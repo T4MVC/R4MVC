@@ -11,7 +11,7 @@ Instead of
 @Html.ActionLink("Delete Dinner", "Delete", "Dinners", new { id = Model.DinnerID }, null)
 ````
 
-T4MVC lets you write
+R4MVC lets you write
 
 ````c#
 @Html.ActionLink("Delete Dinner", MVC.Dinners.Delete(Model.DinnerID))
