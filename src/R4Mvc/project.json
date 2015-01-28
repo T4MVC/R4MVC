@@ -1,17 +1,22 @@
 ﻿{
-    "version": "1.0.0-*",
-    "dependencies": {
-    },
+	"version": "1.0.0-*",
+	"dependencies": {
+		"System.Runtime": "4.0.20-beta-22526",
+				"Microsoft.AspNet.Mvc": "6.0.0-beta4-12507",
+				"Microsoft.CodeAnalysis.Common": "1.0.0-rc1-20150125-01",
+				"Microsoft.Framework.Runtime": "1.0.0-beta4-10991"
+	},
 
-    "frameworks" : {
-        "aspnet50" : { 
-            "dependencies": {
-            }
-        },
-        "aspnetcore50" : { 
-            "dependencies": {
-                "System.Runtime": "4.0.20-beta-22416"
-            }
-        }
-    }
+	"frameworks": {
+		"aspnet50": {
+			"dependencies": {
+				
+			}
+		},
+		"aspnetcore50": {
+			"dependencies": {
+				
+			}
+		}
+	}
 }
