@@ -12,14 +12,20 @@ namespace R4Mvc.Compiler.Preprocess
 
 		public MVCRouteCompilerModule(IServiceProvider provider)
 		{
-			Debugger.Launch();
 			_appProvider = provider; 
 		}
 
 		public void BeforeCompile(IBeforeCompileContext context)
 		{
+			Debugger.Launch();
+
 			var applicationEnvironment = _appProvider.GetRequiredService<IApplicationEnvironment>();
 			var projectResolver = _appProvider.GetRequiredService<IProjectResolver>();
+
+			var compiler = context.CSharpCompilation;
+			var diagnostics = context.Diagnostics;
+			var resources = context.Resources;
+
 			//var compilerOptionsProvider = _appProvider.GetRequiredService<ICompilerOptionsProvider>();
 			//var compilationSettings = compilerOptionsProvider.GetCompilationSettings(applicationEnvironment);
 
