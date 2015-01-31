@@ -1,8 +1,9 @@
-namespace R4Mvc.Compiler.Preprocess
+namespace R4Mvc
 {
 	using System;
 	using System.Diagnostics;
 
+	using Microsoft.CodeAnalysis.CSharp;
 	using Microsoft.Framework.DependencyInjection;
 	using Microsoft.Framework.Runtime;
 
@@ -21,10 +22,18 @@ namespace R4Mvc.Compiler.Preprocess
 
 			var applicationEnvironment = _appProvider.GetRequiredService<IApplicationEnvironment>();
 			var projectResolver = _appProvider.GetRequiredService<IProjectResolver>();
-
 			var compiler = context.CSharpCompilation;
-			var diagnostics = context.Diagnostics;
-			var resources = context.Resources;
+
+			foreach (var tree in compiler.SyntaxTrees)
+			{
+				var newNode = new ControllerRewriter(compiler.GetSemanticModel(tree)).Visit(tree.GetRoot());
+				if (!newNode.IsEquivalentTo(tree.GetRoot()))
+				{
+					// node has changed, should write to file
+					compiler.ReplaceSyntaxTree(tree, newNode.SyntaxTree);
+					CSharpSyntaxTree.Create(newNode as CSharpSyntaxNode, null, tree.FilePath);
+				}
+			}
 
 			//var compilerOptionsProvider = _appProvider.GetRequiredService<ICompilerOptionsProvider>();
 			//var compilationSettings = compilerOptionsProvider.GetCompilationSettings(applicationEnvironment);
@@ -33,13 +42,6 @@ namespace R4Mvc.Compiler.Preprocess
 			//var sc = new ServiceCollection();
 			//sc.ConfigureOptions(setup);
 			//sc.AddMvc();
-
-			// 1. How to find all public types inheriting from Controller
-			//		change class to partial and add {ControllerName}.Generated.cs nested class
-			//		if no default constructor, add one to generated class
-			//		CodeAnalysis should run for public classes and methods to trigger above
-			// 2. Get all public methods that return type inherited from actionresult
-			//      create method stub with same number of arguments but change arg types to dummy[null]
 		}
 
 		public void AfterCompile(IAfterCompileContext context)

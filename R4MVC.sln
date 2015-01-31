@@ -14,8 +14,8 @@ EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "R4Mvc.Test", "test\R4Mvc.Test\R4Mvc.Test.kproj", "{21E184E0-3D98-4112-B72C-F12F17D562B0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ED8974FA-C1B2-4CFD-9619-E4304859A602}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
+	ProjectSection(FolderGlobals) = preProject
+		global_1json__JSONSchema = http://json.schemastore.org/global
 	EndProjectSection
 	ProjectSection(FolderGlobals) = preProject
 		global_1json__JSONSchema = http://json.schemastore.org/global
