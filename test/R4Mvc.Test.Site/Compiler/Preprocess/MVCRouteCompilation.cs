@@ -2,7 +2,7 @@
 
 namespace R4Mvc.Compiler.Preprocess
 {
-	public class MVCRouteCompilation : R4Mvc.Compiler.Preprocess.MVCRouteCompilerModule
+	public class MVCRouteCompilation : MVCRouteCompilerModule
 	{
 		public MVCRouteCompilation(IServiceProvider provider) : base(provider)
 		{
