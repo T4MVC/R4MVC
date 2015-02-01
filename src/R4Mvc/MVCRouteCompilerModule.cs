@@ -2,9 +2,8 @@ namespace R4Mvc
 {
 	using System;
 	using System.Diagnostics;
+	using System.IO;
 
-	using Microsoft.CodeAnalysis.CSharp;
-	using Microsoft.Framework.DependencyInjection;
 	using Microsoft.Framework.Runtime;
 
 	public class MVCRouteCompilerModule : ICompileModule
@@ -20,21 +19,20 @@ namespace R4Mvc
 		{
 			Debugger.Launch();
 
-			var applicationEnvironment = _appProvider.GetRequiredService<IApplicationEnvironment>();
-			var projectResolver = _appProvider.GetRequiredService<IProjectResolver>();
 			var compiler = context.CSharpCompilation;
-
 			foreach (var tree in compiler.SyntaxTrees)
 			{
 				var newNode = new ControllerRewriter(compiler.GetSemanticModel(tree)).Visit(tree.GetRoot());
 				if (!newNode.IsEquivalentTo(tree.GetRoot()))
 				{
-					// node has changed, should write to file
+					// node has changed, update syntaxtree and persist to file
 					compiler.ReplaceSyntaxTree(tree, newNode.SyntaxTree);
-					CSharpSyntaxTree.Create(newNode as CSharpSyntaxNode, null, tree.FilePath);
+					File.WriteAllText(tree.FilePath, newNode.ToFullString());
 				}
 			}
 
+			//var applicationEnvironment = _appProvider.GetRequiredService<IApplicationEnvironment>();
+			//var projectResolver = _appProvider.GetRequiredService<IProjectResolver>();
 			//var compilerOptionsProvider = _appProvider.GetRequiredService<ICompilerOptionsProvider>();
 			//var compilationSettings = compilerOptionsProvider.GetCompilationSettings(applicationEnvironment);
 
