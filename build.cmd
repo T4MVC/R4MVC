@@ -1,4 +1,4 @@
-@echo off
+REM @echo off
 cd %~dp0
 
 SETLOCAL ENABLEEXTENSIONS
