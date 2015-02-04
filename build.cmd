@@ -1,4 +1,4 @@
-REM @echo off
+@echo off
 cd %~dp0
 
 SETLOCAL ENABLEEXTENSIONS
@@ -17,7 +17,7 @@ copy %CACHED_NUGET% .nuget\nuget.exe > nul
 :restore
 IF EXIST packages\KoreBuild goto run
 .nuget\NuGet.exe install KoreBuild -ExcludeVersion -o packages -nocache -pre -Source https://www.myget.org/F/aspnetvnext/api/v2
-.nuget\NuGet.exe install Sake -version 0.2 -o packages -ExcludeVersion -Source https://www.myget.org/F/aspnetvnext/api/v2
+.nuget\NuGet.exe install Sake -version 0.2 -o packages -ExcludeVersion 
 
 IF "%SKIP_KRE_INSTALL%"=="1" goto run
 CALL packages\KoreBuild\build\kvm upgrade
