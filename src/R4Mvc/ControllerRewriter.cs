@@ -155,11 +155,6 @@ namespace R4Mvc
 			return declaration;
 		}
 
-		public static SyntaxNode CreateClass(this SyntaxNode node, string className)
-		{
-			return node;
-		}
-
 		public static SyntaxToken CreatePartialToken()
 		{
 			return SyntaxFactory.Token(
