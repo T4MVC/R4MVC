@@ -17,16 +17,15 @@ copy %CACHED_NUGET% .nuget\nuget.exe > nul
 :restore
 IF EXIST packages\KoreBuild goto run
 .nuget\NuGet.exe install KoreBuild -ExcludeVersion -o packages -nocache -pre -Source https://www.myget.org/F/aspnetvnext/api/v2
-.nuget\NuGet.exe install Sake -version 0.2 -o packages -ExcludeVersion 
+.nuget\NuGet.exe install Sake -version 0.2 -o packages -ExcludeVersion -Source https://www.myget.org/F/aspnetvnext/api/v2
 
 IF "%SKIP_KRE_INSTALL%"=="1" goto run
-CALL packages\KoreBuild\build\kvm upgrade -runtime CLR -x86
-CALL packages\KoreBuild\build\kvm install default -runtime CoreCLR -x86
+CALL packages\KoreBuild\build\kvm upgrade
+CALL packages\KoreBuild\build\kvm install default
 
 :run
 CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86
-CALL packages\KoreBuild\build\kpm restore
-CALL packages\KoreBuild\build\kvm build
+packages\Sake\tools\Sake.exe -I packages\KoreBuild\build -f makefile.shade %*
 
 :end
 exit /b %ERRORLEVEL%
