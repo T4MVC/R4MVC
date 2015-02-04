@@ -5,10 +5,13 @@ namespace R4Mvc
 	using System.IO;
 
 	using Microsoft.Framework.Runtime;
+	using Microsoft.Framework.Runtime.Roslyn;
 
 	public class MVCRouteCompilerModule : ICompileModule
 	{
 		private readonly IServiceProvider _appProvider;
+
+		private Project project;
 
 		public MVCRouteCompilerModule(IServiceProvider provider)
 		{
@@ -18,8 +21,9 @@ namespace R4Mvc
 		public void BeforeCompile(IBeforeCompileContext context)
 		{
 			Debugger.Launch();
+			project = ((CompilationContext)(context)).Project;
 
-			var compiler = context.CSharpCompilation;
+            var compiler = context.CSharpCompilation;
 			foreach (var tree in compiler.SyntaxTrees)
 			{
 				var newNode = new ControllerRewriter(compiler.GetSemanticModel(tree)).Visit(tree.GetRoot());
@@ -44,6 +48,8 @@ namespace R4Mvc
 
 		public void AfterCompile(IAfterCompileContext context)
 		{
+			// need to touch project file to invalidate klr source cache
+			File.SetLastWriteTimeUtc(project.ProjectFilePath, DateTime.UtcNow);
 		}
 	}
 }
