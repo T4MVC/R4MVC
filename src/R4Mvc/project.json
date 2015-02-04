@@ -9,11 +9,12 @@
 		"Microsoft.Framework.Runtime": "1.0.0-beta2",
 		"Microsoft.Framework.DependencyInjection": "1.0.0-beta2",
 		"Microsoft.AspNet.Mvc.Razor": "6.0.0-beta2",
-		"System.Runtime": "4.0.20-beta-22526",
+		"System.Runtime": "4.0.20-beta-22530",
+		"System.IO.FileSystem": "4.0.0-beta-22530",
 		"System.Linq": "4.0.0-beta-22231"
 	},
 
-	"compilationOptions": {"languageVersion": "csharp6"},
+	"compilationOptions": { "languageVersion": "csharp6" },
 
 	"frameworks": {
 		"aspnet50": {
@@ -24,7 +25,8 @@
 		},
 		"aspnetcore50": {
 			"dependencies": {
-				"System.Runtime": "4.0.0.0"
+				"System.Runtime": "4.0.0.0",
+
 			}
 		}
 	}

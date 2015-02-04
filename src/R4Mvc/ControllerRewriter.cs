@@ -1,6 +1,7 @@
 ﻿// ControllerRewriter.cs
 namespace R4Mvc
 {
+	using System.CodeDom.Compiler;
 	using System.Diagnostics;
 	using System.IO;
 	using System.Linq;
@@ -31,24 +32,38 @@ namespace R4Mvc
 				if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
 				{
 					// Mark class partial
-					Debug.WriteLine("Marking {1} class a partial", symbol.ToString());
-					var syntaxToken = SyntaxFactory.Token(
-						SyntaxFactory.TriviaList(),
-						SyntaxKind.PartialKeyword,
-						SyntaxFactory.TriviaList(SyntaxFactory.Space));
+					Debug.WriteLine("Marking {0} class a partial", symbol);
+					var syntaxToken = Helpers.CreatePartialToken();
 					var newNode = node.AddModifiers(syntaxToken);
-					
-					// Create new generate file/partial class for this class
-					// TODO should put generated files in own folder
-					var generatedText = string.Format("namespace {0} {{ public partial class {1} {{}} }}", symbol.ContainingNamespace.ToString(), symbol.Name);
-					var generatedFilePath = System.Text.RegularExpressions.Regex.Replace(node.SyntaxTree.FilePath, ".cs$", ".R4MVC.generated.cs");
-					var generatedTree = CSharpSyntaxTree.ParseText(generatedText);
-					
-					// TODO how to have reliable updated semanticmodel to pass to visitor for newly generate file
-					// var generatedAfterVisit = new ControllerRewriter(_model).Visit(generatedTree.GetRoot());
-					File.WriteAllText(generatedFilePath, generatedTree.GetCompilationUnitRoot().GetText().ToString());
-
 					node = newNode;
+				}
+
+				if (!string.IsNullOrWhiteSpace(node.SyntaxTree.FilePath))
+				{
+					// does generated file exist?
+					var references = symbol.DeclaringSyntaxReferences;
+					if (references.Length == 1)
+					{
+						// Create new generate file/partial class for this class
+						var fileName = symbol.Name;
+						if (symbol.IsGenericType)
+						{
+							fileName += "`" + symbol.TypeParameters.Length;
+						}
+
+						var generatedFilePath = GetGeneratedFilePath(Path.GetDirectoryName(node.SyntaxTree.FilePath), fileName);
+
+						var fileTree = Helpers.CreateNamespace(symbol.ContainingNamespace.ToString());
+						fileTree = fileTree.WithUsings(new[] { "System.CodeDom.Compiler" });
+						fileTree = fileTree.WithClass(symbol.Name, node.TypeParameterList?.Parameters.ToArray());
+						fileTree.SyntaxTree.WithFilePath(generatedFilePath);
+						fileTree = fileTree.NormalizeWhitespace();
+						
+						using (var textWriter = new StreamWriter(generatedFilePath))
+						{
+							fileTree.WriteTo(textWriter);
+						}					
+					}
 				}
 			}
 
@@ -98,6 +113,18 @@ namespace R4Mvc
 
 			return base.VisitMethodDeclaration(node);
 		}
+		
+		private string GetGeneratedFilePath(string directory, string name)
+		{
+			var path = Path.Combine(directory, "R4MVC");
+			if (directory != null && !Directory.Exists(path))
+			{
+				Directory.CreateDirectory(path);
+			}
+
+			var fileName =  string.Format("{0}.R4MVC.generated.cs", name);
+			return Path.Combine(path, fileName);
+		}
 
 		private bool InheritsFrom<T>(INamedTypeSymbol symbol)
 		{
@@ -117,5 +144,65 @@ namespace R4Mvc
 			}
 			return _inheritsController;
 		}
+	}
+
+	public static class Helpers
+	{
+		public static NamespaceDeclarationSyntax CreateNamespace(string namespaceText)
+		{
+			var nameSyntax = SyntaxFactory.ParseName(namespaceText);
+			var declaration = SyntaxFactory.NamespaceDeclaration(nameSyntax);
+			return declaration;
+		}
+
+		public static SyntaxNode CreateClass(this SyntaxNode node, string className)
+		{
+			return node;
+		}
+
+		public static SyntaxToken CreatePartialToken()
+		{
+			return SyntaxFactory.Token(
+				SyntaxFactory.TriviaList(),
+				SyntaxKind.PartialKeyword,
+				SyntaxFactory.TriviaList(SyntaxFactory.Space));
+		}
+		public static SyntaxToken CreatePublicToken()
+		{
+			return SyntaxFactory.Token(
+				SyntaxFactory.TriviaList(),
+				SyntaxKind.PublicKeyword,
+				SyntaxFactory.TriviaList(SyntaxFactory.Space));
+		}
+
+		public static NamespaceDeclarationSyntax WithUsings(this NamespaceDeclarationSyntax node, string[] namespaces)
+		{
+			var collection = namespaces.Select(ns => SyntaxFactory.ParseName(ns)).Select(SyntaxFactory.UsingDirective);
+			var usings = SyntaxFactory.List(collection);
+			return node.WithUsings(usings);
+		}
+
+		public static NamespaceDeclarationSyntax WithClass(this NamespaceDeclarationSyntax node, string className, TypeParameterSyntax[] typeParams)
+		{
+			var classSyntax =
+				SyntaxFactory.ClassDeclaration(className)
+					.AddModifiers(CreatePublicToken())
+					.AddModifiers(CreatePartialToken());
+					//.AddAttributeLists(CreateGeneratedAttribute());
+
+			if(typeParams != null)
+				classSyntax = classSyntax
+					.AddTypeParameterListParameters(typeParams);
+
+			node = node.AddMembers(classSyntax);
+			return node;
+		}
+
+		//private static AttributeListSyntax[] CreateGeneratedAttribute()
+		//{
+		//	//var argumentList = SyntaxFactory.ParseAttributeArgumentList("[GeneratedCode(\"R4MVC\", \"1.0.0.0\")]");
+		//	//var attribute = SyntaxFactory.AttributeList(SyntaxFactory.Attribute(SyntaxFactory.IdentifierName("GeneratedCode"), argumentList);
+		//	//return SyntaxFactory.AttributeList(attribute);
+		//}
 	}
 }
