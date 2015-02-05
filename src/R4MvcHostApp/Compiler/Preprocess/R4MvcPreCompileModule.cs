@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Framework.Runtime;
+using R4Mvc;
 
 namespace R4MvcHostApp.Compiler.Preprocess
 {
@@ -7,7 +8,7 @@ namespace R4MvcHostApp.Compiler.Preprocess
     {
         public void BeforeCompile(IBeforeCompileContext context)
         {
-               
+            R4MvcGenerator.Generate(context.CSharpCompilation);
         }
 
         public void AfterCompile(IAfterCompileContext context)
