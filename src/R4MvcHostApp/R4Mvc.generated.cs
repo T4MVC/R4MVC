@@ -1,0 +1,1 @@
+// Generated codenamespace R4MvcHostApp{	public class MVC	{}}
