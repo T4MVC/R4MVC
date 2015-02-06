@@ -18,3 +18,7 @@ R4MVC lets you write
 ````
 
 and that's just the beginning!
+
+## Continuous Integration
+
+[![Build status](https://ci.appveyor.com/api/projects/status/sw4jwy7gtedra5bv?svg=true)](https://ci.appveyor.com/project/T4MVC/r4mvc)
