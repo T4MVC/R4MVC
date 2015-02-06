@@ -30,7 +30,7 @@ namespace R4Mvc
 			var fileTree = R4MvcHelpers.CreateNamespace(firstSymbol.ContainingNamespace.ToString());
 			fileTree = fileTree.WithHeader(_headerText);
 			fileTree = fileTree.WithPragmaCodes(false, 1591, 3008, 3009, 0108);
-			fileTree = fileTree.WithUsings(new[] { "System.CodeDom.Compiler" });
+			fileTree = fileTree.WithUsings("System.CodeDom.Compiler");
 			fileTree.SyntaxTree.WithFilePath(generatedFilePath);
 
 			foreach (var mvcControllerNode in mvcControllerNodes)
