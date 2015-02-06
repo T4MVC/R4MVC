@@ -1,11 +1,6 @@
-﻿using System;
-
-namespace R4Mvc.Compiler.Preprocess
+﻿namespace R4Mvc.Compiler.Preprocess
 {
-	public class MVCRouteCompilation : MVCRouteCompilerModule
+	public class R4MvcCompilation : R4MVCCompilerModule
 	{
-		public MVCRouteCompilation(IServiceProvider provider) : base(provider)
-		{
-		}
 	}
 }
