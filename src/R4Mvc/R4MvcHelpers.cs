@@ -60,7 +60,7 @@ namespace R4Mvc
 			return node;
 		}
 
-		public static NamespaceDeclarationSyntax WithUsings(this NamespaceDeclarationSyntax node, string[] namespaces)
+		public static NamespaceDeclarationSyntax WithUsings(this NamespaceDeclarationSyntax node, params string[] namespaces)
 		{
 			var collection = namespaces.Select(ns => SyntaxFactory.ParseName(ns)).Select(SyntaxFactory.UsingDirective);
 			var usings = SyntaxFactory.List(collection);
