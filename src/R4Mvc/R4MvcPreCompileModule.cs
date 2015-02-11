@@ -1,7 +1,6 @@
-﻿namespace R4MvcHostApp.Compiler.Preprocess
+﻿namespace R4Mvc
 {
 	using Microsoft.Framework.Runtime;
-	using R4Mvc;
 
 	public class R4MvcPreCompileModule : ICompileModule
     {
@@ -12,7 +11,6 @@
 
         public void AfterCompile(IAfterCompileContext context)
         {
-
         }
     }
 }
