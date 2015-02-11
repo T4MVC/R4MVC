@@ -34,7 +34,7 @@ namespace R4Mvc
 			var compiler = context.CSharpCompilation;
 			foreach (var tree in compiler.SyntaxTrees.Where(x => !x.FilePath.EndsWith(R4MvcHelpers.R4MvcFileName)))
 			{
-				var controllerRewriter = new ControllerRewriter(compiler.GetSemanticModel(tree));
+				var controllerRewriter = new ControllerRewriter(compiler);
 				var newNode = controllerRewriter.Visit(tree.GetRoot());
 				this.MvcClasses.AddRange(controllerRewriter.MvcControllerClassNodes);
 				if (newNode.IsEquivalentTo(tree.GetRoot()))

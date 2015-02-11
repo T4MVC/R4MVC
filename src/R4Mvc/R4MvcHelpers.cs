@@ -54,6 +54,14 @@ namespace R4Mvc
 				SyntaxFactory.TriviaList(SyntaxFactory.Space));
 		}
 
+		public static SyntaxToken CreateVirtualToken()
+		{
+			return SyntaxFactory.Token(
+				SyntaxFactory.TriviaList(),
+				SyntaxKind.VirtualKeyword,
+				SyntaxFactory.TriviaList(SyntaxFactory.Space));
+		}
+
 		public static NamespaceDeclarationSyntax WithPragmaCodes(this NamespaceDeclarationSyntax node, bool enable, params int[] codes)
 		{
 			// TODO Add prama warning enable/disable [codes]
@@ -69,11 +77,7 @@ namespace R4Mvc
 
 		public static NamespaceDeclarationSyntax WithClass(this NamespaceDeclarationSyntax node, string className, TypeParameterSyntax[] typeParams)
 		{
-			var classSyntax =
-				SyntaxFactory.ClassDeclaration(className)
-					.AddModifiers(CreatePublicToken())
-					.AddModifiers(CreatePartialToken());
-			//.AddAttributeLists(CreateGeneratedAttribute());
+			var classSyntax = SyntaxFactory.ClassDeclaration(className).WithPublicModifier().WithPartialModifier();
 
 			if(typeParams != null)
 				classSyntax = classSyntax
@@ -103,12 +107,19 @@ namespace R4Mvc
 			}
 		}
 
-		public static ClassDeclarationSyntax AddPartialModifier(ClassDeclarationSyntax node)
+		public static ClassDeclarationSyntax WithPartialModifier(this ClassDeclarationSyntax node)
 		{
-			var syntaxToken = R4MvcHelpers.CreatePartialToken();
-			var newNode = node.AddModifiers(syntaxToken);
-			node = newNode;
-			return node;
+			return node.AddModifiers(CreatePartialToken());
+		}
+
+		public static ClassDeclarationSyntax WithPublicModifier(this ClassDeclarationSyntax node)
+		{
+			return node.AddModifiers(CreatePublicToken());
+		}
+
+		public static MethodDeclarationSyntax WithVirtualModifier(this MethodDeclarationSyntax node)
+		{
+			return node.AddModifiers(CreateVirtualToken());
 		}
 
 		public const string R4MvcFileName = "R4MVC.generated.cs";
