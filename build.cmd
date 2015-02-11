@@ -24,7 +24,7 @@ REM CALL packages\KoreBuild\build\kvm upgrade -runtime CLR -x86
 REM CALL packages\KoreBuild\build\kvm install 1.0.0-beta2 -runtime CoreCLR -x86
 
 @powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/master/kvminstall.ps1'))"
-%USERPROFILE%\.kre\bin\kvm install 1.0.0-beta2
+CALL %USERPROFILE%\.kre\bin\kvm install 1.0.0-beta2
 
 :run
 REM CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86
