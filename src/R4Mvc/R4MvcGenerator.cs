@@ -4,16 +4,18 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using Microsoft.Framework.Runtime;
+using Microsoft.Framework.Runtime.Roslyn;
 
 namespace R4Mvc
 {
     public class R4MvcGenerator
     {
-        public static void Generate(CSharpCompilation complication)
+        public static void Generate(IBeforeCompileContext context)
         {
             var compilationUnit = CompilationUnit();
 
-            NameSyntax name = GetRootNamespace(complication);
+            NameSyntax name = GetRootNamespace(context);
             name = name.WithLeadingTrivia(Space).WithTrailingTrivia(ElasticCarriageReturn);
 
             var mvcClass = ClassDeclaration(Identifier(TriviaList(Space), "MVC", TriviaList(ElasticCarriageReturn, ElasticTab)));
@@ -25,9 +27,9 @@ namespace R4Mvc
 
             compilationUnit = compilationUnit.AddMembers(@namespace);
 
-            var tree = SyntaxTree(compilationUnit, path: GetGeneratedCsPath(complication));
+            var tree = SyntaxTree(compilationUnit, path: GetGeneratedCsPath(context));
 
-            complication.AddSyntaxTrees(tree);
+            context.CSharpCompilation.AddSyntaxTrees(tree);
             
 #if !ASPNETCORE50
             // TODO: Fix writing out generated files in both frameworks
@@ -35,16 +37,17 @@ namespace R4Mvc
 #endif
         }
 
-        private static NameSyntax GetRootNamespace(CSharpCompilation complication)
+        private static NameSyntax GetRootNamespace(IBeforeCompileContext context)
         {
             // TODO: Get this from the complication object
             return ParseName("R4MvcHostApp");
         }
 
-        private static string GetGeneratedCsPath(CSharpCompilation complication)
+        private static string GetGeneratedCsPath(IBeforeCompileContext context)
         {
-            // TODO: Get this from the complication object
-            return @"C:\Projects\R4MVC\src\R4MvcHostApp\R4Mvc.generated.cs";
+            var project = ((CompilationContext)(context)).Project;
+
+            return Path.Combine(project.ProjectDirectory, "R4Mvc.generated.cs");
         }
     }
 }

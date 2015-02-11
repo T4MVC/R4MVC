@@ -8,7 +8,7 @@ namespace R4MvcHostApp.Compiler.Preprocess
     {
         public void BeforeCompile(IBeforeCompileContext context)
         {
-            R4MvcGenerator.Generate(context.CSharpCompilation);
+            R4MvcGenerator.Generate(context);
         }
 
         public void AfterCompile(IAfterCompileContext context)
