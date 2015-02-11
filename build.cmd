@@ -20,9 +20,20 @@ IF EXIST packages\KoreBuild goto run
 .nuget\NuGet.exe install Sake -version 0.2 -o packages -ExcludeVersion 
 
 IF "%SKIP_KRE_INSTALL%"=="1" goto run
-CALL packages\KoreBuild\build\kvm upgrade -runtime CLR -x86
-CALL packages\KoreBuild\build\kvm install default -runtime CoreCLR -x86
+REM CALL packages\KoreBuild\build\kvm upgrade -runtime CLR -x86
+REM CALL packages\KoreBuild\build\kvm install 1.0.0-beta2 -runtime CoreCLR -x86
+
+@powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/master/kvminstall.ps1'))"
+kvm install 1.0.0-beta2
 
 :run
-CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86
-packages\Sake\tools\Sake.exe -I packages\KoreBuild\build -f makefile.shade %*
+REM CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86
+REM packages\Sake\tools\Sake.exe -I packages\KoreBuild\build -f makefile.shade %*
+
+CALL kpm restore 
+CALL kpm build src\R4Mvc
+CALL kpm build src\R4MvcHostApp
+CALL kpm build test\R4Mvc.Test
+
+cd test\R4Mvc.Test
+CALL k test
