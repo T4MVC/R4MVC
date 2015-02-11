@@ -6,12 +6,12 @@
         "System.IO": "4.0.10-beta-*",
         "Microsoft.Framework.Runtime.Roslyn": "1.0.0-beta2-*",
 		"Microsoft.Framework.Runtime": "1.0.0-beta2-*",
-        "Xunit.KRunner": "1.0.0-*",
+        "xunit.runner.kre": "1.0.0-*",
         "R4Mvc": "1.0.0-*"
     },
 
     "commands": {
-        "test": "Xunit.KRunner"
+        "test": "xunit.runner.kre"
     },
 
     "frameworks": {
