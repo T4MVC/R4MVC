@@ -1,10 +1,8 @@
-﻿using System;
-using Microsoft.Framework.Runtime;
-using R4Mvc;
-
-namespace R4MvcHostApp.Compiler.Preprocess
+﻿namespace R4Mvc
 {
-    public class R4MvcPreCompileModule : ICompileModule
+	using Microsoft.Framework.Runtime;
+
+	public class R4MvcPreCompileModule : ICompileModule
     {
         public void BeforeCompile(IBeforeCompileContext context)
         {
@@ -13,7 +11,6 @@ namespace R4MvcHostApp.Compiler.Preprocess
 
         public void AfterCompile(IAfterCompileContext context)
         {
-
         }
     }
 }
