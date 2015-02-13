@@ -7,7 +7,10 @@ namespace R4Mvc
 	using Microsoft.CodeAnalysis.CSharp;
 	using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-	public static class R4MvcHelpers
+	/// <summary>
+	/// A collection of helper and fluent extension methods to help manipulate SyntaxNodes
+	/// </summary>
+	public static class SyntaxHelpers
 	{
 		public static bool InheritsFrom<T>(this ITypeSymbol symbol)
 		{
@@ -92,18 +95,24 @@ namespace R4Mvc
 			return node.WithLeadingTrivia(SyntaxFactory.Comment(headerText), SyntaxFactory.CarriageReturnLineFeed);
 		}
 
-		//private static AttributeListSyntax[] CreateGeneratedAttribute()
-		//{
-		//	//var argumentList = SyntaxFactory.ParseAttributeArgumentList("[GeneratedCode(\"R4MVC\", \"1.0.0.0\")]");
-		//	//var attribute = SyntaxFactory.AttributeList(SyntaxFactory.Attribute(SyntaxFactory.IdentifierName("GeneratedCode"), argumentList);
-		//	//return SyntaxFactory.AttributeList(attribute);
-		//}
+		private static AttributeListSyntax[] CreateGeneratedAttribute()
+		{
+			// TODO Figure out how to construct attribute args in the SyntaxNode
+			//var argumentList = SyntaxFactory.ParseAttributeArgumentList("[GeneratedCode(\"R4MVC\", \"1.0.0.0\")]");
+			//var attribute = SyntaxFactory.AttributeList(SyntaxFactory.Attribute(SyntaxFactory.IdentifierName("GeneratedCode"), argumentList);
+			//return SyntaxFactory.AttributeList(attribute);
+			return null;
+		}
 
-		public static void WriteFile(this SyntaxNode fileTree, string generatedFilePath)
+		public static void WriteFile(this SyntaxNode fileTree, string generatedFilePath, bool resetWhitespace)
 		{
 			using (var textWriter = new StreamWriter(new FileStream(generatedFilePath, FileMode.Create)))
 			{
-				fileTree.NormalizeWhitespace().WriteTo(textWriter);
+				if (resetWhitespace)
+				{
+					fileTree = fileTree.NormalizeWhitespace();
+				}
+				fileTree.WriteTo(textWriter);
 			}
 		}
 

@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Mvc;
 
 namespace R4MvcHostApp.Controllers
 {
-    public class HomeController : Controller
+    public partial class HomeController : Controller
     {
         public IActionResult Index()
         {

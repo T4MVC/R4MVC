@@ -1,11 +1,11 @@
+using System.Linq;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 namespace R4Mvc
 {
-	using System.IO;
-	using System.Linq;
-
-	using Microsoft.CodeAnalysis.CSharp;
-	using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 	public static class R4MvcGenerator
 	{
 		private const string _headerText = @"
@@ -17,27 +17,26 @@ namespace R4Mvc
 // Make sure the compiler doesn't complain about missing Xml comments and CLS compliance
 // 0108: suppress ""Foo hides inherited member Foo.Use the new keyword if hiding was intended."" when a controller and its abstract parent are both processed";
 
-		public static bool Generate(CSharpCompilation compiler, ClassDeclarationSyntax[] mvcControllerNodes)
+		public static SyntaxNode Generate(CSharpCompilation compiler, ClassDeclarationSyntax[] mvcControllerNodes)
 		{
-			// Create R4Mvc generated file with target project namespace
+			// Grab the first controller node and model and symbol for grabbing the root controller namespace
 			var firstNode = mvcControllerNodes.First();
 			var firstModel = compiler.GetSemanticModel(firstNode.SyntaxTree);
 			var firstSymbol = firstModel.GetDeclaredSymbol(firstNode);
 
-			var generatedFilePath = GetGeneratedFilePath(Path.GetDirectoryName(firstNode.SyntaxTree.FilePath));
-
-			var fileTree = R4MvcHelpers.CreateNamespace(firstSymbol.ContainingNamespace.ToString());
+			// Create the root node and add header, pragma, usings
+			var fileTree = SyntaxHelpers.CreateNamespace(firstSymbol.ContainingNamespace.ToString());
 			fileTree = fileTree.WithHeader(_headerText);
 			fileTree = fileTree.WithPragmaCodes(false, 1591, 3008, 3009, 0108);
 			fileTree = fileTree.WithUsings("System.CodeDom.Compiler");
-			fileTree.SyntaxTree.WithFilePath(generatedFilePath);
-
+			
+			// loop through the controllers and create a partial node for each
 			foreach (var mvcControllerNode in mvcControllerNodes)
 			{
 				var model = compiler.GetSemanticModel(mvcControllerNode.SyntaxTree);
 				var mvcSymbol = model.GetDeclaredSymbol(mvcControllerNode);
 
-				// create partial class
+				// create controller partial class node
 				fileTree = fileTree.WithClass(mvcSymbol.Name, mvcControllerNode.TypeParameterList?.Parameters.ToArray());
 
 				// TODO figure out nice method to fluently add attributes and subclasses
@@ -50,20 +49,11 @@ namespace R4Mvc
 			// TODO create static Links class (scripts, content, bundles?)
 			// TODO create R4MVCHelpers class
 
+			// reenable pragma codes after last node
 			fileTree = fileTree.WithPragmaCodes(true, 1591, 3008, 3009, 0108);
-			fileTree.WriteFile(generatedFilePath);
-			return true;
+			return fileTree;
 		}
 		
-		private static string GetGeneratedFilePath(string controllerPath)
-		{
-			var path = Path.Combine(controllerPath, "R4MVC");
-			if (controllerPath != null && !Directory.Exists(path))
-			{
-				Directory.CreateDirectory(path);
-			}
-
-			return Path.Combine(path, R4MvcHelpers.R4MvcFileName);
-		}
+		
 	}
 }

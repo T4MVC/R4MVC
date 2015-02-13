@@ -30,14 +30,13 @@ namespace R4Mvc
 			var symbol = _compiler.GetSemanticModel(node.SyntaxTree).GetDeclaredSymbol(node);
 			if (symbol.InheritsFrom<Controller>())
 			{
+				// hold a list of all controller classes to use later for the generator
 				_mvcControllerClassNodes.Add(node);
 
-				// if controller is not partial, make it so
-				Debug.WriteLine("{0} inherits from {1}", symbol.ToString(), typeof(Controller).FullName);
 				if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
 				{
 					// Mark class partial
-					Debug.WriteLine("Marking {0} class a partial", symbol);
+					Debug.WriteLine("R4MVC - Marking {0} class a partial", symbol);
 					node = node.WithPartialModifier();
 				}
 			}
@@ -47,8 +46,12 @@ namespace R4Mvc
 
 		public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
 		{
-			// symbol wont be found if we've modified class
-			// TODO how to update out of sync node?
+			// the symbol wont be found if we've modified class before this point
+			// the modification would cause the compiler to run again which would then pick up
+			// the symbol second time around. More efficient to manually create a compilation unit for
+			// this node first time and make all modifications in one pass
+			// TODO how to update out of sync node, new CompilationUnit?
+
 			//var model = _compiler.GetSemanticModel(node.SyntaxTree);
 			//var symbol = model.GetDeclaredSymbol(node);
 			//if (symbol.InheritsFrom<Controller>() && !symbol.IsVirtual)
