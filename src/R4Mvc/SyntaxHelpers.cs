@@ -148,7 +148,7 @@ namespace R4Mvc
 			return classSyntax;
 		}
 
-		public static T CreateHeader<T>(this T node, string headerText) where T : SyntaxNode
+		public static T WithHeader<T>(this T node, string headerText) where T : SyntaxNode
 		{
 			var leadingTrivia =
 				node.GetLeadingTrivia()

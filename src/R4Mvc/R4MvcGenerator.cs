@@ -24,7 +24,7 @@ namespace R4Mvc
 			// Create the root node and add usings, header, pragma
 			var fileTree = SyntaxFactory.CompilationUnit();
 			fileTree = fileTree.WithUsings("System.CodeDom.Compiler", "Microsoft.AspNet.Mvc", "System.Threading.Tasks");
-			fileTree = fileTree.CreateHeader(_headerText);
+			fileTree = fileTree.WithHeader(_headerText);
 			fileTree = fileTree.WithPragmaCodes(false, pramaCodes);
 
 			// controllers might be in different namespaces so we should group by namespace 
