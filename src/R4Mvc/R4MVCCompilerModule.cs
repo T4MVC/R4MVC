@@ -60,12 +60,10 @@ namespace R4Mvc
 
 		public void AfterCompile(IAfterCompileContext context)
 		{
-#if DEBUG
 			// TODO need to touch project file to invalidate klr source cache
 			// otherwise you can to kill klr.exe process. an idea is to touch the
 			// project file but the line below won't compile for klr
-			// File.SetLastWriteTimeUtc(project.ProjectFilePath, DateTime.UtcNow);
-#endif
+			//File.SetLastWriteTimeUtc(project.ProjectFilePath, DateTime.UtcNow);
 		}
 
 		private static string GetGeneratedFilePath(Project project)

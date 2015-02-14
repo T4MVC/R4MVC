@@ -6,15 +6,24 @@
 
 // Make sure the compiler doesn't complain about missing Xml comments and CLS compliance
 // 0108: suppress "Foo hides inherited member Foo.Use the new keyword if hiding was intended." when a controller and its abstract parent are both processed
+#pragma warning disable 1591, 3008, 3009, 108
+using System.CodeDom.Compiler;
+using Microsoft.AspNet.Mvc;
+using System.Threading.Tasks;
+
 namespace R4MvcHostApp.Controllers
 {
-    using System.CodeDom.Compiler;
-
     public partial class AccountController
     {
+        public AccountController()
+        {
+        }
     }
 
     public partial class HomeController
     {
+        public HomeController()
+        {
+        }
     }
-}
+} #pragma warning restore 1591, 3008, 3009, 108

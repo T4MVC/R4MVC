@@ -35,7 +35,6 @@ namespace R4Mvc
 
 				if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
 				{
-					// Mark class partial
 					Debug.WriteLine("R4MVC - Marking {0} class a partial", symbol);
 					node = node.WithPartialModifier();
 				}
@@ -46,12 +45,17 @@ namespace R4Mvc
 
 		public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
 		{
+			// forces compilationUnit creation according to docs...but doesnt?
+			// var newNode = node.SyntaxTree.GetRoot();
+
 			// the symbol wont be found if we've modified class before this point
 			// the modification would cause the compiler to run again which would then pick up
 			// the symbol second time around. More efficient to manually create a compilation unit for
 			// this node first time and make all modifications in one pass
 			// TODO how to update out of sync node, new CompilationUnit?
-
+			if (!node.SyntaxTree.HasCompilationUnitRoot)
+			{
+			}
 			//var model = _compiler.GetSemanticModel(node.SyntaxTree);
 			//var symbol = model.GetDeclaredSymbol(node);
 			//if (symbol.InheritsFrom<Controller>() && !symbol.IsVirtual)
