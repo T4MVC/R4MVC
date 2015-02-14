@@ -26,4 +26,16 @@ namespace R4MvcHostApp.Controllers
         {
         }
     }
+}
+
+namespace R4MVC
+{
+    public class Dummy
+    {
+        private Dummy()
+        {
+        }
+
+        public static Dummy Instance = new Dummy();
+    }
 } #pragma warning restore 1591, 3008, 3009, 108

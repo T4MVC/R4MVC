@@ -45,10 +45,13 @@ namespace R4Mvc
 
 					// build controller partial class node 
 					// add a default constructor if there are some but none are zero length
-					var controllerPartialClass = namespaceNode.WithClass(mvcSymbol.Name, mvcControllerNode.TypeParameterList?.Parameters.ToArray());
+					var controllerPartialClass =
+						SyntaxHelpers.CreateClass(mvcSymbol.Name, mvcControllerNode.TypeParameterList?.Parameters.ToArray())
+							.WithPublicModifier()
+							.WithPartialModifier();
 					if (!mvcSymbol.Constructors.IsEmpty || !mvcSymbol.Constructors.Any(x => x.Parameters.Length == 0))
 					{
-						controllerPartialClass = controllerPartialClass.WithDefaultConstructor(mvcSymbol);
+						controllerPartialClass = controllerPartialClass.WithDefaultConstructor(mvcSymbol.Name, SyntaxHelpers.CreatePublicToken());
 					}
 
 					// add all method stubs, TODO criteria for this: only public virtual actionresults?
@@ -64,9 +67,14 @@ namespace R4Mvc
 				fileTree = fileTree.AddMembers(namespaceNode);
 			}
 
+			var r4Namespace = SyntaxHelpers.CreateNamespace("R4MVC");
+			r4Namespace = r4Namespace.WithDummyClass();
+
 			// TODO create static MVC class
 			// TODO create static Links class (scripts, content, bundles?)
 			// TODO create R4MVCHelpers class
+
+			fileTree = fileTree.AddMembers(r4Namespace);
 
 			// reenable pragma codes after last node
 			// BUG NormalizeWhitespace is messing up prama (called when writing file)

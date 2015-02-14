@@ -52,11 +52,28 @@ namespace R4Mvc
 				SyntaxKind.PartialKeyword,
 				SyntaxFactory.TriviaList(SyntaxFactory.Space));
 		}
+
 		public static SyntaxToken CreatePublicToken()
 		{
 			return SyntaxFactory.Token(
 				SyntaxFactory.TriviaList(),
 				SyntaxKind.PublicKeyword,
+				SyntaxFactory.TriviaList(SyntaxFactory.Space));
+		}
+
+		private static SyntaxToken CreatePrivateToken()
+		{
+			return SyntaxFactory.Token(
+				SyntaxFactory.TriviaList(),
+				SyntaxKind.PrivateKeyword,
+				SyntaxFactory.TriviaList(SyntaxFactory.Space));
+		}
+
+		private static SyntaxToken CreateStaticToken()
+		{
+			return SyntaxFactory.Token(
+				SyntaxFactory.TriviaList(),
+				SyntaxKind.StaticKeyword,
 				SyntaxFactory.TriviaList(SyntaxFactory.Space));
 		}
 
@@ -78,11 +95,10 @@ namespace R4Mvc
 			return null;
 		}
 
-		private static ConstructorDeclarationSyntax CreateDefaultConstructor(ISymbol mvcSymbol)
+		private static ConstructorDeclarationSyntax CreateDefaultConstructor(string className)
 		{
 			return
-				SyntaxFactory.ConstructorDeclaration(mvcSymbol.Name)
-					.AddModifiers(CreatePublicToken())
+				SyntaxFactory.ConstructorDeclaration(className)
 					.WithBody(SyntaxFactory.Block());
 		}
 
@@ -137,9 +153,9 @@ namespace R4Mvc
 			return node.WithUsings(usings);
 		}
 
-		public static ClassDeclarationSyntax WithClass(this NamespaceDeclarationSyntax node, string className, TypeParameterSyntax[] typeParams)
+		public static ClassDeclarationSyntax CreateClass(string className, TypeParameterSyntax[] typeParams = null)
 		{
-			var classSyntax = SyntaxFactory.ClassDeclaration(className).WithPublicModifier().WithPartialModifier();
+			var classSyntax = SyntaxFactory.ClassDeclaration(className);
 
 			if(typeParams != null)
 				classSyntax = classSyntax
@@ -165,9 +181,9 @@ namespace R4Mvc
 			//return node.AddAttributeLists(attributes);
 		}
 
-		public static ClassDeclarationSyntax WithDefaultConstructor(this ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
+		public static ClassDeclarationSyntax WithDefaultConstructor(this ClassDeclarationSyntax node, string className, params SyntaxToken[] modifiers)
 		{
-			return node.AddMembers(CreateDefaultConstructor(mvcSymbol));
+			return node.AddMembers(CreateDefaultConstructor(className).AddModifiers(modifiers));
 		}
 
 		public static ClassDeclarationSyntax WithMethods(this ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
@@ -189,6 +205,38 @@ namespace R4Mvc
 			return node;
 		}
 
+		public static NamespaceDeclarationSyntax WithDummyClass(this NamespaceDeclarationSyntax node)
+		{
+			const string dummyClassName = "Dummy";
+			var dummyClass =
+				CreateClass(dummyClassName)
+					.WithPublicModifier()
+					.WithDefaultConstructor(dummyClassName, CreatePrivateToken())
+					.WithField("Instance", dummyClassName, CreatePublicToken(), CreateStaticToken());
+
+			return node.AddMembers(dummyClass);
+		}
+
+		public static ClassDeclarationSyntax WithField(this ClassDeclarationSyntax node, string fieldName, string typeName, params SyntaxToken[] modifiers)
+		{
+			var field =
+				SyntaxFactory.FieldDeclaration(
+					SyntaxFactory.VariableDeclaration(SyntaxFactory.ParseTypeName(typeName))
+						.WithVariables(
+							SyntaxFactory.SingletonSeparatedList(
+								SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(fieldName))
+									.WithInitializer(
+										SyntaxFactory.EqualsValueClause(
+											SyntaxFactory.ObjectCreationExpression(SyntaxFactory.IdentifierName(typeName))
+												.WithArgumentList(SyntaxFactory.ArgumentList())))))).AddModifiers(modifiers);
+			return node.AddMembers(field);
+		}
+
+		public static ClassDeclarationSyntax WithStaticModifier(this ClassDeclarationSyntax node)
+		{
+			return node.AddModifiers(CreateStaticToken());
+		}
+
 		public static ClassDeclarationSyntax WithPartialModifier(this ClassDeclarationSyntax node)
 		{
 			return node.AddModifiers(CreatePartialToken());
@@ -197,6 +245,11 @@ namespace R4Mvc
 		public static ClassDeclarationSyntax WithPublicModifier(this ClassDeclarationSyntax node)
 		{
 			return node.AddModifiers(CreatePublicToken());
+		}
+
+		public static ClassDeclarationSyntax WithPrivateModifier(this ClassDeclarationSyntax node)
+		{
+			return node.AddModifiers(CreatePrivateToken());
 		}
 
 		public static MethodDeclarationSyntax WithVirtualModifier(this MethodDeclarationSyntax node)
