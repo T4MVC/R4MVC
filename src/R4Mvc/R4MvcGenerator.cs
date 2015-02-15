@@ -58,14 +58,15 @@ namespace R4Mvc
 					}
 
 					// add all method stubs, TODO criteria for this: only public virtual actionresults?
-					// add subclasses for action names
-					genControllerClass = genControllerClass.WithMethods(mvcSymbol);
-					genControllerClass = genControllerClass.WithStringField("Name", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword);
-					genControllerClass = genControllerClass.WithStringField("NameConst", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword);
-					genControllerClass = genControllerClass.WithStringField("Area", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword);
-					genControllerClass = genControllerClass.WithField("s_actions", "ActionNamesClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
-					genControllerClass = genControllerClass.WithActionNameClass(mvcControllerNode);
-					genControllerClass = genControllerClass.WithActionConstantsClass(mvcControllerNode);
+					// add subclasses, fields, properties, constants for action names
+					genControllerClass = genControllerClass
+						.WithMethods(mvcSymbol)
+						.WithStringField("Name", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
+						.WithStringField("NameConst", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
+						.WithStringField("Area", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
+						.WithField("s_actions", "ActionNamesClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
+						.WithActionNameClass(mvcControllerNode)
+						.WithActionConstantsClass(mvcControllerNode);
 
 					namespaceNode = namespaceNode.AddMembers(genControllerClass);
 					// TODO create T4MVC_[Controller] class inheriting from partial
