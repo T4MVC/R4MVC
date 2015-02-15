@@ -34,11 +34,8 @@ namespace R4Mvc
 			var namespaceGroups = mvcControllerNodes.GroupBy(x=> x.Ancestors().OfType<NamespaceDeclarationSyntax>().First().Name.ToFullString());
 			foreach (var namespaceControllers in namespaceGroups)
 			{
-				// Grab the first controller node and model and symbol for the controller's namespace
-				var firstNode = namespaceControllers.First();
-				var firstModel = compiler.GetSemanticModel(firstNode.SyntaxTree);
-				var firstSymbol = firstModel.GetDeclaredSymbol(firstNode);
-				var namespaceNode = CreateNamespace(firstSymbol.ContainingNamespace.ToString());
+				// create the namespace for the controllers
+				var namespaceNode = CreateNamespace(namespaceControllers.Key);
 				
 				// loop through the controllers and create a partial node for each
 				foreach (var mvcControllerNode in mvcControllerNodes)
