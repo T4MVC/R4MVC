@@ -116,6 +116,7 @@ namespace R4Mvc
 		{
 			// TODO decide whether to output full qualified name of return types to avoid issues with add usings
 			// TODO add return type typeparameters
+			// TODO determine what the args need to be
 			// TODO add method body, currently returns null
 			var returnType = methodSymbol.ReturnType;
 			//var typeParameters = returnType.ContainingType.TypeParameters;
@@ -200,10 +201,14 @@ namespace R4Mvc
 			return node.WithLeadingTrivia(leadingTrivia);
 		}
 
-		public static ClassDeclarationSyntax WithDefaultConstructor(this ClassDeclarationSyntax node, string className, params SyntaxKind[] modifiers)
+		public static ClassDeclarationSyntax WithDefaultConstructor(this ClassDeclarationSyntax node, bool includeGeneratedAttributes = true, params SyntaxKind[] modifiers)
 		{
-			return
-				node.AddMembers(CreateDefaultConstructor(className).WithModifiers(modifiers).WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute()));
+			var ctorNode = CreateDefaultConstructor(node.Identifier.ToString()).WithModifiers(modifiers);
+			if (includeGeneratedAttributes)
+			{
+				ctorNode = ctorNode.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
+			}
+			return node.AddMembers(ctorNode);
 		}
 
 		public static ClassDeclarationSyntax WithMethods(this ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
@@ -213,48 +218,15 @@ namespace R4Mvc
 			return node.AddMembers(mvcSymbol.CreateMethods().ToArray());
 		}
 
-		public static ClassDeclarationSyntax WithActionNameClass(this ClassDeclarationSyntax node, ClassDeclarationSyntax controllerNode)
-		{
-			// create ActionNames sub class using symbol method names
-			return node.WithSubClassMembersAsStrings(
-				controllerNode,
-				"ActionNamesClass",
-				SyntaxKind.PublicKeyword,
-				SyntaxKind.ReadOnlyKeyword);
-		}
-
-		public static ClassDeclarationSyntax WithActionConstantsClass(this ClassDeclarationSyntax node, ClassDeclarationSyntax controllerNode)
-		{
-			// create ActionConstants sub class
-			return node.WithSubClassMembersAsStrings(
-				controllerNode,
-				"ActionNameConstants",
-				SyntaxKind.PublicKeyword,
-				SyntaxKind.ConstKeyword);
-		}
-
 		public static ClassDeclarationSyntax WithSubClassMembersAsStrings(this ClassDeclarationSyntax node, ClassDeclarationSyntax controllerNode, string className, params SyntaxKind[] modifiers)
 		{
 			// create ActionConstants sub class
-			var actionNameClass = CreateClass(className, null, SyntaxKind.PublicKeyword).WithAttributes(CreateGeneratedCodeAttribute());
+			var actionNameClass = CreateClass(className, null, SyntaxKind.PublicKeyword).WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
 			foreach (var action in controllerNode.Members.OfType<MethodDeclarationSyntax>().Where(x => x.Modifiers.Any(SyntaxKind.PublicKeyword)).DistinctBy(x => x.Identifier.ToString()))
 			{
 				actionNameClass = actionNameClass.WithStringField(action.Identifier.ToString(), action.Identifier.ToString(), false, modifiers);
 			}
 			return node.AddMembers(actionNameClass);
-		}
-
-		public static NamespaceDeclarationSyntax WithDummyClass(this NamespaceDeclarationSyntax node)
-		{
-			const string dummyClassName = "Dummy";
-			var dummyClass =
-				CreateClass(dummyClassName)
-					.WithModifiers(SyntaxKind.PublicKeyword)
-					.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
-					.WithDefaultConstructor(dummyClassName, SyntaxKind.PrivateKeyword)
-					.WithField("Instance", dummyClassName, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
-
-			return node.AddMembers(dummyClass);
 		}
 
 		public static ClassDeclarationSyntax WithField(this ClassDeclarationSyntax node, string fieldName, string typeName, params SyntaxKind[] modifiers)

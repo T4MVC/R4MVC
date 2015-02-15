@@ -53,8 +53,7 @@ namespace R4Mvc
 
 					if (!mvcSymbol.Constructors.IsEmpty || !mvcSymbol.Constructors.Any(x => x.Parameters.Length == 0))
 					{
-						genControllerClass =
-							genControllerClass.WithDefaultConstructor(mvcSymbol.Name, SyntaxKind.PublicKeyword);
+						genControllerClass = genControllerClass.WithDefaultConstructor(true, SyntaxKind.PublicKeyword);
 					}
 
 					// add all method stubs, TODO criteria for this: only public virtual actionresults?
@@ -66,10 +65,23 @@ namespace R4Mvc
 						.WithStringField("Area", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
 						.WithField("s_actions", "ActionNamesClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
 						.WithActionNameClass(mvcControllerNode)
-						.WithActionConstantsClass(mvcControllerNode);
+						.WithActionConstantsClass(mvcControllerNode)
+						.WithViewNamesClass();
 
 					namespaceNode = namespaceNode.AddMembers(genControllerClass);
+
 					// TODO create T4MVC_[Controller] class inheriting from partial
+					var r4ControllerClass = SyntaxHelpers.CreateClass(
+						string.Format("R4MVC_{0}", genControllerClass.Identifier),
+						null,
+						SyntaxKind.PublicKeyword,
+						SyntaxKind.PartialKeyword)
+						.WithAttributes(SyntaxHelpers.CreateGeneratedCodeAttribute(), SyntaxHelpers.CreateDebugNonUserCodeAttribute())
+						.WithDefaultConstructor(false, SyntaxKind.PublicKeyword);
+
+
+					namespaceNode = namespaceNode.AddMembers(r4ControllerClass);
+
 				}
 
 				fileTree = fileTree.AddMembers(namespaceNode);
@@ -89,6 +101,50 @@ namespace R4Mvc
 			fileTree = fileTree.WithPragmaCodes(true, pramaCodes);
 
 			return fileTree;
+		}
+
+		public static ClassDeclarationSyntax WithActionNameClass(this ClassDeclarationSyntax node, ClassDeclarationSyntax controllerNode)
+		{
+			// create ActionNames sub class using symbol method names
+			return node.WithSubClassMembersAsStrings(
+				controllerNode,
+				"ActionNamesClass",
+				SyntaxKind.PublicKeyword,
+				SyntaxKind.ReadOnlyKeyword);
+		}
+
+		public static ClassDeclarationSyntax WithActionConstantsClass(this ClassDeclarationSyntax node, ClassDeclarationSyntax controllerNode)
+		{
+			// create ActionConstants sub class
+			return node.WithSubClassMembersAsStrings(
+				controllerNode,
+				"ActionNameConstants",
+				SyntaxKind.PublicKeyword,
+				SyntaxKind.ConstKeyword);
+		}
+
+		public static ClassDeclarationSyntax WithViewNamesClass(this ClassDeclarationSyntax node)
+		{
+			// TODO create subclass called ViewsClass
+			// TODO figure out method of view discovery
+			// TODO create ViewNames get property returning static instance of ViewNames subclass
+				// TODO create subclass in ViewsClass called ViewNames 
+					// TODO create string field per view
+			// TODO create string field per view of relative url
+			return node;
+		}
+
+		public static NamespaceDeclarationSyntax WithDummyClass(this NamespaceDeclarationSyntax node)
+		{
+			const string dummyClassName = "Dummy";
+			var dummyClass =
+				SyntaxHelpers.CreateClass(dummyClassName)
+					.WithModifiers(SyntaxKind.PublicKeyword)
+					.WithAttributes(SyntaxHelpers.CreateGeneratedCodeAttribute(), SyntaxHelpers.CreateDebugNonUserCodeAttribute())
+					.WithDefaultConstructor(true, SyntaxKind.PrivateKeyword)
+					.WithField("Instance", dummyClassName, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+
+			return node.AddMembers(dummyClass);
 		}
 	}
 }

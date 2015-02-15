@@ -27,7 +27,7 @@ namespace R4MvcHostApp.Controllers
         [GeneratedCode("R4MVC", "1.0")]
         public readonly string Area = "AccountController";
         static readonly ActionNamesClass s_actions = new ActionNamesClass();
-        [GeneratedCode("R4MVC", "1.0")]
+        [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
             public readonly string Login = "Login";
@@ -36,13 +36,21 @@ namespace R4MvcHostApp.Controllers
             public readonly string LogOff = "LogOff";
         }
 
-        [GeneratedCode("R4MVC", "1.0")]
+        [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
             public const string Login = "Login";
             public const string Register = "Register";
             public const string Manage = "Manage";
             public const string LogOff = "LogOff";
+        }
+    }
+
+    [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
+    public partial class R4MVC_AccountController
+    {
+        public R4MVC_AccountController()
+        {
         }
     }
 
@@ -60,7 +68,7 @@ namespace R4MvcHostApp.Controllers
         [GeneratedCode("R4MVC", "1.0")]
         public readonly string Area = "HomeController";
         static readonly ActionNamesClass s_actions = new ActionNamesClass();
-        [GeneratedCode("R4MVC", "1.0")]
+        [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
             public readonly string Index = "Index";
@@ -69,13 +77,21 @@ namespace R4MvcHostApp.Controllers
             public readonly string Error = "Error";
         }
 
-        [GeneratedCode("R4MVC", "1.0")]
+        [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
             public const string Index = "Index";
             public const string About = "About";
             public const string Contact = "Contact";
             public const string Error = "Error";
+        }
+    }
+
+    [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
+    public partial class R4MVC_HomeController
+    {
+        public R4MVC_HomeController()
+        {
         }
     }
 }
