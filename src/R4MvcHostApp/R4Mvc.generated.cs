@@ -19,6 +19,30 @@ namespace R4MvcHostApp.Controllers
         public AccountController()
         {
         }
+
+        [GeneratedCode("R4MVC", "1.0")]
+        public readonly string Name = "AccountController";
+        [GeneratedCode("R4MVC", "1.0")]
+        public const string NameConst = "AccountController";
+        [GeneratedCode("R4MVC", "1.0")]
+        public readonly string Area = "AccountController";
+        [GeneratedCode("R4MVC", "1.0")]
+        public class ActionNamesClass
+        {
+            public readonly string Login = "Login";
+            public readonly string Register = "Register";
+            public readonly string Manage = "Manage";
+            public readonly string LogOff = "LogOff";
+        }
+
+        [GeneratedCode("R4MVC", "1.0")]
+        public class ActionNameConstants
+        {
+            public const string Login = "Login";
+            public const string Register = "Register";
+            public const string Manage = "Manage";
+            public const string LogOff = "LogOff";
+        }
     }
 
     public partial class HomeController
@@ -26,6 +50,30 @@ namespace R4MvcHostApp.Controllers
         [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
         public HomeController()
         {
+        }
+
+        [GeneratedCode("R4MVC", "1.0")]
+        public readonly string Name = "HomeController";
+        [GeneratedCode("R4MVC", "1.0")]
+        public const string NameConst = "HomeController";
+        [GeneratedCode("R4MVC", "1.0")]
+        public readonly string Area = "HomeController";
+        [GeneratedCode("R4MVC", "1.0")]
+        public class ActionNamesClass
+        {
+            public readonly string Index = "Index";
+            public readonly string About = "About";
+            public readonly string Contact = "Contact";
+            public readonly string Error = "Error";
+        }
+
+        [GeneratedCode("R4MVC", "1.0")]
+        public class ActionNameConstants
+        {
+            public const string Index = "Index";
+            public const string About = "About";
+            public const string Contact = "Contact";
+            public const string Error = "Error";
         }
     }
 }

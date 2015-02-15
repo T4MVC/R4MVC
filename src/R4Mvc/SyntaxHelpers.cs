@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -51,6 +52,19 @@ namespace R4Mvc
 				SyntaxFactory.TriviaList(SyntaxFactory.Space));
 		}
 
+		private static SyntaxToken CreateModifier(SyntaxKind kind)
+		{
+			return SyntaxFactory.Token(
+				SyntaxFactory.TriviaList(),
+				kind,
+				SyntaxFactory.TriviaList(SyntaxFactory.Space));
+		}
+
+		public static SyntaxToken[] CreateModifiers(params SyntaxKind[] kinds)
+		{
+			return kinds.Select(CreateModifier).ToArray();
+		}
+
 		public static SyntaxToken CreatePublicToken()
 		{
 			return SyntaxFactory.Token(
@@ -83,9 +97,9 @@ namespace R4Mvc
 				SyntaxFactory.TriviaList(SyntaxFactory.Space));
 		}
 
-		public static ClassDeclarationSyntax CreateClass(string className, TypeParameterSyntax[] typeParams = null)
+		public static ClassDeclarationSyntax CreateClass(string className, TypeParameterSyntax[] typeParams = null, params SyntaxKind[] modifiers)
 		{
-			var classSyntax = SyntaxFactory.ClassDeclaration(className);
+			var classSyntax = SyntaxFactory.ClassDeclaration(className).WithModifiers(modifiers);
 
 			if (typeParams != null)
 				classSyntax = classSyntax
@@ -150,8 +164,8 @@ namespace R4Mvc
 			
 			var methodNode =
 				SyntaxFactory.MethodDeclaration(returnTypeSyntax, methodSymbol.Name)
-					.AddModifiers(CreatePublicToken(), CreateVirtualToken())
-					.AddAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute(), CreateNonActionAttribute())
+					.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute(), CreateNonActionAttribute())
+					.WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.VirtualKeyword)
 					.WithBody(
 						SyntaxFactory.Block(
 							SyntaxFactory.SingletonList<StatementSyntax>(
@@ -159,17 +173,36 @@ namespace R4Mvc
 			return methodNode;
 		}
 
-		public static MethodDeclarationSyntax AddAttributes(this MethodDeclarationSyntax node, params AttributeSyntax[] attributes)
+		private static FieldDeclarationSyntax CreateStringFieldDeclaration(string fieldName, string fieldValue, params SyntaxKind[] modifiers)
+		{
+			return
+				SyntaxFactory.FieldDeclaration(
+					SyntaxFactory.VariableDeclaration(
+						SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+						SyntaxFactory.SingletonSeparatedList(
+							SyntaxFactory.VariableDeclarator(fieldName)
+								.WithInitializer(
+									SyntaxFactory.EqualsValueClause(
+										SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(fieldValue)))))))
+					.WithModifiers(modifiers);
+		}
+
+		public static MethodDeclarationSyntax WithAttributes(this MethodDeclarationSyntax node, params AttributeSyntax[] attributes)
 		{
 			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
 		}
 
-		public static ConstructorDeclarationSyntax AddAttributes(this ConstructorDeclarationSyntax node, params AttributeSyntax[] attributes)
+		public static ConstructorDeclarationSyntax WithAttributes(this ConstructorDeclarationSyntax node, params AttributeSyntax[] attributes)
 		{
 			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
 		}
 
-		public static ClassDeclarationSyntax AddAttributes(this ClassDeclarationSyntax node, params AttributeSyntax[] attributes)
+		public static ClassDeclarationSyntax WithAttributes(this ClassDeclarationSyntax node, params AttributeSyntax[] attributes)
+		{
+			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
+		}
+
+		public static FieldDeclarationSyntax WithAttributes(this FieldDeclarationSyntax node, params AttributeSyntax[] attributes)
 		{
 			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
 		}
@@ -207,10 +240,10 @@ namespace R4Mvc
 			return node.WithLeadingTrivia(leadingTrivia);
 		}
 
-		public static ClassDeclarationSyntax WithDefaultConstructor(this ClassDeclarationSyntax node, string className, params SyntaxToken[] modifiers)
+		public static ClassDeclarationSyntax WithDefaultConstructor(this ClassDeclarationSyntax node, string className, params SyntaxKind[] modifiers)
 		{
 			return
-				node.AddMembers(CreateDefaultConstructor(className).AddModifiers(modifiers).AddAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute()));
+				node.AddMembers(CreateDefaultConstructor(className).WithModifiers(modifiers).WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute()));
 		}
 
 		public static ClassDeclarationSyntax WithMethods(this ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
@@ -220,16 +253,35 @@ namespace R4Mvc
 			return node.AddMembers(mvcSymbol.CreateMethods().ToArray());
 		}
 
-		public static ClassDeclarationSyntax WithActionNameClass(this ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
+		public static ClassDeclarationSyntax WithActionNameClass(this ClassDeclarationSyntax node, ClassDeclarationSyntax controllerNode)
 		{
-			// TODO create ActionNames sub class using symbol method names
-			return node;
+			// create ActionNames sub class using symbol method names
+			return node.WithSubClassMembersAsStrings(
+				controllerNode,
+				"ActionNamesClass",
+				SyntaxKind.PublicKeyword,
+				SyntaxKind.ReadOnlyKeyword);
 		}
 
-		public static ClassDeclarationSyntax WithActionConstantsClass(this ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
+		public static ClassDeclarationSyntax WithActionConstantsClass(this ClassDeclarationSyntax node, ClassDeclarationSyntax controllerNode)
 		{
-			// TODO create ActionConstants sub class
-			return node;
+			// create ActionConstants sub class
+			return node.WithSubClassMembersAsStrings(
+				controllerNode,
+				"ActionNameConstants",
+				SyntaxKind.PublicKeyword,
+				SyntaxKind.ConstKeyword);
+		}
+
+		public static ClassDeclarationSyntax WithSubClassMembersAsStrings(this ClassDeclarationSyntax node, ClassDeclarationSyntax controllerNode, string className, params SyntaxKind[] modifiers)
+		{
+			// create ActionConstants sub class
+			var actionNameClass = CreateClass(className, null, SyntaxKind.PublicKeyword).WithAttributes(CreateGeneratedCodeAttribute());
+			foreach (var action in controllerNode.Members.OfType<MethodDeclarationSyntax>().Where(x => x.Modifiers.Any(SyntaxKind.PublicKeyword)).DistinctBy(x => x.Identifier.ToString()))
+			{
+				actionNameClass = actionNameClass.WithStringField(action.Identifier.ToString(), action.Identifier.ToString(), false, modifiers);
+			}
+			return node.AddMembers(actionNameClass);
 		}
 
 		public static NamespaceDeclarationSyntax WithDummyClass(this NamespaceDeclarationSyntax node)
@@ -237,15 +289,15 @@ namespace R4Mvc
 			const string dummyClassName = "Dummy";
 			var dummyClass =
 				CreateClass(dummyClassName)
-					.WithPublicModifier()
-					.AddAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
-					.WithDefaultConstructor(dummyClassName, CreatePrivateToken())
-					.WithField("Instance", dummyClassName, CreatePublicToken(), CreateStaticToken());
+					.WithModifiers(SyntaxKind.PublicKeyword)
+					.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
+					.WithDefaultConstructor(dummyClassName, SyntaxKind.PrivateKeyword)
+					.WithField("Instance", dummyClassName, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
 
 			return node.AddMembers(dummyClass);
 		}
 
-		public static ClassDeclarationSyntax WithField(this ClassDeclarationSyntax node, string fieldName, string typeName, params SyntaxToken[] modifiers)
+		public static ClassDeclarationSyntax WithField(this ClassDeclarationSyntax node, string fieldName, string typeName, params SyntaxKind[] modifiers)
 		{
 			var field =
 				SyntaxFactory.FieldDeclaration(
@@ -256,33 +308,41 @@ namespace R4Mvc
 									.WithInitializer(
 										SyntaxFactory.EqualsValueClause(
 											SyntaxFactory.ObjectCreationExpression(SyntaxFactory.IdentifierName(typeName))
-												.WithArgumentList(SyntaxFactory.ArgumentList())))))).AddModifiers(modifiers);
+												.WithArgumentList(SyntaxFactory.ArgumentList())))))).WithModifiers(modifiers);
 			return node.AddMembers(field);
 		}
 
-		public static ClassDeclarationSyntax WithStaticModifier(this ClassDeclarationSyntax node)
+		public static ClassDeclarationSyntax WithStringField(this ClassDeclarationSyntax node, string name, string value, bool includeGeneratedAttribute = true, params SyntaxKind[] modifiers)
 		{
-			return node.AddModifiers(CreateStaticToken());
+			var fieldDeclaration = CreateStringFieldDeclaration(name, value, modifiers);
+			if (includeGeneratedAttribute) fieldDeclaration = fieldDeclaration.WithAttributes(CreateGeneratedCodeAttribute());
+			return node.AddMembers(fieldDeclaration);
 		}
 
-		public static ClassDeclarationSyntax WithPartialModifier(this ClassDeclarationSyntax node)
+		public static ClassDeclarationSyntax WithModifiers(this ClassDeclarationSyntax node, params SyntaxKind[] modifiers)
 		{
-			return node.AddModifiers(CreatePartialToken());
+			return node.AddModifiers(CreateModifiers(modifiers));
 		}
 
-		public static ClassDeclarationSyntax WithPublicModifier(this ClassDeclarationSyntax node)
+		public static ConstructorDeclarationSyntax WithModifiers(this ConstructorDeclarationSyntax node, params SyntaxKind[] modifiers)
 		{
-			return node.AddModifiers(CreatePublicToken());
+			return node.AddModifiers(CreateModifiers(modifiers));
 		}
 
-		public static ClassDeclarationSyntax WithPrivateModifier(this ClassDeclarationSyntax node)
+		public static MethodDeclarationSyntax WithModifiers(this MethodDeclarationSyntax node, params SyntaxKind[] modifiers)
 		{
-			return node.AddModifiers(CreatePrivateToken());
+			return node.AddModifiers(CreateModifiers(modifiers));
 		}
 
-		public static MethodDeclarationSyntax WithVirtualModifier(this MethodDeclarationSyntax node)
+		public static FieldDeclarationSyntax WithModifiers(this FieldDeclarationSyntax node, params SyntaxKind[] modifiers)
 		{
-			return node.AddModifiers(CreateVirtualToken());
+			return node.AddModifiers(CreateModifiers(modifiers));
+		}
+
+		public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+		{
+			var seenKeys = new HashSet<TKey>();
+			return source.Where(element => seenKeys.Add(keySelector(element)));
 		}
 
 		public static void WriteFile(this SyntaxNode fileTree, string generatedFilePath)

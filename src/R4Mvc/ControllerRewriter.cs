@@ -38,7 +38,7 @@ namespace R4Mvc
 				if (!newNode.Modifiers.Any(SyntaxKind.PartialKeyword))
 				{
 					Debug.WriteLine("R4MVC - Marking {0} class a partial", symbol);
-					newNode = newNode.WithPartialModifier();
+					newNode = newNode.WithModifiers(SyntaxKind.PartialKeyword);
 				}
 			}
 
@@ -59,7 +59,7 @@ namespace R4Mvc
 						"R4MVC - Marking controller method {0} as virtual from {1}",
 						symbol.ToString(),
 						symbol.ContainingType?.ToString());
-					node = node.WithVirtualModifier();
+					node = node.WithModifiers(SyntaxKind.VirtualKeyword);
 				}
 			}
 

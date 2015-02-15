@@ -45,21 +45,26 @@ namespace R4Mvc
 
 					// build controller partial class node 
 					// add a default constructor if there are some but none are zero length
-					var genControllerClass =
-						SyntaxHelpers.CreateClass(mvcSymbol.Name, mvcControllerNode.TypeParameterList?.Parameters.ToArray())
-							.WithPublicModifier()
-							.WithPartialModifier();
+					var genControllerClass = SyntaxHelpers.CreateClass(
+						mvcSymbol.Name,
+						mvcControllerNode.TypeParameterList?.Parameters.ToArray(),
+						SyntaxKind.PublicKeyword,
+						SyntaxKind.PartialKeyword);
+
 					if (!mvcSymbol.Constructors.IsEmpty || !mvcSymbol.Constructors.Any(x => x.Parameters.Length == 0))
 					{
 						genControllerClass =
-							genControllerClass.WithDefaultConstructor(mvcSymbol.Name, SyntaxHelpers.CreatePublicToken());
+							genControllerClass.WithDefaultConstructor(mvcSymbol.Name, SyntaxKind.PublicKeyword);
 					}
 
 					// add all method stubs, TODO criteria for this: only public virtual actionresults?
 					// add subclasses for action names
 					genControllerClass = genControllerClass.WithMethods(mvcSymbol);
-					genControllerClass = genControllerClass.WithActionNameClass(mvcSymbol);
-					genControllerClass = genControllerClass.WithActionConstantsClass(mvcSymbol);
+					genControllerClass = genControllerClass.WithStringField("Name", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword);
+					genControllerClass = genControllerClass.WithStringField("NameConst", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword);
+					genControllerClass = genControllerClass.WithStringField("Area", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword);
+					genControllerClass = genControllerClass.WithActionNameClass(mvcControllerNode);
+					genControllerClass = genControllerClass.WithActionConstantsClass(mvcControllerNode);
 
 					namespaceNode = namespaceNode.AddMembers(genControllerClass);
 					// TODO create T4MVC_[Controller] class inheriting from partial
