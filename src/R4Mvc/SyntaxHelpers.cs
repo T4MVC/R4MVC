@@ -44,14 +44,6 @@ namespace R4Mvc
 			return declaration;
 		}
 
-		public static SyntaxToken CreatePartialToken()
-		{
-			return SyntaxFactory.Token(
-				SyntaxFactory.TriviaList(),
-				SyntaxKind.PartialKeyword,
-				SyntaxFactory.TriviaList(SyntaxFactory.Space));
-		}
-
 		private static SyntaxToken CreateModifier(SyntaxKind kind)
 		{
 			return SyntaxFactory.Token(
@@ -63,38 +55,6 @@ namespace R4Mvc
 		public static SyntaxToken[] CreateModifiers(params SyntaxKind[] kinds)
 		{
 			return kinds.Select(CreateModifier).ToArray();
-		}
-
-		public static SyntaxToken CreatePublicToken()
-		{
-			return SyntaxFactory.Token(
-				SyntaxFactory.TriviaList(),
-				SyntaxKind.PublicKeyword,
-				SyntaxFactory.TriviaList(SyntaxFactory.Space));
-		}
-
-		private static SyntaxToken CreatePrivateToken()
-		{
-			return SyntaxFactory.Token(
-				SyntaxFactory.TriviaList(),
-				SyntaxKind.PrivateKeyword,
-				SyntaxFactory.TriviaList(SyntaxFactory.Space));
-		}
-
-		private static SyntaxToken CreateStaticToken()
-		{
-			return SyntaxFactory.Token(
-				SyntaxFactory.TriviaList(),
-				SyntaxKind.StaticKeyword,
-				SyntaxFactory.TriviaList(SyntaxFactory.Space));
-		}
-
-		public static SyntaxToken CreateVirtualToken()
-		{
-			return SyntaxFactory.Token(
-				SyntaxFactory.TriviaList(),
-				SyntaxKind.VirtualKeyword,
-				SyntaxFactory.TriviaList(SyntaxFactory.Space));
 		}
 
 		public static ClassDeclarationSyntax CreateClass(string className, TypeParameterSyntax[] typeParams = null, params SyntaxKind[] modifiers)
