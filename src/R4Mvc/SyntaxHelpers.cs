@@ -135,7 +135,20 @@ namespace R4Mvc
 			return methodNode;
 		}
 
-		private static FieldDeclarationSyntax CreateStringFieldDeclaration(string fieldName, string fieldValue, params SyntaxKind[] modifiers)
+		public static FieldDeclarationSyntax CreateFieldWithDefaultInitializer(string fieldName, string typeName, params SyntaxKind[] modifiers)
+		{
+			return FieldDeclaration(
+				VariableDeclaration(ParseTypeName(typeName))
+					.WithVariables(
+						SingletonSeparatedList(
+							VariableDeclarator(Identifier(fieldName))
+								.WithInitializer(
+									EqualsValueClause(
+										ObjectCreationExpression(IdentifierName(typeName))
+											.WithArgumentList(ArgumentList())))))).WithModifiers(modifiers);
+		}
+
+		public static FieldDeclarationSyntax CreateStringFieldDeclaration(string fieldName, string fieldValue, params SyntaxKind[] modifiers)
 		{
 			return
 				FieldDeclaration(
@@ -234,16 +247,7 @@ namespace R4Mvc
 
 		public static ClassDeclarationSyntax WithField(this ClassDeclarationSyntax node, string fieldName, string typeName, params SyntaxKind[] modifiers)
 		{
-			var field =
-				FieldDeclaration(
-					VariableDeclaration(ParseTypeName(typeName))
-						.WithVariables(
-							SingletonSeparatedList(
-								VariableDeclarator(Identifier(fieldName))
-									.WithInitializer(
-										EqualsValueClause(
-											ObjectCreationExpression(IdentifierName(typeName))
-												.WithArgumentList(ArgumentList())))))).WithModifiers(modifiers);
+			var field = CreateFieldWithDefaultInitializer(fieldName, typeName, modifiers);
 			return node.AddMembers(field);
 		}
 

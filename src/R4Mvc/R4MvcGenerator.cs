@@ -24,10 +24,11 @@ namespace R4Mvc
 		public static SyntaxNode Generate(CSharpCompilation compiler, ClassDeclarationSyntax[] mvcControllerNodes)
 		{
 			// Create the root node and add usings, header, pragma
-			var fileTree = CompilationUnit();
-			fileTree = fileTree.WithUsings("System.CodeDom.Compiler", "System.Diagnostics", "Microsoft.AspNet.Mvc");
-			fileTree = fileTree.WithHeader(_headerText);
-			fileTree = fileTree.WithPragmaCodes(false, pramaCodes);
+			var fileTree =
+				CompilationUnit()
+					.WithUsings("System.CodeDom.Compiler", "System.Diagnostics", "Microsoft.AspNet.Mvc")
+					.WithHeader(_headerText)
+					.WithPragmaCodes(false, pramaCodes);
 
 			// controllers might be in different namespaces so we should group by namespace 
 			var namespaceGroups = mvcControllerNodes.GroupBy(x=> x.Ancestors().OfType<NamespaceDeclarationSyntax>().First().Name.ToFullString());
@@ -72,9 +73,11 @@ namespace R4Mvc
 
 					namespaceNode = namespaceNode.AddMembers(genControllerClass);
 
-					// TODO create T4MVC_[Controller] class inheriting from partial
+					// create R4MVC_[Controller] class inheriting from partial
+					// TODO inherit from partial
+
 					var r4ControllerClass = CreateClass(
-						string.Format("R4MVC_{0}", genControllerClass.Identifier),
+						GetR4MVCControllerClassName(genControllerClass),
 						null,
 						SyntaxKind.PublicKeyword,
 						SyntaxKind.PartialKeyword)
@@ -89,20 +92,50 @@ namespace R4Mvc
 				fileTree = fileTree.AddMembers(namespaceNode);
 			}
 
+			// add the dummy class using in the derived controller partial class
 			var r4Namespace = CreateNamespace("R4MVC");
 			r4Namespace = r4Namespace.WithDummyClass();
+			fileTree = fileTree.AddMembers(r4Namespace);
+			
+			// create static MVC class and add controller fields 
+			// TODO get 'MVC' static class name from overridable config, 'MVC' by default
+			var mvcStaticClass =
+				CreateClass("MVC", null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
+					.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
+					.WithControllerFields(mvcControllerNodes);
+			fileTree = fileTree.AddMembers(mvcStaticClass);
 
-			// TODO create static MVC class
-			// TODO create static Links class (scripts, content, bundles?)
+			// create static Links class (scripts, content, bundles?)
+			var linksNamespace = CreateNamespace("Links");
+			// TODO will default to look in the wwwroot of the project but need to get this from config
+			var staticFolders = new[] { "css", "lib" };
+			foreach (var folder in staticFolders)
+			{
+				var staticFolderClass =
+					CreateClass(folder, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
+						.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
+						.WithStaticFieldsForFiles()
+						.WithUrlMethods()
+						.WithStringField("URLPATH", "~/" + folder, false, SyntaxKind.PrivateKeyword, SyntaxKind.ConstKeyword);
+
+				linksNamespace = linksNamespace.AddMembers(staticFolderClass);
+			}
+			fileTree = fileTree.AddMembers(linksNamespace);
+
 			// TODO create R4MVCHelpers class
 
-			fileTree = fileTree.AddMembers(r4Namespace);
+
 			fileTree = fileTree.NormalizeWhitespace();
 			// reenable pragma codes after last node
 			// BUG NormalizeWhitespace is messing up prama (called when writing file)
 			fileTree = fileTree.WithPragmaCodes(true, pramaCodes);
 
 			return fileTree;
+		}
+
+		private static string GetR4MVCControllerClassName(ClassDeclarationSyntax genControllerClass)
+		{
+			return string.Format("R4MVC_{0}", genControllerClass.Identifier);
 		}
 
 		public static ClassDeclarationSyntax WithActionNameClass(this ClassDeclarationSyntax node, ClassDeclarationSyntax controllerNode)
@@ -135,6 +168,33 @@ namespace R4Mvc
 			// TODO create string field per view of relative url
 			return node;
 		}
+
+		public static ClassDeclarationSyntax WithControllerFields(this ClassDeclarationSyntax node, ClassDeclarationSyntax[] mvcControllerNodes)
+		{
+			// TODO field name should be overriddable via config, stripping off 'controller' by default
+			// TODO add extension method to customise field initializer as this needs to be the one returned from GetR4MVCControllerClassName
+			return node.AddMembers(
+				mvcControllerNodes.Select(
+					x => CreateFieldWithDefaultInitializer(
+						x.Identifier.ToString().Replace("Controller", string.Empty),
+						string.Format("{0}.{1}", ((NamespaceDeclarationSyntax)x.Parent).Name.ToString(), x.Identifier.ToString()),
+						SyntaxKind.PublicKeyword,
+						SyntaxKind.StaticKeyword)).Cast<MemberDeclarationSyntax>().ToArray()); 
+		}
+
+		public static ClassDeclarationSyntax WithStaticFieldsForFiles(this ClassDeclarationSyntax node)
+		{
+			// TODO add string field for each file
+			// TODO add check for IsProduction
+			return node;
+		}
+
+		public static ClassDeclarationSyntax WithUrlMethods(this ClassDeclarationSyntax node)
+		{
+			// TODO add url methods that call delegated virtual path provider
+			return node;
+		}
+
 
 		public static NamespaceDeclarationSyntax WithDummyClass(this NamespaceDeclarationSyntax node)
 		{
