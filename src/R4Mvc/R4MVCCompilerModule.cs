@@ -25,7 +25,7 @@ namespace R4Mvc
 			// NOTE compilation and generation is always run a second time if files are modified on first run
 #if !ASPNETCORE50
 			// TODO: Fix writing out generated files in both frameworks
-			if (this.filesGenerated)
+			if (filesGenerated)
 			{
 				// TODO compilation is run a second time after files are modified and generated
 				return;
@@ -33,8 +33,8 @@ namespace R4Mvc
 
 			//Debugger.Launch();
 
-			this.Project = ((CompilationContext)(context)).Project;
-			var generatedFilePath = this.GetGeneratedFilePath(this.Project);
+			Project = ((CompilationContext)(context)).Project;
+			var generatedFilePath = this.GetGeneratedFilePath(Project);
 
 			var compiler = context.CSharpCompilation;
 			foreach (var tree in compiler.SyntaxTrees.Where(x => !x.FilePath.Equals(generatedFilePath)))
@@ -51,13 +51,13 @@ namespace R4Mvc
 				}
 
 				// save the controller nodes from each visit to pass to the generator
-				this.MvcClasses.AddRange(controllerRewriter.MvcControllerClassNodes);
+				MvcClasses.AddRange(controllerRewriter.MvcControllerClassNodes);
 			}
 
 			// pass the controller classes to the R4MVC Generator and save file in Project root
-			var generatedNode = R4MvcGenerator.Generate(compiler, this.MvcClasses.ToArray());
+			var generatedNode = R4MvcGenerator.Generate(compiler, MvcClasses.ToArray());
 			generatedNode.WriteFile(generatedFilePath);
-			this.filesGenerated = true;
+			filesGenerated = true;
 #endif
 		}
 
@@ -71,12 +71,12 @@ namespace R4Mvc
 
 		private string GetGeneratedFilePath(Project project)
 		{
-			return this.getFilePath == null ? Path.Combine(project.ProjectDirectory, R4MvcFileName) : this.getFilePath.Invoke();
+			return getFilePath == null ? Path.Combine(project.ProjectDirectory, R4MvcFileName) : getFilePath.Invoke();
 		}
 
 		protected void SetGeneratedFilePath(Func<string> filePath)
 		{
-			this.getFilePath = filePath;
+			getFilePath = filePath;
 		}
 
 		public const string R4MvcFileName = "R4MVC.generated.cs";

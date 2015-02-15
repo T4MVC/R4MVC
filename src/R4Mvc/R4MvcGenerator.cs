@@ -3,6 +3,8 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using static R4Mvc.SyntaxHelpers;
 
 namespace R4Mvc
 {
@@ -22,7 +24,7 @@ namespace R4Mvc
 		public static SyntaxNode Generate(CSharpCompilation compiler, ClassDeclarationSyntax[] mvcControllerNodes)
 		{
 			// Create the root node and add usings, header, pragma
-			var fileTree = SyntaxFactory.CompilationUnit();
+			var fileTree = CompilationUnit();
 			fileTree = fileTree.WithUsings("System.CodeDom.Compiler", "System.Diagnostics", "Microsoft.AspNet.Mvc");
 			fileTree = fileTree.WithHeader(_headerText);
 			fileTree = fileTree.WithPragmaCodes(false, pramaCodes);
@@ -35,7 +37,7 @@ namespace R4Mvc
 				var firstNode = namespaceControllers.First();
 				var firstModel = compiler.GetSemanticModel(firstNode.SyntaxTree);
 				var firstSymbol = firstModel.GetDeclaredSymbol(firstNode);
-				var namespaceNode = SyntaxHelpers.CreateNamespace(firstSymbol.ContainingNamespace.ToString());
+				var namespaceNode = CreateNamespace(firstSymbol.ContainingNamespace.ToString());
 				
 				// loop through the controllers and create a partial node for each
 				foreach (var mvcControllerNode in mvcControllerNodes)
@@ -45,7 +47,7 @@ namespace R4Mvc
 
 					// build controller partial class node 
 					// add a default constructor if there are some but none are zero length
-					var genControllerClass = SyntaxHelpers.CreateClass(
+					var genControllerClass = CreateClass(
 						mvcSymbol.Name,
 						mvcControllerNode.TypeParameterList?.Parameters.ToArray(),
 						SyntaxKind.PublicKeyword,
@@ -71,12 +73,12 @@ namespace R4Mvc
 					namespaceNode = namespaceNode.AddMembers(genControllerClass);
 
 					// TODO create T4MVC_[Controller] class inheriting from partial
-					var r4ControllerClass = SyntaxHelpers.CreateClass(
+					var r4ControllerClass = CreateClass(
 						string.Format("R4MVC_{0}", genControllerClass.Identifier),
 						null,
 						SyntaxKind.PublicKeyword,
 						SyntaxKind.PartialKeyword)
-						.WithAttributes(SyntaxHelpers.CreateGeneratedCodeAttribute(), SyntaxHelpers.CreateDebugNonUserCodeAttribute())
+						.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
 						.WithDefaultConstructor(false, SyntaxKind.PublicKeyword);
 
 
@@ -87,7 +89,7 @@ namespace R4Mvc
 				fileTree = fileTree.AddMembers(namespaceNode);
 			}
 
-			var r4Namespace = SyntaxHelpers.CreateNamespace("R4MVC");
+			var r4Namespace = CreateNamespace("R4MVC");
 			r4Namespace = r4Namespace.WithDummyClass();
 
 			// TODO create static MVC class
@@ -138,9 +140,9 @@ namespace R4Mvc
 		{
 			const string dummyClassName = "Dummy";
 			var dummyClass =
-				SyntaxHelpers.CreateClass(dummyClassName)
+				CreateClass(dummyClassName)
 					.WithModifiers(SyntaxKind.PublicKeyword)
-					.WithAttributes(SyntaxHelpers.CreateGeneratedCodeAttribute(), SyntaxHelpers.CreateDebugNonUserCodeAttribute())
+					.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
 					.WithDefaultConstructor(false, SyntaxKind.PrivateKeyword)
 					.WithField("Instance", dummyClassName, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
 

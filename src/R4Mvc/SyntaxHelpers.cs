@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace R4Mvc
 {
@@ -39,17 +40,17 @@ namespace R4Mvc
 
 		public static NamespaceDeclarationSyntax CreateNamespace(string namespaceText)
 		{
-			var nameSyntax = SyntaxFactory.ParseName(namespaceText);
-			var declaration = SyntaxFactory.NamespaceDeclaration(nameSyntax);
+			var nameSyntax = ParseName(namespaceText);
+			var declaration = NamespaceDeclaration(nameSyntax);
 			return declaration;
 		}
 
 		private static SyntaxToken CreateModifier(SyntaxKind kind)
 		{
-			return SyntaxFactory.Token(
-				SyntaxFactory.TriviaList(),
+			return Token(
+				TriviaList(),
 				kind,
-				SyntaxFactory.TriviaList(SyntaxFactory.Space));
+				TriviaList(Space));
 		}
 
 		public static SyntaxToken[] CreateModifiers(params SyntaxKind[] kinds)
@@ -59,7 +60,7 @@ namespace R4Mvc
 
 		public static ClassDeclarationSyntax CreateClass(string className, TypeParameterSyntax[] typeParams = null, params SyntaxKind[] modifiers)
 		{
-			var classSyntax = SyntaxFactory.ClassDeclaration(className).WithModifiers(modifiers);
+			var classSyntax = ClassDeclaration(className).WithModifiers(modifiers);
 
 			if (typeParams != null)
 				classSyntax = classSyntax
@@ -70,34 +71,34 @@ namespace R4Mvc
 
 		public static AttributeSyntax CreateDebugNonUserCodeAttribute()
 		{
-			return SyntaxFactory.Attribute(SyntaxFactory.IdentifierName(@"DebuggerNonUserCode"));
+			return Attribute(IdentifierName(@"DebuggerNonUserCode"));
 		}
 
 		public static AttributeSyntax CreateNonActionAttribute()
 		{
-			return SyntaxFactory.Attribute(SyntaxFactory.IdentifierName(@"NonAction"));
+			return Attribute(IdentifierName(@"NonAction"));
 		}
 
 		public static AttributeSyntax CreateGeneratedCodeAttribute()
 		{
 			var arguments =
-				SyntaxFactory.AttributeArgumentList(
-					SyntaxFactory.SeparatedList(
+				AttributeArgumentList(
+					SeparatedList(
 						new[]
 							{
-								SyntaxFactory.AttributeArgument(
-									SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal("R4MVC"))),
-									SyntaxFactory.AttributeArgument(
-									SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal("1.0")))
+								AttributeArgument(
+									LiteralExpression(SyntaxKind.StringLiteralExpression, Literal("R4MVC"))),
+									AttributeArgument(
+									LiteralExpression(SyntaxKind.StringLiteralExpression, Literal("1.0")))
 							}));
-			return SyntaxFactory.Attribute(SyntaxFactory.IdentifierName("GeneratedCode"), arguments);
+			return Attribute(IdentifierName("GeneratedCode"), arguments);
 		}
 
 		private static ConstructorDeclarationSyntax CreateDefaultConstructor(string className)
 		{
 			return
-				SyntaxFactory.ConstructorDeclaration(className)
-					.WithBody(SyntaxFactory.Block());
+				ConstructorDeclaration(className)
+					.WithBody(Block());
 		}
 
 		public static IEnumerable<MemberDeclarationSyntax> CreateMethods(this ITypeSymbol mvcSymbol)
@@ -121,51 +122,51 @@ namespace R4Mvc
 			var returnType = methodSymbol.ReturnType;
 			//var typeParameters = returnType.ContainingType.TypeParameters;
 
-			var returnTypeSyntax = SyntaxFactory.ParseTypeName(returnType.ToDisplayString());
+			var returnTypeSyntax = ParseTypeName(returnType.ToDisplayString());
 			
 			var methodNode =
-				SyntaxFactory.MethodDeclaration(returnTypeSyntax, methodSymbol.Name)
+				MethodDeclaration(returnTypeSyntax, methodSymbol.Name)
 					.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute(), CreateNonActionAttribute())
 					.WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.VirtualKeyword)
 					.WithBody(
-						SyntaxFactory.Block(
-							SyntaxFactory.SingletonList<StatementSyntax>(
-								SyntaxFactory.ReturnStatement(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)))));
+						Block(
+							SingletonList<StatementSyntax>(
+								ReturnStatement(LiteralExpression(SyntaxKind.NullLiteralExpression)))));
 			return methodNode;
 		}
 
 		private static FieldDeclarationSyntax CreateStringFieldDeclaration(string fieldName, string fieldValue, params SyntaxKind[] modifiers)
 		{
 			return
-				SyntaxFactory.FieldDeclaration(
-					SyntaxFactory.VariableDeclaration(
-						SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword)),
-						SyntaxFactory.SingletonSeparatedList(
-							SyntaxFactory.VariableDeclarator(fieldName)
+				FieldDeclaration(
+					VariableDeclaration(
+						PredefinedType(Token(SyntaxKind.StringKeyword)),
+						SingletonSeparatedList(
+							VariableDeclarator(fieldName)
 								.WithInitializer(
-									SyntaxFactory.EqualsValueClause(
-										SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal(fieldValue)))))))
+									EqualsValueClause(
+										LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(fieldValue)))))))
 					.WithModifiers(modifiers);
 		}
 
 		public static MethodDeclarationSyntax WithAttributes(this MethodDeclarationSyntax node, params AttributeSyntax[] attributes)
 		{
-			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
+			return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
 		}
 
 		public static ConstructorDeclarationSyntax WithAttributes(this ConstructorDeclarationSyntax node, params AttributeSyntax[] attributes)
 		{
-			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
+			return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
 		}
 
 		public static ClassDeclarationSyntax WithAttributes(this ClassDeclarationSyntax node, params AttributeSyntax[] attributes)
 		{
-			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
+			return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
 		}
 
 		public static FieldDeclarationSyntax WithAttributes(this FieldDeclarationSyntax node, params AttributeSyntax[] attributes)
 		{
-			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
+			return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
 		}
 
 		public static T WithPragmaCodes<T>(this T node, bool enable, params string[] codes) where T : SyntaxNode
@@ -173,22 +174,22 @@ namespace R4Mvc
 			// BUG prama is not put on newline with normalizewhitespace as expected
 			var trivia = enable ? node.GetTrailingTrivia() : node.GetLeadingTrivia();
 			var pramaStatus = enable ? SyntaxKind.RestoreKeyword : SyntaxKind.DisableKeyword;
-			var pramaExpressions = SyntaxFactory.SeparatedList(codes.Select(x => SyntaxFactory.ParseExpression(x.ToString())));
+			var pramaExpressions = SeparatedList(codes.Select(x => ParseExpression(x.ToString())));
 			var prama =
-				trivia.Add(SyntaxFactory.ElasticCarriageReturnLineFeed)
+				trivia.Add(ElasticCarriageReturnLineFeed)
 					.Add(
-						SyntaxFactory.Trivia(
-							SyntaxFactory.PragmaWarningDirectiveTrivia(SyntaxFactory.Token(pramaStatus), pramaExpressions, true)
+						Trivia(
+							PragmaWarningDirectiveTrivia(Token(pramaStatus), pramaExpressions, true)
 								.NormalizeWhitespace()))
-					.Add(SyntaxFactory.ElasticCarriageReturnLineFeed);
+					.Add(ElasticCarriageReturnLineFeed);
 
 			return enable ? node.WithTrailingTrivia(prama) : node.WithLeadingTrivia(prama);
 		}
 
 		public static CompilationUnitSyntax WithUsings(this CompilationUnitSyntax node, params string[] namespaces)
 		{
-			var collection = namespaces.Select(ns => SyntaxFactory.ParseName(ns)).Select(SyntaxFactory.UsingDirective);
-			var usings = SyntaxFactory.List(collection);
+			var collection = namespaces.Select(ns => ParseName(ns)).Select(UsingDirective);
+			var usings = List(collection);
 			return node.WithUsings(usings);
 		}
 
@@ -196,8 +197,8 @@ namespace R4Mvc
 		{
 			var leadingTrivia =
 				node.GetLeadingTrivia()
-				.Add(SyntaxFactory.Comment(headerText))
-				.Add(SyntaxFactory.CarriageReturnLineFeed);
+				.Add(Comment(headerText))
+				.Add(CarriageReturnLineFeed);
 			return node.WithLeadingTrivia(leadingTrivia);
 		}
 
@@ -221,7 +222,9 @@ namespace R4Mvc
 		public static ClassDeclarationSyntax WithSubClassMembersAsStrings(this ClassDeclarationSyntax node, ClassDeclarationSyntax controllerNode, string className, params SyntaxKind[] modifiers)
 		{
 			// create ActionConstants sub class
-			var actionNameClass = CreateClass(className, null, SyntaxKind.PublicKeyword).WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
+			var actionNameClass =
+				CreateClass(className, null, SyntaxKind.PublicKeyword)
+					.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
 			foreach (var action in controllerNode.Members.OfType<MethodDeclarationSyntax>().Where(x => x.Modifiers.Any(SyntaxKind.PublicKeyword)).DistinctBy(x => x.Identifier.ToString()))
 			{
 				actionNameClass = actionNameClass.WithStringField(action.Identifier.ToString(), action.Identifier.ToString(), false, modifiers);
@@ -232,15 +235,15 @@ namespace R4Mvc
 		public static ClassDeclarationSyntax WithField(this ClassDeclarationSyntax node, string fieldName, string typeName, params SyntaxKind[] modifiers)
 		{
 			var field =
-				SyntaxFactory.FieldDeclaration(
-					SyntaxFactory.VariableDeclaration(SyntaxFactory.ParseTypeName(typeName))
+				FieldDeclaration(
+					VariableDeclaration(ParseTypeName(typeName))
 						.WithVariables(
-							SyntaxFactory.SingletonSeparatedList(
-								SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(fieldName))
+							SingletonSeparatedList(
+								VariableDeclarator(Identifier(fieldName))
 									.WithInitializer(
-										SyntaxFactory.EqualsValueClause(
-											SyntaxFactory.ObjectCreationExpression(SyntaxFactory.IdentifierName(typeName))
-												.WithArgumentList(SyntaxFactory.ArgumentList())))))).WithModifiers(modifiers);
+										EqualsValueClause(
+											ObjectCreationExpression(IdentifierName(typeName))
+												.WithArgumentList(ArgumentList())))))).WithModifiers(modifiers);
 			return node.AddMembers(field);
 		}
 
