@@ -44,6 +44,16 @@ namespace R4MvcHostApp.Controllers
             public const string Manage = "Manage";
             public const string LogOff = "LogOff";
         }
+
+        static readonly ViewsClass s_views = new ViewsClass();
+        [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
+        public class ViewsClass
+        {
+            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            public class _ViewNamesClass
+            {
+            }
+        }
     }
 
     [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
@@ -84,6 +94,16 @@ namespace R4MvcHostApp.Controllers
             public const string About = "About";
             public const string Contact = "Contact";
             public const string Error = "Error";
+        }
+
+        static readonly ViewsClass s_views = new ViewsClass();
+        [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
+        public class ViewsClass
+        {
+            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            public class _ViewNamesClass
+            {
+            }
         }
     }
 

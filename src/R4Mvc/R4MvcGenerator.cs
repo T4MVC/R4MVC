@@ -69,11 +69,15 @@ namespace R4Mvc
 						.WithField("s_actions", "ActionNamesClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
 						.WithActionNameClass(mvcControllerNode)
 						.WithActionConstantsClass(mvcControllerNode)
-						.WithViewNamesClass();
+						.WithField("s_views", "ViewsClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
+						.WithViewsClass();
 
 					namespaceNode = namespaceNode.AddMembers(genControllerClass);
 
 					// create R4MVC_[Controller] class inheriting from partial
+					// TODO chain base constructor call : base(Dummy.Instance)
+					// TODO create [method]overrides(T4MVC_System_Web_Mvc_ActionResult callInfo)
+					// TODO create method overrides that call above
 					var r4ControllerClass = CreateClass(
 						GetR4MVCControllerClassName(genControllerClass),
 						null,
@@ -156,15 +160,24 @@ namespace R4Mvc
 				SyntaxKind.ConstKeyword);
 		}
 
-		public static ClassDeclarationSyntax WithViewNamesClass(this ClassDeclarationSyntax node)
+		public static ClassDeclarationSyntax WithViewsClass(this ClassDeclarationSyntax node)
 		{
-			// TODO create subclass called ViewsClass
 			// TODO figure out method of view discovery
-			// TODO create ViewNames get property returning static instance of ViewNames subclass
-				// TODO create subclass in ViewsClass called ViewNames 
-					// TODO create string field per view
+			// create subclass called ViewsClass
+			// TODO create ViewNames get property returning static instance of _ViewNamesClass subclass
+			//	create subclass in ViewsClass called _ViewNamesClass 
+			//		TODO create string field per view
+			const string viewNamesClass = "_ViewNamesClass";
+            var viewClassNode =
+				CreateClass("ViewsClass", null, SyntaxKind.PublicKeyword)
+					.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
+					.WithField("s_ViewNames", viewNamesClass, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
+
+			var viewNamesClassNode = CreateClass(viewNamesClass, null, SyntaxKind.PublicKeyword);
+			viewClassNode = viewClassNode.AddMembers(viewNamesClassNode);
+			
 			// TODO create string field per view of relative url
-			return node;
+			return node.AddMembers(viewClassNode);
 		}
 
 		public static ClassDeclarationSyntax WithControllerFields(this ClassDeclarationSyntax node, ClassDeclarationSyntax[] mvcControllerNodes)
