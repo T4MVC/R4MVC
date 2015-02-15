@@ -23,7 +23,7 @@ namespace R4Mvc
 		{
 			// Create the root node and add usings, header, pragma
 			var fileTree = SyntaxFactory.CompilationUnit();
-			fileTree = fileTree.WithUsings("System.CodeDom.Compiler", "Microsoft.AspNet.Mvc", "System.Threading.Tasks");
+			fileTree = fileTree.WithUsings("System.CodeDom.Compiler", "System.Diagnostics", "Microsoft.AspNet.Mvc");
 			fileTree = fileTree.WithHeader(_headerText);
 			fileTree = fileTree.WithPragmaCodes(false, pramaCodes);
 
@@ -45,22 +45,23 @@ namespace R4Mvc
 
 					// build controller partial class node 
 					// add a default constructor if there are some but none are zero length
-					var controllerPartialClass =
+					var genControllerClass =
 						SyntaxHelpers.CreateClass(mvcSymbol.Name, mvcControllerNode.TypeParameterList?.Parameters.ToArray())
 							.WithPublicModifier()
 							.WithPartialModifier();
 					if (!mvcSymbol.Constructors.IsEmpty || !mvcSymbol.Constructors.Any(x => x.Parameters.Length == 0))
 					{
-						controllerPartialClass = controllerPartialClass.WithDefaultConstructor(mvcSymbol.Name, SyntaxHelpers.CreatePublicToken());
+						genControllerClass =
+							genControllerClass.WithDefaultConstructor(mvcSymbol.Name, SyntaxHelpers.CreatePublicToken());
 					}
 
 					// add all method stubs, TODO criteria for this: only public virtual actionresults?
 					// add subclasses for action names
-					controllerPartialClass = controllerPartialClass.WithMethods(mvcSymbol);
-					controllerPartialClass = controllerPartialClass.WithActionNameClass(mvcSymbol);
-					controllerPartialClass = controllerPartialClass.WithActionConstantsClass(mvcSymbol);
+					genControllerClass = genControllerClass.WithMethods(mvcSymbol);
+					genControllerClass = genControllerClass.WithActionNameClass(mvcSymbol);
+					genControllerClass = genControllerClass.WithActionConstantsClass(mvcSymbol);
 
-					namespaceNode = namespaceNode.AddMembers(controllerPartialClass);
+					namespaceNode = namespaceNode.AddMembers(genControllerClass);
 					// TODO create T4MVC_[Controller] class inheriting from partial
 				}
 

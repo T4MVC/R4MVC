@@ -8,13 +8,14 @@
 // 0108: suppress "Foo hides inherited member Foo.Use the new keyword if hiding was intended." when a controller and its abstract parent are both processed
 #pragma warning disable 1591, 3008, 3009, 108
 using System.CodeDom.Compiler;
+using System.Diagnostics;
 using Microsoft.AspNet.Mvc;
-using System.Threading.Tasks;
 
 namespace R4MvcHostApp.Controllers
 {
     public partial class AccountController
     {
+        [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
         public AccountController()
         {
         }
@@ -22,6 +23,7 @@ namespace R4MvcHostApp.Controllers
 
     public partial class HomeController
     {
+        [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
         public HomeController()
         {
         }
@@ -30,8 +32,10 @@ namespace R4MvcHostApp.Controllers
 
 namespace R4MVC
 {
+    [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
     public class Dummy
     {
+        [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
         private Dummy()
         {
         }

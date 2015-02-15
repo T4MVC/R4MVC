@@ -83,14 +83,40 @@ namespace R4Mvc
 				SyntaxFactory.TriviaList(SyntaxFactory.Space));
 		}
 
-		private static AttributeListSyntax[] CreateGeneratedAttribute()
+		public static ClassDeclarationSyntax CreateClass(string className, TypeParameterSyntax[] typeParams = null)
 		{
-			// TODO Figure out how to construct attribute args in the SyntaxNode
-			var argumentList = SyntaxFactory.ParseAttributeArgumentList("(tool: \"R4MVC\", version: \"1.0.0.0\")");
-			//var attributeNode = SyntaxFactory.Attribute(SyntaxFactory.IdentifierName("GeneratedCode"), argumentList);
-			//var attribute = SyntaxFactory.List<AttributeListSyntax>(attributeNode);
-			//return SyntaxFactory.AttributeList(attribute);
-			return null;
+			var classSyntax = SyntaxFactory.ClassDeclaration(className);
+
+			if (typeParams != null)
+				classSyntax = classSyntax
+					.AddTypeParameterListParameters(typeParams);
+
+			return classSyntax;
+		}
+
+		public static AttributeSyntax CreateDebugNonUserCodeAttribute()
+		{
+			return SyntaxFactory.Attribute(SyntaxFactory.IdentifierName(@"DebuggerNonUserCode"));
+		}
+
+		public static AttributeSyntax CreateNonActionAttribute()
+		{
+			return SyntaxFactory.Attribute(SyntaxFactory.IdentifierName(@"NonAction"));
+		}
+
+		public static AttributeSyntax CreateGeneratedCodeAttribute()
+		{
+			var arguments =
+				SyntaxFactory.AttributeArgumentList(
+					SyntaxFactory.SeparatedList(
+						new[]
+							{
+								SyntaxFactory.AttributeArgument(
+									SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal("R4MVC"))),
+									SyntaxFactory.AttributeArgument(
+									SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal("1.0")))
+							}));
+			return SyntaxFactory.Attribute(SyntaxFactory.IdentifierName("GeneratedCode"), arguments);
 		}
 
 		private static ConstructorDeclarationSyntax CreateDefaultConstructor(string className)
@@ -117,16 +143,35 @@ namespace R4Mvc
 			// TODO decide whether to output full qualified name of return types to avoid issues with add usings
 			// TODO add return type typeparameters
 			// TODO add method body, currently returns null
-			var returnType = SyntaxFactory.ParseTypeName(methodSymbol.ReturnType.Name);
+			var returnType = methodSymbol.ReturnType;
+			//var typeParameters = returnType.ContainingType.TypeParameters;
+
+			var returnTypeSyntax = SyntaxFactory.ParseTypeName(returnType.ToDisplayString());
+			
 			var methodNode =
-				SyntaxFactory.MethodDeclaration(returnType, methodSymbol.Name)
-					.AddModifiers(CreatePublicToken())
+				SyntaxFactory.MethodDeclaration(returnTypeSyntax, methodSymbol.Name)
+					.AddModifiers(CreatePublicToken(), CreateVirtualToken())
+					.AddAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute(), CreateNonActionAttribute())
 					.WithBody(
 						SyntaxFactory.Block(
 							SyntaxFactory.SingletonList<StatementSyntax>(
 								SyntaxFactory.ReturnStatement(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)))));
+			return methodNode;
+		}
 
-			return methodNode.WithGeneratedAttributes();
+		public static MethodDeclarationSyntax AddAttributes(this MethodDeclarationSyntax node, params AttributeSyntax[] attributes)
+		{
+			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
+		}
+
+		public static ConstructorDeclarationSyntax AddAttributes(this ConstructorDeclarationSyntax node, params AttributeSyntax[] attributes)
+		{
+			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
+		}
+
+		public static ClassDeclarationSyntax AddAttributes(this ClassDeclarationSyntax node, params AttributeSyntax[] attributes)
+		{
+			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
 		}
 
 		public static T WithPragmaCodes<T>(this T node, bool enable, params int[] codes) where T : SyntaxNode
@@ -153,17 +198,6 @@ namespace R4Mvc
 			return node.WithUsings(usings);
 		}
 
-		public static ClassDeclarationSyntax CreateClass(string className, TypeParameterSyntax[] typeParams = null)
-		{
-			var classSyntax = SyntaxFactory.ClassDeclaration(className);
-
-			if(typeParams != null)
-				classSyntax = classSyntax
-					.AddTypeParameterListParameters(typeParams);
-
-			return classSyntax;
-		}
-
 		public static T WithHeader<T>(this T node, string headerText) where T : SyntaxNode
 		{
 			var leadingTrivia =
@@ -173,17 +207,10 @@ namespace R4Mvc
 			return node.WithLeadingTrivia(leadingTrivia);
 		}
 
-		public static MemberDeclarationSyntax WithGeneratedAttributes(this MemberDeclarationSyntax node)
-		{
-			var attributes = CreateGeneratedAttribute();
-			return node;
-			// TODO fix adding attributes for gencode and debugskip
-			//return node.AddAttributeLists(attributes);
-		}
-
 		public static ClassDeclarationSyntax WithDefaultConstructor(this ClassDeclarationSyntax node, string className, params SyntaxToken[] modifiers)
 		{
-			return node.AddMembers(CreateDefaultConstructor(className).AddModifiers(modifiers));
+			return
+				node.AddMembers(CreateDefaultConstructor(className).AddModifiers(modifiers).AddAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute()));
 		}
 
 		public static ClassDeclarationSyntax WithMethods(this ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
@@ -211,6 +238,7 @@ namespace R4Mvc
 			var dummyClass =
 				CreateClass(dummyClassName)
 					.WithPublicModifier()
+					.AddAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
 					.WithDefaultConstructor(dummyClassName, CreatePrivateToken())
 					.WithField("Instance", dummyClassName, CreatePublicToken(), CreateStaticToken());
 
