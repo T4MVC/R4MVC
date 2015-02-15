@@ -63,6 +63,7 @@ namespace R4Mvc
 					genControllerClass = genControllerClass.WithStringField("Name", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword);
 					genControllerClass = genControllerClass.WithStringField("NameConst", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword);
 					genControllerClass = genControllerClass.WithStringField("Area", mvcControllerNode.Identifier.ToString(), true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword);
+					genControllerClass = genControllerClass.WithField("s_actions", "ActionNamesClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
 					genControllerClass = genControllerClass.WithActionNameClass(mvcControllerNode);
 					genControllerClass = genControllerClass.WithActionConstantsClass(mvcControllerNode);
 

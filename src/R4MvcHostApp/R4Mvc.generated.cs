@@ -26,6 +26,7 @@ namespace R4MvcHostApp.Controllers
         public const string NameConst = "AccountController";
         [GeneratedCode("R4MVC", "1.0")]
         public readonly string Area = "AccountController";
+        static readonly ActionNamesClass s_actions = new ActionNamesClass();
         [GeneratedCode("R4MVC", "1.0")]
         public class ActionNamesClass
         {
@@ -58,6 +59,7 @@ namespace R4MvcHostApp.Controllers
         public const string NameConst = "HomeController";
         [GeneratedCode("R4MVC", "1.0")]
         public readonly string Area = "HomeController";
+        static readonly ActionNamesClass s_actions = new ActionNamesClass();
         [GeneratedCode("R4MVC", "1.0")]
         public class ActionNamesClass
         {
