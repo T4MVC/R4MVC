@@ -182,6 +182,16 @@ namespace R4Mvc
 			return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
 		}
 
+		public static ClassDeclarationSyntax WithBaseTypes(this ClassDeclarationSyntax node, params string[] types)
+		{
+			return node.AddBaseListTypes(types.Select(x => SimpleBaseType(ParseTypeName(x))).Cast<BaseTypeSyntax>().ToArray());
+		}
+
+		public static string ToQualifiedName(this ClassDeclarationSyntax node)
+		{
+			return string.Format("{0}.{1}", ((NamespaceDeclarationSyntax)node?.Parent)?.Name, node.Identifier);
+		}
+
 		public static T WithPragmaCodes<T>(this T node, bool enable, params string[] codes) where T : SyntaxNode
 		{
 			// BUG prama is not put on newline with normalizewhitespace as expected

@@ -74,16 +74,14 @@ namespace R4Mvc
 					namespaceNode = namespaceNode.AddMembers(genControllerClass);
 
 					// create R4MVC_[Controller] class inheriting from partial
-					// TODO inherit from partial
-
 					var r4ControllerClass = CreateClass(
 						GetR4MVCControllerClassName(genControllerClass),
 						null,
 						SyntaxKind.PublicKeyword,
 						SyntaxKind.PartialKeyword)
 						.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
+						.WithBaseTypes(mvcControllerNode.ToQualifiedName())
 						.WithDefaultConstructor(false, SyntaxKind.PublicKeyword);
-
 
 					namespaceNode = namespaceNode.AddMembers(r4ControllerClass);
 
@@ -177,7 +175,7 @@ namespace R4Mvc
 				mvcControllerNodes.Select(
 					x => CreateFieldWithDefaultInitializer(
 						x.Identifier.ToString().Replace("Controller", string.Empty),
-						string.Format("{0}.{1}", ((NamespaceDeclarationSyntax)x.Parent).Name.ToString(), x.Identifier.ToString()),
+						x.ToQualifiedName(),
 						SyntaxKind.PublicKeyword,
 						SyntaxKind.StaticKeyword)).Cast<MemberDeclarationSyntax>().ToArray()); 
 		}

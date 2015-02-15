@@ -47,7 +47,7 @@ namespace R4MvcHostApp.Controllers
     }
 
     [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
-    public partial class R4MVC_AccountController
+    public partial class R4MVC_AccountController : R4MvcHostApp.Controllers.AccountController
     {
         public R4MVC_AccountController()
         {
@@ -88,7 +88,7 @@ namespace R4MvcHostApp.Controllers
     }
 
     [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
-    public partial class R4MVC_HomeController
+    public partial class R4MVC_HomeController : R4MvcHostApp.Controllers.HomeController
     {
         public R4MVC_HomeController()
         {
