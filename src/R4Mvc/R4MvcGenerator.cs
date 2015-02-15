@@ -75,7 +75,7 @@ namespace R4Mvc
 			// TODO create R4MVCHelpers class
 
 			fileTree = fileTree.AddMembers(r4Namespace);
-
+			fileTree = fileTree.NormalizeWhitespace();
 			// reenable pragma codes after last node
 			// BUG NormalizeWhitespace is messing up prama (called when writing file)
 			fileTree = fileTree.WithPragmaCodes(true, pramaCodes);

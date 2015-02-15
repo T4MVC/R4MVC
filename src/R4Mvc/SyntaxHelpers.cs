@@ -134,12 +134,14 @@ namespace R4Mvc
 			// BUG prama is not put on newline with normalizewhitespace as expected
 			var trivia = enable ? node.GetTrailingTrivia() : node.GetLeadingTrivia();
 			var pramaStatus = enable ? SyntaxKind.RestoreKeyword : SyntaxKind.DisableKeyword;
-			var pramaExpressions = codes.Select(x => SyntaxFactory.ParseExpression(x.ToString())).ToArray();
+			var pramaExpressions = SyntaxFactory.SeparatedList(codes.Select(x => SyntaxFactory.ParseExpression(x.ToString())));
 			var prama =
-				trivia.Add(
-					SyntaxFactory.Trivia(
-						SyntaxFactory.PragmaWarningDirectiveTrivia(SyntaxFactory.Token(pramaStatus), true).AddErrorCodes(pramaExpressions)))
-					.NormalizeWhitespace();
+				trivia.Add(SyntaxFactory.ElasticCarriageReturnLineFeed)
+					.Add(
+						SyntaxFactory.Trivia(
+							SyntaxFactory.PragmaWarningDirectiveTrivia(SyntaxFactory.Token(pramaStatus), pramaExpressions, true)
+								.NormalizeWhitespace()))
+					.Add(SyntaxFactory.ElasticCarriageReturnLineFeed);
 
 			return enable ? node.WithTrailingTrivia(prama) : node.WithLeadingTrivia(prama);
 		}
@@ -255,14 +257,10 @@ namespace R4Mvc
 			return node.AddModifiers(CreateVirtualToken());
 		}
 
-		public static void WriteFile(this SyntaxNode fileTree, string generatedFilePath, bool resetWhitespace)
+		public static void WriteFile(this SyntaxNode fileTree, string generatedFilePath)
 		{
 			using (var textWriter = new StreamWriter(new FileStream(generatedFilePath, FileMode.Create)))
 			{
-				if (resetWhitespace)
-				{
-					fileTree = fileTree.NormalizeWhitespace();
-				}
 				fileTree.WriteTo(textWriter);
 			}
 		}

@@ -47,7 +47,7 @@ namespace R4Mvc
 				{
 					// node has changed, update syntaxtree and persist to file
 					compiler.ReplaceSyntaxTree(tree, newNode.SyntaxTree);
-					newNode.WriteFile(tree.FilePath, false);
+					newNode.WriteFile(tree.FilePath);
 				}
 
 				// save the controller nodes from each visit to pass to the generator
@@ -56,7 +56,7 @@ namespace R4Mvc
 
 			// pass the controller classes to the R4MVC Generator and save file in Project root
 			var generatedNode = R4MvcGenerator.Generate(compiler, this.MvcClasses.ToArray());
-			generatedNode.WriteFile(generatedFilePath, true);
+			generatedNode.WriteFile(generatedFilePath);
 			this.filesGenerated = true;
 #endif
 		}

@@ -38,4 +38,6 @@ namespace R4MVC
 
         public static Dummy Instance = new Dummy();
     }
-} #pragma warning restore 1591, 3008, 3009, 108
+}
+#pragma warning restore 1591, 3008, 3009, 108
+
