@@ -168,7 +168,7 @@ namespace R4Mvc
 			return node.AddAttributeLists(SyntaxFactory.AttributeList(SyntaxFactory.SeparatedList(attributes)));
 		}
 
-		public static T WithPragmaCodes<T>(this T node, bool enable, params int[] codes) where T : SyntaxNode
+		public static T WithPragmaCodes<T>(this T node, bool enable, params string[] codes) where T : SyntaxNode
 		{
 			// BUG prama is not put on newline with normalizewhitespace as expected
 			var trivia = enable ? node.GetTrailingTrivia() : node.GetLeadingTrivia();
