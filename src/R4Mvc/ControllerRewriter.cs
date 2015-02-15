@@ -1,14 +1,13 @@
-﻿// ControllerRewriter.cs
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+
+using Microsoft.AspNet.Mvc;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 namespace R4Mvc
 {
-	using System.Collections.Generic;
-	using System.Diagnostics;
-
-	using Microsoft.AspNet.Mvc;
-	using Microsoft.CodeAnalysis;
-	using Microsoft.CodeAnalysis.CSharp;
-	using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 	/// <summary>
 	/// Handles changes to non-generated mvc controller inheriting classes
 	/// </summary>
