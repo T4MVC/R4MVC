@@ -7,26 +7,26 @@ namespace R4MvcHostApp.Controllers
 {
     public partial class HomeController : Controller
     {
-        public IActionResult Index()
+        public virtual IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult About()
+        public virtual IActionResult About()
         {
             ViewBag.Message = "Your application description page.";
 
             return View();
         }
 
-        public IActionResult Contact()
+        public virtual IActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";
 
             return View();
         }
 
-        public IActionResult Error()
+        public virtual IActionResult Error()
         {
             return View("~/Views/Shared/Error.cshtml");
         }

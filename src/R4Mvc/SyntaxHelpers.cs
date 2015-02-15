@@ -13,8 +13,6 @@ namespace R4Mvc
 	/// </summary>
 	public static class SyntaxHelpers
 	{
-		public const string R4MvcFileName = "R4MVC.generated.cs";
-
 		public static bool InheritsFrom<T>(this ITypeSymbol symbol)
 		{
 			while (true)

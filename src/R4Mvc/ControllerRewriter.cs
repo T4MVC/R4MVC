@@ -27,44 +27,43 @@ namespace R4Mvc
 
 		public override SyntaxNode VisitClassDeclaration(ClassDeclarationSyntax node)
 		{
+			// grab the symbol first and pass to other visitors first
 			var symbol = _compiler.GetSemanticModel(node.SyntaxTree).GetDeclaredSymbol(node);
+			var newNode = (ClassDeclarationSyntax)base.VisitClassDeclaration(node);
 			if (symbol.InheritsFrom<Controller>())
 			{
 				// hold a list of all controller classes to use later for the generator
 				_mvcControllerClassNodes.Add(node);
 
-				if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
+				if (!newNode.Modifiers.Any(SyntaxKind.PartialKeyword))
 				{
 					Debug.WriteLine("R4MVC - Marking {0} class a partial", symbol);
-					node = node.WithPartialModifier();
+					newNode = newNode.WithPartialModifier();
 				}
 			}
 
-			return base.VisitClassDeclaration(node);
+			return newNode;
 		}
 
 		public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
 		{
-			// forces compilationUnit creation according to docs...but doesnt?
-			// var newNode = node.SyntaxTree.GetRoot();
+			node = (MethodDeclarationSyntax)base.VisitMethodDeclaration(node);
 
-			// the symbol wont be found if we've modified class before this point
-			// the modification would cause the compiler to run again which would then pick up
-			// the symbol second time around. More efficient to manually create a compilation unit for
-			// this node first time and make all modifications in one pass
-			// TODO how to update out of sync node, new CompilationUnit?
-			if (!node.SyntaxTree.HasCompilationUnitRoot)
+			// only public methods not marked as virtual
+			if (node.Modifiers.Any(SyntaxKind.PublicKeyword) && !node.Modifiers.Any(SyntaxKind.VirtualKeyword))
 			{
+				var symbol = _compiler.GetSemanticModel(node.SyntaxTree).GetDeclaredSymbol(node);
+				if (symbol.InheritsFrom<Controller>())
+				{
+					Debug.WriteLine(
+						"R4MVC - Marking controller method {0} as virtual from {1}",
+						symbol.ToString(),
+						symbol.ContainingType?.ToString());
+					node = node.WithVirtualModifier();
+				}
 			}
-			//var model = _compiler.GetSemanticModel(node.SyntaxTree);
-			//var symbol = model.GetDeclaredSymbol(node);
-			//if (symbol.InheritsFrom<Controller>() && !symbol.IsVirtual)
-			//{
-			//	Debug.WriteLine("visiting controller method {0} from {1}", symbol.ToString(), node.SyntaxTree.FilePath);
-			//	node.WithVirtualModifier();
-			//}
 
-			return base.VisitMethodDeclaration(node);
+			return node;
 		}
 	}
 }

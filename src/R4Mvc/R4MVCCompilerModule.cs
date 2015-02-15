@@ -12,28 +12,32 @@ namespace R4Mvc
 
 	public class R4MVCCompilerModule : ICompileModule
 	{
-		private Project project;
-
 		private readonly List<ClassDeclarationSyntax> MvcClasses = new List<ClassDeclarationSyntax>();
 
 		public bool filesGenerated;
+
+		private Func<string> getFilePath;
+
+		public Project Project { get; private set; }
 
 		public void BeforeCompile(IBeforeCompileContext context)
 		{
 			// NOTE compilation and generation is always run a second time if files are modified on first run
 #if !ASPNETCORE50
 			// TODO: Fix writing out generated files in both frameworks
-			if (filesGenerated)
+			if (this.filesGenerated)
 			{
 				// TODO compilation is run a second time after files are modified and generated
 				return;
 			}
 
 			//Debugger.Launch();
-			this.project = ((CompilationContext)(context)).Project;
+
+			this.Project = ((CompilationContext)(context)).Project;
+			var generatedFilePath = this.GetGeneratedFilePath(this.Project);
 
 			var compiler = context.CSharpCompilation;
-			foreach (var tree in compiler.SyntaxTrees.Where(x => !x.FilePath.EndsWith(SyntaxHelpers.R4MvcFileName)))
+			foreach (var tree in compiler.SyntaxTrees.Where(x => !x.FilePath.Equals(generatedFilePath)))
 			{
 				// this first part, finds all the controller classes, modifies them and saves the changes
 				var controllerRewriter = new ControllerRewriter(compiler);
@@ -50,25 +54,31 @@ namespace R4Mvc
 				this.MvcClasses.AddRange(controllerRewriter.MvcControllerClassNodes);
 			}
 
-			// pass the controller classes to the R4MVC Generator and save file in project root
+			// pass the controller classes to the R4MVC Generator and save file in Project root
 			var generatedNode = R4MvcGenerator.Generate(compiler, this.MvcClasses.ToArray());
-			var generatedFilePath = GetGeneratedFilePath(project);
 			generatedNode.WriteFile(generatedFilePath, true);
-			filesGenerated = true;
+			this.filesGenerated = true;
 #endif
 		}
 
 		public void AfterCompile(IAfterCompileContext context)
 		{
-			// TODO need to touch project file to invalidate klr source cache
+			// TODO need to touch Project file to invalidate klr source cache
 			// otherwise you can to kill klr.exe process. an idea is to touch the
-			// project file but the line below won't compile for klr
-			//File.SetLastWriteTimeUtc(project.ProjectFilePath, DateTime.UtcNow);
+			// Project file but the line below won't compile for klr
+			//File.SetLastWriteTimeUtc(Project.ProjectFilePath, DateTime.UtcNow);
 		}
 
-		private static string GetGeneratedFilePath(Project project)
+		private string GetGeneratedFilePath(Project project)
 		{
-			return Path.Combine(project.ProjectDirectory, SyntaxHelpers.R4MvcFileName);
+			return this.getFilePath == null ? Path.Combine(project.ProjectDirectory, R4MvcFileName) : this.getFilePath.Invoke();
 		}
+
+		protected void SetGeneratedFilePath(Func<string> filePath)
+		{
+			this.getFilePath = filePath;
+		}
+
+		public const string R4MvcFileName = "R4MVC.generated.cs";
 	}
 }
