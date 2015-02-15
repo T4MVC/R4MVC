@@ -141,7 +141,7 @@ namespace R4Mvc
 				SyntaxHelpers.CreateClass(dummyClassName)
 					.WithModifiers(SyntaxKind.PublicKeyword)
 					.WithAttributes(SyntaxHelpers.CreateGeneratedCodeAttribute(), SyntaxHelpers.CreateDebugNonUserCodeAttribute())
-					.WithDefaultConstructor(true, SyntaxKind.PrivateKeyword)
+					.WithDefaultConstructor(false, SyntaxKind.PrivateKeyword)
 					.WithField("Instance", dummyClassName, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
 
 			return node.AddMembers(dummyClass);

@@ -101,7 +101,6 @@ namespace R4MVC
     [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
     public class Dummy
     {
-        [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
         private Dummy()
         {
         }
