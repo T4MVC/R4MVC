@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 using Microsoft.AspNet.Mvc;
 using Microsoft.CodeAnalysis;
@@ -29,7 +30,7 @@ namespace R4Mvc
 			// grab the symbol first and pass to other visitors first
 			var symbol = _compiler.GetSemanticModel(node.SyntaxTree).GetDeclaredSymbol(node);
 			var newNode = (ClassDeclarationSyntax)base.VisitClassDeclaration(node);
-			if (symbol.InheritsFrom<Controller>())
+			if (symbol.InheritsFrom<Controller>() && !IsForcedExclusion(symbol))
 			{
 				// hold a list of all controller classes to use later for the generator
 				_mvcControllerClassNodes.Add(node);
@@ -42,6 +43,13 @@ namespace R4Mvc
 			}
 
 			return newNode;
+		}
+
+		private static bool IsForcedExclusion(INamedTypeSymbol symbol)
+		{
+			// need to fully qualify attribute type for reliable matching
+			var r4attribute = symbol.GetAttributes().ToArray().FirstOrDefault(x => x.AttributeClass.ToDisplayString() == typeof(R4MVCExcludeAttribute).FullName);
+			return r4attribute != null;
 		}
 
 		public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
