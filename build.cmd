@@ -39,4 +39,4 @@ CALL kpm build src\R4MvcHostApp
 CALL kpm build test\R4Mvc.Test
 
 cd test\R4Mvc.Test
-CALL k test
+REM CALL k test
