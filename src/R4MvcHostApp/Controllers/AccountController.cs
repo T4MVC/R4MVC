@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
@@ -10,7 +10,7 @@ using R4MvcHostApp.Models;
 namespace R4MvcHostApp.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public partial class AccountController : Controller
     {
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
@@ -24,7 +24,7 @@ namespace R4MvcHostApp.Controllers
         // GET: /Account/Login
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login(string returnUrl = null)
+        public virtual IActionResult Login(string returnUrl = null)
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
@@ -35,7 +35,7 @@ namespace R4MvcHostApp.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        public async virtual Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -59,7 +59,7 @@ namespace R4MvcHostApp.Controllers
         // GET: /Account/Register
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Register()
+        public virtual IActionResult Register()
         {
             return View();
         }
@@ -69,7 +69,7 @@ namespace R4MvcHostApp.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async virtual Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -93,7 +93,7 @@ namespace R4MvcHostApp.Controllers
         //
         // GET: /Account/Manage
         [HttpGet]
-        public IActionResult Manage(ManageMessageId? message = null)
+        public virtual IActionResult Manage(ManageMessageId? message = null)
         {
             ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
@@ -107,7 +107,7 @@ namespace R4MvcHostApp.Controllers
         // POST: /Account/Manage
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Manage(ManageUserViewModel model)
+        public async virtual Task<IActionResult> Manage(ManageUserViewModel model)
         {
             ViewBag.ReturnUrl = Url.Action("Manage");
             if (ModelState.IsValid)
@@ -132,7 +132,7 @@ namespace R4MvcHostApp.Controllers
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult LogOff()
+        public virtual IActionResult LogOff()
         {
             SignInManager.SignOut();
             return RedirectToAction("Index", "Home");
