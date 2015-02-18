@@ -1,24 +1,31 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Framework.DependencyInjection;
+using Microsoft.Framework.Runtime;
+using Microsoft.Framework.Runtime.Roslyn;
 
 namespace R4Mvc
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Linq;
-
-	using Microsoft.CodeAnalysis.CSharp.Syntax;
-	using Microsoft.Framework.Runtime;
-	using Microsoft.Framework.Runtime.Roslyn;
-
 	public class R4MVCCompilerModule : ICompileModule
 	{
-		private readonly List<ClassDeclarationSyntax> MvcClasses = new List<ClassDeclarationSyntax>();
+		private readonly List<ClassDeclarationSyntax> _mvcClasses;
+
+		private readonly IServiceProvider _serviceProvider;
 
 		public bool filesGenerated;
 
 		private Func<string> getFilePath;
+
+		public R4MVCCompilerModule(IServiceProvider serviceProvider)
+		{
+			this._serviceProvider = serviceProvider;
+			_mvcClasses = new List<ClassDeclarationSyntax>();
+		}
 
 		public Project Project { get; private set; }
 
@@ -51,17 +58,24 @@ namespace R4Mvc
 				if (!newNode.IsEquivalentTo(tree.GetRoot()))
 				{
 					// node has changed, update syntaxtree and persist to file
-					compiler.ReplaceSyntaxTree(tree, newNode.SyntaxTree);
+					compiler = compiler.ReplaceSyntaxTree(tree, newNode.SyntaxTree);
 					newNode.WriteFile(tree.FilePath);
 				}
 
 				// save the controller nodes from each visit to pass to the generator
-				MvcClasses.AddRange(controllerRewriter.MvcControllerClassNodes);
+				_mvcClasses.AddRange(controllerRewriter.MvcControllerClassNodes);
 			}
 
+			// get the project view files
+			var viewFinder = _serviceProvider.GetService<IViewLocator>()
+			                 ?? new RazorViewLocator(Project.ContentFiles, new Uri(Project.ProjectDirectory + Path.DirectorySeparatorChar));
+			var viewFiles = viewFinder.Find();
+
 			// pass the controller classes to the R4MVC Generator and save file in Project root
-			var generatedNode = R4MvcGenerator.Generate(compiler, MvcClasses.ToArray());
+			var generatedNode = R4MvcGenerator.Generate(compiler, _mvcClasses.ToArray(), viewFiles);
 			generatedNode.WriteFile(generatedFilePath);
+			compiler.AddSyntaxTrees(generatedNode.SyntaxTree);
+
 			filesGenerated = true;
 #endif
 		}
