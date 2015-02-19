@@ -13,10 +13,21 @@ namespace R4Mvc
 
 		private const string _extension = ".cshtml";
 
-		public RazorViewLocator(IEnumerable<string> files, Uri projectRoot)
+		public RazorViewLocator(IProjectLocator projectLocator)
 		{
-			this._files = files;
-			_projectRoot = projectRoot;
+			_files = projectLocator.GetContentFiles();
+
+			// TODO how to abstract plugin validation
+			var projectDirectory = projectLocator.GetProjectDirectory();
+			if (!Directory.Exists(projectDirectory))
+			{
+				throw new ArgumentException(string.Format("IProjectLocator directory '{0}' is invalid", projectDirectory));
+			}
+
+			// for the relative paths to work correct, the projectDirectory path needs to end in a '/'
+			_projectRoot = projectDirectory.EndsWith(Path.DirectorySeparatorChar.ToString())
+				               ? _projectRoot
+				               : new Uri(projectDirectory + Path.DirectorySeparatorChar);
 		}
 
 		public View[] Find()
