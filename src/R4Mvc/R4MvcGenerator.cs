@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.CodeAnalysis;
@@ -21,7 +23,7 @@ namespace R4Mvc
 // Make sure the compiler doesn't complain about missing Xml comments and CLS compliance
 // 0108: suppress ""Foo hides inherited member Foo.Use the new keyword if hiding was intended."" when a controller and its abstract parent are both processed";
 
-		public static SyntaxNode Generate(CSharpCompilation compiler, ClassDeclarationSyntax[] mvcControllerNodes)
+		public static SyntaxNode Generate(CSharpCompilation compiler, ClassDeclarationSyntax[] mvcControllerNodes, View[] viewFiles)
 		{
 			// Create the root node and add usings, header, pragma
 			var fileTree =
@@ -67,7 +69,7 @@ namespace R4Mvc
 						.WithActionNameClass(mvcControllerNode)
 						.WithActionConstantsClass(mvcControllerNode)
 						.WithField("s_views", "ViewsClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
-						.WithViewsClass();
+						.WithViewsClass(viewFiles);
 
 					namespaceNode = namespaceNode.AddMembers(genControllerClass);
 
@@ -157,23 +159,34 @@ namespace R4Mvc
 				SyntaxKind.ConstKeyword);
 		}
 
-		public static ClassDeclarationSyntax WithViewsClass(this ClassDeclarationSyntax node)
+		public static ClassDeclarationSyntax WithViewsClass(this ClassDeclarationSyntax node, View[] viewFiles)
 		{
-			// TODO figure out method of view discovery
 			// create subclass called ViewsClass
-			// TODO create ViewNames get property returning static instance of _ViewNamesClass subclass
+			// create ViewNames get property returning static instance of _ViewNamesClass subclass
 			//	create subclass in ViewsClass called _ViewNamesClass 
-			//		TODO create string field per view
+			//		create string field per view
 			const string viewNamesClass = "_ViewNamesClass";
-            var viewClassNode =
+			var viewClassNode =
 				CreateClass("ViewsClass", null, SyntaxKind.PublicKeyword)
 					.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
 					.WithField("s_ViewNames", viewNamesClass, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
 
 			var viewNamesClassNode = CreateClass(viewNamesClass, null, SyntaxKind.PublicKeyword);
+			var controllerViews = viewFiles.Where(x => x.ControllerName.Equals(node.Identifier.ToString(), StringComparison.CurrentCultureIgnoreCase)).ToImmutableArray();
+			var viewNameFields =
+				controllerViews.Select(
+					x => CreateStringFieldDeclaration(x.ViewName, x.ViewName, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
+					.Cast<MemberDeclarationSyntax>().ToArray();
+			viewNamesClassNode = viewNamesClassNode.AddMembers(viewNameFields);
+
 			viewClassNode = viewClassNode.AddMembers(viewNamesClassNode);
-			
-			// TODO create string field per view of relative url
+			var viewFields =
+				controllerViews.Select(
+					x => CreateStringFieldDeclaration(x.ViewName, "~/" + x.RelativePath, SyntaxKind.PublicKeyword))
+					.Cast<MemberDeclarationSyntax>()
+					.ToArray();
+			viewClassNode = viewClassNode.AddMembers(viewFields);
+
 			return node.AddMembers(viewClassNode);
 		}
 

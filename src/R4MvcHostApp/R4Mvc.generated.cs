@@ -52,7 +52,16 @@ namespace R4MvcHostApp.Controllers
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
             public class _ViewNamesClass
             {
+                public readonly string Login = "Login";
+                public readonly string Manage = "Manage";
+                public readonly string Register = "Register";
+                public readonly string _ChangePasswordPartial = "_ChangePasswordPartial";
             }
+
+            public string Login = "~/Views/Account/Login.cshtml";
+            public string Manage = "~/Views/Account/Manage.cshtml";
+            public string Register = "~/Views/Account/Register.cshtml";
+            public string _ChangePasswordPartial = "~/Views/Account/_ChangePasswordPartial.cshtml";
         }
     }
 
@@ -103,7 +112,14 @@ namespace R4MvcHostApp.Controllers
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
             public class _ViewNamesClass
             {
+                public readonly string About = "About";
+                public readonly string Contact = "Contact";
+                public readonly string Index = "Index";
             }
+
+            public string About = "~/Views/Home/About.cshtml";
+            public string Contact = "~/Views/Home/Contact.cshtml";
+            public string Index = "~/Views/Home/Index.cshtml";
         }
     }
 
