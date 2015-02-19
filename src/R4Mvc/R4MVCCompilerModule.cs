@@ -1,13 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Runtime;
-using Microsoft.Framework.Runtime.Roslyn;
 
 namespace R4Mvc
 {
@@ -15,19 +12,14 @@ namespace R4Mvc
 	{
 		private readonly List<ClassDeclarationSyntax> _mvcClasses;
 
-		private readonly IServiceProvider _serviceProvider;
-
 		public bool filesGenerated;
 
-		private Func<string> getFilePath;
-
-		public R4MVCCompilerModule(IServiceProvider serviceProvider)
+		public R4MVCCompilerModule()
 		{
-			this._serviceProvider = serviceProvider;
 			_mvcClasses = new List<ClassDeclarationSyntax>();
 		}
 
-		public Project Project { get; private set; }
+		public R4MvcPluginProvider Plugins { get; } = new R4MvcPluginProvider();
 
 		public void BeforeCompile(IBeforeCompileContext context)
 		{
@@ -40,16 +32,24 @@ namespace R4Mvc
 				return;
 			}
 
+			// Register plugins, will be ignored if target project has already registered
+			Plugins.Register(new DefaultProjectLocator(context));
+			var projectLocator = Plugins.Get<IProjectLocator>();
+			Plugins.Register(new RazorViewLocator(projectLocator));
+
+			// Plugin validation, check file paths etc?
+
 			//Debugger.Launch();
 
-			Project = ((CompilationContext)(context)).Project;
-			var generatedFilePath = this.GetGeneratedFilePath(Project);
-
 			var compiler = context.CSharpCompilation;
-			foreach (var tree in compiler.SyntaxTrees.Where(x => !x.FilePath.Equals(generatedFilePath)))
+			
+			foreach (var tree in compiler.SyntaxTrees.Where(x => !x.FilePath.Equals(projectLocator.GetGeneratedFilePath())))
 			{
 				// if syntaxtree has errors, skip code generation
-				if (tree.GetDiagnostics().Any(x => x.Severity == DiagnosticSeverity.Error)) continue;
+				if (tree.GetDiagnostics().Any(x => x.Severity == DiagnosticSeverity.Error))
+				{
+					continue;
+				}
 
 				// this first part, finds all the controller classes, modifies them and saves the changes
 				var controllerRewriter = new ControllerRewriter(compiler);
@@ -66,14 +66,13 @@ namespace R4Mvc
 				_mvcClasses.AddRange(controllerRewriter.MvcControllerClassNodes);
 			}
 
-			// get the project view files
-			var viewFinder = _serviceProvider.GetService<IViewLocator>()
-			                 ?? new RazorViewLocator(Project.ContentFiles, new Uri(Project.ProjectDirectory + Path.DirectorySeparatorChar));
+			var viewFinder = Plugins.Get<IViewLocator>();
 			var viewFiles = viewFinder.Find();
 
 			// pass the controller classes to the R4MVC Generator and save file in Project root
 			var generatedNode = R4MvcGenerator.Generate(compiler, _mvcClasses.ToArray(), viewFiles);
-			generatedNode.WriteFile(generatedFilePath);
+			generatedNode.WriteFile(projectLocator.GetGeneratedFilePath());
+
 			compiler.AddSyntaxTrees(generatedNode.SyntaxTree);
 
 			filesGenerated = true;
@@ -82,22 +81,6 @@ namespace R4Mvc
 
 		public void AfterCompile(IAfterCompileContext context)
 		{
-			// TODO need to touch Project file to invalidate klr source cache
-			// otherwise you can to kill klr.exe process. an idea is to touch the
-			// Project file but the line below won't compile for klr
-			//File.SetLastWriteTimeUtc(Project.ProjectFilePath, DateTime.UtcNow);
 		}
-
-		private string GetGeneratedFilePath(Project project)
-		{
-			return getFilePath == null ? Path.Combine(project.ProjectDirectory, R4MvcFileName) : getFilePath.Invoke();
-		}
-
-		protected void SetGeneratedFilePath(Func<string> filePath)
-		{
-			getFilePath = filePath;
-		}
-
-		public const string R4MvcFileName = "R4MVC.generated.cs";
 	}
 }
