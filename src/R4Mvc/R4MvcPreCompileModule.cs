@@ -1,14 +1,20 @@
 ﻿using System;
 using Microsoft.Framework.Runtime;
-using R4Mvc;
 
-namespace R4MvcHostApp.Compiler.Preprocess
+namespace R4Mvc
 {
     public class R4MvcPreCompileModule : ICompileModule
     {
+        private readonly IServiceProvider _serviceProvider;
+
+        public R4MvcPreCompileModule(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
         public void BeforeCompile(IBeforeCompileContext context)
         {
-            R4MvcGenerator.Generate(context);
+            
         }
 
         public void AfterCompile(IAfterCompileContext context)
