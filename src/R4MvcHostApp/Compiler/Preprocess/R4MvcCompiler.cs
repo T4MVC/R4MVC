@@ -9,5 +9,12 @@ namespace R4MvcHostApp.Compiler.Preprocess
         {
             
         }
+
+        // Uncomment this method to register custom locators
+        //public override void RegisterCustomLocators()
+        //{
+        //    ControllerLocators.Clear();
+        //    ControllerLocators.Add(new CustomControllerLocator());
+        //}
     }
 }
