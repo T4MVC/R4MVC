@@ -52,7 +52,7 @@ namespace R4Mvc
 					.WithHeader(_headerText)
 					.WithPragmaCodes(false, pramaCodes);
 
-			var controllers = _controllerRewriter.RewriteControllers(context.Compilation, R4MvcFileName);
+			var controllers = _controllerRewriter.RewriteControllers(context.Compilation, R4MvcFileName).ToImmutableArray();
 			var generatedControllers = _controllerGenerator.GenerateControllers(context.Compilation, controllers).ToImmutableArray();
 			var staticFileNode = _staticFileGenerator.GenerateStaticFiles();
 
@@ -64,7 +64,7 @@ namespace R4Mvc
 			var mvcStaticClass =
 				SyntaxNodeHelpers.CreateClass("MVC", null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
 					.WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
-					.WithControllerFields(generatedControllers);
+					.WithControllerFields(controllers);
 
 			r4mvcNode =
 				r4mvcNode.AddMembers(generatedControllers.Cast<MemberDeclarationSyntax>().ToArray())

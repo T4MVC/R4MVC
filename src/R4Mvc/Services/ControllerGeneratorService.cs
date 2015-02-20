@@ -19,11 +19,11 @@ namespace R4Mvc.Services
 
 		public IEnumerable<NamespaceDeclarationSyntax> GenerateControllers(
 			CSharpCompilation compiler,
-			IEnumerable<ClassDeclarationSyntax> mvcControllerNodes)
+			IEnumerable<ClassDeclarationSyntax> controllerNodes)
 		{
 			// controllers might be in different namespaces so should group by namespace 
 			var namespaceGroups =
-				mvcControllerNodes.GroupBy(x => x.Ancestors().OfType<NamespaceDeclarationSyntax>().First().Name.ToFullString());
+				controllerNodes.GroupBy(x => x.Ancestors().OfType<NamespaceDeclarationSyntax>().First().Name.ToFullString());
 			foreach (var namespaceControllers in namespaceGroups)
 			{
 				// create the namespace for the controllers

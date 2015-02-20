@@ -153,9 +153,7 @@ namespace R4MVC
 public static partial class MVC
 {
     public static R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.AccountController();
-    public static R4MvcHostApp.Controllers.R4MVC_AccountController R4MVC_Account = new R4MvcHostApp.Controllers.R4MVC_AccountController();
     public static R4MvcHostApp.Controllers.HomeController Home = new R4MvcHostApp.Controllers.HomeController();
-    public static R4MvcHostApp.Controllers.R4MVC_HomeController R4MVC_Home = new R4MvcHostApp.Controllers.R4MVC_HomeController();
 }
 #pragma warning restore 1591, 3008, 3009, 0108
 

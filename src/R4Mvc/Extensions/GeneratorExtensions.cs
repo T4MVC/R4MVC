@@ -74,24 +74,17 @@ namespace R4Mvc.Extensions
 
 		public static ClassDeclarationSyntax WithControllerFields(
 			this ClassDeclarationSyntax node,
-			IEnumerable<NamespaceDeclarationSyntax> @namespaces)
+			IEnumerable<ClassDeclarationSyntax> controllers)
 		{
 			// TODO field name should be overriddable via config, stripping off 'controller' by default
 			// TODO add extension method to customise field initializer as this needs to be the one returned from GetR4MVCControllerClassName
-			foreach (var @namespace in namespaces)
-			{
-				foreach (var @class in @namespace.Members.OfType<ClassDeclarationSyntax>())
-				{
-					node =
-						node.AddMembers(
-							CreateFieldWithDefaultInitializer(
-								@class.Identifier.ToString().Replace("Controller", Empty),
-								@class.ToQualifiedName(),
-								SyntaxKind.PublicKeyword,
-								SyntaxKind.StaticKeyword));
-				}
-			}
-			return node;
+			return node.AddMembers(
+				controllers.Select(
+					x => CreateFieldWithDefaultInitializer(
+						x.Identifier.ToString().Replace("Controller", string.Empty),
+						x.ToQualifiedName(),
+						SyntaxKind.PublicKeyword,
+						SyntaxKind.StaticKeyword)).Cast<MemberDeclarationSyntax>().ToArray());
 
 		}
 

@@ -15,7 +15,7 @@ namespace R4Mvc.Services
 		{
 			var mvcControllerNodes = new List<ClassDeclarationSyntax>();
 
-			foreach (var tree in compiler.SyntaxTrees.Where(x => !x.FilePath.Equals(outputFileName)))
+			foreach (var tree in compiler.SyntaxTrees.Where(x => !x.FilePath.EndsWith(outputFileName)))
 			{
 				// if syntaxtree has errors, skip code generation
 				if (tree.GetDiagnostics().Any(x => x.Severity == DiagnosticSeverity.Error)) continue;
