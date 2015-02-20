@@ -44,7 +44,7 @@ namespace R4Mvc
 			
 			if (filesGenerated) return;	// prevents generation running twice after compilation is modified the first time
 
-			Debugger.Launch();
+			//Debugger.Launch();
 
 			var project = ((CompilationContext)(context)).Project;
 
