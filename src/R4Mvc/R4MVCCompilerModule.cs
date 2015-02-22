@@ -35,7 +35,7 @@ namespace R4Mvc
 			RegisterDefaultLocators();
 			RegisterCustomLocators();
 
-			_serviceProvider = IocConfig.RegisterServices(serviceProvider, ViewLocators, StaticFileLocators);
+			_serviceProvider = IocConfig.RegisterServices(ViewLocators, StaticFileLocators);
 		}
 
 		public void BeforeCompile(IBeforeCompileContext context)

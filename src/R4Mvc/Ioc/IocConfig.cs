@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 
-using Microsoft.AspNet.Builder;
 using Microsoft.Framework.DependencyInjection;
+using Microsoft.Framework.DependencyInjection.Fallback;
 
 using R4Mvc.Locators;
 using R4Mvc.Services;
@@ -11,24 +11,18 @@ namespace R4Mvc.Ioc
 {
 	public static class IocConfig
 	{
-		public static IServiceProvider RegisterServices(IServiceProvider serviceProvider, IEnumerable<IViewLocator> viewLocators, IEnumerable<IStaticFileLocator> staticFileLocators)
+		public static IServiceProvider RegisterServices(IEnumerable<IViewLocator> viewLocators, IEnumerable<IStaticFileLocator> staticFileLocators)
 		{
-			var appBuilder = new ApplicationBuilder(serviceProvider);
-
 			// register types for IServiceProvider here
-			appBuilder.UseServices(
-				svc =>
-					{
-						svc.AddInstance(typeof(IEnumerable<IViewLocator>), viewLocators);
-						svc.AddInstance(typeof(IEnumerable<IStaticFileLocator>), staticFileLocators);
-						svc.AddTransient<IViewLocatorService, ViewLocatorService>();
-						svc.AddTransient<IStaticFileGeneratorService, StaticFileGeneratorService>();
-						svc.AddTransient<IControllerRewriterService, ControllerRewriterService>();
-						svc.AddTransient<IControllerGeneratorService, ControllerGeneratorService>();
-						svc.AddTransient<R4MvcGenerator, R4MvcGenerator>();
-					});
-
-			return appBuilder.ApplicationServices;
+			var serviceCollection = new ServiceCollection();
+			serviceCollection.AddInstance(typeof(IEnumerable<IViewLocator>), viewLocators);
+			serviceCollection.AddInstance(typeof(IEnumerable<IStaticFileLocator>), staticFileLocators);
+			serviceCollection.AddTransient<IViewLocatorService, ViewLocatorService>();
+			serviceCollection.AddTransient<IStaticFileGeneratorService, StaticFileGeneratorService>();
+			serviceCollection.AddTransient<IControllerRewriterService, ControllerRewriterService>();
+			serviceCollection.AddTransient<IControllerGeneratorService, ControllerGeneratorService>();
+			serviceCollection.AddTransient<R4MvcGenerator, R4MvcGenerator>();
+			return serviceCollection.BuildServiceProvider();
 		}
 	}
 }
