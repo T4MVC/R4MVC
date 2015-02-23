@@ -52,7 +52,7 @@ namespace R4Mvc
 					.WithHeader(_headerText)
 					.WithPragmaCodes(false, pramaCodes);
 
-			var controllers = _controllerRewriter.RewriteControllers(context.Compilation, R4MvcFileName).ToImmutableArray();
+			var controllers = _controllerRewriter.RewriteControllers(context.Compilation, R4MvcFileName);
 			var generatedControllers = _controllerGenerator.GenerateControllers(context.Compilation, controllers).ToImmutableArray();
 			var staticFileNode = _staticFileGenerator.GenerateStaticFiles();
 

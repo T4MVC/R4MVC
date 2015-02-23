@@ -12,7 +12,7 @@ namespace R4Mvc.Services
 {
 	public class ControllerRewriterService : IControllerRewriterService
 	{
-		public IEnumerable<ClassDeclarationSyntax> RewriteControllers(CSharpCompilation compiler, string outputFileName)
+		public ImmutableArray<ClassDeclarationSyntax> RewriteControllers(CSharpCompilation compiler, string outputFileName)
 		{
 			var mvcControllerNodes = new List<ClassDeclarationSyntax>();
 
