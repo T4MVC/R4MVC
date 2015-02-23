@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.CodeAnalysis;
@@ -35,7 +36,7 @@ namespace R4Mvc.Services
 				mvcControllerNodes.AddRange(controllerRewriter.MvcControllerClassNodes);
 			}
 
-			return mvcControllerNodes;
+			return mvcControllerNodes.ToImmutableArray();
 		}
 	}
 }

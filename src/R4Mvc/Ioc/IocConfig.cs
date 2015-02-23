@@ -16,8 +16,8 @@ namespace R4Mvc.Ioc
 		{
 			// register types for IServiceProvider here
 			var serviceCollection = new ServiceCollection();
-			viewLocators.Select(x => serviceCollection.AddInstance(x));
-			staticFileLocators.Select(x => serviceCollection.AddInstance(x));
+			serviceCollection.AddInstance(typeof(IEnumerable<IViewLocator>), viewLocators);
+			serviceCollection.AddInstance(typeof(IEnumerable<IStaticFileLocator>), staticFileLocators);
 			serviceCollection.AddTransient<IViewLocatorService, ViewLocatorService>();
 			serviceCollection.AddTransient<IStaticFileGeneratorService, StaticFileGeneratorService>();
 			serviceCollection.AddTransient<IControllerRewriterService, ControllerRewriterService>();
@@ -25,10 +25,5 @@ namespace R4Mvc.Ioc
 			serviceCollection.AddTransient<R4MvcGenerator, R4MvcGenerator>();
 			return serviceCollection.BuildServiceProvider();
 		}
-
-		public static IEnumerable<T> GetServices<T>(this IServiceProvider provider)
-		{
-			return provider.GetService<IEnumerable<T>>();
-		} 
 	}
 }
