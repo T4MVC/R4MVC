@@ -132,6 +132,10 @@ namespace R4MvcHostApp.Controllers
     }
 }
 
+namespace Links
+{
+}
+
 namespace R4MVC
 {
     [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
@@ -150,21 +154,6 @@ public static partial class MVC
 {
     public static R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.AccountController();
     public static R4MvcHostApp.Controllers.HomeController Home = new R4MvcHostApp.Controllers.HomeController();
-}
-
-namespace Links
-{
-    [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
-    public static class css
-    {
-        private const string URLPATH = "~/css";
-    }
-
-    [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
-    public static class lib
-    {
-        private const string URLPATH = "~/lib";
-    }
 }
 #pragma warning restore 1591, 3008, 3009, 0108
 

@@ -8,8 +8,12 @@ namespace R4MvcHostApp.Compiler.Preprocess
 	{
 		public R4MvcCompiler(IServiceProvider serviceProvider) : base(serviceProvider)
 		{
-			// You can override the generated file location here
-			// this.SetGeneratedFilePath(() => Path.Combine(this.Project.ProjectDirectory, "R4Custom.cs"));
-        }
+			// Uncomment this method to register custom locators
+			//public override void RegisterCustomLocators()
+			//{
+			//    ControllerLocators.Clear();
+			//    ControllerLocators.Add(new CustomControllerLocator());
+			//}
+		}
 	}
 }

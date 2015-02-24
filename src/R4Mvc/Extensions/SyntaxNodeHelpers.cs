@@ -8,12 +8,12 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace R4Mvc
+namespace R4Mvc.Extensions
 {
 	/// <summary>
 	/// A collection of helper and fluent extension methods to help manipulate SyntaxNodes
 	/// </summary>
-	public static class SyntaxHelpers
+	public static class SyntaxNodeHelpers
 	{
 		public static bool InheritsFrom<T>(this ITypeSymbol symbol)
 		{
@@ -103,14 +103,9 @@ namespace R4Mvc
 
 		public static IEnumerable<MemberDeclarationSyntax> CreateMethods(this ITypeSymbol mvcSymbol)
 		{
-			foreach (
-				var mvcControllerMethod in
-					mvcSymbol.GetMembers()
-						.OfType<IMethodSymbol>()
-						.Where(x => x.DeclaredAccessibility == Accessibility.Public && x.MethodKind == MethodKind.Ordinary))
-			{
-				yield return CreateMethod(mvcControllerMethod);
-			}
+			return mvcSymbol.GetMembers()
+				.OfType<IMethodSymbol>()
+				.Where(x => x.DeclaredAccessibility == Accessibility.Public && x.MethodKind == MethodKind.Ordinary).Select(mvcControllerMethod => CreateMethod(mvcControllerMethod));
 		}
 
 		private static MemberDeclarationSyntax CreateMethod(IMethodSymbol methodSymbol)
