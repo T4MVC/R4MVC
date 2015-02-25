@@ -24,14 +24,14 @@ REM CALL packages\KoreBuild\build\kvm upgrade -runtime CLR -x86 || set errorleve
 REM CALL packages\KoreBuild\build\kvm install 1.0.0-beta2 -runtime CoreCLR -x86 || set errorlevel=1
 
 @powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/master/kvminstall.ps1'))"
-CALL %USERPROFILE%\.kre\bin\kvm install 1.0.0-beta2 -runtime CLR -x86 -alias default || set errorlevel=1
-CALL %USERPROFILE%\.kre\bin\kvm install 1.0.0-beta2 -runtime CoreCLR -x86 || set errorlevel=1
+CALL %USERPROFILE%\.k\bin\kvm install 1.0.0-beta2 -runtime CLR -x86 -alias default || set errorlevel=1
+CALL %USERPROFILE%\.k\bin\kvm install 1.0.0-beta2 -runtime CoreCLR -x86 || set errorlevel=1
 
 :run
 REM CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86 || set errorlevel=1
 REM packages\Sake\tools\Sake.exe -I packages\KoreBuild\build -f makefile.shade %*
 
-CALL %USERPROFILE%\.kre\bin\kvm use default -runtime CLR -x86 || set errorlevel=1
+CALL %USERPROFILE%\.k\bin\kvm use default -runtime CLR -x86 || set errorlevel=1
 
 CALL kpm restore || set errorlevel=1
 CALL kpm build src\R4Mvc || set errorlevel=1
