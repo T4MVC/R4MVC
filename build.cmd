@@ -20,23 +20,25 @@ IF EXIST packages\KoreBuild goto run
 .nuget\NuGet.exe install Sake -version 0.2 -o packages -ExcludeVersion 
 
 IF "%SKIP_KRE_INSTALL%"=="1" goto run
-REM CALL packages\KoreBuild\build\kvm upgrade -runtime CLR -x86
-REM CALL packages\KoreBuild\build\kvm install 1.0.0-beta2 -runtime CoreCLR -x86
+REM CALL packages\KoreBuild\build\kvm upgrade -runtime CLR -x86 || set errorlevel=1
+REM CALL packages\KoreBuild\build\kvm install 1.0.0-beta2 -runtime CoreCLR -x86 || set errorlevel=1
 
 @powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/master/kvminstall.ps1'))"
-CALL %USERPROFILE%\.kre\bin\kvm install 1.0.0-beta2 -runtime CLR -x86 -alias default
-CALL %USERPROFILE%\.kre\bin\kvm install 1.0.0-beta2 -runtime CoreCLR -x86
+CALL %USERPROFILE%\.kre\bin\kvm install 1.0.0-beta2 -runtime CLR -x86 -alias default || set errorlevel=1
+CALL %USERPROFILE%\.kre\bin\kvm install 1.0.0-beta2 -runtime CoreCLR -x86 || set errorlevel=1
 
 :run
-REM CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86
+REM CALL packages\KoreBuild\build\kvm use default -runtime CLR -x86 || set errorlevel=1
 REM packages\Sake\tools\Sake.exe -I packages\KoreBuild\build -f makefile.shade %*
 
-CALL %USERPROFILE%\.kre\bin\kvm use default -runtime CLR -x86
+CALL %USERPROFILE%\.kre\bin\kvm use default -runtime CLR -x86 || set errorlevel=1
 
-CALL kpm restore 
-CALL kpm build src\R4Mvc
-CALL kpm build src\R4MvcHostApp
-CALL kpm build test\R4Mvc.Test
+CALL kpm restore || set errorlevel=1
+CALL kpm build src\R4Mvc || set errorlevel=1
+CALL kpm build src\R4MvcHostApp || set errorlevel=1
+CALL kpm build test\R4Mvc.Test || set errorlevel=1
 
 cd test\R4Mvc.Test
-REM CALL k test
+REM CALL k test || set errorlevel=1
+
+exit /b %errorlevel%
