@@ -39,16 +39,17 @@ namespace R4MvcHostApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var signInStatus = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
-                switch (signInStatus)
-                {
-                    case SignInStatus.Success:
-                        return RedirectToLocal(returnUrl);
-                    case SignInStatus.Failure:
-                    default:
-                        ModelState.AddModelError("", "Invalid username or password.");
-                        return View(model);
-                }
+                // TODO: Fix identity build errors
+                //var signInStatus = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
+                //switch (signInStatus)
+                //{
+                //    case SignInStatus.Success:
+                //        return RedirectToLocal(returnUrl);
+                //    case SignInStatus.Failure:
+                //    default:
+                //        ModelState.AddModelError("", "Invalid username or password.");
+                //        return View(model);
+                //}
             }
 
             // If we got this far, something failed, redisplay form
@@ -142,10 +143,11 @@ namespace R4MvcHostApp.Controllers
 
         private void AddErrors(IdentityResult result)
         {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError("", error);
-            }
+            // TODO: Fix identity build errors
+            //foreach (var error in result.Errors)
+            //{
+            //    ModelState.AddModelError("", error);
+            //}
         }
 
         private async Task<ApplicationUser> GetCurrentUserAsync()
