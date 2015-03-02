@@ -38,10 +38,13 @@ CALL kpm build src\R4Mvc || set errorlevel=1
 CALL kpm build src\R4MvcHostApp || set errorlevel=1
 CALL kpm build test\R4Mvc.Test || set errorlevel=1
 
+
+IF NOT EXIST test-results MD test-results
+
 cd test\R4Mvc.Test
-CALL k test || set errorlevel=1
+CALL k test -xml ..\..\test-results\R4Mvc.Test.clr.xml || set errorlevel=1
 
 CALL %USERPROFILE%\.k\bin\kvm use default -r coreclr || set errorlevel=1
-CALL k test || set errorlevel=1
+CALL k test -xml ..\..\test-results\R4Mvc.Test.coreclr.xml || set errorlevel=1
 
 exit /b %errorlevel%

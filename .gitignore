@@ -185,3 +185,6 @@ FakesAssemblies/
 
 # ASP.net 5 Folders
 **/bower_components/
+
+# xUnit Test Results
+test-results/
