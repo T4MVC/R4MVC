@@ -43,7 +43,7 @@ namespace R4Mvc
 		}
 
 
-		public SyntaxNode Generate(CompilationContext context)
+		public SyntaxNode Generate(CompilationContext context, string helpersPrefix)
 		{
 			// Create the root node and add usings, header, pragma
 			var r4mvcNode =
@@ -60,9 +60,8 @@ namespace R4Mvc
 			var r4Namespace = SyntaxNodeHelpers.CreateNamespace("R4MVC").WithDummyClass();
 
 			// create static MVC class and add controller fields 
-			// TODO get 'MVC' static class name from overridable config, 'MVC' by default
 			var mvcStaticClass =
-				SyntaxNodeHelpers.CreateClass("MVC", null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
+				SyntaxNodeHelpers.CreateClass(helpersPrefix, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
 					.WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
 					.WithControllerFields(controllers);
 
