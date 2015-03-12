@@ -21,9 +21,7 @@ namespace R4Mvc
 		public ICollection<IViewLocator> ViewLocators { get; }
 
 		public ICollection<IStaticFileLocator> StaticFileLocators { get; }
-
-		public static bool filesGenerated;
-
+        
 		private readonly DefaultRazorViewLocator _defaultRazorViewLocator = new DefaultRazorViewLocator();
 		private readonly DefaultStaticFileLocator _defaultStaticFileLocator = new DefaultStaticFileLocator();
 
@@ -40,9 +38,7 @@ namespace R4Mvc
 
 		public void BeforeCompile(IBeforeCompileContext context)
 		{
-            if (filesGenerated) return;	// prevents generation running twice after compilation is modified the first time
-
-			//Debugger.Launch();
+            //Debugger.Launch();
 
 			var project = ((CompilationContext)(context)).Project;
 
@@ -60,8 +56,6 @@ namespace R4Mvc
 
 			// update compilation
 			context.CSharpCompilation.AddSyntaxTrees(generatedNode.SyntaxTree);
-
-			filesGenerated = true;
 		}
 
 		public void AfterCompile(IAfterCompileContext context)
