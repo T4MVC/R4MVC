@@ -40,9 +40,7 @@ namespace R4Mvc
 
 		public void BeforeCompile(IBeforeCompileContext context)
 		{
-#if !ASPNETCORE50
-			
-			if (filesGenerated) return;	// prevents generation running twice after compilation is modified the first time
+            if (filesGenerated) return;	// prevents generation running twice after compilation is modified the first time
 
 			//Debugger.Launch();
 
@@ -64,7 +62,6 @@ namespace R4Mvc
 			context.CSharpCompilation.AddSyntaxTrees(generatedNode.SyntaxTree);
 
 			filesGenerated = true;
-#endif
 		}
 
 		public void AfterCompile(IAfterCompileContext context)
