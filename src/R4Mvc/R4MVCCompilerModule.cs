@@ -1,24 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
-using Microsoft.Framework.ConfigurationModel;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.Runtime;
 using Microsoft.Framework.Runtime.Roslyn;
-using R4Mvc.Constants;
 using R4Mvc.Extensions;
 using R4Mvc.Ioc;
 using R4Mvc.Locators;
+using R4Mvc.Services;
 
 namespace R4Mvc
 {
 	public class R4MVCCompilerModule : ICompileModule
 	{
 		private readonly IServiceProvider _serviceProvider;
-	    private IConfiguration _configuration;
-
+	    
 		public ICollection<IViewLocator> ViewLocators { get; }
 
 		public ICollection<IStaticFileLocator> StaticFileLocators { get; }
@@ -42,7 +39,7 @@ namespace R4Mvc
             //Debugger.Launch();
             
 			var project = ((CompilationContext)(context)).Project;
-            LoadConfig(project);
+            var settings = LoadSettings(project);
 
             // HACK to make project available to default view
             _defaultRazorViewLocator.ProjectDelegate = () => project;
@@ -50,7 +47,7 @@ namespace R4Mvc
 
             // generate r4mvc syntaxtree
             var generator = _serviceProvider.GetService<R4MvcGenerator>();
-			var generatedNode = generator.Generate((CompilationContext)context, _configuration.GetHelpersPrefix());
+			var generatedNode = generator.Generate((CompilationContext)context, settings);
 
 			// out to file
 		    var generatedFilePath = Path.Combine(project.ProjectDirectory, R4MvcGenerator.R4MvcFileName);
@@ -72,12 +69,9 @@ namespace R4Mvc
 			StaticFileLocators.Add(_defaultStaticFileLocator);
 		}
         
-	    private void LoadConfig(Project project)
+	    private ISettings LoadSettings(Project project)
 	    {
-            var configuration = new Configuration();
-            configuration.AddJsonFile(Path.Combine(project.ProjectDirectory, Files.Config));
-
-	        _configuration = configuration;
+            return new Settings(project.ProjectDirectory);
 	    }
 	}
 }
