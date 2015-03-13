@@ -5,6 +5,6 @@ namespace R4Mvc.Services
 {
 	public interface IStaticFileGeneratorService
 	{
-		MemberDeclarationSyntax GenerateStaticFiles();
+		MemberDeclarationSyntax GenerateStaticFiles(ISettings settings);
 	}
 }

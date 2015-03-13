@@ -54,7 +54,7 @@ namespace R4Mvc
 
 			var controllers = _controllerRewriter.RewriteControllers(context.Compilation, R4MvcFileName);
 			var generatedControllers = _controllerGenerator.GenerateControllers(context.Compilation, controllers).ToImmutableArray();
-			var staticFileNode = _staticFileGenerator.GenerateStaticFiles();
+			var staticFileNode = _staticFileGenerator.GenerateStaticFiles(settings);
 
 			// add the dummy class using in the derived controller partial class
 			var r4Namespace = SyntaxNodeHelpers.CreateNamespace(settings.R4MvcNamespace).WithDummyClass();

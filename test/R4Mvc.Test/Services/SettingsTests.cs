@@ -62,6 +62,34 @@ namespace R4Mvc.Test.Services
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void LinksNamespace_returns_expected_value_from_json_file()
+        {
+            // Arrange
+            var settings = GetSettings();
+            var expected = "Linksfoo";
+
+            // Act
+            var actual = settings.LinksNamespace;
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void LinksNamespace_returns_default_value_from_json_file_when_key_not_found()
+        {
+            // Arrange
+            var settings = GetEmptySettings();
+            var expected = "Links";
+
+            // Act
+            var actual = settings.LinksNamespace;
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
         private ISettings GetSettings()
         {
             var projectDirectory = GetProjectDirectory();

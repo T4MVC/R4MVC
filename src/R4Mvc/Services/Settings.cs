@@ -31,6 +31,11 @@ namespace R4Mvc.Services
             get { return GetStringValue(ConfigKeys.R4MvcNamespace, "R4Mvc"); }
         }
 
+        public string LinksNamespace
+        {
+            get { return GetStringValue(ConfigKeys.LinksNamespace, "Links"); }
+        }
+
         private string GetStringValue(string key, string defaultValue)
         {
             string value;
