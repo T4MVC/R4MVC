@@ -44,7 +44,7 @@ IF NOT EXIST test-results MD test-results
 cd test\R4Mvc.Test
 CALL k test -xml ..\..\test-results\R4Mvc.Test.clr.xml || set errorlevel=1
 
-CALL %USERPROFILE%\.k\bin\kvm use default -r coreclr || set errorlevel=1
-CALL k test -xml ..\..\test-results\R4Mvc.Test.coreclr.xml || set errorlevel=1
+REM CALL %USERPROFILE%\.k\bin\kvm use default -r coreclr || set errorlevel=1
+REM CALL k test -xml ..\..\test-results\R4Mvc.Test.coreclr.xml || set errorlevel=1
 
 exit /b %errorlevel%
