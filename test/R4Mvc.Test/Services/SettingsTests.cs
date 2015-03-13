@@ -34,6 +34,34 @@ namespace R4Mvc.Test.Services
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void R4MvcNamespace_returns_expected_value_from_json_file()
+        {
+            // Arrange
+            var settings = GetSettings();
+            var expected = "R4Mvcfoo";
+
+            // Act
+            var actual = settings.R4MvcNamespace;
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void R4MvcNamespace_returns_default_value_from_json_file_when_key_not_found()
+        {
+            // Arrange
+            var settings = GetEmptySettings();
+            var expected = "R4Mvc";
+
+            // Act
+            var actual = settings.R4MvcNamespace;
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
         private ISettings GetSettings()
         {
             var projectDirectory = GetProjectDirectory();

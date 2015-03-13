@@ -1,3 +1,4 @@
 ﻿{
-    "helpersPrefix" :  "MVCfoo"
+    "helpersPrefix": "MVCfoo",
+    "r4mvcNamespace":  "R4Mvcfoo"
 }

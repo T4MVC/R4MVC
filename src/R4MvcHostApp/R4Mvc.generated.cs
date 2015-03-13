@@ -136,7 +136,7 @@ namespace Links
 {
 }
 
-namespace R4MVC
+namespace R4Mvc
 {
     [GeneratedCode("R4MVC", "1.0"), DebuggerNonUserCode]
     public class Dummy

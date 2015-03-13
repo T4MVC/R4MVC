@@ -23,13 +23,20 @@ namespace R4Mvc.Services
 
         public string HelpersPrefix
         {
-            get
-            {
-                string prefix;
-                _configuration.TryGet(ConfigKeys.HelpersPrefix, out prefix);
+            get { return GetStringValue(ConfigKeys.HelpersPrefix, "MVC"); }
+        }
 
-                return prefix ?? "MVC";
-            }
+        public string R4MvcNamespace
+        {
+            get { return GetStringValue(ConfigKeys.R4MvcNamespace, "R4Mvc"); }
+        }
+
+        private string GetStringValue(string key, string defaultValue)
+        {
+            string value;
+            _configuration.TryGet(key, out value);
+
+            return value ?? defaultValue;
         }
     }
 }

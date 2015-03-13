@@ -57,7 +57,7 @@ namespace R4Mvc
 			var staticFileNode = _staticFileGenerator.GenerateStaticFiles();
 
 			// add the dummy class using in the derived controller partial class
-			var r4Namespace = SyntaxNodeHelpers.CreateNamespace("R4MVC").WithDummyClass();
+			var r4Namespace = SyntaxNodeHelpers.CreateNamespace(settings.R4MvcNamespace).WithDummyClass();
 
 			// create static MVC class and add controller fields 
 			var mvcStaticClass =
