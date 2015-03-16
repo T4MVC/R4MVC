@@ -43,7 +43,7 @@ namespace R4Mvc
 		}
 
 
-		public SyntaxNode Generate(CompilationContext context)
+		public SyntaxNode Generate(CompilationContext context, ISettings settings)
 		{
 			// Create the root node and add usings, header, pragma
 			var r4mvcNode =
@@ -54,15 +54,14 @@ namespace R4Mvc
 
 			var controllers = _controllerRewriter.RewriteControllers(context.Compilation, R4MvcFileName);
 			var generatedControllers = _controllerGenerator.GenerateControllers(context.Compilation, controllers).ToImmutableArray();
-			var staticFileNode = _staticFileGenerator.GenerateStaticFiles();
+			var staticFileNode = _staticFileGenerator.GenerateStaticFiles(settings);
 
 			// add the dummy class using in the derived controller partial class
-			var r4Namespace = SyntaxNodeHelpers.CreateNamespace("R4MVC").WithDummyClass();
+			var r4Namespace = SyntaxNodeHelpers.CreateNamespace(settings.R4MvcNamespace).WithDummyClass();
 
 			// create static MVC class and add controller fields 
-			// TODO get 'MVC' static class name from overridable config, 'MVC' by default
 			var mvcStaticClass =
-				SyntaxNodeHelpers.CreateClass("MVC", null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
+				SyntaxNodeHelpers.CreateClass(settings.HelpersPrefix, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
 					.WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
 					.WithControllerFields(controllers);
 

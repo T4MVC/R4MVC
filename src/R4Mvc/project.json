@@ -5,7 +5,8 @@
 		"System.Text.Encoding": "4.0.10-beta-*",
 		"System.IO": "4.0.10-beta-*",
 		"Microsoft.AspNet.Mvc": "6.0.0-beta3",
-		"Microsoft.Framework.Runtime.Roslyn" : "1.0.0-beta3"
+        "Microsoft.Framework.Runtime.Roslyn": "1.0.0-beta3",
+        "Microsoft.Framework.ConfigurationModel.Json": "1.0.0-beta3"
 	},
 
 	"frameworks": {

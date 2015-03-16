@@ -20,13 +20,13 @@ namespace R4Mvc.Services
 			_staticFileLocators = staticFileLocators;
 		}
 
-		public MemberDeclarationSyntax GenerateStaticFiles()
+		public MemberDeclarationSyntax GenerateStaticFiles(ISettings settings)
 		{
 			var staticfiles = _staticFileLocators.SelectMany(x => x.Find());
 			staticfiles = SanitiseFileNamesWithNoConflicts(staticfiles);
 
 			// create static Links class (scripts, content, bundles?)
-			var linksNamespace = CreateNamespace("Links");
+			var linksNamespace = CreateNamespace(settings.LinksNamespace);
 			foreach (var grouping in staticfiles.GroupBy(x => x.CollectionName))
 			{
 				var sanitizedGrouping = SanitiseFileNamesWithNoConflicts(grouping);
