@@ -1,11 +1,11 @@
 ﻿{
     "version": "1.0.0-*",
     "dependencies": {
-        "Microsoft.CodeAnalysis.CSharp": "1.0.0-rc1",
+        "Microsoft.CodeAnalysis.CSharp": "1.0.0-rc2",
         "System.Text.Encoding": "4.0.10-beta-*",
         "System.IO": "4.0.10-beta-*",
-        "Microsoft.Framework.Runtime.Roslyn": "1.0.0-beta3-*",
-		"Microsoft.Framework.Runtime": "1.0.0-beta3-*",
+        "Microsoft.Framework.Runtime.Roslyn": "1.0.0-beta4-*",
+		"Microsoft.Framework.Runtime": "1.0.0-beta4-*",
         "xunit": "2.0.0-rc3-*",
         "xunit.runner.aspnet": "2.0.0-rc3-*",
         "R4Mvc": "1.0.0-*"
@@ -16,11 +16,11 @@
     },
 
     "frameworks": {
-        "aspnet50": {
+        "dnx451": {
             "dependencies": {
             }
         },
-        "aspnetcore50": {
+        "dnxcore50": {
             "dependencies": {
                 "System.Runtime": "4.0.20-beta-*",
                 "System.AppContext": "4.0.0-beta-*"

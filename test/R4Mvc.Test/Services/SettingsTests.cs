@@ -104,7 +104,7 @@ namespace R4Mvc.Test.Services
 
         private string GetProjectDirectory()
         { 
-#if !ASPNETCORE50
+#if !DNXCORE50
         return AppDomain.CurrentDomain.BaseDirectory;
 #else
        return AppContext.BaseDirectory;

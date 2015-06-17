@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22609.0
+VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{30626644-0E8A-4610-A0A9-274E91F1A037}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E11DD8FA-FBC7-490C-88B7-15DB073FD903}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "R4Mvc", "src\R4Mvc\R4Mvc.kproj", "{96965C66-BF3C-4A96-BA76-C77411B8AC17}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "R4Mvc", "src\R4Mvc\R4Mvc.xproj", "{96965C66-BF3C-4A96-BA76-C77411B8AC17}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "R4MvcHostApp", "src\R4MvcHostApp\R4MvcHostApp.kproj", "{2DCF80B3-15C8-48FF-9F8A-A41104C27764}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "R4MvcHostApp", "src\R4MvcHostApp\R4MvcHostApp.xproj", "{2DCF80B3-15C8-48FF-9F8A-A41104C27764}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "R4Mvc.Test", "test\R4Mvc.Test\R4Mvc.Test.kproj", "{21E184E0-3D98-4112-B72C-F12F17D562B0}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "R4Mvc.Test", "test\R4Mvc.Test\R4Mvc.Test.xproj", "{21E184E0-3D98-4112-B72C-F12F17D562B0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ED8974FA-C1B2-4CFD-9619-E4304859A602}"
 	ProjectSection(SolutionItems) = preProject
