@@ -18,14 +18,18 @@ namespace R4Mvc.Locators
 			var project = ProjectDelegate.Invoke();
 			var projectDirectory = project.ProjectDirectory;
 			var projectRootUrl = projectDirectory.EndsWith("/") ? new Uri(projectDirectory) : new Uri(projectDirectory + "/");
-			return
-				project.ContentFiles.Where(x => x.EndsWith(_extension, StringComparison.CurrentCultureIgnoreCase))
-					.Select(x =>
-					{
-						var controllerName = Path.GetDirectoryName(x)?.Split(Path.DirectorySeparatorChar).Last() + "Controller";
-						var absoluteUrl = new Uri(x);
-						return new View(controllerName, Path.GetFileNameWithoutExtension(x), projectRootUrl.MakeRelativeUri(absoluteUrl));
-					});
+
+            // TODO: Refactor out our dependency on Project.ContentFiles
+            return new List<View>();
+
+            // return
+				//project.ContentFiles.Where(x => x.EndsWith(_extension, StringComparison.CurrentCultureIgnoreCase))
+				//	.Select(x =>
+				//	{
+				//		var controllerName = Path.GetDirectoryName(x)?.Split(Path.DirectorySeparatorChar).Last() + "Controller";
+				//		var absoluteUrl = new Uri(x);
+				//		return new View(controllerName, Path.GetFileNameWithoutExtension(x), projectRootUrl.MakeRelativeUri(absoluteUrl));
+				//	});
 		}
 	}
 }

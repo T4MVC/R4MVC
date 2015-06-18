@@ -19,14 +19,18 @@ namespace R4Mvc.Locators
 			var project = ProjectDelegate.Invoke();
 			var projectDirectory = project.ProjectDirectory;
 			var projectRootUrl = projectDirectory.EndsWith("/") ? new Uri(projectDirectory) : new Uri(projectDirectory + "/");
-			return
-				project.ContentFiles.Select(
-					x =>
-						{
-							var absoluteUrl = new Uri(x);
-							var @namespace = absoluteUrl;
-							return new StaticFile(Path.GetFileNameWithoutExtension(x), projectRootUrl.MakeRelativeUri(absoluteUrl), @namespace);
-						});
+
+            // TODO: Refactor out our dependency on Project.ContentFiles
+            return new List<StaticFile>();
+
+           // return
+				//project.ContentFiles.Select(
+				//	x =>
+				//		{
+				//			var absoluteUrl = new Uri(x);
+				//			var @namespace = absoluteUrl;
+				//			return new StaticFile(Path.GetFileNameWithoutExtension(x), projectRootUrl.MakeRelativeUri(absoluteUrl), @namespace);
+				//		});
 		}
 	}
 }
