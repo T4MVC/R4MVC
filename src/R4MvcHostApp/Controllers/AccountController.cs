@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
 using R4MvcHostApp.Models;
@@ -152,7 +153,9 @@ namespace R4MvcHostApp.Controllers
 
         private async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            return await UserManager.FindByIdAsync(Context.User.Identity.GetUserId());
+            // TODO: Fix identity build errors
+            //return await UserManager.FindByIdAsync(Context.User.Identity.GetUserId());
+            throw new Exception("TODO: Fix identity build errors");
         }
 
         public enum ManageMessageId

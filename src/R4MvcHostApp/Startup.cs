@@ -5,6 +5,7 @@ using Microsoft.AspNet.Diagnostics.Entity;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Security.Cookies;
 using Microsoft.Data.Entity;
@@ -32,12 +33,12 @@ namespace R4MvcHostApp
         public void ConfigureServices(IServiceCollection services)
         {
             // Add EF services to the services container.
-            services.AddEntityFramework(Configuration)
+            services.AddEntityFramework()
                 .AddSqlServer()
                 .AddDbContext<ApplicationDbContext>();
 
             // Add Identity services to the services container.
-            services.AddIdentity<ApplicationUser, IdentityRole>(Configuration)
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Add MVC services to the services container.
