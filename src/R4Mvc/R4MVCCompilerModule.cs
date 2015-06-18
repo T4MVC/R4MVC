@@ -54,7 +54,7 @@ namespace R4Mvc
 			generatedNode.WriteFile(generatedFilePath);
 
 			// update compilation
-			context.CSharpCompilation.AddSyntaxTrees(generatedNode.SyntaxTree);
+			context.Compilation.AddSyntaxTrees(generatedNode.SyntaxTree);
 		}
 
 		public void AfterCompile(IAfterCompileContext context)
