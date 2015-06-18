@@ -23,7 +23,7 @@ IF "%SKIP_KRE_INSTALL%"=="1" goto run
 REM CALL packages\KoreBuild\build\dnvm upgrade -runtime CLR -x86 || set errorlevel=1
 REM CALL packages\KoreBuild\build\dnvm install 1.0.0-beta2 -runtime CoreCLR -x86 || set errorlevel=1
 
-@powershell -NoProfile -ExecutionPolicy unrestricted -Command "iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/release/dnvminstall.ps1'))"
+@powershell -NoProfile -ExecutionPolicy unrestricted -Command "&{$Branch='dev';iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))}"
 CALL %USERPROFILE%\.dnx\bin\dnvm install latest -runtime CLR -x86 -alias default || set errorlevel=1
 CALL %USERPROFILE%\.dnx\bin\dnvm install latest -runtime CoreCLR -x86 || set errorlevel=1
 
