@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using R4Mvc.Services;
 using Xunit;
 
@@ -104,12 +105,7 @@ namespace R4Mvc.Test.Services
 
         private string GetProjectDirectory()
         { 
-#if !DNXCORE50
-        return AppDomain.CurrentDomain.BaseDirectory;
-#else
-       return AppContext.BaseDirectory;
-#endif
+           return Directory.GetCurrentDirectory();
         }
-
     }
 }
