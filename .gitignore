@@ -188,3 +188,6 @@ FakesAssemblies/
 
 # xUnit Test Results
 test-results/
+
+# Visual Studio 2015
+.vs
