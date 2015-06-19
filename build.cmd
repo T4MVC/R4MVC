@@ -42,7 +42,7 @@ CALL dnu build test\R4Mvc.Test || set errorlevel=1
 IF NOT EXIST test-results MD test-results
 
 cd test\R4Mvc.Test
-CALL dnx test -xml ..\..\test-results\R4Mvc.Test.clr.xml || set errorlevel=1
+CALL dnx . test -xml ..\..\test-results\R4Mvc.Test.clr.xml || set errorlevel=1
 
 REM CALL %USERPROFILE%\.dnx\bin\dnvm use default -r coreclr || set errorlevel=1
 REM CALL dnx test -xml ..\..\test-results\R4Mvc.Test.coreclr.xml || set errorlevel=1
