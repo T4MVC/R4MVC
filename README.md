@@ -5,7 +5,7 @@ It is a re-implementation of [T4MVC](https://github.com/T4MVC/T4MVC) for ASP.NET
 
 ## ** NEW MAINTAINTERS WANTED **
 
-We are currently looking for new maintainers.  Please see issue #42 for more details.
+We are currently looking for new maintainers.  Please see issue [#42](https://github.com/T4MVC/R4MVC/issues/42) for more details.
 
 ## Usage
 
