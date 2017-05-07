@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
-using Microsoft.Framework.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 using R4Mvc.Locators;
 using R4Mvc.Services;
@@ -15,8 +14,8 @@ namespace R4Mvc.Ioc
 		{
 			// register types for IServiceProvider here
 			var serviceCollection = new ServiceCollection();
-			serviceCollection.AddInstance(typeof(IEnumerable<IViewLocator>), viewLocators);
-			serviceCollection.AddInstance(typeof(IEnumerable<IStaticFileLocator>), staticFileLocators);
+			serviceCollection.AddSingleton(typeof(IEnumerable<IViewLocator>), viewLocators);
+			serviceCollection.AddSingleton(typeof(IEnumerable<IStaticFileLocator>), staticFileLocators);
 			serviceCollection.AddTransient<IViewLocatorService, ViewLocatorService>();
 			serviceCollection.AddTransient<IStaticFileGeneratorService, StaticFileGeneratorService>();
 			serviceCollection.AddTransient<IControllerRewriterService, ControllerRewriterService>();

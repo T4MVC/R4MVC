@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>dnx451;dnxcore50</TargetFrameworks>
+    <AssemblyName>R4MvcHostApp</AssemblyName>
+    <PackageId>R4MvcHostApp</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\**\*;node_modules;bower_components" />
+    <EmbeddedResource Remove="wwwroot\**\*;node_modules;bower_components" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\R4Mvc\R4Mvc.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EntityFramework.SqlServer" Version="7.0.0-beta4-*" />
+    <PackageReference Include="EntityFramework.Commands" Version="7.0.0-beta4-*" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="6.0.0-beta4-*" />
+    <PackageReference Include="Microsoft.AspNet.Diagnostics" Version="1.0.0-beta4-*" />
+    <PackageReference Include="Microsoft.AspNet.Diagnostics.Entity" Version="7.0.0-beta4-*" />
+    <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework" Version="3.0.0-beta4" />
+    <PackageReference Include="Microsoft.AspNet.Security.Cookies" Version="1.0.0-beta3-*" />
+    <PackageReference Include="Microsoft.AspNet.Server.IIS" Version="1.0.0-beta4-*" />
+    <PackageReference Include="Microsoft.AspNet.Server.WebListener" Version="1.0.0-beta4-*" />
+    <PackageReference Include="Microsoft.AspNet.StaticFiles" Version="1.0.0-beta4-*" />
+    <PackageReference Include="Microsoft.Framework.ConfigurationModel.Json" Version="1.0.0-beta4-*" />
+    <PackageReference Include="Microsoft.Framework.CodeGenerators.Mvc" Version="1.0.0-beta4-*" />
+    <PackageReference Include="Microsoft.Framework.Logging" Version="1.0.0-beta4-*" />
+    <PackageReference Include="Microsoft.Framework.Logging.Console" Version="1.0.0-beta4-*" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'dnx451' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>
