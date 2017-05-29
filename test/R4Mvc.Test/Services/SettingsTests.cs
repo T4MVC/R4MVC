@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using R4Mvc.Services;
 using Xunit;
 
@@ -104,8 +103,8 @@ namespace R4Mvc.Test.Services
         }
 
         private string GetProjectDirectory()
-        { 
-           return Directory.GetCurrentDirectory();
+        {
+            return Directory.GetCurrentDirectory();
         }
     }
 }
