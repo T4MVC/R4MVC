@@ -7,16 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{30626644-0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E11DD8FA-FBC7-490C-88B7-15DB073FD903}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ED8974FA-C1B2-4CFD-9619-E4304859A602}"
-	ProjectSection(FolderGlobals) = preProject
-		global_1json__JSONSchema = http://json.schemastore.org/global
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4Mvc", "src\R4Mvc\R4Mvc.csproj", "{0DF253A4-4093-4299-98A1-D28175DFEE34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R4MvcHostApp", "src\R4MvcHostApp\R4MvcHostApp.csproj", "{60691734-BD6C-4BED-8FAE-77E324C76574}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4MvcHostApp", "src\R4MvcHostApp\R4MvcHostApp.csproj", "{60691734-BD6C-4BED-8FAE-77E324C76574}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R4Mvc.Test", "test\R4Mvc.Test\R4Mvc.Test.csproj", "{CFE51159-0850-415A-BAD0-FBFF607E772F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4Mvc.Test", "test\R4Mvc.Test\R4Mvc.Test.csproj", "{CFE51159-0850-415A-BAD0-FBFF607E772F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
