@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
-using Microsoft.Framework.ConfigurationModel;
+//using Microsoft.Framework.ConfigurationModel;
 using R4Mvc.Constants;
 
 namespace R4Mvc.Services
 {
     public class Settings : ISettings
     {
-        private readonly IConfiguration _configuration;
+        //private readonly IConfiguration _configuration;
         
         public const string SettingsFileName = "r4mvc.json";
 
@@ -15,10 +15,10 @@ namespace R4Mvc.Services
 
         internal Settings(string projectDirectory, string settingsFile)
         {
-            var configuration = new Configuration();
-            configuration.AddJsonFile(Path.Combine(projectDirectory, settingsFile));
+            //var configuration = new Configuration();
+            //configuration.AddJsonFile(Path.Combine(projectDirectory, settingsFile));
 
-            _configuration = configuration;
+            //_configuration = configuration;
         }
 
         public string HelpersPrefix
@@ -39,9 +39,10 @@ namespace R4Mvc.Services
         private string GetStringValue(string key, string defaultValue)
         {
             string value;
-            _configuration.TryGet(key, out value);
+            //_configuration.TryGet(key, out value);
 
-            return value ?? defaultValue;
+            //return value ?? defaultValue;
+            throw new NotImplementedException();
         }
     }
 }

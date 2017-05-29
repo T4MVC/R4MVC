@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Framework.Runtime.Roslyn;
 
 using R4Mvc.Extensions;
 using R4Mvc.Services;
@@ -43,38 +42,38 @@ namespace R4Mvc
 		}
 
 
-		public SyntaxNode Generate(CompilationContext context, ISettings settings)
-		{
-			// Create the root node and add usings, header, pragma
-			var r4mvcNode =
-				SyntaxFactory.CompilationUnit()
-					.WithUsings("System.CodeDom.Compiler", "System.Diagnostics", "Microsoft.AspNet.Mvc")
-					.WithHeader(_headerText)
-					.WithPragmaCodes(false, pramaCodes);
+        public SyntaxNode Generate(CSharpCompilation compilation, ISettings settings)
+        {
+            // Create the root node and add usings, header, pragma
+            var r4mvcNode =
+                SyntaxFactory.CompilationUnit()
+                    .WithUsings("System.CodeDom.Compiler", "System.Diagnostics", "Microsoft.AspNet.Mvc")
+                    .WithHeader(_headerText)
+                    .WithPragmaCodes(false, pramaCodes);
 
-			var controllers = _controllerRewriter.RewriteControllers(context.Compilation, R4MvcFileName);
-			var generatedControllers = _controllerGenerator.GenerateControllers(context.Compilation, controllers).ToImmutableArray();
-			var staticFileNode = _staticFileGenerator.GenerateStaticFiles(settings);
+            var controllers = _controllerRewriter.RewriteControllers(compilation, R4MvcFileName);
+            var generatedControllers = _controllerGenerator.GenerateControllers(compilation, controllers).ToImmutableArray();
+            var staticFileNode = _staticFileGenerator.GenerateStaticFiles(settings);
 
-			// add the dummy class using in the derived controller partial class
-			var r4Namespace = SyntaxNodeHelpers.CreateNamespace(settings.R4MvcNamespace).WithDummyClass();
+            // add the dummy class using in the derived controller partial class
+            var r4Namespace = SyntaxNodeHelpers.CreateNamespace(settings.R4MvcNamespace).WithDummyClass();
 
-			// create static MVC class and add controller fields 
-			var mvcStaticClass =
-				SyntaxNodeHelpers.CreateClass(settings.HelpersPrefix, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
-					.WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
-					.WithControllerFields(controllers);
+            // create static MVC class and add controller fields 
+            var mvcStaticClass =
+                SyntaxNodeHelpers.CreateClass(settings.HelpersPrefix, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
+                    .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
+                    .WithControllerFields(controllers);
 
-			r4mvcNode =
-				r4mvcNode.AddMembers(generatedControllers.Cast<MemberDeclarationSyntax>().ToArray())
-					.AddMembers(staticFileNode)
-					.AddMembers(r4Namespace)
-					.AddMembers(mvcStaticClass)
-					.NormalizeWhitespace()
-					.WithPragmaCodes(true, pramaCodes);
-			
-			// NOTE reenable pragma codes after normalizing whitespace or it doesn't place on newline
-			return r4mvcNode;
-		}
-	}
+            r4mvcNode =
+                r4mvcNode.AddMembers(generatedControllers.Cast<MemberDeclarationSyntax>().ToArray())
+                    .AddMembers(staticFileNode)
+                    .AddMembers(r4Namespace)
+                    .AddMembers(mvcStaticClass)
+                    .NormalizeWhitespace()
+                    .WithPragmaCodes(true, pramaCodes);
+
+            // NOTE reenable pragma codes after normalizing whitespace or it doesn't place on newline
+            return r4mvcNode;
+        }
+    }
 }
