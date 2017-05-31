@@ -103,13 +103,12 @@ namespace R4Mvc.Tools.Extensions
 
         public static NamespaceDeclarationSyntax WithDummyClass(this NamespaceDeclarationSyntax node)
         {
-            const string dummyClassName = "Dummy";
             var dummyClass =
-                CreateClass(dummyClassName)
+                CreateClass(Constants.DummyClass)
                     .WithModifiers(SyntaxKind.PublicKeyword)
                     .WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute())
                     .WithDefaultConstructor(false, SyntaxKind.PrivateKeyword)
-                    .WithField("Instance", dummyClassName, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+                    .WithField(Constants.DummyClassInstance, Constants.DummyClass, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
 
             return node.AddMembers(dummyClass);
         }

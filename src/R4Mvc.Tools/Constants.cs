@@ -5,6 +5,9 @@
         internal const string ProjectName = "R4Mvc";
         internal const string Version = "1.0";
 
+        internal const string DummyClass = "Dummy";
+        internal const string DummyClassInstance = "Instance";
+
         internal static class ConfigKeys
         {
             internal const string HelpersPrefix = "helpersPrefix";

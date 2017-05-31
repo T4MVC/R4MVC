@@ -23,13 +23,49 @@ namespace R4MvcHostApp.Controllers
         {
         }
 
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected AccountController(Dummy d)
+        {
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToAction(IActionResult result)
+        {
+            var callInfo = result.GetR4MvcResult();
+            return RedirectToRoute(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToAction(Task<IActionResult> taskResult)
+        {
+            return RedirectToAction(taskResult.Result);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToActionPermanent(IActionResult result)
+        {
+            var callInfo = result.GetR4MvcResult();
+            return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToActionPermanent(Task<IActionResult> taskResult)
+        {
+            return RedirectToActionPermanent(taskResult.Result);
+        }
+
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Name = "AccountController";
+        public AccountController Actions => MVC.Account;
         [GeneratedCode("R4Mvc", "1.0")]
-        public const string NameConst = "AccountController";
+        public readonly string Area = "";
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Area = "AccountController";
+        public readonly string Name = "Account";
+        [GeneratedCode("R4Mvc", "1.0")]
+        public const string NameConst = "Account";
+        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ActionNamesClass s_actions = new ActionNamesClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ActionNamesClass ActionNames => s_actions;
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
@@ -68,10 +104,14 @@ namespace R4MvcHostApp.Controllers
             public const string AccessDenied = "AccessDenied";
         }
 
+        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ViewsClass s_views = new ViewsClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ViewsClass Views => s_views;
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ViewsClass
         {
+            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
             public class _ViewNamesClass
             {
@@ -82,7 +122,7 @@ namespace R4MvcHostApp.Controllers
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_AccountController : R4MvcHostApp.Controllers.AccountController
     {
-        public R4MVC_AccountController()
+        public R4MVC_AccountController(): base (Dummy.Instance)
         {
         }
     }
@@ -94,13 +134,49 @@ namespace R4MvcHostApp.Controllers
         {
         }
 
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected HomeController(Dummy d)
+        {
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToAction(IActionResult result)
+        {
+            var callInfo = result.GetR4MvcResult();
+            return RedirectToRoute(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToAction(Task<IActionResult> taskResult)
+        {
+            return RedirectToAction(taskResult.Result);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToActionPermanent(IActionResult result)
+        {
+            var callInfo = result.GetR4MvcResult();
+            return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToActionPermanent(Task<IActionResult> taskResult)
+        {
+            return RedirectToActionPermanent(taskResult.Result);
+        }
+
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Name = "HomeController";
+        public HomeController Actions => MVC.Home;
         [GeneratedCode("R4Mvc", "1.0")]
-        public const string NameConst = "HomeController";
+        public readonly string Area = "";
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Area = "HomeController";
+        public readonly string Name = "Home";
+        [GeneratedCode("R4Mvc", "1.0")]
+        public const string NameConst = "Home";
+        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ActionNamesClass s_actions = new ActionNamesClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ActionNamesClass ActionNames => s_actions;
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
@@ -119,10 +195,14 @@ namespace R4MvcHostApp.Controllers
             public const string Error = "Error";
         }
 
+        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ViewsClass s_views = new ViewsClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ViewsClass Views => s_views;
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ViewsClass
         {
+            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
             public class _ViewNamesClass
             {
@@ -133,7 +213,7 @@ namespace R4MvcHostApp.Controllers
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_HomeController : R4MvcHostApp.Controllers.HomeController
     {
-        public R4MVC_HomeController()
+        public R4MVC_HomeController(): base (Dummy.Instance)
         {
         }
     }
@@ -145,13 +225,49 @@ namespace R4MvcHostApp.Controllers
         {
         }
 
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected ManageController(Dummy d)
+        {
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToAction(IActionResult result)
+        {
+            var callInfo = result.GetR4MvcResult();
+            return RedirectToRoute(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToAction(Task<IActionResult> taskResult)
+        {
+            return RedirectToAction(taskResult.Result);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToActionPermanent(IActionResult result)
+        {
+            var callInfo = result.GetR4MvcResult();
+            return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToActionPermanent(Task<IActionResult> taskResult)
+        {
+            return RedirectToActionPermanent(taskResult.Result);
+        }
+
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Name = "ManageController";
+        public ManageController Actions => MVC.Manage;
         [GeneratedCode("R4Mvc", "1.0")]
-        public const string NameConst = "ManageController";
+        public readonly string Area = "";
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Area = "ManageController";
+        public readonly string Name = "Manage";
+        [GeneratedCode("R4Mvc", "1.0")]
+        public const string NameConst = "Manage";
+        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ActionNamesClass s_actions = new ActionNamesClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ActionNamesClass ActionNames => s_actions;
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
@@ -186,10 +302,14 @@ namespace R4MvcHostApp.Controllers
             public const string LinkLoginCallback = "LinkLoginCallback";
         }
 
+        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ViewsClass s_views = new ViewsClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ViewsClass Views => s_views;
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ViewsClass
         {
+            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
             public class _ViewNamesClass
             {
@@ -200,7 +320,7 @@ namespace R4MvcHostApp.Controllers
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_ManageController : R4MvcHostApp.Controllers.ManageController
     {
-        public R4MVC_ManageController()
+        public R4MVC_ManageController(): base (Dummy.Instance)
         {
         }
     }
@@ -219,6 +339,7 @@ namespace R4Mvc
         {
         }
 
+        [GeneratedCode("R4Mvc", "1.0")]
         public static Dummy Instance = new Dummy();
     }
 }

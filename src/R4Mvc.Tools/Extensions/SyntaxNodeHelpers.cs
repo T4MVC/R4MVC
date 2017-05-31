@@ -84,12 +84,12 @@ namespace R4Mvc.Tools.Extensions
                 AttributeArgumentList(
                     SeparatedList(
                         new[]
-                            {
-                                AttributeArgument(
+                        {
+                            AttributeArgument(
                                 LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(Constants.ProjectName))),
-                                    AttributeArgument(
+                            AttributeArgument(
                                 LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(Constants.Version)))
-                            }));
+                        }));
             return Attribute(IdentifierName("GeneratedCode"), arguments);
         }
 
@@ -128,28 +128,30 @@ namespace R4Mvc.Tools.Extensions
         public static FieldDeclarationSyntax CreateFieldWithDefaultInitializer(string fieldName, string typeName, string valueTypeName, params SyntaxKind[] modifiers)
         {
             return FieldDeclaration(
-                VariableDeclaration(ParseTypeName(typeName))
-                    .WithVariables(
-                        SingletonSeparatedList(
-                            VariableDeclarator(Identifier(fieldName))
-                                .WithInitializer(
-                                    EqualsValueClause(
-                                        ObjectCreationExpression(IdentifierName(valueTypeName))
-                                            .WithArgumentList(ArgumentList())))))).WithModifiers(modifiers);
+                VariableDeclaration(
+                    IdentifierName(typeName),
+                    fieldName,
+                    ObjectCreationExpression(IdentifierName(valueTypeName))
+                        .WithArgumentList(ArgumentList())))
+                .WithModifiers(modifiers);
         }
 
         public static FieldDeclarationSyntax CreateStringFieldDeclaration(string fieldName, string fieldValue, params SyntaxKind[] modifiers)
         {
-            return
-                FieldDeclaration(
-                    VariableDeclaration(
-                        PredefinedType(Token(SyntaxKind.StringKeyword)),
-                        SingletonSeparatedList(
-                            VariableDeclarator(fieldName)
-                                .WithInitializer(
-                                    EqualsValueClause(
-                                        LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(fieldValue)))))))
-                    .WithModifiers(modifiers);
+            return FieldDeclaration(
+                VariableDeclaration(
+                    PredefinedType(Token(SyntaxKind.StringKeyword)),
+                    fieldName,
+                    LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(fieldValue))))
+                .WithModifiers(modifiers);
+        }
+
+        public static PropertyDeclarationSyntax CreateProperty(string propertyName, string typeName, ExpressionSyntax value, params SyntaxKind[] modifiers)
+        {
+            return PropertyDeclaration(IdentifierName(typeName), Identifier(propertyName))
+                .WithExpressionBody(ArrowExpressionClause(value))
+                .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                .WithModifiers(modifiers);
         }
 
         public static MethodDeclarationSyntax WithAttributes(this MethodDeclarationSyntax node, params AttributeSyntax[] attributes)
@@ -168,6 +170,11 @@ namespace R4Mvc.Tools.Extensions
         }
 
         public static FieldDeclarationSyntax WithAttributes(this FieldDeclarationSyntax node, params AttributeSyntax[] attributes)
+        {
+            return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
+        }
+
+        public static PropertyDeclarationSyntax WithAttributes(this PropertyDeclarationSyntax node, params AttributeSyntax[] attributes)
         {
             return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
         }
@@ -226,6 +233,32 @@ namespace R4Mvc.Tools.Extensions
             return node.AddMembers(ctorNode);
         }
 
+        public static ClassDeclarationSyntax WithDefaultDummyBaseConstructor(this ClassDeclarationSyntax node, bool includeGeneratedAttributes = true, params SyntaxKind[] modifiers)
+        {
+            var ctorNode = ConstructorDeclaration(node.Identifier.ToString())
+                .WithBody(Block())
+                .WithModifiers(modifiers)
+                .WithInitializer(ConstructorInitializer(SyntaxKind.BaseConstructorInitializer, ArgumentList(SeparatedList(new[] { Argument(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(Constants.DummyClass), IdentifierName(Constants.DummyClassInstance))) }))));
+            if (includeGeneratedAttributes)
+            {
+                ctorNode = ctorNode.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
+            }
+            return node.AddMembers(ctorNode);
+        }
+
+        public static ClassDeclarationSyntax WithDummyConstructor(this ClassDeclarationSyntax node, bool includeGeneratedAttributes = true, params SyntaxKind[] modifiers)
+        {
+            var ctorNode = ConstructorDeclaration(node.Identifier.ToString())
+                .WithBody(Block())
+                .WithModifiers(modifiers)
+                .AddParameterListParameters(Parameter(Identifier("d")).WithType(ParseTypeName(Constants.DummyClass)));
+            if (includeGeneratedAttributes)
+            {
+                ctorNode = ctorNode.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
+            }
+            return node.AddMembers(ctorNode);
+        }
+
         public static ClassDeclarationSyntax WithMethods(this ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
         {
             return node;
@@ -248,8 +281,16 @@ namespace R4Mvc.Tools.Extensions
 
         public static ClassDeclarationSyntax WithField(this ClassDeclarationSyntax node, string fieldName, string typeName, params SyntaxKind[] modifiers)
         {
-            var field = CreateFieldWithDefaultInitializer(fieldName, typeName, modifiers);
+            var field = CreateFieldWithDefaultInitializer(fieldName, typeName, modifiers)
+                .WithAttributes(CreateGeneratedCodeAttribute());
             return node.AddMembers(field);
+        }
+
+        public static ClassDeclarationSyntax WithProperty(this ClassDeclarationSyntax node, string propertyName, string typeName, ExpressionSyntax value, params SyntaxKind[] modifiers)
+        {
+            var property = CreateProperty(propertyName, typeName, value, modifiers)
+                .WithAttributes(CreateGeneratedCodeAttribute());
+            return node.AddMembers(property);
         }
 
         public static ClassDeclarationSyntax WithStringField(this ClassDeclarationSyntax node, string name, string value, bool includeGeneratedAttribute = true, params SyntaxKind[] modifiers)
@@ -277,6 +318,49 @@ namespace R4Mvc.Tools.Extensions
         public static FieldDeclarationSyntax WithModifiers(this FieldDeclarationSyntax node, params SyntaxKind[] modifiers)
         {
             return node.AddModifiers(CreateModifiers(modifiers));
+        }
+
+        public static PropertyDeclarationSyntax WithModifiers(this PropertyDeclarationSyntax node, params SyntaxKind[] modifiers)
+        {
+            return node.AddModifiers(CreateModifiers(modifiers));
+        }
+
+        public static VariableDeclarationSyntax VariableDeclaration(string name, ExpressionSyntax value)
+            => VariableDeclaration(IdentifierName("var"), name, value);
+
+        public static VariableDeclarationSyntax VariableDeclaration(TypeSyntax type, string name, ExpressionSyntax value)
+        {
+            return SyntaxFactory.VariableDeclaration(type)
+                .WithVariables(
+                SingletonSeparatedList(
+                    VariableDeclarator(Identifier(name))
+                        .WithInitializer(
+                            EqualsValueClause(value))));
+        }
+
+        public static ParameterSyntax WithGenericType(this ParameterSyntax node, string genericName, params string[] typeArguments)
+        {
+            return node.WithType(
+                GenericName(Identifier(genericName))
+                    .WithTypeArgumentList(
+                        TypeArgumentList(
+                            SeparatedList<TypeSyntax>(
+                                typeArguments.Select(t => IdentifierName(t))))));
+        }
+
+        public static MemberAccessExpressionSyntax MemberAccess(string entityName, string memberName)
+        {
+            return MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                IdentifierName(entityName),
+                IdentifierName(memberName));
+        }
+
+        public static InvocationExpressionSyntax WithArgumentList(this InvocationExpressionSyntax node, params ExpressionSyntax[] arguments)
+        {
+            return node.WithArgumentList(
+                ArgumentList(
+                    SeparatedList(arguments.Select(e => Argument(e)))));
         }
 
         public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
