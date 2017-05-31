@@ -216,7 +216,9 @@ namespace R4Mvc.Tools.Extensions
 
         public static ClassDeclarationSyntax WithDefaultConstructor(this ClassDeclarationSyntax node, bool includeGeneratedAttributes = true, params SyntaxKind[] modifiers)
         {
-            var ctorNode = CreateDefaultConstructor(node.Identifier.ToString()).WithModifiers(modifiers);
+            var ctorNode = ConstructorDeclaration(node.Identifier.ToString())
+                .WithBody(Block())
+                .WithModifiers(modifiers);
             if (includeGeneratedAttributes)
             {
                 ctorNode = ctorNode.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());

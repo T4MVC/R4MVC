@@ -49,8 +49,8 @@ namespace R4Mvc.Tools
                         "System.CodeDom.Compiler",
                         "System.Diagnostics",
                         "System.Threading.Tasks",
-                        "Microsoft.AspNet.Mvc",
-                        "Microsoft.AspNet.Mvc.Routing",
+                        "Microsoft.AspNetCore.Mvc",
+                        "Microsoft.AspNetCore.Mvc.Routing",
                         settings.R4MvcNamespace)
                     .WithHeader(_headerText)
                     .WithPragmaCodes(false, pramaCodes);
