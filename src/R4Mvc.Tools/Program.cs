@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Linq;
@@ -45,10 +46,11 @@ namespace R4Mvc.Tools
             foreach (var diag in compilation.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Error))
                 Console.WriteLine($"  {diag.Severity}: {diag.GetMessage()}");
 
-            var generator = new R4MvcGenerator(
-                new Services.ControllerRewriterService(),
-                new Services.ControllerGeneratorService(new Services.ViewLocatorService(new[] { new Locators.DefaultRazorViewLocator() })),
-                new Services.StaticFileGeneratorService(new[] { new Locators.DefaultStaticFileLocator() }));
+            var serviceCollection = new ServiceCollection();
+            Ioc.IocConfig.RegisterServices(serviceCollection);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+
+            var generator = serviceProvider.GetService<R4MvcGenerator>();
 
             var node = generator.Generate(compilation, new Services.Settings(""));
             Extensions.SyntaxNodeHelpers.WriteFile(node, Path.Combine(Path.GetDirectoryName(project.FilePath), R4MvcGenerator.R4MvcFileName));
