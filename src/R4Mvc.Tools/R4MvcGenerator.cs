@@ -45,7 +45,13 @@ namespace R4Mvc.Tools
             // Create the root node and add usings, header, pragma
             var r4mvcNode =
                 SyntaxFactory.CompilationUnit()
-                    .WithUsings("System.CodeDom.Compiler", "System.Diagnostics", "Microsoft.AspNet.Mvc")
+                    .WithUsings(
+                        "System.CodeDom.Compiler",
+                        "System.Diagnostics",
+                        "System.Threading.Tasks",
+                        "Microsoft.AspNet.Mvc",
+                        "Microsoft.AspNet.Mvc.Routing",
+                        settings.R4MvcNamespace)
                     .WithHeader(_headerText)
                     .WithPragmaCodes(false, pramaCodes);
 

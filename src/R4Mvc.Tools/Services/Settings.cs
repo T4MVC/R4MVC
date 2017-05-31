@@ -1,5 +1,4 @@
 ﻿//using Microsoft.Framework.ConfigurationModel;
-using R4Mvc.Tools.Constants;
 using System;
 
 namespace R4Mvc.Tools.Services
@@ -22,21 +21,22 @@ namespace R4Mvc.Tools.Services
 
         public string HelpersPrefix
         {
-            get { return GetStringValue(ConfigKeys.HelpersPrefix, "MVC"); }
+            get { return GetStringValue(Constants.ConfigKeys.HelpersPrefix, "MVC"); }
         }
 
         public string R4MvcNamespace
         {
-            get { return GetStringValue(ConfigKeys.R4MvcNamespace, "R4Mvc"); }
+            get { return GetStringValue(Constants.ConfigKeys.R4MvcNamespace, "R4Mvc"); }
         }
 
         public string LinksNamespace
         {
-            get { return GetStringValue(ConfigKeys.LinksNamespace, "Links"); }
+            get { return GetStringValue(Constants.ConfigKeys.LinksNamespace, "Links"); }
         }
 
         private string GetStringValue(string key, string defaultValue)
         {
+            return defaultValue;
             string value;
             //_configuration.TryGet(key, out value);
 

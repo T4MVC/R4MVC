@@ -86,18 +86,11 @@ namespace R4Mvc.Tools.Extensions
                         new[]
                             {
                                 AttributeArgument(
-                                    LiteralExpression(SyntaxKind.StringLiteralExpression, Literal("R4MVC"))),
+                                LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(Constants.ProjectName))),
                                     AttributeArgument(
-                                    LiteralExpression(SyntaxKind.StringLiteralExpression, Literal("1.0")))
+                                LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(Constants.Version)))
                             }));
             return Attribute(IdentifierName("GeneratedCode"), arguments);
-        }
-
-        private static ConstructorDeclarationSyntax CreateDefaultConstructor(string className)
-        {
-            return
-                ConstructorDeclaration(className)
-                    .WithBody(Block());
         }
 
         public static IEnumerable<MemberDeclarationSyntax> CreateMethods(this ITypeSymbol mvcSymbol)
@@ -130,6 +123,9 @@ namespace R4Mvc.Tools.Extensions
         }
 
         public static FieldDeclarationSyntax CreateFieldWithDefaultInitializer(string fieldName, string typeName, params SyntaxKind[] modifiers)
+            => CreateFieldWithDefaultInitializer(fieldName, typeName, typeName, modifiers);
+
+        public static FieldDeclarationSyntax CreateFieldWithDefaultInitializer(string fieldName, string typeName, string valueTypeName, params SyntaxKind[] modifiers)
         {
             return FieldDeclaration(
                 VariableDeclaration(ParseTypeName(typeName))
@@ -138,7 +134,7 @@ namespace R4Mvc.Tools.Extensions
                             VariableDeclarator(Identifier(fieldName))
                                 .WithInitializer(
                                     EqualsValueClause(
-                                        ObjectCreationExpression(IdentifierName(typeName))
+                                        ObjectCreationExpression(IdentifierName(valueTypeName))
                                             .WithArgumentList(ArgumentList())))))).WithModifiers(modifiers);
         }
 
@@ -188,7 +184,7 @@ namespace R4Mvc.Tools.Extensions
 
         public static T WithPragmaCodes<T>(this T node, bool enable, params string[] codes) where T : SyntaxNode
         {
-            // BUG prama is not put on newline with normalizewhitespace as expected
+            // BUG pragma is not put on newline with normalizewhitespace as expected
             var trivia = enable ? node.GetTrailingTrivia() : node.GetLeadingTrivia();
             var pramaStatus = enable ? SyntaxKind.RestoreKeyword : SyntaxKind.DisableKeyword;
             var pramaExpressions = SeparatedList(codes.Select(x => ParseExpression(x.ToString())));
@@ -205,15 +201,14 @@ namespace R4Mvc.Tools.Extensions
 
         public static CompilationUnitSyntax WithUsings(this CompilationUnitSyntax node, params string[] namespaces)
         {
-            var collection = namespaces.Select(ns => ParseName(ns)).Select(UsingDirective);
+            var collection = namespaces.Select(ns => UsingDirective(ParseName(ns)));
             var usings = List(collection);
             return node.WithUsings(usings);
         }
 
         public static T WithHeader<T>(this T node, string headerText) where T : SyntaxNode
         {
-            var leadingTrivia =
-                node.GetLeadingTrivia()
+            var leadingTrivia = node.GetLeadingTrivia()
                 .Add(Comment(headerText))
                 .Add(CarriageReturnLineFeed);
             return node.WithLeadingTrivia(leadingTrivia);
