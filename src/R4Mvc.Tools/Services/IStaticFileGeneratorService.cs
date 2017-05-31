@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace R4Mvc.Services
+namespace R4Mvc.Tools.Services
 {
 	public interface IStaticFileGeneratorService
 	{

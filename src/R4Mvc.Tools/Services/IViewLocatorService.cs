@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace R4Mvc.Services
+namespace R4Mvc.Tools.Services
 {
 	public interface IViewLocatorService
 	{

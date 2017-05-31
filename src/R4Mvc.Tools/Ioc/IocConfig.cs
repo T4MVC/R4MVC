@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using R4Mvc.Locators;
-using R4Mvc.Services;
+using R4Mvc.Tools.Locators;
+using R4Mvc.Tools.Services;
 
-namespace R4Mvc.Ioc
+namespace R4Mvc.Tools.Ioc
 {
 	public static class IocConfig
 	{

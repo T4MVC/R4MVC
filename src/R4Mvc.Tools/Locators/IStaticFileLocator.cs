@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace R4Mvc.Locators
+namespace R4Mvc.Tools.Locators
 {
 	public interface IStaticFileLocator
 	{

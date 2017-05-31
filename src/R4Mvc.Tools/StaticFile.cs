@@ -1,8 +1,8 @@
 using System;
 
-using R4Mvc.Extensions;
+using R4Mvc.Tools.Extensions;
 
-namespace R4Mvc
+namespace R4Mvc.Tools
 {
 	public class StaticFile
 	{

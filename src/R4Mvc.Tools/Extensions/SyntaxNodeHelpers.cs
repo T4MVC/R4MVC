@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace R4Mvc.Extensions
+namespace R4Mvc.Tools.Extensions
 {
 	/// <summary>
 	/// A collection of helper and fluent extension methods to help manipulate SyntaxNodes

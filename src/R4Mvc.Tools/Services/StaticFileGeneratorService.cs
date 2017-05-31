@@ -4,11 +4,11 @@ using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-using R4Mvc.Extensions;
-using R4Mvc.Locators;
-using static R4Mvc.Extensions.SyntaxNodeHelpers;
+using R4Mvc.Tools.Extensions;
+using R4Mvc.Tools.Locators;
+using static R4Mvc.Tools.Extensions.SyntaxNodeHelpers;
 
-namespace R4Mvc.Services
+namespace R4Mvc.Tools.Services
 {
 	public class StaticFileGeneratorService : IStaticFileGeneratorService
 	{

@@ -7,9 +7,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-using R4Mvc.Extensions;
+using R4Mvc.Tools.Extensions;
 
-namespace R4Mvc
+namespace R4Mvc.Tools
 {
 	/// <summary>
 	/// Handles changes to non-generated mvc controller inheriting classes
@@ -50,7 +50,7 @@ namespace R4Mvc
 		private static bool IsForcedExclusion(INamedTypeSymbol symbol)
 		{
 			// need to fully qualify attribute type for reliable matching
-			var r4attribute = symbol.GetAttributes().ToArray().FirstOrDefault(x => x.AttributeClass.ToDisplayString() == typeof(R4MVCExcludeAttribute).FullName);
+			var r4attribute = symbol.GetAttributes().ToArray().FirstOrDefault(x => x.AttributeClass.ToDisplayString() == typeof(R4MvcExcludeAttribute).FullName);
 			return r4attribute != null;
 		}
 

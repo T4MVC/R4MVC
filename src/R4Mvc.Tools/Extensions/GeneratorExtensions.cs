@@ -8,9 +8,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 using static System.String;
 
-using static R4Mvc.Extensions.SyntaxNodeHelpers;
+using static R4Mvc.Tools.Extensions.SyntaxNodeHelpers;
 
-namespace R4Mvc.Extensions
+namespace R4Mvc.Tools.Extensions
 {
 	public static class GeneratorExtensions
 	{

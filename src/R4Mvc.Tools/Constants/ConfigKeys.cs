@@ -1,4 +1,4 @@
-﻿namespace R4Mvc.Constants
+﻿namespace R4Mvc.Tools.Constants
 {
     internal static class ConfigKeys
     {

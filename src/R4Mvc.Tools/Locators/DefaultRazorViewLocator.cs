@@ -5,7 +5,7 @@ using System.Linq;
 
 //using Microsoft.Framework.Runtime;
 
-namespace R4Mvc.Locators
+namespace R4Mvc.Tools.Locators
 {
 	public class DefaultRazorViewLocator : IViewLocator
 	{

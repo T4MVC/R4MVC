@@ -1,4 +1,4 @@
-﻿namespace R4Mvc.Services
+﻿namespace R4Mvc.Tools.Services
 {
     public interface ISettings
     {

@@ -1,0 +1,11 @@
+[*]
+end_of_line = crlf
+
+[*.cs]
+dotnet_sort_system_directives_first                        = true
+dotnet_style_predefined_type_for_locals_parameters_members = true : warning
+dotnet_style_predefined_type_for_member_access             = true : warning
+indent_style = space
+
+[*.xml]
+indent_style = space

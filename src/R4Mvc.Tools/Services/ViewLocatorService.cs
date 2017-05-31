@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using R4Mvc.Locators;
+using R4Mvc.Tools.Locators;
 
-namespace R4Mvc.Services
+namespace R4Mvc.Tools.Services
 {
 	public class ViewLocatorService : IViewLocatorService
 	{

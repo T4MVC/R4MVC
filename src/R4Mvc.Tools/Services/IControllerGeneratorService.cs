@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace R4Mvc.Services
+namespace R4Mvc.Tools.Services
 {
 	public interface IControllerGeneratorService
 	{

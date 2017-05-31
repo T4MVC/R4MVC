@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 //using Microsoft.Framework.ConfigurationModel;
-using R4Mvc.Constants;
+using R4Mvc.Tools.Constants;
 
-namespace R4Mvc.Services
+namespace R4Mvc.Tools.Services
 {
     public class Settings : ISettings
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace R4Mvc
+namespace R4Mvc.Tools
 {
 	public class View
 	{

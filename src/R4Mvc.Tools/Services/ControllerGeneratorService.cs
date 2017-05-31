@@ -4,9 +4,9 @@ using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-using R4Mvc.Extensions;
+using R4Mvc.Tools.Extensions;
 
-namespace R4Mvc.Services
+namespace R4Mvc.Tools.Services
 {
 	public class ControllerGeneratorService : IControllerGeneratorService
 	{

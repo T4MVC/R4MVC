@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\R4Mvc\R4Mvc.csproj" />
+    <ProjectReference Include="..\..\src\R4Mvc.Tools\R4Mvc.Tools.csproj" />
   </ItemGroup>
 
   <ItemGroup>
