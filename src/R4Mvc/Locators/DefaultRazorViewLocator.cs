@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Microsoft.Framework.Runtime;
+//using Microsoft.Framework.Runtime;
 
 namespace R4Mvc.Locators
 {
 	public class DefaultRazorViewLocator : IViewLocator
 	{
-		public Func<Project> ProjectDelegate;
+		//public Func<Project> ProjectDelegate;
 
 		private const string _extension = ".cshtml";
 
 		public IEnumerable<View> Find()
 		{
-			var project = ProjectDelegate.Invoke();
-			var projectDirectory = project.ProjectDirectory;
-			var projectRootUrl = projectDirectory.EndsWith("/") ? new Uri(projectDirectory) : new Uri(projectDirectory + "/");
+			//var project = ProjectDelegate.Invoke();
+			//var projectDirectory = project.ProjectDirectory;
+			//var projectRootUrl = projectDirectory.EndsWith("/") ? new Uri(projectDirectory) : new Uri(projectDirectory + "/");
 
             // TODO: Refactor out our dependency on Project.ContentFiles
             return new List<View>();

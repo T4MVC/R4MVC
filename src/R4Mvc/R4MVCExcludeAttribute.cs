@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Microsoft.AspNet.Mvc
+namespace Microsoft.AspNetCore.Mvc
 {
 	/// <summary>
 	/// Force exclusion of a class for R4MVC code generation
