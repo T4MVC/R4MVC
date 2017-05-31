@@ -1,17 +1,16 @@
-﻿using System;
-using System.IO;
-//using Microsoft.Framework.ConfigurationModel;
+﻿//using Microsoft.Framework.ConfigurationModel;
 using R4Mvc.Tools.Constants;
+using System;
 
 namespace R4Mvc.Tools.Services
 {
     public class Settings : ISettings
     {
         //private readonly IConfiguration _configuration;
-        
+
         public const string SettingsFileName = "r4mvc.json";
 
-        public Settings(string projectDirectory) : this (projectDirectory, SettingsFileName) { }
+        public Settings(string projectDirectory) : this(projectDirectory, SettingsFileName) { }
 
         internal Settings(string projectDirectory, string settingsFile)
         {

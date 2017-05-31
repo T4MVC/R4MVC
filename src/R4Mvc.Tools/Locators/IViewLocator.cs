@@ -2,8 +2,8 @@
 
 namespace R4Mvc.Tools.Locators
 {
-	public interface IViewLocator
-	{
-		IEnumerable<View> Find();
-	}
+    public interface IViewLocator
+    {
+        IEnumerable<View> Find();
+    }
 }

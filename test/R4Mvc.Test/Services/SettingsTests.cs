@@ -1,5 +1,5 @@
-﻿using System.IO;
-using R4Mvc.Tools.Services;
+﻿using R4Mvc.Tools.Services;
+using System.IO;
 using Xunit;
 
 namespace R4Mvc.Test.Services
