@@ -37,6 +37,9 @@ namespace R4Mvc.Tools.Extensions
             return symbol.ContainingType.InheritsFrom<T>();
         }
 
+        public static TypeSyntax PredefinedStringType()
+            => PredefinedType(Token(SyntaxKind.StringKeyword));
+
         public static NamespaceDeclarationSyntax CreateNamespace(string namespaceText)
         {
             var nameSyntax = ParseName(namespaceText);
@@ -140,7 +143,7 @@ namespace R4Mvc.Tools.Extensions
         {
             return FieldDeclaration(
                 VariableDeclaration(
-                    PredefinedType(Token(SyntaxKind.StringKeyword)),
+                    PredefinedStringType(),
                     fieldName,
                     LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(fieldValue))))
                 .WithModifiers(modifiers);
@@ -151,6 +154,20 @@ namespace R4Mvc.Tools.Extensions
             return PropertyDeclaration(IdentifierName(typeName), Identifier(propertyName))
                 .WithExpressionBody(ArrowExpressionClause(value))
                 .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                .WithModifiers(modifiers);
+        }
+
+        public static PropertyDeclarationSyntax CreateAutoProperty(string propertyName, TypeSyntax type, params SyntaxKind[] modifiers)
+        {
+            return PropertyDeclaration(type, propertyName)
+                .WithAccessorList(
+                    AccessorList(
+                        List<AccessorDeclarationSyntax>(
+                            new[]
+                            {
+                                AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                            })))
                 .WithModifiers(modifiers);
         }
 
@@ -293,6 +310,15 @@ namespace R4Mvc.Tools.Extensions
             return node.AddMembers(property);
         }
 
+        public static ClassDeclarationSyntax WithAutoStringProperty(this ClassDeclarationSyntax node, string propertyName, params SyntaxKind[] modifiers)
+            => WithAutoProperty(node, propertyName, PredefinedStringType(), modifiers);
+
+        public static ClassDeclarationSyntax WithAutoProperty(this ClassDeclarationSyntax node, string propertyName, TypeSyntax type, params SyntaxKind[] modifiers)
+        {
+            var property = CreateAutoProperty(propertyName, type, modifiers);
+            return node.AddMembers(property);
+        }
+
         public static ClassDeclarationSyntax WithStringField(this ClassDeclarationSyntax node, string name, string value, bool includeGeneratedAttribute = true, params SyntaxKind[] modifiers)
         {
             var fieldDeclaration = CreateStringFieldDeclaration(name, value, modifiers);
@@ -323,6 +349,11 @@ namespace R4Mvc.Tools.Extensions
         public static PropertyDeclarationSyntax WithModifiers(this PropertyDeclarationSyntax node, params SyntaxKind[] modifiers)
         {
             return node.AddModifiers(CreateModifiers(modifiers));
+        }
+
+        public static ClassDeclarationSyntax WithMethods(this ClassDeclarationSyntax node, params MemberDeclarationSyntax[] methods)
+        {
+            return node.AddMembers(methods);
         }
 
         public static VariableDeclarationSyntax VariableDeclaration(string name, ExpressionSyntax value)
@@ -357,6 +388,13 @@ namespace R4Mvc.Tools.Extensions
         }
 
         public static InvocationExpressionSyntax WithArgumentList(this InvocationExpressionSyntax node, params ExpressionSyntax[] arguments)
+        {
+            return node.WithArgumentList(
+                ArgumentList(
+                    SeparatedList(arguments.Select(e => Argument(e)))));
+        }
+
+        public static ObjectCreationExpressionSyntax WithArgumentList(this ObjectCreationExpressionSyntax node, params ExpressionSyntax[] arguments)
         {
             return node.WithArgumentList(
                 ArgumentList(

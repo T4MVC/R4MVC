@@ -8,6 +8,9 @@
         internal const string DummyClass = "Dummy";
         internal const string DummyClassInstance = "Instance";
 
+        internal const string ActionResultClass = ProjectName + "_Microsoft_AspNetCore_Mvc_ActionResult";
+        internal const string JsonResultClass = ProjectName + "_Microsoft_AspNetCore_Mvc_JsonResult";
+
         internal static class ConfigKeys
         {
             internal const string HelpersPrefix = "helpersPrefix";

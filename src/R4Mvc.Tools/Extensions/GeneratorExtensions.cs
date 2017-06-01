@@ -78,8 +78,9 @@ namespace R4Mvc.Tools.Extensions
             return node.AddMembers(
                 controllers.Select(
                     x => CreateFieldWithDefaultInitializer(
-                        x.Identifier.ToString().Replace("Controller", string.Empty),
+                        x.Identifier.ToString().TrimEnd("Controller"),
                         x.ToQualifiedName(),
+                        ((NamespaceDeclarationSyntax)x?.Parent)?.Name + "." + Services.ControllerGeneratorService.GetR4MVCControllerClassName(x),
                         SyntaxKind.PublicKeyword,
                         SyntaxKind.StaticKeyword)).Cast<MemberDeclarationSyntax>().ToArray());
 

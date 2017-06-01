@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using R4Mvc.Tools.Extensions;
@@ -38,6 +39,7 @@ namespace R4Mvc.Tools.Services
                 {
                     var model = compiler.GetSemanticModel(mvcControllerNode.SyntaxTree);
                     var mvcSymbol = model.GetDeclaredSymbol(mvcControllerNode);
+                    var controllerName = mvcControllerNode.Identifier.ToString().TrimEnd("Controller");
 
                     // build controller partial class node 
                     // add a default constructor if there are some but none are zero length
@@ -56,9 +58,9 @@ namespace R4Mvc.Tools.Services
 
                     // add all method stubs, TODO criteria for this: only public virtual actionresults?
                     // add subclasses, fields, properties, constants for action names
-                    var controllerName = mvcControllerNode.Identifier.ToString().TrimEnd("Controller");
+                    genControllerClass = AddParameterlessMethods(genControllerClass, mvcSymbol);
                     genControllerClass =
-                        genControllerClass.WithMethods(mvcSymbol)
+                        genControllerClass
                             .WithProperty("Actions", mvcControllerNode.Identifier.ToString(), SyntaxNodeHelpers.MemberAccess("MVC", controllerName), SyntaxKind.PublicKeyword)
                             .WithStringField(
                                 "Area",
@@ -170,7 +172,31 @@ namespace R4Mvc.Tools.Services
             return node.AddMembers(methods);
         }
 
-        private static string GetR4MVCControllerClassName(ClassDeclarationSyntax genControllerClass)
+        private ClassDeclarationSyntax AddParameterlessMethods(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
+        {
+            var methods = mvcSymbol.GetMembers()
+                .OfType<IMethodSymbol>()
+                .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
+                .GroupBy(m => m.Name)
+                .Where(g => !g.Any(m => !m.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute") && m.Parameters.Length == 0))
+                .Select(g => g.First())
+                .Select(m => MethodDeclaration(IdentifierName("IActionResult"), Identifier(m.Name))
+                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.VirtualKeyword)
+                    .WithAttributes(SyntaxNodeHelpers.CreateNonActionAttribute())
+                    .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
+                    .WithBody(
+                        Block(
+                            // return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
+                            ReturnStatement(
+                                ObjectCreationExpression(IdentifierName(Constants.ActionResultClass))
+                                    .WithArgumentList(
+                                        IdentifierName("Area"),
+                                        IdentifierName("Name"),
+                                        SyntaxNodeHelpers.MemberAccess("ActionNames", m.Name))))));
+            return node.AddMembers(methods.ToArray());
+        }
+
+        internal static string GetR4MVCControllerClassName(ClassDeclarationSyntax genControllerClass)
         {
             return string.Format("R4MVC_{0}", genControllerClass.Identifier);
         }

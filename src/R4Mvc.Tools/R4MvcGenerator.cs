@@ -5,6 +5,7 @@ using R4Mvc.Tools.Extensions;
 using R4Mvc.Tools.Services;
 using System.Collections.Immutable;
 using System.Linq;
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace R4Mvc.Tools
 {
@@ -50,7 +51,7 @@ namespace R4Mvc.Tools
                         "System.Diagnostics",
                         "System.Threading.Tasks",
                         "Microsoft.AspNetCore.Mvc",
-                        "Microsoft.AspNetCore.Mvc.Routing",
+                        "Microsoft.AspNetCore.Routing",
                         settings.R4MvcNamespace)
                     .WithHeader(_headerText)
                     .WithPragmaCodes(false, pramaCodes);
@@ -68,11 +69,51 @@ namespace R4Mvc.Tools
                     .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
                     .WithControllerFields(controllers);
 
+            var actionResultClass =
+                SyntaxNodeHelpers.CreateClass(Constants.ActionResultClass, null, SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
+                    .WithBaseTypes("IActionResult", "IR4MvcActionResult")
+                    .WithMethods(ConstructorDeclaration(Constants.ActionResultClass)
+                        .WithModifiers(SyntaxKind.PublicKeyword)
+                        .AddParameterListParameters(
+                            Parameter(Identifier("area")).WithType(SyntaxNodeHelpers.PredefinedStringType()),
+                            Parameter(Identifier("controller")).WithType(SyntaxNodeHelpers.PredefinedStringType()),
+                            Parameter(Identifier("action")).WithType(SyntaxNodeHelpers.PredefinedStringType()),
+                            Parameter(Identifier("protocol")).WithType(SyntaxNodeHelpers.PredefinedStringType())
+                                .WithDefault(EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression))))
+                        .WithBody(
+                            Block(
+                                ExpressionStatement(
+                                    InvocationExpression(
+                                        SyntaxNodeHelpers.MemberAccess("this", "InitMVCT4Result"))
+                                        .WithArgumentList(
+                                            IdentifierName("area"),
+                                            IdentifierName("controller"),
+                                            IdentifierName("action"),
+                                            IdentifierName("protocol"))))))
+                    .WithAutoStringProperty("Controller", SyntaxKind.PublicKeyword)
+                    .WithAutoStringProperty("Action", SyntaxKind.PublicKeyword)
+                    .WithAutoStringProperty("Protocol", SyntaxKind.PublicKeyword)
+                    .WithAutoProperty("RouteValueDictionary", IdentifierName("RouteValueDictionary"), SyntaxKind.PublicKeyword)
+                    .WithMethods(
+                        MethodDeclaration(IdentifierName("Task"), Identifier("ExecuteResultAsync"))
+                            .WithModifiers(SyntaxKind.PublicKeyword)
+                            .AddParameterListParameters(
+                                Parameter(Identifier("context")).WithType(IdentifierName("ActionContext")))
+                            .WithBody(
+                                Block(
+                                    // return Task.FromResult(0);
+                                    ReturnStatement(
+                                        InvocationExpression(
+                                            SyntaxNodeHelpers.MemberAccess("Task", "FromResult"))
+                                            .WithArgumentList(
+                                                LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0)))))));
+
             r4mvcNode =
                 r4mvcNode.AddMembers(generatedControllers.Cast<MemberDeclarationSyntax>().ToArray())
                     .AddMembers(staticFileNode)
                     .AddMembers(r4Namespace)
                     .AddMembers(mvcStaticClass)
+                    .AddMembers(actionResultClass)
                     .NormalizeWhitespace()
                     .WithPragmaCodes(true, pramaCodes);
 
