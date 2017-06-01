@@ -19,11 +19,6 @@ namespace R4MvcHostApp.Controllers
     public partial class AccountController
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public AccountController()
-        {
-        }
-
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         protected AccountController(Dummy d)
         {
         }
@@ -523,11 +518,6 @@ namespace R4MvcHostApp.Controllers
 
     public partial class ManageController
     {
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public ManageController()
-        {
-        }
-
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         protected ManageController(Dummy d)
         {
