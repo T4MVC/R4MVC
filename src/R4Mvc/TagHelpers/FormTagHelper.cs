@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -20,18 +21,26 @@ namespace R4Mvc.TagHelpers
         [ViewContext]
         public ViewContext ViewContext { get; set; }
         [HtmlAttributeName(ActionAttribute)]
-        public IActionResult Action { get; set; }
+        public object Action { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.Attributes.RemoveAll(ActionAttribute);
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
-            if (Action is IR4MvcActionResult t4mvcActionResult)
+            string url = null;
+            switch (Action)
             {
-                var url = urlHelper.RouteUrl(t4mvcActionResult.RouteValueDictionary);
-                output.Attributes.SetAttribute("action", url);
+                case IR4MvcActionResult t4mvcActionResult:
+                    url = urlHelper.RouteUrl(t4mvcActionResult.RouteValueDictionary);
+                    break;
+                case Task<IActionResult> taskActionResult when taskActionResult.Result is IR4MvcActionResult t4mvcActionResult:
+                    url = urlHelper.RouteUrl(t4mvcActionResult.RouteValueDictionary);
+                    break;
             }
+
+            if (url != null)
+                output.Attributes.SetAttribute("action", url);
         }
     }
 }
