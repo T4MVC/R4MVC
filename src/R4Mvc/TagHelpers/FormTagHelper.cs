@@ -21,7 +21,11 @@ namespace R4Mvc.TagHelpers
         [ViewContext]
         public ViewContext ViewContext { get; set; }
         [HtmlAttributeName(ActionAttribute)]
-        public object Action { get; set; }
+        public object ObjectAction { get; set; }
+        [HtmlAttributeName(ActionAttribute)]
+        public IActionResult Action { get; set; }
+        [HtmlAttributeName(ActionAttribute)]
+        public Task<IActionResult> TaskAction { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
@@ -29,7 +33,7 @@ namespace R4Mvc.TagHelpers
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
             string url = null;
-            switch (Action)
+            switch (ObjectAction)
             {
                 case IR4MvcActionResult t4mvcActionResult:
                     url = urlHelper.RouteUrl(t4mvcActionResult.RouteValueDictionary);
