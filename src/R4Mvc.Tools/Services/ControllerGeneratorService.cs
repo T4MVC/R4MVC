@@ -101,6 +101,7 @@ namespace R4Mvc.Tools.Services
                             .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
                             .WithBaseTypes(mvcControllerNode.ToQualifiedName())
                             .WithDefaultDummyBaseConstructor(false, SyntaxKind.PublicKeyword);
+                    r4ControllerClass = AddMethodOverrides(r4ControllerClass, mvcSymbol);
 
                     namespaceNode = namespaceNode.AddMembers(genControllerClass).AddMembers(r4ControllerClass);
                 }
@@ -177,10 +178,10 @@ namespace R4Mvc.Tools.Services
             var methods = mvcSymbol.GetMembers()
                 .OfType<IMethodSymbol>()
                 .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
+                .Where(m => !m.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute"))
                 .GroupBy(m => m.Name)
-                .Where(g => !g.Any(m => !m.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute") && m.Parameters.Length == 0))
-                .Select(g => g.First())
-                .Select(m => MethodDeclaration(IdentifierName("IActionResult"), Identifier(m.Name))
+                .Where(g => !g.Any(m => m.Parameters.Length == 0))
+                .Select(g => MethodDeclaration(IdentifierName("IActionResult"), Identifier(g.Key))
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.VirtualKeyword)
                     .WithAttributes(SyntaxNodeHelpers.CreateNonActionAttribute())
                     .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
@@ -192,7 +193,66 @@ namespace R4Mvc.Tools.Services
                                     .WithArgumentList(
                                         IdentifierName("Area"),
                                         IdentifierName("Name"),
-                                        SyntaxNodeHelpers.MemberAccess("ActionNames", m.Name))))));
+                                        SyntaxNodeHelpers.MemberAccess("ActionNames", g.Key))))));
+            return node.AddMembers(methods.ToArray());
+        }
+
+        private ClassDeclarationSyntax AddMethodOverrides(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
+        {
+            const string overrideMethodSuffix = "Override";
+            var methods = mvcSymbol.GetMembers()
+                .OfType<IMethodSymbol>()
+                .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
+                .Where(m => !m.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute"))
+                .SelectMany(m => new[]
+                {
+                    MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), Identifier(m.Name + overrideMethodSuffix))
+                        .WithModifiers(SyntaxKind.PartialKeyword)
+                        .WithAttributes(SyntaxNodeHelpers.CreateNonActionAttribute())
+                        .AddParameterListParameters(
+                            Parameter(Identifier("callInfo")).WithType(IdentifierName(Constants.ActionResultClass)))
+                        .AddParameterListParameters(m.Parameters
+                            .Select(p => Parameter(Identifier(p.Name))
+                                .WithType(IdentifierName(p.Type.ToString())))
+                            .ToArray())
+                        .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                    MethodDeclaration(IdentifierName(m.ReturnType.ToString()), Identifier(m.Name))
+                        .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
+                        .WithAttributes(SyntaxNodeHelpers.CreateNonActionAttribute())
+                        .AddParameterListParameters(m.Parameters
+                            .Select(p => Parameter(Identifier(p.Name))
+                                .WithType(IdentifierName(p.Type.ToString())))
+                            .ToArray())
+                        .WithBody(
+                            Block(
+                                // var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
+                                LocalDeclarationStatement(
+                                    SyntaxNodeHelpers.VariableDeclaration("callInfo",
+                                        ObjectCreationExpression(IdentifierName(Constants.ActionResultClass))
+                                            .WithArgumentList(
+                                                IdentifierName("Area"),
+                                                IdentifierName("Name"),
+                                                SyntaxNodeHelpers.MemberAccess("ActionNames", m.Name)))),
+                                // {Action}Override(callInfo, {parameters});
+                                ExpressionStatement(
+                                    InvocationExpression(IdentifierName(m.Name + overrideMethodSuffix))
+                                        .WithArgumentList(
+                                            new []{ IdentifierName("callInfo")}
+                                                .Concat(m.Parameters.Select(p => IdentifierName(p.Name)))
+                                                .ToArray())),
+                                // return callInfo;
+                                m.ReturnType.ToString().Contains("Task<")
+                                    ? ReturnStatement(
+                                        InvocationExpression(
+                                            SyntaxNodeHelpers.MemberAccess("Task", "FromResult"))
+                                            .WithArgumentList(
+                                                BinaryExpression(
+                                                    SyntaxKind.AsExpression,
+                                                    IdentifierName("callInfo"),
+                                                    IdentifierName(m.ReturnType.ToString().Substring(m.ReturnType.ToString().IndexOf('<') + 1).TrimEnd('>')))))
+                                    : ReturnStatement(IdentifierName("callInfo"))
+                                )),
+                });
             return node.AddMembers(methods.ToArray());
         }
 

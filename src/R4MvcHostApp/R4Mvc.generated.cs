@@ -188,6 +188,206 @@ namespace R4MvcHostApp.Controllers
         public R4MVC_AccountController(): base (Dummy.Instance)
         {
         }
+
+        [NonAction]
+        partial void LoginOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, string returnUrl);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> Login(string returnUrl)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Login);
+            LoginOverride(callInfo, returnUrl);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void LoginOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.AccountViewModels.LoginViewModel model, string returnUrl);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> Login(R4MvcHostApp.Models.AccountViewModels.LoginViewModel model, string returnUrl)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Login);
+            LoginOverride(callInfo, model, returnUrl);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void RegisterOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, string returnUrl);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult Register(string returnUrl)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Register);
+            RegisterOverride(callInfo, returnUrl);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void RegisterOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.AccountViewModels.RegisterViewModel model, string returnUrl);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> Register(R4MvcHostApp.Models.AccountViewModels.RegisterViewModel model, string returnUrl)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Register);
+            RegisterOverride(callInfo, model, returnUrl);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void LogoutOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> Logout()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Logout);
+            LogoutOverride(callInfo);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void ExternalLoginOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, string provider, string returnUrl);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult ExternalLogin(string provider, string returnUrl)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLogin);
+            ExternalLoginOverride(callInfo, provider, returnUrl);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ExternalLoginCallbackOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, string returnUrl, string remoteError);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ExternalLoginCallback(string returnUrl, string remoteError)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginCallback);
+            ExternalLoginCallbackOverride(callInfo, returnUrl, remoteError);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void ExternalLoginConfirmationOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.AccountViewModels.ExternalLoginConfirmationViewModel model, string returnUrl);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ExternalLoginConfirmation(R4MvcHostApp.Models.AccountViewModels.ExternalLoginConfirmationViewModel model, string returnUrl)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginConfirmation);
+            ExternalLoginConfirmationOverride(callInfo, model, returnUrl);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void ConfirmEmailOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, string userId, string code);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ConfirmEmail(string userId, string code)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ConfirmEmail);
+            ConfirmEmailOverride(callInfo, userId, code);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void ForgotPasswordOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult ForgotPassword()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ForgotPassword);
+            ForgotPasswordOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ForgotPasswordOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.AccountViewModels.ForgotPasswordViewModel model);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ForgotPassword(R4MvcHostApp.Models.AccountViewModels.ForgotPasswordViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ForgotPassword);
+            ForgotPasswordOverride(callInfo, model);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void ForgotPasswordConfirmationOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult ForgotPasswordConfirmation()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ForgotPasswordConfirmation);
+            ForgotPasswordConfirmationOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ResetPasswordOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, string code);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult ResetPassword(string code)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPassword);
+            ResetPasswordOverride(callInfo, code);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ResetPasswordOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.AccountViewModels.ResetPasswordViewModel model);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ResetPassword(R4MvcHostApp.Models.AccountViewModels.ResetPasswordViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPassword);
+            ResetPasswordOverride(callInfo, model);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void ResetPasswordConfirmationOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult ResetPasswordConfirmation()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPasswordConfirmation);
+            ResetPasswordConfirmationOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void SendCodeOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, string returnUrl, bool rememberMe);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.ActionResult> SendCode(string returnUrl, bool rememberMe)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.SendCode);
+            SendCodeOverride(callInfo, returnUrl, rememberMe);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.ActionResult);
+        }
+
+        [NonAction]
+        partial void SendCodeOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.AccountViewModels.SendCodeViewModel model);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> SendCode(R4MvcHostApp.Models.AccountViewModels.SendCodeViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.SendCode);
+            SendCodeOverride(callInfo, model);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void VerifyCodeOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, string provider, bool rememberMe, string returnUrl);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> VerifyCode(string provider, bool rememberMe, string returnUrl)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.VerifyCode);
+            VerifyCodeOverride(callInfo, provider, rememberMe, returnUrl);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void VerifyCodeOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.AccountViewModels.VerifyCodeViewModel model);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> VerifyCode(R4MvcHostApp.Models.AccountViewModels.VerifyCodeViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.VerifyCode);
+            VerifyCodeOverride(callInfo, model);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void AccessDeniedOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult AccessDenied()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.AccessDenied);
+            AccessDeniedOverride(callInfo);
+            return callInfo;
+        }
     }
 
     public partial class HomeController
@@ -278,6 +478,46 @@ namespace R4MvcHostApp.Controllers
     {
         public R4MVC_HomeController(): base (Dummy.Instance)
         {
+        }
+
+        [NonAction]
+        partial void IndexOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult Index()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Index);
+            IndexOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void AboutOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult About()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.About);
+            AboutOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ContactOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult Contact()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Contact);
+            ContactOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ErrorOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult Error()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Error);
+            ErrorOverride(callInfo);
+            return callInfo;
         }
     }
 
@@ -421,6 +661,166 @@ namespace R4MvcHostApp.Controllers
         public R4MVC_ManageController(): base (Dummy.Instance)
         {
         }
+
+        [NonAction]
+        partial void IndexOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Controllers.ManageController.ManageMessageId? message);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> Index(R4MvcHostApp.Controllers.ManageController.ManageMessageId? message)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Index);
+            IndexOverride(callInfo, message);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void RemoveLoginOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.ManageViewModels.RemoveLoginViewModel account);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> RemoveLogin(R4MvcHostApp.Models.ManageViewModels.RemoveLoginViewModel account)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.RemoveLogin);
+            RemoveLoginOverride(callInfo, account);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void AddPhoneNumberOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult AddPhoneNumber()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.AddPhoneNumber);
+            AddPhoneNumberOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void AddPhoneNumberOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.ManageViewModels.AddPhoneNumberViewModel model);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> AddPhoneNumber(R4MvcHostApp.Models.ManageViewModels.AddPhoneNumberViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.AddPhoneNumber);
+            AddPhoneNumberOverride(callInfo, model);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void EnableTwoFactorAuthenticationOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> EnableTwoFactorAuthentication()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.EnableTwoFactorAuthentication);
+            EnableTwoFactorAuthenticationOverride(callInfo);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void DisableTwoFactorAuthenticationOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> DisableTwoFactorAuthentication()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.DisableTwoFactorAuthentication);
+            DisableTwoFactorAuthenticationOverride(callInfo);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void VerifyPhoneNumberOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, string phoneNumber);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> VerifyPhoneNumber(string phoneNumber)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.VerifyPhoneNumber);
+            VerifyPhoneNumberOverride(callInfo, phoneNumber);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void VerifyPhoneNumberOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.ManageViewModels.VerifyPhoneNumberViewModel model);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> VerifyPhoneNumber(R4MvcHostApp.Models.ManageViewModels.VerifyPhoneNumberViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.VerifyPhoneNumber);
+            VerifyPhoneNumberOverride(callInfo, model);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void RemovePhoneNumberOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> RemovePhoneNumber()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.RemovePhoneNumber);
+            RemovePhoneNumberOverride(callInfo);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void ChangePasswordOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult ChangePassword()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ChangePassword);
+            ChangePasswordOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ChangePasswordOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.ManageViewModels.ChangePasswordViewModel model);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ChangePassword(R4MvcHostApp.Models.ManageViewModels.ChangePasswordViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ChangePassword);
+            ChangePasswordOverride(callInfo, model);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void SetPasswordOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult SetPassword()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.SetPassword);
+            SetPasswordOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void SetPasswordOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Models.ManageViewModels.SetPasswordViewModel model);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> SetPassword(R4MvcHostApp.Models.ManageViewModels.SetPasswordViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.SetPassword);
+            SetPasswordOverride(callInfo, model);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void ManageLoginsOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Controllers.ManageController.ManageMessageId? message);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ManageLogins(R4MvcHostApp.Controllers.ManageController.ManageMessageId? message)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ManageLogins);
+            ManageLoginsOverride(callInfo, message);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void LinkLoginOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, string provider);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> LinkLogin(string provider)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.LinkLogin);
+            LinkLoginOverride(callInfo, provider);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void LinkLoginCallbackOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.ActionResult> LinkLoginCallback()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.LinkLoginCallback);
+            LinkLoginCallbackOverride(callInfo);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.ActionResult);
+        }
     }
 }
 
@@ -450,7 +850,7 @@ public static partial class MVC
     public static R4MvcHostApp.Controllers.ManageController Manage = new R4MvcHostApp.Controllers.R4MVC_ManageController();
 }
 
-internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult : IActionResult, IR4MvcActionResult
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult : ActionResult, IR4MvcActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(string area, string controller, string action, string protocol = null)
     {
@@ -480,10 +880,37 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult : IActionResu
         get;
         set;
     }
+}
 
-    public Task ExecuteResultAsync(ActionContext context)
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult : JsonResult, IR4MvcActionResult
+{
+    public R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult(string area, string controller, string action, string protocol = null): base (null)
     {
-        return Task.FromResult(0);
+        this.InitMVCT4Result(area, controller, action, protocol);
+    }
+
+    public string Controller
+    {
+        get;
+        set;
+    }
+
+    public string Action
+    {
+        get;
+        set;
+    }
+
+    public string Protocol
+    {
+        get;
+        set;
+    }
+
+    public RouteValueDictionary RouteValueDictionary
+    {
+        get;
+        set;
     }
 }
 #pragma warning restore 1591, 3008, 3009, 0108

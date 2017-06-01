@@ -71,7 +71,7 @@ namespace R4Mvc.Tools
 
             var actionResultClass =
                 SyntaxNodeHelpers.CreateClass(Constants.ActionResultClass, null, SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
-                    .WithBaseTypes("IActionResult", "IR4MvcActionResult")
+                    .WithBaseTypes("ActionResult", "IR4MvcActionResult")
                     .WithMethods(ConstructorDeclaration(Constants.ActionResultClass)
                         .WithModifiers(SyntaxKind.PublicKeyword)
                         .AddParameterListParameters(
@@ -93,20 +93,34 @@ namespace R4Mvc.Tools
                     .WithAutoStringProperty("Controller", SyntaxKind.PublicKeyword)
                     .WithAutoStringProperty("Action", SyntaxKind.PublicKeyword)
                     .WithAutoStringProperty("Protocol", SyntaxKind.PublicKeyword)
-                    .WithAutoProperty("RouteValueDictionary", IdentifierName("RouteValueDictionary"), SyntaxKind.PublicKeyword)
-                    .WithMethods(
-                        MethodDeclaration(IdentifierName("Task"), Identifier("ExecuteResultAsync"))
-                            .WithModifiers(SyntaxKind.PublicKeyword)
-                            .AddParameterListParameters(
-                                Parameter(Identifier("context")).WithType(IdentifierName("ActionContext")))
-                            .WithBody(
-                                Block(
-                                    // return Task.FromResult(0);
-                                    ReturnStatement(
-                                        InvocationExpression(
-                                            SyntaxNodeHelpers.MemberAccess("Task", "FromResult"))
-                                            .WithArgumentList(
-                                                LiteralExpression(SyntaxKind.NumericLiteralExpression, Literal(0)))))));
+                    .WithAutoProperty("RouteValueDictionary", IdentifierName("RouteValueDictionary"), SyntaxKind.PublicKeyword);
+
+            var jsonResultClass =
+                SyntaxNodeHelpers.CreateClass(Constants.JsonResultClass, null, SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
+                    .WithBaseTypes("JsonResult", "IR4MvcActionResult")
+                    .WithMethods(ConstructorDeclaration(Constants.JsonResultClass)
+                        .WithModifiers(SyntaxKind.PublicKeyword)
+                        .AddParameterListParameters(
+                            Parameter(Identifier("area")).WithType(SyntaxNodeHelpers.PredefinedStringType()),
+                            Parameter(Identifier("controller")).WithType(SyntaxNodeHelpers.PredefinedStringType()),
+                            Parameter(Identifier("action")).WithType(SyntaxNodeHelpers.PredefinedStringType()),
+                            Parameter(Identifier("protocol")).WithType(SyntaxNodeHelpers.PredefinedStringType())
+                                .WithDefault(EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression))))
+                        .WithInitializer(ConstructorInitializer(SyntaxKind.BaseConstructorInitializer, ArgumentList(SingletonSeparatedList(Argument(LiteralExpression(SyntaxKind.NullLiteralExpression))))))
+                        .WithBody(
+                            Block(
+                                ExpressionStatement(
+                                    InvocationExpression(
+                                        SyntaxNodeHelpers.MemberAccess("this", "InitMVCT4Result"))
+                                        .WithArgumentList(
+                                            IdentifierName("area"),
+                                            IdentifierName("controller"),
+                                            IdentifierName("action"),
+                                            IdentifierName("protocol"))))))
+                    .WithAutoStringProperty("Controller", SyntaxKind.PublicKeyword)
+                    .WithAutoStringProperty("Action", SyntaxKind.PublicKeyword)
+                    .WithAutoStringProperty("Protocol", SyntaxKind.PublicKeyword)
+                    .WithAutoProperty("RouteValueDictionary", IdentifierName("RouteValueDictionary"), SyntaxKind.PublicKeyword);
 
             r4mvcNode =
                 r4mvcNode.AddMembers(generatedControllers.Cast<MemberDeclarationSyntax>().ToArray())
@@ -114,6 +128,7 @@ namespace R4Mvc.Tools
                     .AddMembers(r4Namespace)
                     .AddMembers(mvcStaticClass)
                     .AddMembers(actionResultClass)
+                    .AddMembers(jsonResultClass)
                     .NormalizeWhitespace()
                     .WithPragmaCodes(true, pramaCodes);
 
