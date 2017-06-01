@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+using Microsoft.AspNetCore.Routing;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace R4Mvc.TagHelpers
 {
@@ -26,25 +29,33 @@ namespace R4Mvc.TagHelpers
         public IActionResult Action { get; set; }
         [HtmlAttributeName(ActionAttribute)]
         public Task<IActionResult> TaskAction { get; set; }
+        [HtmlAttributeName("asp-all-route-data", DictionaryAttributePrefix = "asp-route-")]
+        public IDictionary<string, string> RouteValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             output.Attributes.RemoveAll(ActionAttribute);
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
-            string url = null;
+            RouteValueDictionary routeValues = null;
             switch (ObjectAction)
             {
                 case IR4MvcActionResult t4mvcActionResult:
-                    url = urlHelper.RouteUrl(t4mvcActionResult.RouteValueDictionary);
+                    routeValues = t4mvcActionResult.RouteValueDictionary;
                     break;
                 case Task<IActionResult> taskActionResult when taskActionResult.Result is IR4MvcActionResult t4mvcActionResult:
-                    url = urlHelper.RouteUrl(t4mvcActionResult.RouteValueDictionary);
+                    routeValues = t4mvcActionResult.RouteValueDictionary;
                     break;
             }
 
-            if (url != null)
+            if (routeValues != null)
+            {
+                foreach (var set in RouteValues)
+                    routeValues[set.Key] = set.Value;
+
+                var url = urlHelper.RouteUrl(routeValues);
                 output.Attributes.SetAttribute("href", url);
+            }
         }
     }
 }
