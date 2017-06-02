@@ -2,6 +2,16 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\R4Mvc.xml</DocumentationFile>
+    <PackageProjectUrl>https://github.com/T4MVC/R4MVC</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/artiomchi/R4MVC</RepositoryUrl>
+    <AssemblyVersion>0.5.0</AssemblyVersion>
+    <FileVersion>0.5.0</FileVersion>
+    <Version>0.5.0-alpha.1</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
