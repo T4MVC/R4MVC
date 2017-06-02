@@ -1,7 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Linq;
@@ -11,49 +12,65 @@ namespace R4Mvc.Tools
 {
     class Program
     {
-        private static string ProjectPath;
         static void Main(string[] args)
         {
-            for (int i = 0; i < args.Length; i++)
-                Console.WriteLine($"Arg {i}: {args[i]}");
-
             if (args.Length == 0)
             {
                 Console.WriteLine("Expecting project path as parameter");
                 return;
             }
 
-            ProjectPath = Path.IsPathRooted(args[0]) ? args[0] : Path.Combine(Environment.CurrentDirectory, args[0]);
-            Console.WriteLine($"Project path: {ProjectPath}");
+            var projectPath = Path.IsPathRooted(args[0]) ? args[0] : Path.Combine(Environment.CurrentDirectory, args[0]);
+            Console.WriteLine($"Project path: {projectPath}");
 
-            if (!File.Exists(ProjectPath))
+            if (!File.Exists(projectPath))
             {
-                Console.WriteLine("Invalid project path");
+                Console.WriteLine("Project file doesn't exist");
                 return;
             }
 
-            new Program().Run().Wait();
+            var configuration = LoadConfiguration(args.Skip(1).ToArray(), projectPath);
+
+            var services = new ServiceCollection();
+            ConfigureServices(services, configuration);
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            new Program().Run(projectPath, serviceProvider).Wait();
         }
 
-        public async Task Run()
+        public async Task Run(string projectPath, IServiceProvider serviceProvider)
         {
             var workspace = MSBuildWorkspace.Create();
-            var project = await workspace.OpenProjectAsync(ProjectPath);
-            foreach (var diag in workspace.Diagnostics)
-                Console.WriteLine($"  {diag.Kind}: {diag.Message}");
+            var generator = serviceProvider.GetService<R4MvcGenerator>();
+            var settings = serviceProvider.GetService<IOptions<Services.Settings>>().Value;
+
+            var project = await workspace.OpenProjectAsync(projectPath);
+            if (workspace.Diagnostics.Count > 0)
+            {
+                foreach (var diag in workspace.Diagnostics)
+                    Console.WriteLine($"  {diag.Kind}: {diag.Message}");
+                return;
+            }
 
             var compilation = await project.GetCompilationAsync() as CSharpCompilation;
-            foreach (var diag in compilation.GetDiagnostics().Where(d => d.Severity == DiagnosticSeverity.Error))
-                Console.WriteLine($"  {diag.Severity}: {diag.GetMessage()}");
-
-            var serviceCollection = new ServiceCollection();
-            Ioc.IocConfig.RegisterServices(serviceCollection);
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-
-            var generator = serviceProvider.GetService<R4MvcGenerator>();
-
-            var node = generator.Generate(compilation, new Services.Settings(""));
+            var node = generator.Generate(compilation, settings);
             Extensions.SyntaxNodeHelpers.WriteFile(node, Path.Combine(Path.GetDirectoryName(project.FilePath), R4MvcGenerator.R4MvcFileName));
+        }
+
+        static IConfigurationRoot LoadConfiguration(string[] args, string projectPath)
+        {
+            return new ConfigurationBuilder()
+                .AddJsonFile(Path.Combine(Path.GetDirectoryName(projectPath), "r4mvc.json"), optional: true)
+                .AddCommandLine(args)
+                .Build();
+        }
+
+        static void ConfigureServices(IServiceCollection services, IConfigurationRoot configuration)
+        {
+            Ioc.IocConfig.RegisterServices(services);
+            services.AddOptions();
+            services.Configure<Services.Settings>(configuration);
         }
     }
 }

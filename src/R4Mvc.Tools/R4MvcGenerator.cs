@@ -41,7 +41,7 @@ namespace R4Mvc.Tools
         }
 
 
-        public SyntaxNode Generate(CSharpCompilation compilation, ISettings settings)
+        public SyntaxNode Generate(CSharpCompilation compilation, Settings settings)
         {
             // Create the root node and add usings, header, pragma
             var r4mvcNode =

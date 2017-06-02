@@ -21,8 +21,11 @@ namespace R4Mvc.TagHelpers
             _urlHelperFactory = urlHelperFactory;
         }
 
-        [ViewContext]
+        [ViewContext, HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
+        /// <summary>
+        /// The MVC action call (use R4MVC syntax i.e. `MVC.Home.Index()`)
+        /// </summary>
         [HtmlAttributeName(ActionAttribute)]
         public object ObjectAction { get; set; }
         [HtmlAttributeName(ActionAttribute)]

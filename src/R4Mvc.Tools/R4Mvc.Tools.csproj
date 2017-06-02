@@ -35,6 +35,9 @@
     <PackageReference Include="Microsoft.Build" Version="15.1.1012" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.1.1012" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
   </ItemGroup>
 
   <ItemGroup>

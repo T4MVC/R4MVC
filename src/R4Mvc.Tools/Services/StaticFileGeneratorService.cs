@@ -17,7 +17,7 @@ namespace R4Mvc.Tools.Services
             _staticFileLocators = staticFileLocators;
         }
 
-        public MemberDeclarationSyntax GenerateStaticFiles(ISettings settings)
+        public MemberDeclarationSyntax GenerateStaticFiles(Settings settings)
         {
             var staticfiles = _staticFileLocators.SelectMany(x => x.Find());
             staticfiles = SanitiseFileNamesWithNoConflicts(staticfiles);
