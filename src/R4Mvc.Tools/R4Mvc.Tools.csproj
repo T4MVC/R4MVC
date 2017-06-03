@@ -38,6 +38,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
