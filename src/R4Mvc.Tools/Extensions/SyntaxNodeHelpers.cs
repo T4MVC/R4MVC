@@ -201,6 +201,11 @@ namespace R4Mvc.Tools.Extensions
             return node.AddBaseListTypes(types.Select(x => SimpleBaseType(ParseTypeName(x))).Cast<BaseTypeSyntax>().ToArray());
         }
 
+        public static string ToQualifiedName(this ITypeSymbol symbol)
+        {
+            return string.Format("{0}.{1}", symbol.ContainingNamespace.ToString(), symbol.Name);
+        }
+
         public static string ToQualifiedName(this ClassDeclarationSyntax node)
         {
             return string.Format("{0}.{1}", ((NamespaceDeclarationSyntax)node?.Parent)?.Name, node.Identifier);

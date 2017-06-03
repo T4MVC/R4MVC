@@ -56,18 +56,17 @@ namespace R4Mvc.Tools
                     .WithHeader(_headerText)
                     .WithPragmaCodes(false, pramaCodes);
 
+            // create static MVC class and add controller fields 
+            var mvcStaticClass =
+                SyntaxNodeHelpers.CreateClass(settings.HelpersPrefix, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
+                    .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute());
+
             var controllers = _controllerRewriter.RewriteControllers(compilation, R4MvcFileName);
-            var generatedControllers = _controllerGenerator.GenerateControllers(compilation, controllers).ToImmutableArray();
+            var generatedControllers = _controllerGenerator.GenerateControllers(compilation, controllers, ref mvcStaticClass).ToImmutableArray();
             var staticFileNode = _staticFileGenerator.GenerateStaticFiles(settings);
 
             // add the dummy class using in the derived controller partial class
             var r4Namespace = SyntaxNodeHelpers.CreateNamespace(settings.R4MvcNamespace).WithDummyClass();
-
-            // create static MVC class and add controller fields 
-            var mvcStaticClass =
-                SyntaxNodeHelpers.CreateClass(settings.HelpersPrefix, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
-                    .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
-                    .WithControllerFields(controllers);
 
             var actionResultClass =
                 SyntaxNodeHelpers.CreateClass(Constants.ActionResultClass, null, SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)

@@ -6,6 +6,6 @@ namespace R4Mvc.Tools.Services
 {
     public interface IControllerGeneratorService
     {
-        IEnumerable<NamespaceDeclarationSyntax> GenerateControllers(CSharpCompilation compiler, IEnumerable<ClassDeclarationSyntax> controllerNodes);
+        IEnumerable<NamespaceDeclarationSyntax> GenerateControllers(CSharpCompilation compiler, IEnumerable<ClassDeclarationSyntax> controllerNodes, ref ClassDeclarationSyntax mvcStaticClass);
     }
 }

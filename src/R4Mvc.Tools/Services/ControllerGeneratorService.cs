@@ -20,11 +20,13 @@ namespace R4Mvc.Tools.Services
 
         public IEnumerable<NamespaceDeclarationSyntax> GenerateControllers(
             CSharpCompilation compiler,
-            IEnumerable<ClassDeclarationSyntax> controllerNodes)
+            IEnumerable<ClassDeclarationSyntax> controllerNodes,
+            ref ClassDeclarationSyntax mvcStaticClass)
         {
             // controllers might be in different namespaces so should group by namespace 
             var namespaceGroups =
                 controllerNodes.GroupBy(x => x.Ancestors().OfType<NamespaceDeclarationSyntax>().First().Name.ToFullString());
+            var result = new List<NamespaceDeclarationSyntax>();
             foreach (var namespaceControllers in namespaceGroups)
             {
                 // create the namespace for the controllers
@@ -39,81 +41,100 @@ namespace R4Mvc.Tools.Services
                 {
                     var model = compiler.GetSemanticModel(mvcControllerNode.SyntaxTree);
                     var mvcSymbol = model.GetDeclaredSymbol(mvcControllerNode);
-                    var controllerName = mvcControllerNode.Identifier.ToString().TrimEnd("Controller");
+                    var controllerName = mvcSymbol.Name.TrimEnd("Controller");
 
-                    // build controller partial class node 
-                    // add a default constructor if there are some but none are zero length
-                    var genControllerClass = SyntaxNodeHelpers.CreateClass(
-                        mvcSymbol.Name,
-                        mvcControllerNode.TypeParameterList?.Parameters.ToArray(),
-                        SyntaxKind.PublicKeyword,
-                        SyntaxKind.PartialKeyword);
+                    var genControllerClass = GeneratePartialController(compiler, mvcControllerNode, mvcSymbol, area, controllerName);
 
-                    if (!mvcSymbol.Constructors.IsEmpty)
-                    {
-                        var constructors = mvcSymbol.Constructors
-                            .Where(c => c.DeclaredAccessibility == Accessibility.Public)
-                            .Where(c => !c.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute"))
-                            .ToArray();
-                        if (!constructors.Any())
-                        {
-                            genControllerClass = genControllerClass.WithDefaultConstructor(true, SyntaxKind.PublicKeyword);
-                        }
-                    }
-                    genControllerClass = genControllerClass.WithDummyConstructor(true, SyntaxKind.ProtectedKeyword);
-                    genControllerClass = AddRedirectMethods(genControllerClass);
-
-                    // add all method stubs, TODO criteria for this: only public virtual actionresults?
-                    // add subclasses, fields, properties, constants for action names
-                    genControllerClass = AddParameterlessMethods(genControllerClass, mvcSymbol);
-                    genControllerClass =
-                        genControllerClass
-                            .WithProperty("Actions", mvcControllerNode.Identifier.ToString(), SyntaxNodeHelpers.MemberAccess("MVC", controllerName), SyntaxKind.PublicKeyword)
-                            .WithStringField(
-                                "Area",
-                                area,
-                                true,
-                                SyntaxKind.PublicKeyword,
-                                SyntaxKind.ReadOnlyKeyword)
-                            .WithStringField(
-                                "Name",
-                                controllerName,
-                                true,
-                                SyntaxKind.PublicKeyword,
-                                SyntaxKind.ReadOnlyKeyword)
-                            .WithStringField(
-                                "NameConst",
-                                controllerName,
-                                true,
-                                SyntaxKind.PublicKeyword,
-                                SyntaxKind.ConstKeyword)
-                            .WithField("s_actions", "ActionNamesClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
-                            .WithProperty("ActionNames", "ActionNamesClass", IdentifierName("s_actions"), SyntaxKind.PublicKeyword)
-                            .WithActionNameClass(mvcControllerNode)
-                            .WithActionConstantsClass(mvcControllerNode)
-                            .WithField("s_views", "ViewsClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
-                            .WithProperty("Views", "ViewsClass", IdentifierName("s_views"), SyntaxKind.PublicKeyword)
-                            .WithViewsClass(_viewLocator.FindViews());
-
-                    // create R4MVC_[Controller] class inheriting from partial
-                    // TODO chain base constructor call : base(Dummy.Instance)
-                    // TODO create [method]overrides(T4MVC_System_Web_Mvc_ActionResult callInfo)
-                    // TODO create method overrides that call above
-                    var r4ControllerClass =
-                        SyntaxNodeHelpers.CreateClass(
-                            GetR4MVCControllerClassName(genControllerClass),
-                            null,
-                            SyntaxKind.PublicKeyword,
-                            SyntaxKind.PartialKeyword)
-                            .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
-                            .WithBaseTypes(mvcControllerNode.ToQualifiedName())
-                            .WithDefaultDummyBaseConstructor(false, SyntaxKind.PublicKeyword);
-                    r4ControllerClass = AddMethodOverrides(r4ControllerClass, mvcSymbol);
+                    var r4ControllerClass = GenerateR4Controller(mvcSymbol);
 
                     namespaceNode = namespaceNode.AddMembers(genControllerClass).AddMembers(r4ControllerClass);
+
+                    mvcStaticClass = mvcStaticClass.AddMembers(
+                        SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
+                            genControllerClass.Identifier.ToString().TrimEnd("Controller"),
+                            $"{namespaceNode.Name}.{genControllerClass.Identifier}",
+                            $"{namespaceNode.Name}.{r4ControllerClass.Identifier}",
+                            SyntaxKind.PublicKeyword,
+                            SyntaxKind.StaticKeyword));
                 }
-                yield return namespaceNode;
+                result.Add(namespaceNode);
             }
+            return result;
+        }
+
+        public ClassDeclarationSyntax GeneratePartialController(CSharpCompilation compiler, ClassDeclarationSyntax mvcControllerNode, INamedTypeSymbol mvcSymbol, string area, string controllerName)
+        {
+            // build controller partial class node 
+            // add a default constructor if there are some but none are zero length
+            var genControllerClass = SyntaxNodeHelpers.CreateClass(
+                mvcSymbol.Name,
+                mvcControllerNode.TypeParameterList?.Parameters.ToArray(),
+                SyntaxKind.PublicKeyword,
+                SyntaxKind.PartialKeyword);
+
+            if (!mvcSymbol.Constructors.IsEmpty)
+            {
+                var constructors = mvcSymbol.Constructors
+                    .Where(c => c.DeclaredAccessibility == Accessibility.Public)
+                    .Where(c => !c.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute"))
+                    .ToArray();
+                if (!constructors.Any())
+                {
+                    genControllerClass = genControllerClass.WithDefaultConstructor(true, SyntaxKind.PublicKeyword);
+                }
+            }
+            genControllerClass = genControllerClass.WithDummyConstructor(true, SyntaxKind.ProtectedKeyword);
+            genControllerClass = AddRedirectMethods(genControllerClass);
+
+            // add all method stubs, TODO criteria for this: only public virtual actionresults?
+            // add subclasses, fields, properties, constants for action names
+            genControllerClass = AddParameterlessMethods(genControllerClass, mvcSymbol);
+            genControllerClass =
+                genControllerClass
+                    .WithProperty("Actions", mvcControllerNode.Identifier.ToString(), SyntaxNodeHelpers.MemberAccess("MVC", controllerName), SyntaxKind.PublicKeyword)
+                    .WithStringField(
+                        "Area",
+                        area,
+                        true,
+                        SyntaxKind.PublicKeyword,
+                        SyntaxKind.ReadOnlyKeyword)
+                    .WithStringField(
+                        "Name",
+                        controllerName,
+                        true,
+                        SyntaxKind.PublicKeyword,
+                        SyntaxKind.ReadOnlyKeyword)
+                    .WithStringField(
+                        "NameConst",
+                        controllerName,
+                        true,
+                        SyntaxKind.PublicKeyword,
+                        SyntaxKind.ConstKeyword)
+                    .WithField("s_actions", "ActionNamesClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
+                    .WithProperty("ActionNames", "ActionNamesClass", IdentifierName("s_actions"), SyntaxKind.PublicKeyword)
+                    .WithActionNameClass(mvcControllerNode)
+                    .WithActionConstantsClass(mvcControllerNode)
+                    .WithField("s_views", "ViewsClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
+                    .WithProperty("Views", "ViewsClass", IdentifierName("s_views"), SyntaxKind.PublicKeyword)
+                    .WithViewsClass(_viewLocator.FindViews());
+
+            return genControllerClass;
+        }
+
+        public ClassDeclarationSyntax GenerateR4Controller(INamedTypeSymbol mvcSymbol)
+        {
+            // create R4MVC_[Controller] class inheriting from partial
+            var r4ControllerClass =
+                SyntaxNodeHelpers.CreateClass(
+                    GetR4MVCControllerClassName(mvcSymbol),
+                    null,
+                    SyntaxKind.PublicKeyword,
+                    SyntaxKind.PartialKeyword)
+                    .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
+                    .WithBaseTypes(mvcSymbol.ToQualifiedName())
+                    .WithDefaultDummyBaseConstructor(false, SyntaxKind.PublicKeyword);
+            r4ControllerClass = AddMethodOverrides(r4ControllerClass, mvcSymbol);
+            return r4ControllerClass;
         }
 
         private ClassDeclarationSyntax AddRedirectMethods(ClassDeclarationSyntax node)
@@ -279,9 +300,9 @@ namespace R4Mvc.Tools.Services
             return node.AddMembers(methods.ToArray());
         }
 
-        internal static string GetR4MVCControllerClassName(ClassDeclarationSyntax genControllerClass)
+        internal static string GetR4MVCControllerClassName(INamedTypeSymbol controllerClass)
         {
-            return string.Format("R4MVC_{0}", genControllerClass.Identifier);
+            return string.Format("R4MVC_{0}", controllerClass.Name);
         }
     }
 }
