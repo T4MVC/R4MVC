@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -13,11 +14,11 @@ namespace R4Mvc.Tools.Extensions
     {
         public static ClassDeclarationSyntax WithActionNameClass(
             this ClassDeclarationSyntax node,
-            ClassDeclarationSyntax controllerNode)
+            ITypeSymbol controllerClass)
         {
             // create ActionNames sub class using symbol method names
             return node.WithSubClassMembersAsStrings(
-                controllerNode,
+                controllerClass,
                 "ActionNamesClass",
                 SyntaxKind.PublicKeyword,
                 SyntaxKind.ReadOnlyKeyword);
@@ -25,11 +26,11 @@ namespace R4Mvc.Tools.Extensions
 
         public static ClassDeclarationSyntax WithActionConstantsClass(
             this ClassDeclarationSyntax node,
-            ClassDeclarationSyntax controllerNode)
+            ITypeSymbol controllerClass)
         {
             // create ActionConstants sub class
             return node.WithSubClassMembersAsStrings(
-                controllerNode,
+                controllerClass,
                 "ActionNameConstants",
                 SyntaxKind.PublicKeyword,
                 SyntaxKind.ConstKeyword);

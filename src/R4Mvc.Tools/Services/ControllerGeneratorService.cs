@@ -43,7 +43,7 @@ namespace R4Mvc.Tools.Services
                     var mvcSymbol = model.GetDeclaredSymbol(mvcControllerNode);
                     var controllerName = mvcSymbol.Name.TrimEnd("Controller");
 
-                    var genControllerClass = GeneratePartialController(compiler, mvcControllerNode, mvcSymbol, area, controllerName);
+                    var genControllerClass = GeneratePartialController(mvcSymbol, area, controllerName);
 
                     var r4ControllerClass = GenerateR4Controller(mvcSymbol);
 
@@ -62,13 +62,13 @@ namespace R4Mvc.Tools.Services
             return result;
         }
 
-        public ClassDeclarationSyntax GeneratePartialController(CSharpCompilation compiler, ClassDeclarationSyntax mvcControllerNode, INamedTypeSymbol mvcSymbol, string area, string controllerName)
+        public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol mvcSymbol, string area, string controllerName)
         {
             // build controller partial class node 
             // add a default constructor if there are some but none are zero length
             var genControllerClass = SyntaxNodeHelpers.CreateClass(
                 mvcSymbol.Name,
-                mvcControllerNode.TypeParameterList?.Parameters.ToArray(),
+                mvcSymbol.TypeParameters.Select(tp => TypeParameter(tp.Name)).ToArray(),
                 SyntaxKind.PublicKeyword,
                 SyntaxKind.PartialKeyword);
 
@@ -91,7 +91,7 @@ namespace R4Mvc.Tools.Services
             genControllerClass = AddParameterlessMethods(genControllerClass, mvcSymbol);
             genControllerClass =
                 genControllerClass
-                    .WithProperty("Actions", mvcControllerNode.Identifier.ToString(), SyntaxNodeHelpers.MemberAccess("MVC", controllerName), SyntaxKind.PublicKeyword)
+                    .WithProperty("Actions", mvcSymbol.Name, SyntaxNodeHelpers.MemberAccess("MVC", controllerName), SyntaxKind.PublicKeyword)
                     .WithStringField(
                         "Area",
                         area,
@@ -112,8 +112,8 @@ namespace R4Mvc.Tools.Services
                         SyntaxKind.ConstKeyword)
                     .WithField("s_actions", "ActionNamesClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
                     .WithProperty("ActionNames", "ActionNamesClass", IdentifierName("s_actions"), SyntaxKind.PublicKeyword)
-                    .WithActionNameClass(mvcControllerNode)
-                    .WithActionConstantsClass(mvcControllerNode)
+                    .WithActionNameClass(mvcSymbol)
+                    .WithActionConstantsClass(mvcSymbol)
                     .WithField("s_views", "ViewsClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
                     .WithProperty("Views", "ViewsClass", IdentifierName("s_views"), SyntaxKind.PublicKeyword)
                     .WithViewsClass(_viewLocator.FindViews());
@@ -203,10 +203,7 @@ namespace R4Mvc.Tools.Services
 
         private ClassDeclarationSyntax AddParameterlessMethods(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
         {
-            var methods = mvcSymbol.GetMembers()
-                .OfType<IMethodSymbol>()
-                .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
-                .Where(m => !m.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute"))
+            var methods = mvcSymbol.GetPublicNonGeneratedMethods()
                 .GroupBy(m => m.Name)
                 .Where(g => !g.Any(m => m.Parameters.Length == 0))
                 .Select(g => MethodDeclaration(IdentifierName("IActionResult"), Identifier(g.Key))
@@ -228,10 +225,7 @@ namespace R4Mvc.Tools.Services
         private ClassDeclarationSyntax AddMethodOverrides(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
         {
             const string overrideMethodSuffix = "Override";
-            var methods = mvcSymbol.GetMembers()
-                .OfType<IMethodSymbol>()
-                .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
-                .Where(m => !m.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute"))
+            var methods = mvcSymbol.GetPublicNonGeneratedMethods()
                 .SelectMany(m =>
                 {
                     var statements = new List<StatementSyntax>

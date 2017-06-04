@@ -64,7 +64,7 @@ namespace R4Mvc.Tools.Extensions
         {
             var classSyntax = ClassDeclaration(className).WithModifiers(modifiers);
 
-            if (typeParams != null)
+            if (typeParams?.Length > 0)
                 classSyntax = classSyntax
                     .AddTypeParameterListParameters(typeParams);
 
@@ -94,6 +94,19 @@ namespace R4Mvc.Tools.Extensions
                                 LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(Constants.Version)))
                         }));
             return Attribute(IdentifierName("GeneratedCode"), arguments);
+        }
+
+        public static bool IsNotR4MVCGenerated(this IMethodSymbol method)
+        {
+            return !method.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute");
+        }
+
+        public static IEnumerable<IMethodSymbol> GetPublicNonGeneratedMethods(this ITypeSymbol controller)
+        {
+            return controller.GetMembers()
+                .OfType<IMethodSymbol>()
+                .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
+                .Where(IsNotR4MVCGenerated);
         }
 
         public static IEnumerable<MemberDeclarationSyntax> CreateMethods(this ITypeSymbol mvcSymbol)
@@ -288,15 +301,15 @@ namespace R4Mvc.Tools.Extensions
             return node.AddMembers(mvcSymbol.CreateMethods().ToArray());
         }
 
-        public static ClassDeclarationSyntax WithSubClassMembersAsStrings(this ClassDeclarationSyntax node, ClassDeclarationSyntax controllerNode, string className, params SyntaxKind[] modifiers)
+        public static ClassDeclarationSyntax WithSubClassMembersAsStrings(this ClassDeclarationSyntax node, ITypeSymbol controllerClass, string className, params SyntaxKind[] modifiers)
         {
             // create ActionConstants sub class
             var actionNameClass =
                 CreateClass(className, null, SyntaxKind.PublicKeyword)
                     .WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
-            foreach (var action in controllerNode.Members.OfType<MethodDeclarationSyntax>().Where(x => x.Modifiers.Any(SyntaxKind.PublicKeyword)).DistinctBy(x => x.Identifier.ToString()))
+            foreach (var actionName in controllerClass.GetPublicNonGeneratedMethods().GroupBy(x => x.Name))
             {
-                actionNameClass = actionNameClass.WithStringField(action.Identifier.ToString(), action.Identifier.ToString(), false, modifiers);
+                actionNameClass = actionNameClass.WithStringField(actionName.Key, actionName.Key, false, modifiers);
             }
             return node.AddMembers(actionNameClass);
         }
