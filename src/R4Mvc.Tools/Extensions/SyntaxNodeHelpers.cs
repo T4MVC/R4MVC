@@ -424,13 +424,5 @@ namespace R4Mvc.Tools.Extensions
             var seenKeys = new HashSet<TKey>();
             return source.Where(element => seenKeys.Add(keySelector(element)));
         }
-
-        public static void WriteFile(this SyntaxNode fileTree, string generatedFilePath)
-        {
-            using (var textWriter = new StreamWriter(new FileStream(generatedFilePath, FileMode.Create)))
-            {
-                fileTree.WriteTo(textWriter);
-            }
-        }
     }
 }

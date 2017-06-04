@@ -18,63 +18,19 @@ namespace R4Mvc.Tools.Services
             _viewLocator = viewLocator;
         }
 
-        public IEnumerable<NamespaceDeclarationSyntax> GenerateControllers(
-            CSharpCompilation compiler,
-            IEnumerable<ClassDeclarationSyntax> controllerNodes,
-            ref ClassDeclarationSyntax mvcStaticClass)
-        {
-            // controllers might be in different namespaces so should group by namespace 
-            var namespaceGroups =
-                controllerNodes.GroupBy(x => x.Ancestors().OfType<NamespaceDeclarationSyntax>().First().Name.ToFullString());
-            var result = new List<NamespaceDeclarationSyntax>();
-            foreach (var namespaceControllers in namespaceGroups)
-            {
-                // create the namespace for the controllers
-                var namespaceNode = SyntaxNodeHelpers.CreateNamespace(namespaceControllers.Key);
-                var areaMatch = Regex.Match(namespaceControllers.Key, ".Areas.(\\w+).Controllers");
-                var area = areaMatch.Success
-                    ? areaMatch.Groups[1].Value
-                    : string.Empty;
-
-                // loop through the controllers and create a partial node for each
-                foreach (var mvcControllerNode in namespaceControllers)
-                {
-                    var model = compiler.GetSemanticModel(mvcControllerNode.SyntaxTree);
-                    var mvcSymbol = model.GetDeclaredSymbol(mvcControllerNode);
-                    var controllerName = mvcSymbol.Name.TrimEnd("Controller");
-
-                    var genControllerClass = GeneratePartialController(mvcSymbol, area, controllerName);
-
-                    var r4ControllerClass = GenerateR4Controller(mvcSymbol);
-
-                    namespaceNode = namespaceNode.AddMembers(genControllerClass).AddMembers(r4ControllerClass);
-
-                    mvcStaticClass = mvcStaticClass.AddMembers(
-                        SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
-                            genControllerClass.Identifier.ToString().TrimEnd("Controller"),
-                            $"{namespaceNode.Name}.{genControllerClass.Identifier}",
-                            $"{namespaceNode.Name}.{r4ControllerClass.Identifier}",
-                            SyntaxKind.PublicKeyword,
-                            SyntaxKind.StaticKeyword));
-                }
-                result.Add(namespaceNode);
-            }
-            return result;
-        }
-
-        public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol mvcSymbol, string area, string controllerName)
+        public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaName, string controllerName)
         {
             // build controller partial class node 
             // add a default constructor if there are some but none are zero length
             var genControllerClass = SyntaxNodeHelpers.CreateClass(
-                mvcSymbol.Name,
-                mvcSymbol.TypeParameters.Select(tp => TypeParameter(tp.Name)).ToArray(),
+                controllerSymbol.Name,
+                controllerSymbol.TypeParameters.Select(tp => TypeParameter(tp.Name)).ToArray(),
                 SyntaxKind.PublicKeyword,
                 SyntaxKind.PartialKeyword);
 
-            if (!mvcSymbol.Constructors.IsEmpty)
+            if (!controllerSymbol.Constructors.IsEmpty)
             {
-                var constructors = mvcSymbol.Constructors
+                var constructors = controllerSymbol.Constructors
                     .Where(c => c.DeclaredAccessibility == Accessibility.Public)
                     .Where(c => !c.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute"))
                     .ToArray();
@@ -88,13 +44,13 @@ namespace R4Mvc.Tools.Services
 
             // add all method stubs, TODO criteria for this: only public virtual actionresults?
             // add subclasses, fields, properties, constants for action names
-            genControllerClass = AddParameterlessMethods(genControllerClass, mvcSymbol);
+            genControllerClass = AddParameterlessMethods(genControllerClass, controllerSymbol);
             genControllerClass =
                 genControllerClass
-                    .WithProperty("Actions", mvcSymbol.Name, SyntaxNodeHelpers.MemberAccess("MVC", controllerName), SyntaxKind.PublicKeyword)
+                    .WithProperty("Actions", controllerSymbol.Name, SyntaxNodeHelpers.MemberAccess("MVC", controllerName), SyntaxKind.PublicKeyword)
                     .WithStringField(
                         "Area",
-                        area,
+                        areaName,
                         true,
                         SyntaxKind.PublicKeyword,
                         SyntaxKind.ReadOnlyKeyword)
@@ -112,8 +68,8 @@ namespace R4Mvc.Tools.Services
                         SyntaxKind.ConstKeyword)
                     .WithField("s_actions", "ActionNamesClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
                     .WithProperty("ActionNames", "ActionNamesClass", IdentifierName("s_actions"), SyntaxKind.PublicKeyword)
-                    .WithActionNameClass(mvcSymbol)
-                    .WithActionConstantsClass(mvcSymbol)
+                    .WithActionNameClass(controllerSymbol)
+                    .WithActionConstantsClass(controllerSymbol)
                     .WithField("s_views", "ViewsClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
                     .WithProperty("Views", "ViewsClass", IdentifierName("s_views"), SyntaxKind.PublicKeyword)
                     .WithViewsClass(_viewLocator.FindViews());
@@ -121,19 +77,19 @@ namespace R4Mvc.Tools.Services
             return genControllerClass;
         }
 
-        public ClassDeclarationSyntax GenerateR4Controller(INamedTypeSymbol mvcSymbol)
+        public ClassDeclarationSyntax GenerateR4Controller(INamedTypeSymbol controllerSymbol)
         {
             // create R4MVC_[Controller] class inheriting from partial
             var r4ControllerClass =
                 SyntaxNodeHelpers.CreateClass(
-                    GetR4MVCControllerClassName(mvcSymbol),
+                    GetR4MVCControllerClassName(controllerSymbol),
                     null,
                     SyntaxKind.PublicKeyword,
                     SyntaxKind.PartialKeyword)
                     .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
-                    .WithBaseTypes(mvcSymbol.ToQualifiedName())
+                    .WithBaseTypes(controllerSymbol.ToQualifiedName())
                     .WithDefaultDummyBaseConstructor(false, SyntaxKind.PublicKeyword);
-            r4ControllerClass = AddMethodOverrides(r4ControllerClass, mvcSymbol);
+            r4ControllerClass = AddMethodOverrides(r4ControllerClass, controllerSymbol);
             return r4ControllerClass;
         }
 

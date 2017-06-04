@@ -3,7 +3,10 @@ using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using R4Mvc.Tools.Locators;
+using R4Mvc.Tools.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +15,7 @@ namespace R4Mvc.Tools
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main(string[] args) 
         {
             if (args.Length == 0)
             {
@@ -54,8 +57,7 @@ namespace R4Mvc.Tools
             }
 
             var compilation = await project.GetCompilationAsync() as CSharpCompilation;
-            var node = generator.Generate(compilation, settings);
-            Extensions.SyntaxNodeHelpers.WriteFile(node, Path.Combine(Path.GetDirectoryName(project.FilePath), R4MvcGenerator.R4MvcFileName));
+            generator.Generate(compilation, Path.GetDirectoryName(project.FilePath));
         }
 
         static IConfigurationRoot LoadConfiguration(string[] args, string projectPath)
@@ -68,9 +70,17 @@ namespace R4Mvc.Tools
 
         static void ConfigureServices(IServiceCollection services, IConfigurationRoot configuration)
         {
-            Ioc.IocConfig.RegisterServices(services);
             services.AddOptions();
             services.Configure<Services.Settings>(configuration);
+
+            services.AddSingleton(typeof(IEnumerable<IViewLocator>), new[] { new DefaultRazorViewLocator() });
+            services.AddSingleton(typeof(IEnumerable<IStaticFileLocator>), new[] { new DefaultStaticFileLocator() });
+            services.AddTransient<IViewLocatorService, ViewLocatorService>();
+            services.AddTransient<IStaticFileGeneratorService, StaticFileGeneratorService>();
+            services.AddTransient<IControllerRewriterService, ControllerRewriterService>();
+            services.AddTransient<IControllerGeneratorService, ControllerGeneratorService>();
+            services.AddTransient<IFilePersistService, FilePersistService>();
+            services.AddTransient<R4MvcGenerator, R4MvcGenerator>();
         }
     }
 }

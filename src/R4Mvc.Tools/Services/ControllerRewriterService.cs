@@ -10,6 +10,12 @@ namespace R4Mvc.Tools.Services
 {
     public class ControllerRewriterService : IControllerRewriterService
     {
+        private readonly IFilePersistService _filePersistService;
+        public ControllerRewriterService(IFilePersistService filePersistService)
+        {
+            _filePersistService = filePersistService;
+        }
+
         public ImmutableArray<ClassDeclarationSyntax> RewriteControllers(CSharpCompilation compiler, string outputFileName)
         {
             var mvcControllerNodes = new List<ClassDeclarationSyntax>();
@@ -27,7 +33,7 @@ namespace R4Mvc.Tools.Services
                 {
                     // node has changed, update syntaxtree and persist to file
                     compiler = compiler.ReplaceSyntaxTree(tree, newNode.SyntaxTree);
-                    newNode.WriteFile(tree.FilePath);
+                    _filePersistService.WriteFile(newNode, tree.FilePath);
                 }
 
                 // save the controller nodes from each visit to pass to the generator
