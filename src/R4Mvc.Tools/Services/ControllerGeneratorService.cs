@@ -62,16 +62,13 @@ namespace R4Mvc.Tools.Services
                 SyntaxKind.PublicKeyword,
                 SyntaxKind.PartialKeyword);
 
-            if (!controllerSymbol.Constructors.IsEmpty)
+            var gotCustomConstructors = controllerSymbol.Constructors
+                .Where(c => c.DeclaredAccessibility == Accessibility.Public)
+                .Where(SyntaxNodeHelpers.IsNotR4MVCGenerated)
+                .Any();
+            if (!gotCustomConstructors)
             {
-                var constructors = controllerSymbol.Constructors
-                    .Where(c => c.DeclaredAccessibility == Accessibility.Public)
-                    .Where(SyntaxNodeHelpers.IsNotR4MVCGenerated)
-                    .ToArray();
-                if (!constructors.Any())
-                {
-                    genControllerClass = genControllerClass.WithDefaultConstructor(true, SyntaxKind.PublicKeyword);
-                }
+                genControllerClass = genControllerClass.WithDefaultConstructor(true, SyntaxKind.PublicKeyword);
             }
             genControllerClass = genControllerClass.WithDummyConstructor(true, SyntaxKind.ProtectedKeyword);
             genControllerClass = AddRedirectMethods(genControllerClass);

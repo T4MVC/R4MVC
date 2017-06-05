@@ -1,5 +1,9 @@
 ﻿using System;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace Microsoft.AspNetCore.Mvc
 {
@@ -11,6 +15,11 @@ namespace Microsoft.AspNetCore.Mvc
             if (actionResult == null)
                 throw new InvalidOperationException("R4MVC was called incorrectly. You may need to force it to regenerate by running `dotnet r4mvc`");
             return actionResult;
+        }
+
+        public static RouteValueDictionary GetRouteValueDictionary(this IActionResult result)
+        {
+            return result.GetR4MvcResult().RouteValueDictionary;
         }
 
         public static void InitMVCT4Result(this IR4MvcActionResult result, string area, string controller, string action, string protocol = null)
