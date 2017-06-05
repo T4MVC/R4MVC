@@ -7,7 +7,6 @@ using R4Mvc.Tools.Services;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace R4Mvc.Tools
@@ -59,20 +58,28 @@ namespace R4Mvc.Tools
                 SyntaxNodeHelpers.CreateClass(_settings.HelpersPrefix, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                     .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute());
 
+            // R4MVC namespace used for the areas and Dummy class
+            var r4Namespace = SyntaxNodeHelpers.CreateNamespace(_settings.R4MvcNamespace)
+                // add the dummy class using in the derived controller partial class
+                .WithDummyClass();
+            var areaClasses = new Dictionary<string, ClassDeclarationSyntax>();
+
             var controllers = _controllerRewriter.RewriteControllers(compilation, R4MvcFileName);
             var namespaceGroups = controllers.GroupBy(c => c.Ancestors().OfType<NamespaceDeclarationSyntax>().First().Name.ToFullString().Trim());
             var generatedControllers = new List<NamespaceDeclarationSyntax>();
             foreach (var nameGroup in namespaceGroups)
             {
                 var namespaceNode = SyntaxNodeHelpers.CreateNamespace(nameGroup.Key);
-                var areaMatch = Regex.Match(nameGroup.Key, ".Areas.(\\w+).Controllers");
-                var areaName = areaMatch.Success ? areaMatch.Groups[1].Value : string.Empty;
 
                 foreach (var controllerNode in nameGroup)
                 {
+                    if (controllerNode.SyntaxTree.FilePath.EndsWith(".generated.cs"))
+                        continue;
+
                     var model = compilation.GetSemanticModel(controllerNode.SyntaxTree);
                     var controllerSymbol = model.GetDeclaredSymbol(controllerNode);
                     var controllerName = controllerSymbol.Name.TrimEnd("Controller");
+                    var areaName = _controllerGenerator.GetControllerArea(controllerSymbol);
 
                     var genControllerClass = _controllerGenerator.GeneratePartialController(controllerSymbol, areaName, controllerName);
                     var r4ControllerClass = _controllerGenerator.GenerateR4Controller(controllerSymbol);
@@ -87,23 +94,40 @@ namespace R4Mvc.Tools
                         namespaceNode = SyntaxNodeHelpers.CreateNamespace(nameGroup.Key);
                     }
 
-                    mvcStaticClass = mvcStaticClass.AddMembers(
-                        SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
-                            controllerName,
-                            $"{nameGroup.Key}.{genControllerClass.Identifier}",
-                            $"{nameGroup.Key}.{r4ControllerClass.Identifier}",
-                            SyntaxKind.PublicKeyword,
-                            SyntaxKind.StaticKeyword));
+                    var mvcStaticClassMemer = SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
+                        controllerName,
+                        $"{nameGroup.Key}.{genControllerClass.Identifier}",
+                        $"{nameGroup.Key}.{r4ControllerClass.Identifier}",
+                        SyntaxKind.PublicKeyword,
+                        SyntaxKind.StaticKeyword,
+                        SyntaxKind.ReadOnlyKeyword);
+
+                    if (!string.IsNullOrEmpty(areaName))
+                    {
+                        if (!areaClasses.ContainsKey(areaName))
+                        {
+                            string areaClass = areaName + "Class";
+                            areaClasses[areaName] = SyntaxNodeHelpers.CreateClass(areaClass, null, SyntaxKind.PublicKeyword);
+                            // change to field and property
+                            mvcStaticClass = mvcStaticClass.AddMembers(
+                                SyntaxNodeHelpers.CreateFieldWithDefaultInitializer("s_" + areaName, areaClass, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword),
+                                SyntaxNodeHelpers.CreateProperty(areaClass, areaClass, IdentifierName("s_" + areaName), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword));
+                        }
+
+                        areaClasses[areaName] = areaClasses[areaName].AddMembers(mvcStaticClassMemer);
+                    }
+                    else
+                    {
+                        mvcStaticClass = mvcStaticClass.AddMembers(mvcStaticClassMemer);
+                    }
                 }
 
                 if (!_settings.SplitIntoMutipleFiles)
                     generatedControllers.Add(namespaceNode);
             }
+            r4Namespace = r4Namespace.AddMembers(areaClasses.Values.ToArray());
 
             var staticFileNode = _staticFileGenerator.GenerateStaticFiles(_settings);
-
-            // add the dummy class using in the derived controller partial class
-            var r4Namespace = SyntaxNodeHelpers.CreateNamespace(_settings.R4MvcNamespace).WithDummyClass();
 
             var actionResultClass =
                 SyntaxNodeHelpers.CreateClass(Constants.ActionResultClass, null, SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)

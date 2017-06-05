@@ -2,8 +2,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -96,9 +96,9 @@ namespace R4Mvc.Tools.Extensions
             return Attribute(IdentifierName("GeneratedCode"), arguments);
         }
 
-        public static bool IsNotR4MVCGenerated(this IMethodSymbol method)
+        public static bool IsNotR4MVCGenerated(this ISymbol method)
         {
-            return !method.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute");
+            return !method.GetAttributes().Any(a => a.AttributeClass.ToDisplayString() == typeof(GeneratedCodeAttribute).FullName);
         }
 
         public static IEnumerable<IMethodSymbol> GetPublicNonGeneratedMethods(this ITypeSymbol controller)

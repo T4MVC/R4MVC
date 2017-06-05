@@ -1,10 +1,10 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using R4Mvc.Tools.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace R4Mvc.Tools.Services
@@ -16,6 +16,17 @@ namespace R4Mvc.Tools.Services
         public ControllerGeneratorService(IViewLocatorService viewLocator)
         {
             _viewLocator = viewLocator;
+        }
+
+        public string GetControllerArea(INamedTypeSymbol controllerSymbol)
+        {
+            var areaAttribute = controllerSymbol.GetAttributes()
+                .Where(a => a.AttributeClass.ToDisplayString() == typeof(AreaAttribute).FullName)
+                .FirstOrDefault();
+            if (areaAttribute == null)
+                return string.Empty;
+
+            return areaAttribute.ConstructorArguments[0].Value?.ToString();
         }
 
         public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaName, string controllerName)
