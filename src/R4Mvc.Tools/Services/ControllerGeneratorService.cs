@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Options;
 using R4Mvc.Tools.Extensions;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,12 @@ namespace R4Mvc.Tools.Services
     public class ControllerGeneratorService : IControllerGeneratorService
     {
         private readonly IViewLocatorService _viewLocator;
+        private readonly Settings _settings;
 
-        public ControllerGeneratorService(IViewLocatorService viewLocator)
+        public ControllerGeneratorService(IViewLocatorService viewLocator, IOptions<Settings> settings)
         {
             _viewLocator = viewLocator;
+            _settings = settings.Value;
         }
 
         public string GetControllerArea(INamedTypeSymbol controllerSymbol)
@@ -49,7 +52,7 @@ namespace R4Mvc.Tools.Services
             return string.Empty;
         }
 
-        public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaName, string controllerName)
+        public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaName, string controllerName, string projectRoot)
         {
             // build controller partial class node 
             // add a default constructor if there are some but none are zero length
@@ -76,9 +79,12 @@ namespace R4Mvc.Tools.Services
             // add all method stubs, TODO criteria for this: only public virtual actionresults?
             // add subclasses, fields, properties, constants for action names
             genControllerClass = AddParameterlessMethods(genControllerClass, controllerSymbol);
+            var actionsExpression = !string.IsNullOrEmpty(areaName)
+                ? SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix + "." + areaName, controllerName)
+                : SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix, controllerName);
             genControllerClass =
                 genControllerClass
-                    .WithProperty("Actions", controllerSymbol.Name, SyntaxNodeHelpers.MemberAccess("MVC", controllerName), SyntaxKind.PublicKeyword)
+                    .WithProperty("Actions", controllerSymbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
                     .WithStringField(
                         "Area",
                         areaName,
@@ -103,7 +109,7 @@ namespace R4Mvc.Tools.Services
                     .WithActionConstantsClass(controllerSymbol)
                     .WithField("s_views", "ViewsClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
                     .WithProperty("Views", "ViewsClass", IdentifierName("s_views"), SyntaxKind.PublicKeyword)
-                    .WithViewsClass(_viewLocator.FindViews());
+                    .WithViewsClass(areaName, _viewLocator.FindViews(projectRoot));
 
             return genControllerClass;
         }

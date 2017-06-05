@@ -140,7 +140,20 @@ namespace R4MvcHostApp.Controllers
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
             public class _ViewNamesClass
             {
+                public readonly string AddPhoneNumber = "AddPhoneNumber";
+                public readonly string ChangePassword = "ChangePassword";
+                public readonly string Index = "Index";
+                public readonly string ManageLogins = "ManageLogins";
+                public readonly string SetPassword = "SetPassword";
+                public readonly string VerifyPhoneNumber = "VerifyPhoneNumber";
             }
+
+            public string AddPhoneNumber = "~/Views/Manage/AddPhoneNumber.cshtml";
+            public string ChangePassword = "~/Views/Manage/ChangePassword.cshtml";
+            public string Index = "~/Views/Manage/Index.cshtml";
+            public string ManageLogins = "~/Views/Manage/ManageLogins.cshtml";
+            public string SetPassword = "~/Views/Manage/SetPassword.cshtml";
+            public string VerifyPhoneNumber = "~/Views/Manage/VerifyPhoneNumber.cshtml";
         }
     }
 

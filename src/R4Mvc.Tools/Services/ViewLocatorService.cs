@@ -14,9 +14,9 @@ namespace R4Mvc.Tools.Services
             _viewLocators = viewLocators;
         }
 
-        public IEnumerable<View> FindViews()
+        public IEnumerable<View> FindViews(string projectRoot)
         {
-            return _viewLocators.SelectMany(x => x.Find());
+            return _viewLocators.SelectMany(x => x.Find(projectRoot));
         }
     }
 }

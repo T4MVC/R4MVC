@@ -94,7 +94,14 @@ namespace R4MvcHostApp.Controllers
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
             public class _ViewNamesClass
             {
+                public readonly string About = "About";
+                public readonly string Contact = "Contact";
+                public readonly string Index = "Index";
             }
+
+            public string About = "~/Views/Home/About.cshtml";
+            public string Contact = "~/Views/Home/Contact.cshtml";
+            public string Index = "~/Views/Home/Index.cshtml";
         }
     }
 

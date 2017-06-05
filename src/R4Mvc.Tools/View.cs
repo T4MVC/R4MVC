@@ -4,17 +4,17 @@ namespace R4Mvc.Tools
 {
     public class View
     {
-        public View(string controllerName, string viewName, Uri relativePath)
+        public View(string areaName, string controllerName, string viewName, Uri relativePath)
         {
-            this.ControllerName = controllerName;
-            this.ViewName = viewName;
-            this.RelativePath = relativePath;
+            AreaName = areaName;
+            ControllerName = controllerName;
+            ViewName = viewName;
+            RelativePath = relativePath;
         }
 
-        public string ControllerName { get; private set; }
-
-        public string ViewName { get; private set; }
-
-        public Uri RelativePath { get; private set; }
+        public string AreaName { get; }
+        public string ControllerName { get; }
+        public string ViewName { get; }
+        public Uri RelativePath { get; }
     }
 }

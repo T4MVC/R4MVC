@@ -172,7 +172,34 @@ namespace R4MvcHostApp.Controllers
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
             public class _ViewNamesClass
             {
+                public readonly string AccessDenied = "AccessDenied";
+                public readonly string ConfirmEmail = "ConfirmEmail";
+                public readonly string ExternalLoginConfirmation = "ExternalLoginConfirmation";
+                public readonly string ExternalLoginFailure = "ExternalLoginFailure";
+                public readonly string ForgotPassword = "ForgotPassword";
+                public readonly string ForgotPasswordConfirmation = "ForgotPasswordConfirmation";
+                public readonly string Lockout = "Lockout";
+                public readonly string Login = "Login";
+                public readonly string Register = "Register";
+                public readonly string ResetPassword = "ResetPassword";
+                public readonly string ResetPasswordConfirmation = "ResetPasswordConfirmation";
+                public readonly string SendCode = "SendCode";
+                public readonly string VerifyCode = "VerifyCode";
             }
+
+            public string AccessDenied = "~/Views/Account/AccessDenied.cshtml";
+            public string ConfirmEmail = "~/Views/Account/ConfirmEmail.cshtml";
+            public string ExternalLoginConfirmation = "~/Views/Account/ExternalLoginConfirmation.cshtml";
+            public string ExternalLoginFailure = "~/Views/Account/ExternalLoginFailure.cshtml";
+            public string ForgotPassword = "~/Views/Account/ForgotPassword.cshtml";
+            public string ForgotPasswordConfirmation = "~/Views/Account/ForgotPasswordConfirmation.cshtml";
+            public string Lockout = "~/Views/Account/Lockout.cshtml";
+            public string Login = "~/Views/Account/Login.cshtml";
+            public string Register = "~/Views/Account/Register.cshtml";
+            public string ResetPassword = "~/Views/Account/ResetPassword.cshtml";
+            public string ResetPasswordConfirmation = "~/Views/Account/ResetPasswordConfirmation.cshtml";
+            public string SendCode = "~/Views/Account/SendCode.cshtml";
+            public string VerifyCode = "~/Views/Account/VerifyCode.cshtml";
         }
     }
 

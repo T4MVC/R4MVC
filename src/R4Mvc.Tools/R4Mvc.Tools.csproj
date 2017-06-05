@@ -3,7 +3,6 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net462</TargetFramework>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\R4Mvc.Tools.xml</DocumentationFile>
     <PackageProjectUrl>https://github.com/T4MVC/R4MVC</PackageProjectUrl>
     <RepositoryUrl>https://github.com/artiomchi/R4MVC</RepositoryUrl>
     <AssemblyVersion>0.5.1</AssemblyVersion>

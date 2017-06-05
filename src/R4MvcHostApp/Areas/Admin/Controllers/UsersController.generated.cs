@@ -54,7 +54,7 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
-        public UsersController Actions => MVC.Users;
+        public UsersController Actions => MVC.Admin.Users;
         [GeneratedCode("R4Mvc", "1.0")]
         public readonly string Area = "Admin";
         [GeneratedCode("R4Mvc", "1.0")]
@@ -88,7 +88,10 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
             public class _ViewNamesClass
             {
+                public readonly string Index = "Index";
             }
+
+            public string Index = "~/Areas/Admin/Views/Users/Index.cshtml";
         }
     }
 

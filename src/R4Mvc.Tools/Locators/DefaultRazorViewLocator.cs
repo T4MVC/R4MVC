@@ -1,35 +1,46 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-
-//using Microsoft.Framework.Runtime;
 
 namespace R4Mvc.Tools.Locators
 {
     public class DefaultRazorViewLocator : IViewLocator
     {
-        //public Func<Project> ProjectDelegate;
-
-        private const string _extension = ".cshtml";
-
-        public IEnumerable<View> Find()
+        public IEnumerable<View> Find(string projectRoot)
         {
-            //var project = ProjectDelegate.Invoke();
-            //var projectDirectory = project.ProjectDirectory;
-            //var projectRootUrl = projectDirectory.EndsWith("/") ? new Uri(projectDirectory) : new Uri(projectDirectory + "/");
+            var viewsPath = Path.Combine(projectRoot, "Views");
+            if (Directory.Exists(viewsPath))
+            {
+                foreach (var controllerPath in Directory.GetDirectories(viewsPath))
+                {
+                    var controllerName = Path.GetFileName(controllerPath);
+                    foreach (var file in Directory.GetFiles(Path.Combine(viewsPath, controllerName), "*.cshtml"))
+                    {
+                        yield return new View(string.Empty, controllerName + "Controller", Path.GetFileNameWithoutExtension(file), new Uri($"~/Views/{controllerName}/{Path.GetFileName(file)}", UriKind.Relative));
+                    }
+                }
+            }
 
-            // TODO: Refactor out our dependency on Project.ContentFiles
-            return new List<View>();
-
-            // return
-            //project.ContentFiles.Where(x => x.EndsWith(_extension, StringComparison.CurrentCultureIgnoreCase))
-            //	.Select(x =>
-            //	{
-            //		var controllerName = Path.GetDirectoryName(x)?.Split(Path.DirectorySeparatorChar).Last() + "Controller";
-            //		var absoluteUrl = new Uri(x);
-            //		return new View(controllerName, Path.GetFileNameWithoutExtension(x), projectRootUrl.MakeRelativeUri(absoluteUrl));
-            //	});
+            var areasPath = Path.Combine(projectRoot, "Areas");
+            if (Directory.Exists(areasPath))
+            {
+                foreach (var areaPath in Directory.GetDirectories(areasPath))
+                {
+                    var areaName = Path.GetFileName(areaPath);
+                    viewsPath = Path.Combine(areaPath, "Views");
+                    if (Directory.Exists(viewsPath))
+                    {
+                        foreach (var controllerPath in Directory.GetDirectories(viewsPath))
+                        {
+                            var controllerName = Path.GetFileName(controllerPath);
+                            foreach (var file in Directory.GetFiles(Path.Combine(viewsPath, controllerName), "*.cshtml"))
+                            {
+                                yield return new View(areaName, controllerName + "Controller", Path.GetFileNameWithoutExtension(file), new Uri($"~/Areas/{areaName}/Views/{controllerName}/{Path.GetFileName(file)}", UriKind.Relative));
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

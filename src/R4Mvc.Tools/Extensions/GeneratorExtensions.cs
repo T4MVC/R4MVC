@@ -36,7 +36,7 @@ namespace R4Mvc.Tools.Extensions
                 SyntaxKind.ConstKeyword);
         }
 
-        public static ClassDeclarationSyntax WithViewsClass(this ClassDeclarationSyntax node, IEnumerable<View> viewFiles)
+        public static ClassDeclarationSyntax WithViewsClass(this ClassDeclarationSyntax node, string areaName, IEnumerable<View> viewFiles)
         {
             // create subclass called ViewsClass
             // create ViewNames get property returning static instance of _ViewNamesClass subclass
@@ -50,7 +50,7 @@ namespace R4Mvc.Tools.Extensions
 
             var viewNamesClassNode = CreateClass(viewNamesClass, null, SyntaxKind.PublicKeyword);
             var controllerViews =
-                viewFiles.Where(x => x.ControllerName.Equals(node.Identifier.ToString(), StringComparison.CurrentCultureIgnoreCase))
+                viewFiles.Where(x => string.Equals(x.ControllerName, node.Identifier.ToString(), StringComparison.CurrentCultureIgnoreCase) && string.Equals(x.AreaName, areaName, StringComparison.OrdinalIgnoreCase))
                     .ToImmutableArray();
             var viewNameFields =
                 controllerViews.Select(
@@ -62,7 +62,7 @@ namespace R4Mvc.Tools.Extensions
             viewClassNode = viewClassNode.AddMembers(viewNamesClassNode);
             var viewFields =
                 controllerViews.Select(
-                    x => CreateStringFieldDeclaration(x.ViewName, "~/" + x.RelativePath, SyntaxKind.PublicKeyword))
+                    x => CreateStringFieldDeclaration(x.ViewName, x.RelativePath.ToString(), SyntaxKind.PublicKeyword))
                     .Cast<MemberDeclarationSyntax>()
                     .ToArray();
             viewClassNode = viewClassNode.AddMembers(viewFields);
