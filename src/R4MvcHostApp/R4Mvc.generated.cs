@@ -40,7 +40,7 @@ namespace R4Mvc
 public static partial class MVC
 {
     static readonly AdminClass s_Admin = new AdminClass();
-    public static AdminClass AdminClass => s_Admin;
+    public static AdminClass Admin => s_Admin;
     public static readonly R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.R4MVC_AccountController();
     public static readonly R4MvcHostApp.Controllers.HomeController Home = new R4MvcHostApp.Controllers.R4MVC_HomeController();
     public static readonly R4MvcHostApp.Controllers.ManageController Manage = new R4MvcHostApp.Controllers.R4MVC_ManageController();

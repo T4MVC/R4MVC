@@ -111,7 +111,7 @@ namespace R4Mvc.Tools
                             // change to field and property
                             mvcStaticClass = mvcStaticClass.AddMembers(
                                 SyntaxNodeHelpers.CreateFieldWithDefaultInitializer("s_" + areaName, areaClass, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword),
-                                SyntaxNodeHelpers.CreateProperty(areaClass, areaClass, IdentifierName("s_" + areaName), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword));
+                                SyntaxNodeHelpers.CreateProperty(areaName, areaClass, IdentifierName("s_" + areaName), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword));
                         }
 
                         areaClasses[areaName] = areaClasses[areaName].AddMembers(mvcStaticClassMemer);

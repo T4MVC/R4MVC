@@ -21,12 +21,32 @@ namespace R4Mvc.Tools.Services
         public string GetControllerArea(INamedTypeSymbol controllerSymbol)
         {
             var areaAttribute = controllerSymbol.GetAttributes()
-                .Where(a => a.AttributeClass.ToDisplayString() == typeof(AreaAttribute).FullName)
+                .Where(a => a.AttributeClass.InheritsFrom<AreaAttribute>())
                 .FirstOrDefault();
             if (areaAttribute == null)
                 return string.Empty;
 
-            return areaAttribute.ConstructorArguments[0].Value?.ToString();
+            if (areaAttribute.AttributeClass.ToDisplayString() == typeof(AreaAttribute).FullName)
+                return areaAttribute.ConstructorArguments[0].Value?.ToString();
+
+            // parse the constructor to get the area name from derived types
+            if (areaAttribute.AttributeClass.BaseType.ToDisplayString() == typeof(AreaAttribute).FullName)
+            {
+                // direct descendant. Reading the area name from the constructor
+                var constructorInit = areaAttribute.AttributeConstructor.DeclaringSyntaxReferences
+                    .SelectMany(s => s.SyntaxTree.GetRoot().DescendantNodesAndSelf().OfType<ClassDeclarationSyntax>().Where(c => c.Identifier.Text == areaAttribute.AttributeClass.Name))
+                    .SelectMany(s => s.DescendantNodesAndSelf().OfType<ConstructorInitializerSyntax>())
+                    .First();
+                if (constructorInit.ArgumentList.Arguments.Count > 0)
+                {
+                    var arg = constructorInit.ArgumentList.Arguments[0];
+                    if (arg.Expression is LiteralExpressionSyntax litExp)
+                    {
+                        return litExp.Token.ValueText;
+                    }
+                }
+            }
+            return string.Empty;
         }
 
         public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaName, string controllerName)
@@ -43,7 +63,7 @@ namespace R4Mvc.Tools.Services
             {
                 var constructors = controllerSymbol.Constructors
                     .Where(c => c.DeclaredAccessibility == Accessibility.Public)
-                    .Where(c => !c.GetAttributes().Any(a => a.AttributeClass.Name == "GeneratedCodeAttribute"))
+                    .Where(SyntaxNodeHelpers.IsNotR4MVCGenerated)
                     .ToArray();
                 if (!constructors.Any())
                 {

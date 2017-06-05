@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace R4MvcHostApp.Areas.Admin.Controllers
 {
-    [Area("Admin")]
+    [AdminArea]
     public partial class UsersController : Controller
     {
         public virtual IActionResult Index()
