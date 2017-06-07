@@ -52,7 +52,7 @@ namespace R4Mvc.Tools.Services
             return string.Empty;
         }
 
-        public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaName, string controllerName, string projectRoot)
+        public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaKey, string areaName, string controllerName, string projectRoot)
         {
             // build controller partial class node 
             // add a default constructor if there are some but none are zero length
@@ -65,6 +65,7 @@ namespace R4Mvc.Tools.Services
             var gotCustomConstructors = controllerSymbol.Constructors
                 .Where(c => c.DeclaredAccessibility == Accessibility.Public)
                 .Where(SyntaxNodeHelpers.IsNotR4MVCGenerated)
+                .Where(c => !c.IsImplicitlyDeclared)
                 .Any();
             if (!gotCustomConstructors)
             {
@@ -76,8 +77,8 @@ namespace R4Mvc.Tools.Services
             // add all method stubs, TODO criteria for this: only public virtual actionresults?
             // add subclasses, fields, properties, constants for action names
             genControllerClass = AddParameterlessMethods(genControllerClass, controllerSymbol);
-            var actionsExpression = !string.IsNullOrEmpty(areaName)
-                ? SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix + "." + areaName, controllerName)
+            var actionsExpression = !string.IsNullOrEmpty(areaKey)
+                ? SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix + "." + areaKey, controllerName)
                 : SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix, controllerName);
             genControllerClass =
                 genControllerClass

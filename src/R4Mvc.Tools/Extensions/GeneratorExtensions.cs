@@ -41,8 +41,6 @@ namespace R4Mvc.Tools.Extensions
             var allControllerViews = viewFiles
                 .Where(x => string.Equals(x.ControllerName, controllerName, StringComparison.CurrentCultureIgnoreCase) && string.Equals(x.AreaName, areaName, StringComparison.OrdinalIgnoreCase))
                 .GroupBy(v => v.TemplateKind);
-            if (allControllerViews.Count() == 0)
-                return node;
 
             // create subclass called ViewsClass
             // create ViewNames get property returning static instance of _ViewNamesClass subclass

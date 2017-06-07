@@ -68,7 +68,7 @@ namespace R4Mvc
         }
     }
 
-    public class AdminClass
+    public class AdminAreaClass
     {
         public readonly R4MvcHostApp.Areas.Admin.Controllers.UsersController Users = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_UsersController();
         public readonly R4Mvc.AdminArea_SharedControllerClass Shared = new R4Mvc.AdminArea_SharedControllerClass();
@@ -78,9 +78,10 @@ namespace R4Mvc
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 public static partial class MVC
 {
-    static readonly AdminClass s_Admin = new AdminClass();
-    public static AdminClass Admin => s_Admin;
+    static readonly AdminAreaClass s_AdminArea = new AdminAreaClass();
+    public static AdminAreaClass AdminArea => s_AdminArea;
     public static readonly R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.R4MVC_AccountController();
+    public static readonly R4MvcHostApp.Controllers.AdminController Admin = new R4MvcHostApp.Controllers.R4MVC_AdminController();
     public static readonly R4MvcHostApp.Controllers.HomeController Home = new R4MvcHostApp.Controllers.R4MVC_HomeController();
     public static readonly R4MvcHostApp.Controllers.ManageController Manage = new R4MvcHostApp.Controllers.R4MVC_ManageController();
     public static readonly R4Mvc.SharedControllerClass Shared = new R4Mvc.SharedControllerClass();

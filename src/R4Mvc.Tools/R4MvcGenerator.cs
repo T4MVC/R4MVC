@@ -93,7 +93,10 @@ namespace R4Mvc.Tools
 
                 foreach (var controller in nameGroup)
                 {
-                    var genControllerClass = _controllerGenerator.GeneratePartialController(controller.Symbol, controller.Area, controller.Name, projectRoot);
+                    var areaKey = rootControllerNames.Contains(controller.Area)
+                         ? controller.Area + "Area"
+                         : controller.Area;
+                    var genControllerClass = _controllerGenerator.GeneratePartialController(controller.Symbol, areaKey, controller.Area, controller.Name, projectRoot);
                     var r4ControllerClass = _controllerGenerator.GenerateR4Controller(controller.Symbol);
 
                     namespaceNode = namespaceNode
@@ -110,12 +113,12 @@ namespace R4Mvc.Tools
                     {
                         if (!areaClasses.ContainsKey(controller.Area))
                         {
-                            string areaClass = controller.Area + "Class";
+                            string areaClass = controller.Area + "AreaClass";
                             areaClasses[controller.Area] = SyntaxNodeHelpers.CreateClass(areaClass, null, SyntaxKind.PublicKeyword);
                             // change to field and property
                             mvcStaticClass = mvcStaticClass.AddMembers(
-                                SyntaxNodeHelpers.CreateFieldWithDefaultInitializer("s_" + controller.Area, areaClass, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword),
-                                SyntaxNodeHelpers.CreateProperty(controller.Area, areaClass, IdentifierName("s_" + controller.Area), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword));
+                                SyntaxNodeHelpers.CreateFieldWithDefaultInitializer("s_" + areaKey, areaClass, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword),
+                                SyntaxNodeHelpers.CreateProperty(areaKey, areaClass, IdentifierName("s_" + areaKey), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword));
                         }
 
                         areaClasses[controller.Area] = areaClasses[controller.Area].AddMembers(
