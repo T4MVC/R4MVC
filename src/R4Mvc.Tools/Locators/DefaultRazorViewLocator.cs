@@ -8,18 +8,8 @@ namespace R4Mvc.Tools.Locators
     {
         public IEnumerable<View> Find(string projectRoot)
         {
-            var viewsPath = Path.Combine(projectRoot, "Views");
-            if (Directory.Exists(viewsPath))
-            {
-                foreach (var controllerPath in Directory.GetDirectories(viewsPath))
-                {
-                    var controllerName = Path.GetFileName(controllerPath);
-                    foreach (var file in Directory.GetFiles(Path.Combine(viewsPath, controllerName), "*.cshtml"))
-                    {
-                        yield return new View(string.Empty, controllerName + "Controller", Path.GetFileNameWithoutExtension(file), new Uri($"~/Views/{controllerName}/{Path.GetFileName(file)}", UriKind.Relative));
-                    }
-                }
-            }
+            foreach (var view in FindViews(projectRoot, string.Empty))
+                yield return view;
 
             var areasPath = Path.Combine(projectRoot, "Areas");
             if (Directory.Exists(areasPath))
@@ -27,20 +17,55 @@ namespace R4Mvc.Tools.Locators
                 foreach (var areaPath in Directory.GetDirectories(areasPath))
                 {
                     var areaName = Path.GetFileName(areaPath);
-                    viewsPath = Path.Combine(areaPath, "Views");
-                    if (Directory.Exists(viewsPath))
+                    foreach (var view in FindViews(areaPath, areaName))
+                        yield return view;
+                }
+            }
+        }
+
+        private IEnumerable<View> FindViews(string root, string areaName)
+        {
+            var viewsPath = Path.Combine(root, "Views");
+            if (Directory.Exists(viewsPath))
+            {
+                foreach (var controllerPath in Directory.GetDirectories(viewsPath))
+                {
+                    var controllerName = Path.GetFileName(controllerPath);
+                    foreach (var file in Directory.GetFiles(Path.Combine(viewsPath, controllerName), "*.cshtml"))
                     {
-                        foreach (var controllerPath in Directory.GetDirectories(viewsPath))
+                        var relativePath = !string.IsNullOrEmpty(areaName)
+                            ? $"~/Areas/{areaName}/Views/{controllerName}/{Path.GetFileName(file)}"
+                            : $"~/Views/{controllerName}/{Path.GetFileName(file)}";
+                        yield return GetView(file, controllerName, areaName);
+                    }
+
+                    var templatesPath = Path.Combine(controllerPath, "DisplayTemplates");
+                    if (Directory.Exists(templatesPath))
+                    {
+                        foreach (var file in Directory.GetFiles(templatesPath, "*.cshtml"))
                         {
-                            var controllerName = Path.GetFileName(controllerPath);
-                            foreach (var file in Directory.GetFiles(Path.Combine(viewsPath, controllerName), "*.cshtml"))
-                            {
-                                yield return new View(areaName, controllerName + "Controller", Path.GetFileNameWithoutExtension(file), new Uri($"~/Areas/{areaName}/Views/{controllerName}/{Path.GetFileName(file)}", UriKind.Relative));
-                            }
+                            yield return GetView(file, controllerName, areaName, Path.GetFileName(templatesPath));
+                        }
+                    }
+
+                    templatesPath = Path.Combine(controllerPath, "EditorTemplates");
+                    if (Directory.Exists(templatesPath))
+                    {
+                        foreach (var file in Directory.GetFiles(templatesPath, "*.cshtml"))
+                        {
+                            yield return GetView(file, controllerName, areaName, Path.GetFileName(templatesPath));
                         }
                     }
                 }
             }
+        }
+
+        private View GetView(string filePath, string controllerName, string areaName, string templateKind = null)
+        {
+            var relativePath = !string.IsNullOrEmpty(areaName)
+                ? $"~/Areas/{areaName}/Views/{controllerName}/{Path.GetFileName(filePath)}"
+                : $"~/Views/{controllerName}/{Path.GetFileName(filePath)}";
+            return new View(areaName, controllerName + "Controller", Path.GetFileNameWithoutExtension(filePath), new Uri(relativePath, UriKind.Relative), templateKind);
         }
     }
 }
