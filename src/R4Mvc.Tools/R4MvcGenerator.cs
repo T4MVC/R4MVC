@@ -14,13 +14,10 @@ namespace R4Mvc.Tools
     public class R4MvcGenerator
     {
         private readonly IControllerRewriterService _controllerRewriter;
-
         private readonly IControllerGeneratorService _controllerGenerator;
-
         private readonly IStaticFileGeneratorService _staticFileGenerator;
-
         private readonly IFilePersistService _filePersistService;
-
+        private readonly IViewLocatorService _viewLocator;
         private readonly Settings _settings;
 
         private static readonly string[] pragmaCodes = { "1591", "3008", "3009", "0108" };
@@ -41,12 +38,14 @@ namespace R4Mvc.Tools
             IControllerGeneratorService controllerGenerator,
             IStaticFileGeneratorService staticFileGenerator,
             IFilePersistService filePersistService,
+            IViewLocatorService viewLocator,
             IOptions<Settings> settings)
         {
             _controllerRewriter = controllerRewriter;
             _controllerGenerator = controllerGenerator;
             _staticFileGenerator = staticFileGenerator;
             _filePersistService = filePersistService;
+            _viewLocator = viewLocator;
             _settings = settings.Value;
         }
 
@@ -65,24 +64,37 @@ namespace R4Mvc.Tools
             var areaClasses = new Dictionary<string, ClassDeclarationSyntax>();
 
             var controllers = _controllerRewriter.RewriteControllers(compilation, R4MvcFileName);
-            var namespaceGroups = controllers.GroupBy(c => c.Ancestors().OfType<NamespaceDeclarationSyntax>().First().Name.ToFullString().Trim());
+            var controllerDetails = controllers
+                 .Where(c => !c.SyntaxTree.FilePath.EndsWith(".generated.cs"))
+                 .Select(c =>
+                 {
+                     var @namespace = c.Ancestors().OfType<NamespaceDeclarationSyntax>().First().Name.ToFullString().Trim();
+                     var model = compilation.GetSemanticModel(c.SyntaxTree);
+                     var controllerSymbol = model.GetDeclaredSymbol(c);
+                     var controllerName = controllerSymbol.Name.TrimEnd("Controller");
+                     var areaName = _controllerGenerator.GetControllerArea(controllerSymbol);
+                     return new
+
+                     {
+                         FilePath = c.SyntaxTree.FilePath,
+                         Namespace = @namespace,
+                         Name = controllerName,
+                         Area = areaName,
+                         Symbol = controllerSymbol,
+                     };
+                 });
+            var namespaceGroups = controllerDetails.GroupBy(c => c.Namespace);
+            var rootControllerNames = controllerDetails.Where(c => string.IsNullOrEmpty(c.Area)).Select(c => c.Name).ToArray();
+            var allViewFiles = _viewLocator.FindViews(projectRoot);
             var generatedControllers = new List<NamespaceDeclarationSyntax>();
             foreach (var nameGroup in namespaceGroups)
             {
                 var namespaceNode = SyntaxNodeHelpers.CreateNamespace(nameGroup.Key);
 
-                foreach (var controllerNode in nameGroup)
+                foreach (var controller in nameGroup)
                 {
-                    if (controllerNode.SyntaxTree.FilePath.EndsWith(".generated.cs"))
-                        continue;
-
-                    var model = compilation.GetSemanticModel(controllerNode.SyntaxTree);
-                    var controllerSymbol = model.GetDeclaredSymbol(controllerNode);
-                    var controllerName = controllerSymbol.Name.TrimEnd("Controller");
-                    var areaName = _controllerGenerator.GetControllerArea(controllerSymbol);
-
-                    var genControllerClass = _controllerGenerator.GeneratePartialController(controllerSymbol, areaName, controllerName, projectRoot);
-                    var r4ControllerClass = _controllerGenerator.GenerateR4Controller(controllerSymbol);
+                    var genControllerClass = _controllerGenerator.GeneratePartialController(controller.Symbol, controller.Area, controller.Name, projectRoot);
+                    var r4ControllerClass = _controllerGenerator.GenerateR4Controller(controller.Symbol);
 
                     namespaceNode = namespaceNode
                         .AddMembers(genControllerClass, r4ControllerClass);
@@ -90,25 +102,25 @@ namespace R4Mvc.Tools
                     {
                         var controllerFile = NewCompilationUnit()
                             .AddMembers(namespaceNode);
-                        WriteFile(controllerFile, controllerNode.SyntaxTree.FilePath.TrimEnd(".cs") + ".generated.cs");
+                        WriteFile(controllerFile, controller.FilePath.TrimEnd(".cs") + ".generated.cs");
                         namespaceNode = SyntaxNodeHelpers.CreateNamespace(nameGroup.Key);
                     }
 
-                    if (!string.IsNullOrEmpty(areaName))
+                    if (!string.IsNullOrEmpty(controller.Area))
                     {
-                        if (!areaClasses.ContainsKey(areaName))
+                        if (!areaClasses.ContainsKey(controller.Area))
                         {
-                            string areaClass = areaName + "Class";
-                            areaClasses[areaName] = SyntaxNodeHelpers.CreateClass(areaClass, null, SyntaxKind.PublicKeyword);
+                            string areaClass = controller.Area + "Class";
+                            areaClasses[controller.Area] = SyntaxNodeHelpers.CreateClass(areaClass, null, SyntaxKind.PublicKeyword);
                             // change to field and property
                             mvcStaticClass = mvcStaticClass.AddMembers(
-                                SyntaxNodeHelpers.CreateFieldWithDefaultInitializer("s_" + areaName, areaClass, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword),
-                                SyntaxNodeHelpers.CreateProperty(areaName, areaClass, IdentifierName("s_" + areaName), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword));
+                                SyntaxNodeHelpers.CreateFieldWithDefaultInitializer("s_" + controller.Area, areaClass, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword),
+                                SyntaxNodeHelpers.CreateProperty(controller.Area, areaClass, IdentifierName("s_" + controller.Area), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword));
                         }
 
-                        areaClasses[areaName] = areaClasses[areaName].AddMembers(
+                        areaClasses[controller.Area] = areaClasses[controller.Area].AddMembers(
                             SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
-                                controllerName,
+                                controller.Name,
                                 $"{nameGroup.Key}.{genControllerClass.Identifier}",
                                 $"{nameGroup.Key}.{r4ControllerClass.Identifier}",
                                 SyntaxKind.PublicKeyword,
@@ -118,7 +130,7 @@ namespace R4Mvc.Tools
                     {
                         mvcStaticClass = mvcStaticClass.AddMembers(
                             SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
-                                controllerName,
+                                controller.Name,
                                 $"{nameGroup.Key}.{genControllerClass.Identifier}",
                                 $"{nameGroup.Key}.{r4ControllerClass.Identifier}",
                                 SyntaxKind.PublicKeyword,
@@ -130,6 +142,44 @@ namespace R4Mvc.Tools
                 if (!_settings.SplitIntoMutipleFiles)
                     generatedControllers.Add(namespaceNode);
             }
+            var views = _viewLocator.FindViews(projectRoot)
+                .GroupBy(v => new { v.AreaName, v.ControllerName });
+            foreach (var viewSet in views)
+            {
+                if (controllerDetails.Any(c => c.Area == viewSet.Key.AreaName && c.Name == viewSet.Key.ControllerName))
+                    continue;
+
+                var className = !string.IsNullOrEmpty(viewSet.Key.AreaName)
+                    ? $"{viewSet.Key.AreaName}Area_{viewSet.Key.ControllerName}ControllerClass"
+                    : $"{viewSet.Key.ControllerName}ControllerClass";
+                var controllerClass = SyntaxNodeHelpers.CreateClass(className, null, SyntaxKind.PublicKeyword)
+                    .WithViewsClass(viewSet.Key.ControllerName, viewSet.Key.AreaName, viewSet);
+                r4Namespace = r4Namespace.AddMembers(controllerClass);
+
+                if (!string.IsNullOrEmpty(viewSet.Key.AreaName))
+                {
+                    areaClasses[viewSet.Key.AreaName] = areaClasses[viewSet.Key.AreaName].AddMembers(
+                        SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
+                            viewSet.Key.ControllerName,
+                            $"{_settings.R4MvcNamespace}.{className}",
+                            $"{_settings.R4MvcNamespace}.{className}",
+                            SyntaxKind.PublicKeyword,
+                            SyntaxKind.ReadOnlyKeyword));
+                }
+                else
+                {
+                    mvcStaticClass = mvcStaticClass.AddMembers(
+                        SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
+                            viewSet.Key.ControllerName,
+                            $"{_settings.R4MvcNamespace}.{className}",
+                            $"{_settings.R4MvcNamespace}.{className}",
+                            SyntaxKind.PublicKeyword,
+                            SyntaxKind.StaticKeyword,
+                            SyntaxKind.ReadOnlyKeyword));
+                }
+
+            }
+
             r4Namespace = r4Namespace.AddMembers(areaClasses.Values.ToArray());
 
             var staticFileNode = _staticFileGenerator.GenerateStaticFiles(_settings);

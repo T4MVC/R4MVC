@@ -30,9 +30,48 @@ namespace R4Mvc
         public static Dummy Instance = new Dummy();
     }
 
+    public class SharedControllerClass
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ViewsClass
+        {
+            [GeneratedCode("R4Mvc", "1.0")]
+            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            public class _ViewNamesClass
+            {
+                public readonly string Error = "Error";
+                public readonly string _Layout = "_Layout";
+                public readonly string _LoginPartial = "_LoginPartial";
+                public readonly string _ValidationScriptsPartial = "_ValidationScriptsPartial";
+            }
+
+            public string Error = "~/Views/Shared/Error.cshtml";
+            public string _Layout = "~/Views/Shared/_Layout.cshtml";
+            public string _LoginPartial = "~/Views/Shared/_LoginPartial.cshtml";
+            public string _ValidationScriptsPartial = "~/Views/Shared/_ValidationScriptsPartial.cshtml";
+        }
+    }
+
+    public class AdminArea_SharedControllerClass
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ViewsClass
+        {
+            [GeneratedCode("R4Mvc", "1.0")]
+            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            public class _ViewNamesClass
+            {
+                public readonly string _Layout = "_Layout";
+            }
+
+            public string _Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+        }
+    }
+
     public class AdminClass
     {
         public readonly R4MvcHostApp.Areas.Admin.Controllers.UsersController Users = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_UsersController();
+        public readonly R4Mvc.AdminArea_SharedControllerClass Shared = new R4Mvc.AdminArea_SharedControllerClass();
     }
 }
 
@@ -44,6 +83,7 @@ public static partial class MVC
     public static readonly R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.R4MVC_AccountController();
     public static readonly R4MvcHostApp.Controllers.HomeController Home = new R4MvcHostApp.Controllers.R4MVC_HomeController();
     public static readonly R4MvcHostApp.Controllers.ManageController Manage = new R4MvcHostApp.Controllers.R4MVC_ManageController();
+    public static readonly R4Mvc.SharedControllerClass Shared = new R4Mvc.SharedControllerClass();
 }
 
 internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult : ActionResult, IR4MvcActionResult

@@ -36,10 +36,10 @@ namespace R4Mvc.Tools.Extensions
                 SyntaxKind.ConstKeyword);
         }
 
-        public static ClassDeclarationSyntax WithViewsClass(this ClassDeclarationSyntax node, string areaName, IEnumerable<View> viewFiles)
+        public static ClassDeclarationSyntax WithViewsClass(this ClassDeclarationSyntax node, string controllerName, string areaName, IEnumerable<View> viewFiles)
         {
             var allControllerViews = viewFiles
-                .Where(x => string.Equals(x.ControllerName, node.Identifier.ToString(), StringComparison.CurrentCultureIgnoreCase) && string.Equals(x.AreaName, areaName, StringComparison.OrdinalIgnoreCase))
+                .Where(x => string.Equals(x.ControllerName, controllerName, StringComparison.CurrentCultureIgnoreCase) && string.Equals(x.AreaName, areaName, StringComparison.OrdinalIgnoreCase))
                 .GroupBy(v => v.TemplateKind);
             if (allControllerViews.Count() == 0)
                 return node;

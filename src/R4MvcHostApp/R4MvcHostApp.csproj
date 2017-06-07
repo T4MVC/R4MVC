@@ -36,8 +36,5 @@
   <ItemGroup>
     <ProjectReference Include="..\R4Mvc\R4Mvc.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Home\DisplayTemplates\" />
-  </ItemGroup>
 
 </Project>

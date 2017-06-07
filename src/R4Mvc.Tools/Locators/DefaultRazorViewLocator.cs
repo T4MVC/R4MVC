@@ -65,7 +65,7 @@ namespace R4Mvc.Tools.Locators
             var relativePath = !string.IsNullOrEmpty(areaName)
                 ? $"~/Areas/{areaName}/Views/{controllerName}/{Path.GetFileName(filePath)}"
                 : $"~/Views/{controllerName}/{Path.GetFileName(filePath)}";
-            return new View(areaName, controllerName + "Controller", Path.GetFileNameWithoutExtension(filePath), new Uri(relativePath, UriKind.Relative), templateKind);
+            return new View(areaName, controllerName, Path.GetFileNameWithoutExtension(filePath), new Uri(relativePath, UriKind.Relative), templateKind);
         }
     }
 }
