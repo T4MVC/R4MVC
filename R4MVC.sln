@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".solution", ".solution", "{1E8F7AFD-5175-406A-9736-817C75DA1142}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		appveyor.yml = appveyor.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{30626644-0E8A-4610-A0A9-274E91F1A037}"
