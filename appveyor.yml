@@ -1,16 +1,18 @@
-version: 1.0.0.{build}
-
 image: Visual Studio 2017
 
-configuration: Release
+environment:
+  productVersion: 1.0.0-alpha1
+  assemblyVersion: 1.0.0
+ 
+version: $(productVersion).{build}
 
 init:
-- ps: $Env:VersionSuffix = "CI." + $Env:APPVEYOR_BUILD_NUMBER
+- ps: $env:versionSuffix = "ci." + $env:APPVEYOR_BUILD_NUMBER
 - ps: dotnet --info
 
 build_script:
-- ps: dotnet restore -v Minimal
-- ps: dotnet build -c Release --version-suffix $Env:VersionSuffix
+- ps: dotnet restore -v minimal
+- ps: dotnet build -c release --version-suffix "$env:versionSuffix" -p:VersionPrefix=$env:productVersion -p:FileVersion="$env:assemblyVersion.$env:APPVEYOR_BUILD_NUMBER"
 
 artifacts:
 - path: '**\*.nupkg'
