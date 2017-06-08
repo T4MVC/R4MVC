@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "R4Mvc.Tools": {
+      "commandName": "Project",
+      "commandLineArgs": "\"..\\R4MvcHostApp\\R4MvcHostApp.csproj\""
+    }
+  }
+}

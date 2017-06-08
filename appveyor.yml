@@ -1,0 +1,16 @@
+version: 1.0.0.{build}
+
+image: Visual Studio 2017
+
+configuration: Release
+
+init:
+- ps: $Env:VersionSuffix = "CI." + $Env:APPVEYOR_BUILD_NUMBER
+- ps: dotnet --info
+
+build_script:
+- ps: dotnet restore -v Minimal
+- ps: dotnet build -c Release --version-suffix $Env:VersionSuffix
+
+artifacts:
+- path: '**\*.nupkg'

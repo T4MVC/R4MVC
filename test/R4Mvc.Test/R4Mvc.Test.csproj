@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\R4Mvc\R4Mvc.csproj" />
+    <ProjectReference Include="..\..\src\R4Mvc.Tools\R4Mvc.Tools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

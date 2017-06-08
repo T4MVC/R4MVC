@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +14,7 @@ using R4MvcHostApp.Services;
 namespace R4MvcHostApp.Controllers
 {
     [Authorize]
-    public class ManageController : Controller
+    public partial class ManageController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -42,7 +42,7 @@ namespace R4MvcHostApp.Controllers
         //
         // GET: /Manage/Index
         [HttpGet]
-        public async Task<IActionResult> Index(ManageMessageId? message = null)
+        public async virtual Task<IActionResult> Index(ManageMessageId? message = null)
         {
             ViewData["StatusMessage"] =
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
@@ -73,7 +73,7 @@ namespace R4MvcHostApp.Controllers
         // POST: /Manage/RemoveLogin
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveLogin(RemoveLoginViewModel account)
+        public async virtual Task<IActionResult> RemoveLogin(RemoveLoginViewModel account)
         {
             ManageMessageId? message = ManageMessageId.Error;
             var user = await GetCurrentUserAsync();
@@ -91,7 +91,7 @@ namespace R4MvcHostApp.Controllers
 
         //
         // GET: /Manage/AddPhoneNumber
-        public IActionResult AddPhoneNumber()
+        public virtual IActionResult AddPhoneNumber()
         {
             return View();
         }
@@ -100,7 +100,7 @@ namespace R4MvcHostApp.Controllers
         // POST: /Manage/AddPhoneNumber
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
+        public async virtual Task<IActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -121,7 +121,7 @@ namespace R4MvcHostApp.Controllers
         // POST: /Manage/EnableTwoFactorAuthentication
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EnableTwoFactorAuthentication()
+        public async virtual Task<IActionResult> EnableTwoFactorAuthentication()
         {
             var user = await GetCurrentUserAsync();
             if (user != null)
@@ -137,7 +137,7 @@ namespace R4MvcHostApp.Controllers
         // POST: /Manage/DisableTwoFactorAuthentication
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DisableTwoFactorAuthentication()
+        public async virtual Task<IActionResult> DisableTwoFactorAuthentication()
         {
             var user = await GetCurrentUserAsync();
             if (user != null)
@@ -152,7 +152,7 @@ namespace R4MvcHostApp.Controllers
         //
         // GET: /Manage/VerifyPhoneNumber
         [HttpGet]
-        public async Task<IActionResult> VerifyPhoneNumber(string phoneNumber)
+        public async virtual Task<IActionResult> VerifyPhoneNumber(string phoneNumber)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -168,7 +168,7 @@ namespace R4MvcHostApp.Controllers
         // POST: /Manage/VerifyPhoneNumber
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
+        public async virtual Task<IActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -193,7 +193,7 @@ namespace R4MvcHostApp.Controllers
         // POST: /Manage/RemovePhoneNumber
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemovePhoneNumber()
+        public async virtual Task<IActionResult> RemovePhoneNumber()
         {
             var user = await GetCurrentUserAsync();
             if (user != null)
@@ -211,7 +211,7 @@ namespace R4MvcHostApp.Controllers
         //
         // GET: /Manage/ChangePassword
         [HttpGet]
-        public IActionResult ChangePassword()
+        public virtual IActionResult ChangePassword()
         {
             return View();
         }
@@ -220,7 +220,7 @@ namespace R4MvcHostApp.Controllers
         // POST: /Manage/ChangePassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        public async virtual Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -245,7 +245,7 @@ namespace R4MvcHostApp.Controllers
         //
         // GET: /Manage/SetPassword
         [HttpGet]
-        public IActionResult SetPassword()
+        public virtual IActionResult SetPassword()
         {
             return View();
         }
@@ -254,7 +254,7 @@ namespace R4MvcHostApp.Controllers
         // POST: /Manage/SetPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SetPassword(SetPasswordViewModel model)
+        public async virtual Task<IActionResult> SetPassword(SetPasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -278,7 +278,7 @@ namespace R4MvcHostApp.Controllers
 
         //GET: /Manage/ManageLogins
         [HttpGet]
-        public async Task<IActionResult> ManageLogins(ManageMessageId? message = null)
+        public async virtual Task<IActionResult> ManageLogins(ManageMessageId? message = null)
         {
             ViewData["StatusMessage"] =
                 message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
@@ -304,7 +304,7 @@ namespace R4MvcHostApp.Controllers
         // POST: /Manage/LinkLogin
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LinkLogin(string provider)
+        public async virtual Task<IActionResult> LinkLogin(string provider)
         {
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.Authentication.SignOutAsync(_externalCookieScheme);
@@ -318,7 +318,7 @@ namespace R4MvcHostApp.Controllers
         //
         // GET: /Manage/LinkLoginCallback
         [HttpGet]
-        public async Task<ActionResult> LinkLoginCallback()
+        public async virtual Task<ActionResult> LinkLoginCallback()
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
