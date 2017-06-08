@@ -8,10 +8,8 @@ init:
 - ps: $Env:VersionSuffix = "CI." + $Env:APPVEYOR_BUILD_NUMBER
 - ps: dotnet --info
 
-before_build:
+build_script:
 - ps: dotnet restore -v Minimal
-
-build:
 - ps: dotnet build -c Release --version-suffix $Env:VersionSuffix
 
 artifacts:
