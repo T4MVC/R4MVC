@@ -5,16 +5,14 @@ image: Visual Studio 2017
 configuration: Release
 
 init:
+- ps: $Env:VersionSuffix = "CI." + $Env:APPVEYOR_BUILD_NUMBER
 - ps: dotnet --info
-
-environment:
-  VersionSuffix: CI.{version}
 
 before_build:
 - ps: dotnet restore -v Minimal
 
 build:
-  verbosity: minimal
+- ps: dotnet build -c Release --version-suffix $Env:VersionSuffix
 
 artifacts:
 - path: '**\*.nupkg'
