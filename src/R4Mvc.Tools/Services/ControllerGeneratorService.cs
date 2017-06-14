@@ -105,8 +105,6 @@ namespace R4Mvc.Tools.Services
                     .WithProperty("ActionNames", "ActionNamesClass", IdentifierName("s_actions"), SyntaxKind.PublicKeyword)
                     .WithActionNameClass(controllerSymbol)
                     .WithActionConstantsClass(controllerSymbol)
-                    .WithField("s_views", "ViewsClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
-                    .WithProperty("Views", "ViewsClass", IdentifierName("s_views"), SyntaxKind.PublicKeyword)
                     .WithViewsClass(controllerName, areaName, _viewLocator.FindViews(projectRoot));
 
             return genControllerClass;

@@ -77,13 +77,16 @@ namespace R4Mvc.Tools.Extensions
                 templateClass = templateClass.AddMembers(
                     templateKind.Select(t => CreateStringFieldDeclaration(t.ViewName, t.ViewName, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)).ToArray());
 
-                node = node
+                viewClassNode = viewClassNode
                     .WithField("s_" + templateKind.Key, className, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
                     .WithProperty(templateKind.Key, className, SyntaxFactory.IdentifierName("s_" + templateKind.Key), SyntaxKind.PublicKeyword)
                     .AddMembers(templateClass);
             }
 
-            return node.AddMembers(viewClassNode);
+            return node
+                .AddMembers(viewClassNode)
+                .WithField("s_Views", "ViewsClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
+                .WithProperty("Views", "ViewsClass", SyntaxFactory.IdentifierName("s_Views"), SyntaxKind.PublicKeyword);
         }
 
         public static ClassDeclarationSyntax WithStaticFieldsForFiles(this ClassDeclarationSyntax node, IEnumerable<StaticFile> staticFiles)

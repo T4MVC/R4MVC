@@ -49,7 +49,31 @@ namespace R4Mvc
             public string _Layout = "~/Views/Shared/_Layout.cshtml";
             public string _LoginPartial = "~/Views/Shared/_LoginPartial.cshtml";
             public string _ValidationScriptsPartial = "~/Views/Shared/_ValidationScriptsPartial.cshtml";
+            [GeneratedCode("R4Mvc", "1.0")]
+            static readonly _DisplayTemplatesClass s_DisplayTemplates = new _DisplayTemplatesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _DisplayTemplatesClass DisplayTemplates => s_DisplayTemplates;
+            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+            public partial class _DisplayTemplatesClass
+            {
+                public readonly string Test = "Test";
+            }
+
+            [GeneratedCode("R4Mvc", "1.0")]
+            static readonly _EditorTemplatesClass s_EditorTemplates = new _EditorTemplatesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _EditorTemplatesClass EditorTemplates => s_EditorTemplates;
+            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+            public partial class _EditorTemplatesClass
+            {
+                public readonly string Test = "Test";
+            }
         }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ViewsClass s_Views = new ViewsClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ViewsClass Views => s_Views;
     }
 
     public class AdminArea_SharedControllerClass
@@ -66,6 +90,11 @@ namespace R4Mvc
 
             public string _Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
         }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ViewsClass s_Views = new ViewsClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ViewsClass Views => s_Views;
     }
 
     public class AdminAreaClass

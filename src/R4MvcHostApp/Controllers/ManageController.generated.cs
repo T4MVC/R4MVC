@@ -129,10 +129,6 @@ namespace R4MvcHostApp.Controllers
             public const string LinkLoginCallback = "LinkLoginCallback";
         }
 
-        [GeneratedCode("R4Mvc", "1.0")]
-        static readonly ViewsClass s_views = new ViewsClass();
-        [GeneratedCode("R4Mvc", "1.0")]
-        public ViewsClass Views => s_views;
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ViewsClass
         {
@@ -155,6 +151,11 @@ namespace R4MvcHostApp.Controllers
             public string SetPassword = "~/Views/Manage/SetPassword.cshtml";
             public string VerifyPhoneNumber = "~/Views/Manage/VerifyPhoneNumber.cshtml";
         }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ViewsClass s_Views = new ViewsClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ViewsClass Views => s_Views;
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
