@@ -58,6 +58,10 @@ namespace R4Mvc.TagHelpers
 
                 var url = urlHelper.RouteUrl(routeValues);
                 output.Attributes.SetAttribute("action", url);
+
+                var methodAttr = context.AllAttributes["method"];
+                if (string.IsNullOrEmpty(methodAttr?.Value.ToString()))
+                    output.Attributes.SetAttribute("method", "post");
             }
         }
     }

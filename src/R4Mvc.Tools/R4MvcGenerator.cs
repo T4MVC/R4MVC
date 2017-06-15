@@ -105,7 +105,7 @@ namespace R4Mvc.Tools
                     {
                         var controllerFile = NewCompilationUnit()
                             .AddMembers(namespaceNode);
-                        WriteFile(controllerFile, controller.FilePath.TrimEnd(".cs") + ".generated.cs");
+                        CompleteAndWriteFile(controllerFile, controller.FilePath.TrimEnd(".cs") + ".generated.cs");
                         namespaceNode = SyntaxNodeHelpers.CreateNamespace(nameGroup.Key);
                     }
 
@@ -247,7 +247,7 @@ namespace R4Mvc.Tools
                     .AddMembers(mvcStaticClass)
                     .AddMembers(actionResultClass)
                     .AddMembers(jsonResultClass);
-            WriteFile(r4mvcNode, Path.Combine(projectRoot, R4MvcGenerator.R4MvcFileName));
+            CompleteAndWriteFile(r4mvcNode, Path.Combine(projectRoot, R4MvcGenerator.R4MvcFileName));
         }
 
         private CompilationUnitSyntax NewCompilationUnit()
@@ -265,7 +265,7 @@ namespace R4Mvc.Tools
                     .WithPragmaCodes(false, pragmaCodes);
         }
 
-        public void WriteFile(CompilationUnitSyntax contents, string filePath)
+        public void CompleteAndWriteFile(CompilationUnitSyntax contents, string filePath)
         {
             contents = contents
                 .NormalizeWhitespace()
