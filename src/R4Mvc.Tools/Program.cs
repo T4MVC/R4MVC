@@ -19,8 +19,21 @@ namespace R4Mvc.Tools
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Expecting project path as parameter");
-                return;
+                Console.WriteLine("Looking for project...");
+                var projFiles = Directory.GetFiles(Environment.CurrentDirectory, "*.csproj");
+                switch (projFiles.Length)
+                {
+                    case 1:
+                        args = projFiles;
+                        break;
+
+                    case 0:
+                        Console.WriteLine("Project path not found. Pass one as a parameter or run this within the project directory.");
+                        return;
+                    default:
+                        Console.WriteLine("More than one project file found. Aborting, just to be safe!");
+                        return;
+                }
             }
 
             var projectPath = Path.IsPathRooted(args[0]) ? args[0] : Path.Combine(Environment.CurrentDirectory, args[0]);

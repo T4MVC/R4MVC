@@ -9,9 +9,9 @@
     <PackageProjectUrl>https://github.com/T4MVC/R4MVC</PackageProjectUrl>
     <RepositoryUrl>https://github.com/artiomchi/R4MVC</RepositoryUrl>
     <VersionPrefix>0.6.0</VersionPrefix>
-    <PackageType>DotnetCliTool,1.0.0.0</PackageType>
     <ContentTargetFolders>tools</ContentTargetFolders>
     <DevelopmentDependency>True</DevelopmentDependency>
+    <IncludeBuildOutput>False</IncludeBuildOutput>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -22,6 +22,15 @@
     <Content Include="init.ps1" />
     <Content Include="R4MVC.psd1" />
     <Content Include="R4MVC.psm1" />
+    <Content Include="bin\$(Configuration)\$(TargetFramework)\*.dll">
+      <PackagePath>tools</PackagePath>
+    </Content>
+    <Content Include="bin\$(Configuration)\$(TargetFramework)\dotnet-r4mvc.exe">
+      <PackagePath>tools</PackagePath>
+    </Content>
+    <Content Include="bin\$(Configuration)\$(TargetFramework)\dotnet-r4mvc.exe.config">
+      <PackagePath>tools</PackagePath>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
