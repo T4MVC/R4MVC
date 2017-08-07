@@ -15,13 +15,13 @@ We are currently looking for new maintainers.  Please see issue [#42](https://gi
 Instead of
 
 ````c#
-@Html.ActionLink("Delete Dinner", "Delete", "Dinners", new { id = Model.DinnerID }, null)
+@Html.ActionLink("Dinner Details", "Details", "Dinners", new { id = Model.DinnerID }, null)
 ````
 
 R4MVC lets you write
 
 ````c#
-@Html.ActionLink("Delete Dinner", MVC.Dinners.Delete(Model.DinnerID))
+@Html.ActionLink("Dinner Details", MVC.Dinners.Details(Model.DinnerID))
 ````
 
 and that's just the beginning!
