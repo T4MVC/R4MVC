@@ -5,12 +5,67 @@ image: Visual Studio 2017
 configuration: Release
 
 init:
-- ps: $Env:VersionSuffix = "CI." + $Env:APPVEYOR_BUILD_NUMBER
 - ps: dotnet --info
 
-build_script:
+before_build:
 - ps: dotnet restore -v Minimal
-- ps: dotnet build -c Release --version-suffix $Env:VersionSuffix
+
+build_script:
+- ps: dotnet build -c $Env:CONFIGURATION --version-suffix ("ci-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
 artifacts:
 - path: '**\*.nupkg'
+
+for:
+- branches:
+    only:
+    - develop
+
+  deploy:
+    provider: NuGet
+    server: https://www.myget.org/F/artiomchi/api/v2/package
+    symbol_server: https://www.myget.org/F/artiomchi/symbols/api/v2/package
+    api_key:
+      secure: WH4xm0AVvnPcLMdVfX6j1fy8dcW+8PzRXqWs4yguRNGXi5zSs/8ZKii/0Pcr8bDA
+    artifact: /.*\.nupkg/
+
+- branches:
+    only:
+    - /feature\/.*/
+
+  build_script:
+  - ps: dotnet build -c $Env:CONFIGURATION --version-suffix ("ci-" + $Env:APPVEYOR_REPO_BRANCH.Substring(8) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
+
+  deploy:
+    provider: NuGet
+    server: https://www.myget.org/F/artiomchi/api/v2/package
+    symbol_server: https://www.myget.org/F/artiomchi/symbols/api/v2/package
+    api_key:
+      secure: WH4xm0AVvnPcLMdVfX6j1fy8dcW+8PzRXqWs4yguRNGXi5zSs/8ZKii/0Pcr8bDA
+    artifact: /.*\.nupkg/
+
+- branches:
+    only:
+    - /prerelease\/.*/
+
+  build_script:
+  - ps: dotnet build -c $Env:CONFIGURATION --version-suffix ($Env:APPVEYOR_REPO_BRANCH.Substring(11) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
+
+  deploy:
+    provider: NuGet
+    api_key:
+      secure: WH4xm0AVvnPcLMdVfX6j1fy8dcW+8PzRXqWs4yguRNGXi5zSs/8ZKii/0Pcr8bDA
+    artifact: /.*\.nupkg/
+
+- branches:
+    only:
+    - master
+
+  build_script:
+  - ps: dotnet build -c $Env:CONFIGURATION
+
+  deploy:
+    provider: NuGet
+    api_key:
+      secure: WH4xm0AVvnPcLMdVfX6j1fy8dcW+8PzRXqWs4yguRNGXi5zSs/8ZKii/0Pcr8bDA
+    artifact: /.*\.nupkg/
