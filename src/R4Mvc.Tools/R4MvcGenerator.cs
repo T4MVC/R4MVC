@@ -185,7 +185,7 @@ namespace R4Mvc.Tools
 
             r4Namespace = r4Namespace.AddMembers(areaClasses.Values.ToArray());
 
-            var staticFileNode = _staticFileGenerator.GenerateStaticFiles(_settings);
+            var staticFileNode = _staticFileGenerator.GenerateStaticFiles(projectRoot);
 
             var actionResultClass =
                 SyntaxNodeHelpers.CreateClass(Constants.ActionResultClass, null, SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
@@ -242,11 +242,12 @@ namespace R4Mvc.Tools
 
             var r4mvcNode = NewCompilationUnit()
                     .AddMembers(generatedControllers.Cast<MemberDeclarationSyntax>().ToArray())
-                    .AddMembers(staticFileNode)
-                    .AddMembers(r4Namespace)
-                    .AddMembers(mvcStaticClass)
-                    .AddMembers(actionResultClass)
-                    .AddMembers(jsonResultClass);
+                    .AddMembers(
+                        staticFileNode,
+                        r4Namespace,
+                        mvcStaticClass,
+                        actionResultClass,
+                        jsonResultClass);
             CompleteAndWriteFile(r4mvcNode, Path.Combine(projectRoot, R4MvcGenerator.R4MvcFileName));
         }
 

@@ -3,34 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-//using Microsoft.Framework.Runtime;
-
 namespace R4Mvc.Tools.Locators
 {
     public class DefaultStaticFileLocator : IStaticFileLocator
     {
-        //public Func<Project> ProjectDelegate;
-
-        public IEnumerable<StaticFile> Find()
+        public IEnumerable<StaticFile> Find(string staticPathRoot)
         {
-            return new StaticFile[0];
-
-            // TODO need to group by folders and create class hierarchy
-            //var project = ProjectDelegate.Invoke();
-            //var projectDirectory = project.ProjectDirectory;
-            //var projectRootUrl = projectDirectory.EndsWith("/") ? new Uri(projectDirectory) : new Uri(projectDirectory + "/");
-
-            // TODO: Refactor out our dependency on Project.ContentFiles
-            return new List<StaticFile>();
-
-            // return
-            //project.ContentFiles.Select(
-            //	x =>
-            //		{
-            //			var absoluteUrl = new Uri(x);
-            //			var @namespace = absoluteUrl;
-            //			return new StaticFile(Path.GetFileNameWithoutExtension(x), projectRootUrl.MakeRelativeUri(absoluteUrl), @namespace);
-            //		});
+            var files = Directory.GetFiles(staticPathRoot, "*", SearchOption.AllDirectories);
+            if (!staticPathRoot.EndsWith("/"))
+                staticPathRoot += "/";
+            var rootUri = new Uri(staticPathRoot);
+            return files.Select(f => new StaticFile(rootUri.MakeRelativeUri(new Uri(f))));
         }
     }
 }
