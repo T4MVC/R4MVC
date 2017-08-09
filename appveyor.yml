@@ -5,13 +5,15 @@ image: Visual Studio 2017
 configuration: Release
 
 init:
-- ps: dotnet --info
+- ps: $Env.VersionSuffixParam = ("--version-suffix ci-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
 before_build:
+- ps: dotnet --info
 - ps: dotnet restore -v Minimal
 
 build_script:
-- ps: dotnet build -c $Env:CONFIGURATION --version-suffix ("ci-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
+- ps: dotnet build -c $Env:CONFIGURATION $Env.VersionSuffixParam
+- ps: dotnet pack src\R4Mvc.Tools -c $Env:CONFIGURATION $Env.VersionSuffixParam
 
 artifacts:
 - path: '**\*.nupkg'
@@ -23,49 +25,49 @@ for:
 
   deploy:
     provider: NuGet
-    server: https://www.myget.org/F/artiomchi/api/v2/package
-    symbol_server: https://www.myget.org/F/artiomchi/symbols/api/v2/package
+    server: https://www.myget.org/F/r4mvc/api/v2/package
+    symbol_server: https://www.myget.org/F/r4mvc/symbols/api/v2/package
     api_key:
-      secure: WH4xm0AVvnPcLMdVfX6j1fy8dcW+8PzRXqWs4yguRNGXi5zSs/8ZKii/0Pcr8bDA
+      secure: DdgwyUm4/aaCfk28jRGRFgQpqcCp6OvuqCZLZaHjNAPHZuia0+PF01zC8JGpWfe7
     artifact: /.*\.nupkg/
 
 - branches:
     only:
     - /feature\/.*/
 
-  build_script:
-  - ps: dotnet build -c $Env:CONFIGURATION --version-suffix ("ci-" + $Env:APPVEYOR_REPO_BRANCH.Substring(8) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
+  init:
+  - ps: $Env.VersionSuffixParam = ("--version-suffix ci-" + $Env:APPVEYOR_REPO_BRANCH.Substring(8) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
   deploy:
     provider: NuGet
-    server: https://www.myget.org/F/artiomchi/api/v2/package
-    symbol_server: https://www.myget.org/F/artiomchi/symbols/api/v2/package
+    server: https://www.myget.org/F/r4mvc/api/v2/package
+    symbol_server: https://www.myget.org/F/r4mvc/symbols/api/v2/package
     api_key:
-      secure: WH4xm0AVvnPcLMdVfX6j1fy8dcW+8PzRXqWs4yguRNGXi5zSs/8ZKii/0Pcr8bDA
+      secure: DdgwyUm4/aaCfk28jRGRFgQpqcCp6OvuqCZLZaHjNAPHZuia0+PF01zC8JGpWfe7
     artifact: /.*\.nupkg/
 
 - branches:
     only:
     - /prerelease\/.*/
 
-  build_script:
-  - ps: dotnet build -c $Env:CONFIGURATION --version-suffix ($Env:APPVEYOR_REPO_BRANCH.Substring(11) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
+  init:
+  - ps: $Env.VersionSuffixParam = ("--version-suffix " + $Env:APPVEYOR_REPO_BRANCH.Substring(11) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
   deploy:
     provider: NuGet
     api_key:
-      secure: WH4xm0AVvnPcLMdVfX6j1fy8dcW+8PzRXqWs4yguRNGXi5zSs/8ZKii/0Pcr8bDA
+      secure: oK/7qSZDyR1umPtWP8zAswwPfIE0FJPeEkkQQMRKj6e6eq0tdEIwbPh37lGBDeSi
     artifact: /.*\.nupkg/
 
 - branches:
     only:
     - master
 
-  build_script:
-  - ps: dotnet build -c $Env:CONFIGURATION
+  init:
+  - ps: $Env.VersionSuffixParam = $null
 
   deploy:
     provider: NuGet
     api_key:
-      secure: WH4xm0AVvnPcLMdVfX6j1fy8dcW+8PzRXqWs4yguRNGXi5zSs/8ZKii/0Pcr8bDA
+      secure: oK/7qSZDyR1umPtWP8zAswwPfIE0FJPeEkkQQMRKj6e6eq0tdEIwbPh37lGBDeSi
     artifact: /.*\.nupkg/

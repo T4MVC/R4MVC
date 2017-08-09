@@ -11,7 +11,7 @@
 
   <PropertyGroup>
     <PackageId>R4Mvc.Tools</PackageId>
-    <Authors>David Ebbo</Authors>
+    <Authors>Kevin Kuszyk, Scott Mackay, Artiom Chilaru</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseUrl>https://github.com/T4MVC/R4MVC/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/T4MVC/R4MVC</PackageProjectUrl>
@@ -20,10 +20,6 @@
     <Description>R4Mvc is a tool that generates strongly typed helpers for ASP.NET Core MVC.</Description>
     <PackageTags>aspnetcore mvc r4mvc</PackageTags>
     <VersionPrefix>0.6.0</VersionPrefix>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
