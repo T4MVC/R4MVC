@@ -5,7 +5,7 @@ image: Visual Studio 2017
 configuration: Release
 
 init:
-- ps: $Env.VersionSuffixParam = ("--version-suffix ci-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
+- ps: $Env:VersionSuffixParam = ("--version-suffix ci-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
 before_build:
 - ps: dotnet --info
@@ -36,7 +36,7 @@ for:
     - /feature\/.*/
 
   init:
-  - ps: $Env.VersionSuffixParam = ("--version-suffix ci-" + $Env:APPVEYOR_REPO_BRANCH.Substring(8) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
+  - ps: $Env:VersionSuffixParam = ("--version-suffix ci-" + $Env:APPVEYOR_REPO_BRANCH.Substring(8) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
   deploy:
     provider: NuGet
@@ -51,7 +51,7 @@ for:
     - /prerelease\/.*/
 
   init:
-  - ps: $Env.VersionSuffixParam = ("--version-suffix " + $Env:APPVEYOR_REPO_BRANCH.Substring(11) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
+  - ps: $Env:VersionSuffixParam = ("--version-suffix " + $Env:APPVEYOR_REPO_BRANCH.Substring(11) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
   deploy:
     provider: NuGet
@@ -64,7 +64,7 @@ for:
     - master
 
   init:
-  - ps: $Env.VersionSuffixParam = $null
+  - ps: $Env:VersionSuffixParam = $null
 
   deploy:
     provider: NuGet
