@@ -33,7 +33,7 @@ namespace R4Mvc.Tools.Services
             return linksClass;
         }
 
-        private string SanitiseName(string name) => Regex.Replace(Regex.Replace(name, "[^a-z0-9]+", "_"), "^([\\d])", "_$1");
+        private string SanitiseName(string name) => Regex.Replace(Regex.Replace(name, "[^a-z0-9]+", "_", RegexOptions.IgnoreCase), "^([\\d])", "_$1", RegexOptions.IgnoreCase);
 
         private ClassDeclarationSyntax AddStaticFiles(ClassDeclarationSyntax parentClass, string path, IEnumerable<StaticFile> files)
         {
