@@ -27,13 +27,28 @@ namespace R4Mvc.Tools.Services
             var staticFilesRoot = Path.Combine(projectRoot, "wwwroot");
             var staticfiles = _staticFileLocators.SelectMany(x => x.Find(staticFilesRoot));
 
-            var linksClass = CreateClass(_settings.LinksNamespace, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
+            var linksClass = CreateClass(_settings.LinksNamespace, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                 .WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
             linksClass = AddStaticFiles(linksClass, string.Empty, staticfiles);
             return linksClass;
         }
 
-        private string SanitiseName(string name) => Regex.Replace(Regex.Replace(name, "[^a-z0-9]+", "_", RegexOptions.IgnoreCase), "^([\\d])", "_$1", RegexOptions.IgnoreCase);
+        private string SanitiseName(string name)
+        {
+            name = Regex.Replace(name, @"[\W\b]", "_", RegexOptions.IgnoreCase);
+            name = Regex.Replace(name, @"^\d", @"_$0");
+
+            int i = 0;
+            while (SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None ||
+                SyntaxFacts.GetContextualKeywordKind(name) != SyntaxKind.None ||
+                !SyntaxFacts.IsValidIdentifier(name))
+            {
+                if (i++ > 10)
+                    return name; // Sanity check.. The look might be loopy!
+                name = "_" + name;
+            }
+            return name;
+        }
 
         private ClassDeclarationSyntax AddStaticFiles(ClassDeclarationSyntax parentClass, string path, IEnumerable<StaticFile> files)
         {
@@ -55,7 +70,7 @@ namespace R4Mvc.Tools.Services
             {
                 var childFiles = files.Where(f => f.Container.StartsWith(childPath));
                 var className = SanitiseName(childPath.Substring(path.Length > 0 ? path.Length + 1 : 0));
-                var containerClass = CreateClass(className, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
+                var containerClass = CreateClass(className, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                     .WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
                 containerClass = AddStaticFiles(containerClass, childPath, childFiles);
                 parentClass = parentClass.AddMembers(containerClass);

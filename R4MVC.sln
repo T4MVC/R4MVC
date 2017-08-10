@@ -1,12 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+VisualStudioVersion = 15.0.26730.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".solution", ".solution", "{1E8F7AFD-5175-406A-9736-817C75DA1142}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		appveyor.yml = appveyor.yml
+		CHANGELOG.md = CHANGELOG.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{30626644-0E8A-4610-A0A9-274E91F1A037}"
@@ -19,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4MvcHostApp", "src\R4MvcHo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4Mvc.Test", "test\R4Mvc.Test\R4Mvc.Test.csproj", "{CFE51159-0850-415A-BAD0-FBFF607E772F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R4Mvc.Tools", "src\R4Mvc.Tools\R4Mvc.Tools.csproj", "{1673B75E-E97D-4770-A1E3-86CF3C50A5E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4Mvc.Tools", "src\R4Mvc.Tools\R4Mvc.Tools.csproj", "{1673B75E-E97D-4770-A1E3-86CF3C50A5E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

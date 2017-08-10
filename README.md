@@ -6,10 +6,6 @@ R4MVC is a Roslyn code generator for ASP.NET MVC Core apps that creates strongly
 
 It is a re-implementation of [T4MVC](https://github.com/T4MVC/T4MVC) for ASP.NET Core projects, as T4 templates are [not supported](https://github.com/aspnet/Home/issues/272).
 
-## ** NEW MAINTAINTERS WANTED **
-
-We are currently looking for new maintainers.  Please see issue [#42](https://github.com/T4MVC/R4MVC/issues/42) for more details.
-
 ## Usage
 
 Instead of
@@ -25,3 +21,11 @@ R4MVC lets you write
 ````
 
 and that's just the beginning!
+
+### Use the following links to get started
+
+*   **Install** R4MVC in your MVC app using [NuGet](http://nuget.org)
+*   **Learn**: visit the [Documentation page](https://github.com/T4MVC/R4MVC/wiki/Documentation)
+*   **Discuss**: Discuss it on [GitHub](https://github.com/T4MVC/R4MVC/issues)
+*   **Contribute**
+*   **History &amp; release notes**: [change history](CHANGELOG.md)

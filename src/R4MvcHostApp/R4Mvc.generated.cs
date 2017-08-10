@@ -14,17 +14,17 @@ using Microsoft.AspNetCore.Routing;
 using R4Mvc;
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-public static class Links
+public static partial class Links
 {
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public static class css
+    public static partial class css
     {
         public static string site_css = "~/css/site.css";
         public static string site_min_css = "~/css/site.min.css";
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public static class images
+    public static partial class images
     {
         public static string banner1_svg = "~/images/banner1.svg";
         public static string banner2_svg = "~/images/banner2.svg";
@@ -33,23 +33,23 @@ public static class Links
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public static class js
+    public static partial class js
     {
         public static string site_js = "~/js/site.js";
         public static string site_min_js = "~/js/site.min.js";
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public static class lib
+    public static partial class lib
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public static class bootstrap
+        public static partial class bootstrap
         {
             [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-            public static class dist
+            public static partial class dist
             {
                 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-                public static class css
+                public static partial class css
                 {
                     public static string bootstrap_theme_css = "~/lib/bootstrap/dist/css/bootstrap-theme.css";
                     public static string bootstrap_theme_css_map = "~/lib/bootstrap/dist/css/bootstrap-theme.css.map";
@@ -62,7 +62,7 @@ public static class Links
                 }
 
                 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-                public static class fonts
+                public static partial class fonts
                 {
                     public static string glyphicons_halflings_regular_eot = "~/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.eot";
                     public static string glyphicons_halflings_regular_svg = "~/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.svg";
@@ -72,7 +72,7 @@ public static class Links
                 }
 
                 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-                public static class js
+                public static partial class js
                 {
                     public static string bootstrap_js = "~/lib/bootstrap/dist/js/bootstrap.js";
                     public static string bootstrap_min_js = "~/lib/bootstrap/dist/js/bootstrap.min.js";
@@ -81,14 +81,14 @@ public static class Links
             }
 
             public static string bower_json = "~/lib/bootstrap/.bower.json";
-            public static string _ = "~/lib/bootstrap/LICENSE";
+            public static string LICENSE = "~/lib/bootstrap/LICENSE";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public static class jquery
+        public static partial class jquery
         {
             [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-            public static class dist
+            public static partial class dist
             {
                 public static string jquery_js = "~/lib/jquery/dist/jquery.js";
                 public static string jquery_min_js = "~/lib/jquery/dist/jquery.min.js";
@@ -96,10 +96,10 @@ public static class Links
             }
 
             [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-            public static class validation
+            public static partial class validation
             {
                 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-                public static class dist
+                public static partial class dist
                 {
                     public static string additional_methods_js = "~/lib/jquery-validation/dist/additional-methods.js";
                     public static string additional_methods_min_js = "~/lib/jquery-validation/dist/additional-methods.min.js";
@@ -108,7 +108,7 @@ public static class Links
                 }
 
                 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-                public static class unobtrusive
+                public static partial class unobtrusive
                 {
                     public static string bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
                     public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
@@ -116,11 +116,11 @@ public static class Links
                 }
 
                 public static string bower_json = "~/lib/jquery-validation/.bower.json";
-                public static string _md = "~/lib/jquery-validation/LICENSE.md";
+                public static string LICENSE_md = "~/lib/jquery-validation/LICENSE.md";
             }
 
             [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-            public static class validation_unobtrusive
+            public static partial class validation_unobtrusive
             {
                 public static string bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
                 public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
@@ -128,14 +128,14 @@ public static class Links
             }
 
             public static string bower_json = "~/lib/jquery/.bower.json";
-            public static string _txt = "~/lib/jquery/LICENSE.txt";
+            public static string LICENSE_txt = "~/lib/jquery/LICENSE.txt";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public static class jquery_validation
+        public static partial class jquery_validation
         {
             [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-            public static class dist
+            public static partial class dist
             {
                 public static string additional_methods_js = "~/lib/jquery-validation/dist/additional-methods.js";
                 public static string additional_methods_min_js = "~/lib/jquery-validation/dist/additional-methods.min.js";
@@ -144,7 +144,7 @@ public static class Links
             }
 
             [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-            public static class unobtrusive
+            public static partial class unobtrusive
             {
                 public static string bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
                 public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
@@ -152,11 +152,11 @@ public static class Links
             }
 
             public static string bower_json = "~/lib/jquery-validation/.bower.json";
-            public static string _md = "~/lib/jquery-validation/LICENSE.md";
+            public static string LICENSE_md = "~/lib/jquery-validation/LICENSE.md";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public static class jquery_validation_unobtrusive
+        public static partial class jquery_validation_unobtrusive
         {
             public static string bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
             public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
