@@ -5,10 +5,13 @@ image: Visual Studio 2017
 configuration: Release
 
 init:
-- ps: $Env:VersionSuffixParam = "--version-suffix"
 - ps: $Env:VersionSuffixValue = ("ci-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
+environment:
+  VersionSuffixParam: '--version-suffix'
+
 before_build:
+- ps: Write-Output ("Build version suffix: " + $Env:VersionSuffixValue)
 - ps: dotnet --info
 - ps: dotnet restore -v Minimal
 
