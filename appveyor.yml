@@ -9,7 +9,7 @@ init:
 - ps: $Env:VersionSuffixValue = ("ci-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
 before_build:
-- ps: Write-Output ("Build version suffix: " + $Env:VersionSuffixValue)
+- ps: 'Write-Output ("Build version suffix: " + $Env:VersionSuffixValue)'
 - ps: dotnet --info
 - ps: dotnet restore -v Minimal
 
