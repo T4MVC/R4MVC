@@ -1,4 +1,4 @@
-﻿namespace R4Mvc.Tools.Services
+﻿namespace R4Mvc.Tools
 {
     public class Settings
     {

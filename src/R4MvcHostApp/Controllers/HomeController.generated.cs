@@ -72,6 +72,7 @@ namespace R4MvcHostApp.Controllers
             public readonly string About = "About";
             public readonly string Contact = "Contact";
             public readonly string Error = "Error";
+            public readonly string ExtensionTest = "ExtensionTest";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -81,6 +82,7 @@ namespace R4MvcHostApp.Controllers
             public const string About = "About";
             public const string Contact = "Contact";
             public const string Error = "Error";
+            public const string ExtensionTest = "ExtensionTest";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -169,6 +171,16 @@ namespace R4MvcHostApp.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Error);
             ErrorOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ExtensionTestOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult ExtensionTest()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExtensionTest);
+            ExtensionTestOverride(callInfo);
             return callInfo;
         }
     }

@@ -63,28 +63,9 @@ namespace R4Mvc.Tools
                 .WithDummyClass();
             var areaClasses = new Dictionary<string, ClassDeclarationSyntax>();
 
-            var controllers = _controllerRewriter.RewriteControllers(compilation, R4MvcFileName);
-            var controllerDetails = controllers
-                 .Where(c => !c.SyntaxTree.FilePath.EndsWith(".generated.cs"))
-                 .Select(c =>
-                 {
-                     var @namespace = c.Ancestors().OfType<NamespaceDeclarationSyntax>().First().Name.ToFullString().Trim();
-                     var model = compilation.GetSemanticModel(c.SyntaxTree);
-                     var controllerSymbol = model.GetDeclaredSymbol(c);
-                     var controllerName = controllerSymbol.Name.TrimEnd("Controller");
-                     var areaName = _controllerGenerator.GetControllerArea(controllerSymbol);
-                     return new
-
-                     {
-                         FilePath = c.SyntaxTree.FilePath,
-                         Namespace = @namespace,
-                         Name = controllerName,
-                         Area = areaName,
-                         Symbol = controllerSymbol,
-                     };
-                 });
-            var namespaceGroups = controllerDetails.GroupBy(c => c.Namespace);
-            var rootControllerNames = controllerDetails.Where(c => string.IsNullOrEmpty(c.Area)).Select(c => c.Name).ToArray();
+            var controllers = _controllerRewriter.RewriteControllers(compilation);
+            var namespaceGroups = controllers.GroupBy(c => c.Namespace);
+            var rootControllerNames = controllers.Where(c => string.IsNullOrEmpty(c.Area)).Select(c => c.Name).ToArray();
             var allViewFiles = _viewLocator.FindViews(projectRoot);
             var generatedControllers = new List<NamespaceDeclarationSyntax>();
             foreach (var nameGroup in namespaceGroups)
@@ -105,7 +86,7 @@ namespace R4Mvc.Tools
                     {
                         var controllerFile = NewCompilationUnit()
                             .AddMembers(namespaceNode);
-                        CompleteAndWriteFile(controllerFile, controller.FilePath.TrimEnd(".cs") + ".generated.cs");
+                        CompleteAndWriteFile(controllerFile, controller.GetFilePath().TrimEnd(".cs") + ".generated.cs");
                         namespaceNode = SyntaxNodeHelpers.CreateNamespace(nameGroup.Key);
                     }
 
@@ -149,7 +130,7 @@ namespace R4Mvc.Tools
                 .GroupBy(v => new { v.AreaName, v.ControllerName });
             foreach (var viewSet in views)
             {
-                if (controllerDetails.Any(c => c.Area == viewSet.Key.AreaName && c.Name == viewSet.Key.ControllerName))
+                if (controllers.Any(c => c.Area == viewSet.Key.AreaName && c.Name == viewSet.Key.ControllerName))
                     continue;
 
                 var className = !string.IsNullOrEmpty(viewSet.Key.AreaName)

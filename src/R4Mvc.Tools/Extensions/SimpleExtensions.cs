@@ -4,6 +4,8 @@
     {
         public static string TrimEnd(this string value, string suffix)
         {
+            if (value == null)
+                return null;
             if (!value.EndsWith(suffix))
                 return value;
             return value.Substring(0, value.Length - suffix.Length);

@@ -48,7 +48,7 @@ namespace R4Mvc.Tools
         private static bool IsForcedExclusion(INamedTypeSymbol symbol)
         {
             // need to fully qualify attribute type for reliable matching
-            var r4attribute = symbol.GetAttributes().ToArray().FirstOrDefault(x => x.AttributeClass.ToDisplayString() == typeof(R4MvcExcludeAttribute).FullName);
+            var r4attribute = symbol.GetAttributes().FirstOrDefault(x => x.AttributeClass.ToDisplayString() == typeof(R4MvcExcludeAttribute).FullName);
             return r4attribute != null;
         }
 

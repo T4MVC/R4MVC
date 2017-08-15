@@ -31,6 +31,10 @@ and that's just the beginning!
 
 ## Usage
 
+R4MVC runs in Visual Studio 2017, and supports ASP.NET Core MVC 1 (v2 support in progress)
+
+To use it, simply install the [R4Mvc](https://www.nuget.org/packages/r4mvc) and [R4Mvc.Tools](https://www.nuget.org/packages/r4mvc.tools) package using NuGet. It will add the necessary tooling to your project, which will be invoked on install. You will instantly see a number of files get created in your project.
+
 Unlike T4MVC, R4MVC isn't based on a T4 template, so triggering the generation code is slightly different. Currently, you would need to open the Package Manager Console (Tools Menu -> NuGet Package Manager -> Package Manager Console) and running the following PowerShell command:
 
 ```powershell

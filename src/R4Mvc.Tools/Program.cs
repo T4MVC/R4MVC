@@ -59,7 +59,7 @@ namespace R4Mvc.Tools
         {
             var workspace = MSBuildWorkspace.Create();
             var generator = serviceProvider.GetService<R4MvcGenerator>();
-            var settings = serviceProvider.GetService<IOptions<Services.Settings>>().Value;
+            var settings = serviceProvider.GetService<IOptions<Settings>>().Value;
 
             var project = await workspace.OpenProjectAsync(projectPath);
             if (workspace.Diagnostics.Count > 0)
@@ -84,7 +84,7 @@ namespace R4Mvc.Tools
         static void ConfigureServices(IServiceCollection services, IConfigurationRoot configuration)
         {
             services.AddOptions();
-            services.Configure<Services.Settings>(configuration);
+            services.Configure<Settings>(configuration);
 
             services.AddSingleton(typeof(IEnumerable<IViewLocator>), new[] { new DefaultRazorViewLocator() });
             services.AddSingleton(typeof(IEnumerable<IStaticFileLocator>), new[] { new DefaultStaticFileLocator() });
