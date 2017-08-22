@@ -1,15 +1,16 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.MSBuild;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using R4Mvc.Tools.Locators;
-using R4Mvc.Tools.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.Setup.Configuration;
+using R4Mvc.Tools.Locators;
+using R4Mvc.Tools.Services;
 
 namespace R4Mvc.Tools
 {
@@ -57,6 +58,8 @@ namespace R4Mvc.Tools
 
         public async Task Run(string projectPath, IServiceProvider serviceProvider)
         {
+            ConfigureMSBuild();
+
             var workspace = MSBuildWorkspace.Create();
             var generator = serviceProvider.GetService<R4MvcGenerator>();
             var settings = serviceProvider.GetService<IOptions<Settings>>().Value;
@@ -71,6 +74,42 @@ namespace R4Mvc.Tools
 
             var compilation = await project.GetCompilationAsync() as CSharpCompilation;
             generator.Generate(compilation, Path.GetDirectoryName(project.FilePath));
+        }
+
+        private void ConfigureMSBuild()
+        {
+            var query = new SetupConfiguration();
+            var query2 = (ISetupConfiguration2)query;
+
+            try
+            {
+                if (query2.GetInstanceForCurrentProcess() is ISetupInstance2 instance)
+                {
+                    Environment.SetEnvironmentVariable("VSINSTALLDIR", instance.GetInstallationPath());
+                    Environment.SetEnvironmentVariable("VisualStudioVersion", @"15.0");
+                    return;
+                }
+            }
+            catch { }
+
+            var instances = new ISetupInstance[1];
+            var e = query2.EnumAllInstances();
+            int fetched;
+            do
+            {
+                e.Next(1, instances, out fetched);
+                if (fetched > 0)
+                {
+                    var instance = instances[0] as ISetupInstance2;
+                    if (instance.GetInstallationVersion().StartsWith("15."))
+                    {
+                        Environment.SetEnvironmentVariable("VSINSTALLDIR", instance.GetInstallationPath());
+                        Environment.SetEnvironmentVariable("VisualStudioVersion", @"15.0");
+                        return;
+                    }
+                }
+            }
+            while (fetched > 0);
         }
 
         static IConfigurationRoot LoadConfiguration(string[] args, string projectPath)
