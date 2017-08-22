@@ -65,7 +65,7 @@ namespace R4Mvc.Tools
             if (workspace.Diagnostics.Count > 0)
             {
                 foreach (var diag in workspace.Diagnostics)
-                    Console.WriteLine($"  {diag.Kind}: {diag.Message}");
+                    Console.Error.WriteLine($"  {diag.Kind}: {diag.Message}");
                 return;
             }
 

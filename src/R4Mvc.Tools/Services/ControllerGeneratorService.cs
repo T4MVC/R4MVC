@@ -7,6 +7,7 @@ using R4Mvc.Tools.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using static R4Mvc.Tools.Extensions.SyntaxNodeHelpers;
 
 namespace R4Mvc.Tools.Services
 {
@@ -56,11 +57,11 @@ namespace R4Mvc.Tools.Services
         {
             // build controller partial class node 
             // add a default constructor if there are some but none are zero length
-            var genControllerClass = SyntaxNodeHelpers.CreateClass(
-                controllerSymbol.Name,
-                controllerSymbol.TypeParameters.Select(tp => TypeParameter(tp.Name)).ToArray(),
-                SyntaxKind.PublicKeyword,
-                SyntaxKind.PartialKeyword);
+            var genControllerClass = ClassDeclaration(controllerSymbol.Name)
+                .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword);
+            var controllerTypeParams = controllerSymbol.TypeParameters.Select(tp => TypeParameter(tp.Name)).ToArray();
+            if (controllerTypeParams.Length > 0)
+                genControllerClass = genControllerClass.AddTypeParameterListParameters(controllerTypeParams);
 
             var gotCustomConstructors = controllerSymbol.Constructors
                 .Where(c => c.DeclaredAccessibility == Accessibility.Public)
@@ -101,8 +102,7 @@ namespace R4Mvc.Tools.Services
                         true,
                         SyntaxKind.PublicKeyword,
                         SyntaxKind.ConstKeyword)
-                    .WithField("s_actions", "ActionNamesClass", SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
-                    .WithProperty("ActionNames", "ActionNamesClass", IdentifierName("s_actions"), SyntaxKind.PublicKeyword)
+                    .WithStaticFieldBackedProperty("ActionNames", "ActionNamesClass", SyntaxKind.PublicKeyword)
                     .WithActionNameClass(controllerSymbol)
                     .WithActionConstantsClass(controllerSymbol)
                     .WithViewsClass(controllerName, areaName, _viewLocator.FindViews(projectRoot));
@@ -113,15 +113,11 @@ namespace R4Mvc.Tools.Services
         public ClassDeclarationSyntax GenerateR4Controller(INamedTypeSymbol controllerSymbol)
         {
             // create R4MVC_[Controller] class inheriting from partial
-            var r4ControllerClass =
-                SyntaxNodeHelpers.CreateClass(
-                    GetR4MVCControllerClassName(controllerSymbol),
-                    null,
-                    SyntaxKind.PublicKeyword,
-                    SyntaxKind.PartialKeyword)
-                    .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
-                    .WithBaseTypes(controllerSymbol.ToQualifiedName())
-                    .WithDefaultDummyBaseConstructor(false, SyntaxKind.PublicKeyword);
+            var r4ControllerClass = ClassDeclaration(GetR4MVCControllerClassName(controllerSymbol))
+                .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                .WithGeneratedNonUserCodeAttributes()
+                .WithBaseTypes(controllerSymbol.ToQualifiedName())
+                .WithDefaultDummyBaseConstructor(false, SyntaxKind.PublicKeyword);
             r4ControllerClass = AddMethodOverrides(r4ControllerClass, controllerSymbol);
             return r4ControllerClass;
         }
@@ -132,7 +128,7 @@ namespace R4Mvc.Tools.Services
             {
                 MethodDeclaration(IdentifierName("RedirectToRouteResult"), Identifier("RedirectToAction"))
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
-                    .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
+                    .WithGeneratedNonUserCodeAttributes()
                     .AddParameterListParameters(
                         Parameter(Identifier("result")).WithType(IdentifierName("IActionResult")))
                     .WithBody(
@@ -148,7 +144,7 @@ namespace R4Mvc.Tools.Services
                                         SyntaxNodeHelpers.MemberAccess("callInfo", "RouteValueDictionary"))))),
                 MethodDeclaration(IdentifierName("RedirectToRouteResult"), Identifier("RedirectToAction"))
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
-                    .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
+                    .WithGeneratedNonUserCodeAttributes()
                     .AddParameterListParameters(
                         Parameter(Identifier("taskResult")).WithGenericType("Task", "IActionResult"))
                     .WithBody(
@@ -160,7 +156,7 @@ namespace R4Mvc.Tools.Services
                                         SyntaxNodeHelpers.MemberAccess("taskResult", "Result"))))),
                 MethodDeclaration(IdentifierName("RedirectToRouteResult"), Identifier("RedirectToActionPermanent"))
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
-                    .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
+                    .WithGeneratedNonUserCodeAttributes()
                     .AddParameterListParameters(
                         Parameter(Identifier("result")).WithType(IdentifierName("IActionResult")))
                     .WithBody(
@@ -176,7 +172,7 @@ namespace R4Mvc.Tools.Services
                                         SyntaxNodeHelpers.MemberAccess("callInfo", "RouteValueDictionary"))))),
                 MethodDeclaration(IdentifierName("RedirectToRouteResult"), Identifier("RedirectToActionPermanent"))
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
-                    .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
+                    .WithGeneratedNonUserCodeAttributes()
                     .AddParameterListParameters(
                         Parameter(Identifier("taskResult")).WithGenericType("Task", "IActionResult"))
                     .WithBody(
@@ -197,8 +193,8 @@ namespace R4Mvc.Tools.Services
                 .Where(g => !g.Any(m => m.Parameters.Length == 0))
                 .Select(g => MethodDeclaration(IdentifierName("IActionResult"), Identifier(g.Key))
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.VirtualKeyword)
-                    .WithAttributes(SyntaxNodeHelpers.CreateNonActionAttribute())
-                    .WithAttributes(SyntaxNodeHelpers.CreateGeneratedCodeAttribute(), SyntaxNodeHelpers.CreateDebugNonUserCodeAttribute())
+                    .WithNonActionAttribute()
+                    .WithGeneratedNonUserCodeAttributes()
                     .WithBody(
                         Block(
                             // return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
@@ -261,7 +257,7 @@ namespace R4Mvc.Tools.Services
                     {
                         MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), Identifier(m.Name + overrideMethodSuffix))
                             .WithModifiers(SyntaxKind.PartialKeyword)
-                            .WithAttributes(SyntaxNodeHelpers.CreateNonActionAttribute())
+                            .WithNonActionAttribute()
                             .AddParameterListParameters(
                                 Parameter(Identifier("callInfo")).WithType(IdentifierName(Constants.ActionResultClass)))
                             .AddParameterListParameters(m.Parameters
@@ -271,7 +267,7 @@ namespace R4Mvc.Tools.Services
                             .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
                         MethodDeclaration(IdentifierName(m.ReturnType.ToString()), Identifier(m.Name))
                             .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
-                            .WithAttributes(SyntaxNodeHelpers.CreateNonActionAttribute())
+                            .WithNonActionAttribute()
                             .AddParameterListParameters(m.Parameters
                                 .Select(p => Parameter(Identifier(p.Name))
                                     .WithType(IdentifierName(p.Type.ToString())))

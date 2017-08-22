@@ -187,6 +187,8 @@ namespace R4Mvc
         {
             [GeneratedCode("R4Mvc", "1.0")]
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
                 public readonly string Error = "Error";
@@ -233,6 +235,8 @@ namespace R4Mvc
         {
             [GeneratedCode("R4Mvc", "1.0")]
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
                 public readonly string _Layout = "_Layout";

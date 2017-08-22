@@ -27,8 +27,9 @@ namespace R4Mvc.Tools.Services
             var staticFilesRoot = Path.Combine(projectRoot, "wwwroot");
             var staticfiles = _staticFileLocators.SelectMany(x => x.Find(staticFilesRoot));
 
-            var linksClass = CreateClass(_settings.LinksNamespace, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
-                .WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
+            var linksClass = SyntaxFactory.ClassDeclaration(_settings.LinksNamespace)
+                .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
+                .WithGeneratedNonUserCodeAttributes();
             linksClass = AddStaticFiles(linksClass, string.Empty, staticfiles);
             return linksClass;
         }
@@ -70,8 +71,9 @@ namespace R4Mvc.Tools.Services
             {
                 var childFiles = files.Where(f => f.Container.StartsWith(childPath));
                 var className = SanitiseName(childPath.Substring(path.Length > 0 ? path.Length + 1 : 0));
-                var containerClass = CreateClass(className, null, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
-                    .WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
+                var containerClass = SyntaxFactory.ClassDeclaration(className)
+                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
+                    .WithGeneratedNonUserCodeAttributes();
                 containerClass = AddStaticFiles(containerClass, childPath, childFiles);
                 parentClass = parentClass.AddMembers(containerClass);
             }

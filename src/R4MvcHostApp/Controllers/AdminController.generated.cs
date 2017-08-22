@@ -62,9 +62,9 @@ namespace R4MvcHostApp.Controllers
         [GeneratedCode("R4Mvc", "1.0")]
         public const string NameConst = "Admin";
         [GeneratedCode("R4Mvc", "1.0")]
-        static readonly ActionNamesClass s_actions = new ActionNamesClass();
+        static readonly ActionNamesClass s_ActionNames = new ActionNamesClass();
         [GeneratedCode("R4Mvc", "1.0")]
-        public ActionNamesClass ActionNames => s_actions;
+        public ActionNamesClass ActionNames => s_ActionNames;
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
@@ -82,6 +82,8 @@ namespace R4MvcHostApp.Controllers
         {
             [GeneratedCode("R4Mvc", "1.0")]
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
             }

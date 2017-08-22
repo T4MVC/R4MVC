@@ -32,68 +32,12 @@ namespace R4Mvc.Tools.Extensions
             return false;
         }
 
-        public static bool InheritsFrom<T>(this IMethodSymbol symbol)
-        {
-            return symbol.ContainingType.InheritsFrom<T>();
-        }
-
         public static TypeSyntax PredefinedStringType()
             => PredefinedType(Token(SyntaxKind.StringKeyword));
 
-        public static NamespaceDeclarationSyntax CreateNamespace(string namespaceText)
-        {
-            var nameSyntax = ParseName(namespaceText);
-            var declaration = NamespaceDeclaration(nameSyntax);
-            return declaration;
-        }
-
-        private static SyntaxToken CreateModifier(SyntaxKind kind)
-        {
-            return Token(
-                TriviaList(),
-                kind,
-                TriviaList(Space));
-        }
-
         public static SyntaxToken[] CreateModifiers(params SyntaxKind[] kinds)
         {
-            return kinds.Select(CreateModifier).ToArray();
-        }
-
-        public static ClassDeclarationSyntax CreateClass(string className, TypeParameterSyntax[] typeParams = null, params SyntaxKind[] modifiers)
-        {
-            var classSyntax = ClassDeclaration(className).WithModifiers(modifiers);
-
-            if (typeParams?.Length > 0)
-                classSyntax = classSyntax
-                    .AddTypeParameterListParameters(typeParams);
-
-            return classSyntax;
-        }
-
-        public static AttributeSyntax CreateDebugNonUserCodeAttribute()
-        {
-            return Attribute(IdentifierName(@"DebuggerNonUserCode"));
-        }
-
-        public static AttributeSyntax CreateNonActionAttribute()
-        {
-            return Attribute(IdentifierName(@"NonAction"));
-        }
-
-        public static AttributeSyntax CreateGeneratedCodeAttribute()
-        {
-            var arguments =
-                AttributeArgumentList(
-                    SeparatedList(
-                        new[]
-                        {
-                            AttributeArgument(
-                                LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(Constants.ProjectName))),
-                            AttributeArgument(
-                                LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(Constants.Version)))
-                        }));
-            return Attribute(IdentifierName("GeneratedCode"), arguments);
+            return kinds.Select(m => Token(TriviaList(), m, TriviaList(Space))).ToArray();
         }
 
         public static bool IsNotR4MVCGenerated(this ISymbol method)
@@ -107,35 +51,6 @@ namespace R4Mvc.Tools.Extensions
                 .OfType<IMethodSymbol>()
                 .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
                 .Where(IsNotR4MVCGenerated);
-        }
-
-        public static IEnumerable<MemberDeclarationSyntax> CreateMethods(this ITypeSymbol mvcSymbol)
-        {
-            return mvcSymbol.GetMembers()
-                .OfType<IMethodSymbol>()
-                .Where(x => x.DeclaredAccessibility == Accessibility.Public && x.MethodKind == MethodKind.Ordinary).Select(mvcControllerMethod => CreateMethod(mvcControllerMethod));
-        }
-
-        private static MemberDeclarationSyntax CreateMethod(IMethodSymbol methodSymbol)
-        {
-            // TODO decide whether to output full qualified name of return types to avoid issues with add usings
-            // TODO add return type typeparameters
-            // TODO determine what the args need to be
-            // TODO add method body, currently returns null
-            var returnType = methodSymbol.ReturnType;
-            //var typeParameters = returnType.ContainingType.TypeParameters;
-
-            var returnTypeSyntax = ParseTypeName(returnType.ToDisplayString());
-
-            var methodNode =
-                MethodDeclaration(returnTypeSyntax, methodSymbol.Name)
-                    .WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute(), CreateNonActionAttribute())
-                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.VirtualKeyword)
-                    .WithBody(
-                        Block(
-                            SingletonList<StatementSyntax>(
-                                ReturnStatement(LiteralExpression(SyntaxKind.NullLiteralExpression)))));
-            return methodNode;
         }
 
         public static FieldDeclarationSyntax CreateFieldWithDefaultInitializer(string fieldName, string typeName, params SyntaxKind[] modifiers)
@@ -184,30 +99,41 @@ namespace R4Mvc.Tools.Extensions
                 .WithModifiers(modifiers);
         }
 
-        public static MethodDeclarationSyntax WithAttributes(this MethodDeclarationSyntax node, params AttributeSyntax[] attributes)
+        private static AttributeSyntax CreateGeneratedCodeAttribute()
         {
-            return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
+            var arguments =
+                AttributeArgumentList(
+                    SeparatedList(
+                        new[]
+                        {
+                            AttributeArgument(
+                                LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(Constants.ProjectName))),
+                            AttributeArgument(
+                                LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(Constants.Version)))
+                        }));
+            return Attribute(IdentifierName("GeneratedCode"), arguments);
         }
 
-        public static ConstructorDeclarationSyntax WithAttributes(this ConstructorDeclarationSyntax node, params AttributeSyntax[] attributes)
-        {
-            return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
-        }
+        private static AttributeListSyntax GeneratedNonUserCodeAttributeList()
+            => AttributeList(SeparatedList(new[] { CreateGeneratedCodeAttribute(), Attribute(IdentifierName("DebuggerNonUserCode")) }));
 
-        public static ClassDeclarationSyntax WithAttributes(this ClassDeclarationSyntax node, params AttributeSyntax[] attributes)
-        {
-            return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
-        }
+        public static MethodDeclarationSyntax WithGeneratedNonUserCodeAttributes(this MethodDeclarationSyntax node)
+            => node.AddAttributeLists(GeneratedNonUserCodeAttributeList());
 
-        public static FieldDeclarationSyntax WithAttributes(this FieldDeclarationSyntax node, params AttributeSyntax[] attributes)
-        {
-            return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
-        }
+        public static MethodDeclarationSyntax WithNonActionAttribute(this MethodDeclarationSyntax node)
+            => node.AddAttributeLists(AttributeList(SingletonSeparatedList(Attribute(IdentifierName("NonAction")))));
 
-        public static PropertyDeclarationSyntax WithAttributes(this PropertyDeclarationSyntax node, params AttributeSyntax[] attributes)
-        {
-            return node.AddAttributeLists(AttributeList(SeparatedList(attributes)));
-        }
+        public static ConstructorDeclarationSyntax WithGeneratedNonUserCodeAttributes(this ConstructorDeclarationSyntax node)
+            => node.AddAttributeLists(GeneratedNonUserCodeAttributeList());
+
+        public static ClassDeclarationSyntax WithGeneratedNonUserCodeAttributes(this ClassDeclarationSyntax node)
+            => node.AddAttributeLists(GeneratedNonUserCodeAttributeList());
+
+        public static FieldDeclarationSyntax WithGeneratedAttribute(this FieldDeclarationSyntax node)
+            => node.AddAttributeLists(AttributeList(SingletonSeparatedList(CreateGeneratedCodeAttribute())));
+
+        public static PropertyDeclarationSyntax WithGeneratedAttribute(this PropertyDeclarationSyntax node)
+            => node.AddAttributeLists(AttributeList(SingletonSeparatedList(CreateGeneratedCodeAttribute())));
 
         public static ClassDeclarationSyntax WithBaseTypes(this ClassDeclarationSyntax node, params string[] types)
         {
@@ -217,11 +143,6 @@ namespace R4Mvc.Tools.Extensions
         public static string ToQualifiedName(this ITypeSymbol symbol)
         {
             return string.Format("{0}.{1}", symbol.ContainingNamespace.ToString(), symbol.Name);
-        }
-
-        public static string ToQualifiedName(this ClassDeclarationSyntax node)
-        {
-            return string.Format("{0}.{1}", ((NamespaceDeclarationSyntax)node?.Parent)?.Name, node.Identifier);
         }
 
         public static T WithPragmaCodes<T>(this T node, bool enable, params string[] codes) where T : SyntaxNode
@@ -263,7 +184,7 @@ namespace R4Mvc.Tools.Extensions
                 .WithModifiers(modifiers);
             if (includeGeneratedAttributes)
             {
-                ctorNode = ctorNode.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
+                ctorNode = ctorNode.WithGeneratedNonUserCodeAttributes();
             }
             return node.AddMembers(ctorNode);
         }
@@ -276,7 +197,7 @@ namespace R4Mvc.Tools.Extensions
                 .WithInitializer(ConstructorInitializer(SyntaxKind.BaseConstructorInitializer, ArgumentList(SeparatedList(new[] { Argument(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(Constants.DummyClass), IdentifierName(Constants.DummyClassInstance))) }))));
             if (includeGeneratedAttributes)
             {
-                ctorNode = ctorNode.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
+                ctorNode = ctorNode.WithGeneratedNonUserCodeAttributes();
             }
             return node.AddMembers(ctorNode);
         }
@@ -289,24 +210,17 @@ namespace R4Mvc.Tools.Extensions
                 .AddParameterListParameters(Parameter(Identifier("d")).WithType(ParseTypeName(Constants.DummyClass)));
             if (includeGeneratedAttributes)
             {
-                ctorNode = ctorNode.WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
+                ctorNode = ctorNode.WithGeneratedNonUserCodeAttributes();
             }
             return node.AddMembers(ctorNode);
-        }
-
-        public static ClassDeclarationSyntax WithMethods(this ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
-        {
-            return node;
-            // TODO fix member generation
-            return node.AddMembers(mvcSymbol.CreateMethods().ToArray());
         }
 
         public static ClassDeclarationSyntax WithSubClassMembersAsStrings(this ClassDeclarationSyntax node, ITypeSymbol controllerClass, string className, params SyntaxKind[] modifiers)
         {
             // create ActionConstants sub class
-            var actionNameClass =
-                CreateClass(className, null, SyntaxKind.PublicKeyword)
-                    .WithAttributes(CreateGeneratedCodeAttribute(), CreateDebugNonUserCodeAttribute());
+            var actionNameClass = ClassDeclaration(className)
+                .WithModifiers(SyntaxKind.PublicKeyword)
+                .WithGeneratedNonUserCodeAttributes();
             foreach (var actionName in controllerClass.GetPublicNonGeneratedMethods().GroupBy(x => x.Name))
             {
                 actionNameClass = actionNameClass.WithStringField(actionName.Key, actionName.Key, false, modifiers);
@@ -314,17 +228,27 @@ namespace R4Mvc.Tools.Extensions
             return node.AddMembers(actionNameClass);
         }
 
+        public static ClassDeclarationSyntax WithStaticFieldBackedProperty(this ClassDeclarationSyntax node, string propertyName, string typeName, params SyntaxKind[] modifiers)
+        {
+            var fieldName = "s_" + propertyName;
+            return node.AddMembers(
+                CreateFieldWithDefaultInitializer(fieldName, typeName, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
+                    .WithGeneratedAttribute(),
+                CreateProperty(propertyName, typeName, IdentifierName(fieldName), modifiers)
+                    .WithGeneratedAttribute());
+        }
+
         public static ClassDeclarationSyntax WithField(this ClassDeclarationSyntax node, string fieldName, string typeName, params SyntaxKind[] modifiers)
         {
             var field = CreateFieldWithDefaultInitializer(fieldName, typeName, modifiers)
-                .WithAttributes(CreateGeneratedCodeAttribute());
+                .WithGeneratedAttribute();
             return node.AddMembers(field);
         }
 
         public static ClassDeclarationSyntax WithProperty(this ClassDeclarationSyntax node, string propertyName, string typeName, ExpressionSyntax value, params SyntaxKind[] modifiers)
         {
             var property = CreateProperty(propertyName, typeName, value, modifiers)
-                .WithAttributes(CreateGeneratedCodeAttribute());
+                .WithGeneratedAttribute();
             return node.AddMembers(property);
         }
 
@@ -340,10 +264,11 @@ namespace R4Mvc.Tools.Extensions
         public static ClassDeclarationSyntax WithStringField(this ClassDeclarationSyntax node, string name, string value, bool includeGeneratedAttribute = true, params SyntaxKind[] modifiers)
         {
             var fieldDeclaration = CreateStringFieldDeclaration(name, value, modifiers);
-            if (includeGeneratedAttribute) fieldDeclaration = fieldDeclaration.WithAttributes(CreateGeneratedCodeAttribute());
+            if (includeGeneratedAttribute) fieldDeclaration = fieldDeclaration.WithGeneratedAttribute();
             return node.AddMembers(fieldDeclaration);
         }
 
+        /// TODO: Can this use a aeparated list?
         public static ClassDeclarationSyntax WithModifiers(this ClassDeclarationSyntax node, params SyntaxKind[] modifiers)
         {
             return node.AddModifiers(CreateModifiers(modifiers));
@@ -367,11 +292,6 @@ namespace R4Mvc.Tools.Extensions
         public static PropertyDeclarationSyntax WithModifiers(this PropertyDeclarationSyntax node, params SyntaxKind[] modifiers)
         {
             return node.AddModifiers(CreateModifiers(modifiers));
-        }
-
-        public static ClassDeclarationSyntax WithMethods(this ClassDeclarationSyntax node, params MemberDeclarationSyntax[] methods)
-        {
-            return node.AddMembers(methods);
         }
 
         public static VariableDeclarationSyntax VariableDeclaration(string name, ExpressionSyntax value)
@@ -417,12 +337,6 @@ namespace R4Mvc.Tools.Extensions
             return node.WithArgumentList(
                 ArgumentList(
                     SeparatedList(arguments.Select(e => Argument(e)))));
-        }
-
-        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
-        {
-            var seenKeys = new HashSet<TKey>();
-            return source.Where(element => seenKeys.Add(keySelector(element)));
         }
     }
 }
