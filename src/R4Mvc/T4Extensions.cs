@@ -1,9 +1,5 @@
 ﻿using System;
-using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Linq;
 
 namespace Microsoft.AspNetCore.Mvc
 {
@@ -33,6 +29,47 @@ namespace Microsoft.AspNetCore.Mvc
                 { "Controller", controller },
                 { "Action", action }
             };
+        }
+
+        public static IActionResult AddRouteValues(this IActionResult result, object routeValues)
+        {
+            return result.AddRouteValues(new RouteValueDictionary(routeValues));
+        }
+
+        public static IActionResult AddRouteValues(this IActionResult result, RouteValueDictionary routeValues)
+        {
+            RouteValueDictionary currentRouteValues = result.GetRouteValueDictionary();
+
+            // Add all the extra values
+            foreach (var pair in routeValues)
+            {
+                ModelUnbinderHelpers.AddRouteValues(currentRouteValues, pair.Key, pair.Value);
+            }
+
+            return result;
+        }
+
+        //public static IActionResult AddRouteValues(this IActionResult result, NameValueCollection nameValueCollection)
+        //{
+        //    // Copy all the values from the NameValueCollection into the route dictionary
+        //    if (nameValueCollection.AllKeys.Any(m => m == null))  //if it has a null, the CopyTo extension will crash!
+        //    {
+        //        var filtered = new NameValueCollection(nameValueCollection);
+        //        filtered.Remove(null);
+        //        filtered.CopyTo(result.GetRouteValueDictionary(), 0);
+        //    }
+        //    else
+        //    {
+        //        nameValueCollection.CopyTo(result.GetRouteValueDictionary(), replaceEntries: true);
+        //    }
+        //    return result;
+        //}
+
+        public static IActionResult AddRouteValue(this IActionResult result, string name, object value)
+        {
+            RouteValueDictionary routeValues = result.GetRouteValueDictionary();
+            ModelUnbinderHelpers.AddRouteValues(routeValues, name, value);
+            return result;
         }
     }
 }
