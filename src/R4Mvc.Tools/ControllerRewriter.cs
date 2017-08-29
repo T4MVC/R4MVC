@@ -56,10 +56,10 @@ namespace R4Mvc.Tools
             node = (MethodDeclarationSyntax)base.VisitMethodDeclaration(node);
 
             // only public methods not marked as virtual
-            if (node.Modifiers.Any(SyntaxKind.PublicKeyword) && !node.Modifiers.Any(SyntaxKind.VirtualKeyword) && !node.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            if (node.Modifiers.Any(SyntaxKind.PublicKeyword) && !node.Modifiers.Any(SyntaxKind.VirtualKeyword) && !node.Modifiers.Any(SyntaxKind.OverrideKeyword) )
             {
                 var symbol = _compiler.GetSemanticModel(node.SyntaxTree).GetDeclaredSymbol(node);
-                if (ControllerShouldBeProcessed(symbol.ContainingType))
+                if (ControllerShouldBeProcessed(symbol.ContainingType) && symbol.IsAction())
                 {
                     Debug.WriteLine(
                         "R4MVC - Marking controller method {0} as virtual from {1}",

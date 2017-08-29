@@ -68,13 +68,11 @@ namespace R4MvcHostApp.Areas.Admin
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
-            public readonly string OnActionExecuting = "OnActionExecuting";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
-            public const string OnActionExecuting = "OnActionExecuting";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]

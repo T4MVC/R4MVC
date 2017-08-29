@@ -204,7 +204,6 @@ namespace R4Mvc.Tools.Services
         private ClassDeclarationSyntax AddParameterlessMethods(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
         {
             var methods = mvcSymbol.GetPublicNonGeneratedMethods()
-                .Where(r => r.ReturnsVoid == false)
                 .GroupBy(m => m.Name)
                 .Where(g => !g.Any(m => m.Parameters.Length == 0))
                 .Select(g => MethodDeclaration(IdentifierName("IActionResult"), Identifier(g.Key))
@@ -227,7 +226,6 @@ namespace R4Mvc.Tools.Services
         {
             const string overrideMethodSuffix = "Override";
             var methods = mvcSymbol.GetPublicNonGeneratedMethods()
-                .Where(m => m.ReturnsVoid == false)
                 .SelectMany(m =>
                 {
                     var statements = new List<StatementSyntax>
@@ -295,6 +293,7 @@ namespace R4Mvc.Tools.Services
                 });
             return node.AddMembers(methods.ToArray());
         }
+
 
         internal static string GetR4MVCControllerClassName(INamedTypeSymbol controllerClass)
         {

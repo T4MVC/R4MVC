@@ -14,5 +14,27 @@ namespace R4MvcHostApp.Areas.Admin
         {
             base.OnActionExecuting(context);
         }
+
+
+        protected virtual void NonActionMethodVoidReturn()
+        {
+
+        }
+
+        protected virtual int NonActionMethodWithReturnValue()
+        {
+            return 1;
+        }
+
+        public virtual void PublicNonActionMethodVoidReturn()
+        {
+
+        }
+
+        [NonAction]
+        public virtual int PublicNonActionMethodMustBeExcludedWithNonAction()
+        {
+            return 1;
+        }
     }
 }

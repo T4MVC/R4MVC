@@ -6,6 +6,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using Microsoft.AspNetCore.Mvc;
 
 namespace R4Mvc.Tools.Extensions
 {
@@ -50,7 +51,16 @@ namespace R4Mvc.Tools.Extensions
             return controller.GetMembers()
                 .OfType<IMethodSymbol>()
                 .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
-                .Where(IsNotR4MVCGenerated);
+                .Where(IsNotR4MVCGenerated)
+                .Where(IsAction);
+        }
+
+        public static bool IsAction(this IMethodSymbol method)
+        {
+            var returnsVoid = method.ReturnsVoid;
+            var explicitlyExcluded = method.GetAttributes().Where(a => a.AttributeClass.InheritsFrom<NonActionAttribute>()).Any();
+
+            return returnsVoid == false && explicitlyExcluded == false;
         }
 
         public static FieldDeclarationSyntax CreateFieldWithDefaultInitializer(string fieldName, string typeName, params SyntaxKind[] modifiers)
