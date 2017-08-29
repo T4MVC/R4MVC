@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace R4MvcHostApp.Areas.Admin.Controllers
 {
-    [AdminArea]
     public partial class UsersController : AdminController
     {
         IUrlHelper _urlHelper;

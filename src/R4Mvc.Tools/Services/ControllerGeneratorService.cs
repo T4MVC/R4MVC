@@ -24,9 +24,8 @@ namespace R4Mvc.Tools.Services
 
         public string GetControllerArea(INamedTypeSymbol controllerSymbol)
         {
-            var areaAttribute = controllerSymbol.GetAttributes()
-                .Where(a => a.AttributeClass.InheritsFrom<AreaAttribute>())
-                .FirstOrDefault();
+            var areaAttribute = SearchAreaAttribute(controllerSymbol);
+
             if (areaAttribute == null)
                 return string.Empty;
 
@@ -52,6 +51,22 @@ namespace R4Mvc.Tools.Services
             }
             return string.Empty;
         }
+
+
+        AttributeData SearchAreaAttribute(INamedTypeSymbol controllerSymbol)
+        {
+            var current = controllerSymbol;
+            AttributeData result = null;
+
+            while (current != null && result == null)
+            {
+                result = current.GetAttributes().Where(a => a.AttributeClass.InheritsFrom<AreaAttribute>()).FirstOrDefault();
+                current = current.BaseType;
+            }
+
+            return result;
+        }
+
 
         public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaKey, string areaName, string controllerName, string projectRoot)
         {
