@@ -13,12 +13,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using R4Mvc;
 
-namespace R4MvcHostApp.Areas.Admin.Controllers
+namespace R4MvcHostApp.Areas.Admin
 {
-    public partial class UsersController
+    public partial class AdminController
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        protected UsersController(Dummy d)
+        public AdminController()
+        {
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected AdminController(Dummy d)
         {
         }
 
@@ -49,13 +54,13 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
-        public UsersController Actions => MVC.AdminArea.Users;
+        public AdminController Actions => MVC.AdminArea.Admin;
         [GeneratedCode("R4Mvc", "1.0")]
         public readonly string Area = "Admin";
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Name = "Users";
+        public readonly string Name = "Admin";
         [GeneratedCode("R4Mvc", "1.0")]
-        public const string NameConst = "Users";
+        public const string NameConst = "Admin";
         [GeneratedCode("R4Mvc", "1.0")]
         static readonly ActionNamesClass s_ActionNames = new ActionNamesClass();
         [GeneratedCode("R4Mvc", "1.0")]
@@ -63,13 +68,13 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
-            public readonly string Index = "Index";
+            public readonly string OnActionExecuting = "OnActionExecuting";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
-            public const string Index = "Index";
+            public const string OnActionExecuting = "OnActionExecuting";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -81,10 +86,7 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
             public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
-                public readonly string Index = "Index";
             }
-
-            public string Index = "~/Areas/Admin/Views/Users/Index.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
@@ -94,20 +96,10 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public partial class R4MVC_UsersController : R4MvcHostApp.Areas.Admin.Controllers.UsersController
+    public partial class R4MVC_AdminController : R4MvcHostApp.Areas.Admin.AdminController
     {
-        public R4MVC_UsersController(): base (Dummy.Instance)
+        public R4MVC_AdminController(): base (Dummy.Instance)
         {
-        }
-
-        [NonAction]
-        partial void IndexOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
-        [NonAction]
-        public override Microsoft.AspNetCore.Mvc.IActionResult Index()
-        {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Index);
-            IndexOverride(callInfo);
-            return callInfo;
         }
     }
 }
