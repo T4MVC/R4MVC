@@ -53,6 +53,13 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
             return RedirectToActionPermanent(taskResult.Result);
         }
 
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult Index2()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Index2);
+        }
+
         [GeneratedCode("R4Mvc", "1.0")]
         public UsersController Actions => MVC.AdminArea.Users;
         [GeneratedCode("R4Mvc", "1.0")]
@@ -69,12 +76,14 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
         public class ActionNamesClass
         {
             public readonly string Index = "Index";
+            public readonly string Index2 = "Index2";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
             public const string Index = "Index";
+            public const string Index2 = "Index2";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -112,6 +121,17 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Index);
             IndexOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void Index2Override(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Areas.Admin.Controllers.Index2ViewModel model);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult Index2(R4MvcHostApp.Areas.Admin.Controllers.Index2ViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Index2);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
+            Index2Override(callInfo, model);
             return callInfo;
         }
     }
