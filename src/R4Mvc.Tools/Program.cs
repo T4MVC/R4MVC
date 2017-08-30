@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.Setup.Configuration;
+using R4Mvc.Tools.Commands;
 using R4Mvc.Tools.Locators;
 using R4Mvc.Tools.Services;
 
@@ -16,7 +13,7 @@ namespace R4Mvc.Tools
 {
     class Program
     {
-        static void Main(string[] args) 
+        static void Main(string[] args)
         {
             if (args.Length == 0)
             {
@@ -53,63 +50,13 @@ namespace R4Mvc.Tools
 
             var serviceProvider = services.BuildServiceProvider();
 
-            new Program().Run(projectPath, serviceProvider).Wait();
+            Run(projectPath, serviceProvider).Wait();
         }
 
-        public async Task Run(string projectPath, IServiceProvider serviceProvider)
+        static Task Run(string projectPath, IServiceProvider serviceProvider)
         {
-            ConfigureMSBuild();
-
-            var workspace = MSBuildWorkspace.Create();
-            var generator = serviceProvider.GetService<R4MvcGenerator>();
-            var settings = serviceProvider.GetService<IOptions<Settings>>().Value;
-
-            var project = await workspace.OpenProjectAsync(projectPath);
-            if (workspace.Diagnostics.Count > 0)
-            {
-                foreach (var diag in workspace.Diagnostics)
-                    Console.Error.WriteLine($"  {diag.Kind}: {diag.Message}");
-                return;
-            }
-
-            var compilation = await project.GetCompilationAsync() as CSharpCompilation;
-            generator.Generate(compilation, Path.GetDirectoryName(project.FilePath));
-        }
-
-        private void ConfigureMSBuild()
-        {
-            var query = new SetupConfiguration();
-            var query2 = (ISetupConfiguration2)query;
-
-            try
-            {
-                if (query2.GetInstanceForCurrentProcess() is ISetupInstance2 instance)
-                {
-                    Environment.SetEnvironmentVariable("VSINSTALLDIR", instance.GetInstallationPath());
-                    Environment.SetEnvironmentVariable("VisualStudioVersion", @"15.0");
-                    return;
-                }
-            }
-            catch { }
-
-            var instances = new ISetupInstance[1];
-            var e = query2.EnumAllInstances();
-            int fetched;
-            do
-            {
-                e.Next(1, instances, out fetched);
-                if (fetched > 0)
-                {
-                    var instance = instances[0] as ISetupInstance2;
-                    if (instance.GetInstallationVersion().StartsWith("15."))
-                    {
-                        Environment.SetEnvironmentVariable("VSINSTALLDIR", instance.GetInstallationPath());
-                        Environment.SetEnvironmentVariable("VisualStudioVersion", @"15.0");
-                        return;
-                    }
-                }
-            }
-            while (fetched > 0);
+            var command = serviceProvider.GetService<GenerateCommand>();
+            return command.Run(projectPath);
         }
 
         static IConfigurationRoot LoadConfiguration(string[] args, string projectPath)
@@ -125,6 +72,8 @@ namespace R4Mvc.Tools
             services.AddOptions();
             services.Configure<Settings>(configuration);
 
+            services.AddTransient<GenerateCommand, GenerateCommand>();
+
             services.AddSingleton(typeof(IEnumerable<IViewLocator>), new[] { new DefaultRazorViewLocator() });
             services.AddSingleton(typeof(IEnumerable<IStaticFileLocator>), new[] { new DefaultStaticFileLocator() });
             services.AddTransient<IViewLocatorService, ViewLocatorService>();
@@ -132,7 +81,7 @@ namespace R4Mvc.Tools
             services.AddTransient<IControllerRewriterService, ControllerRewriterService>();
             services.AddTransient<IControllerGeneratorService, ControllerGeneratorService>();
             services.AddTransient<IFilePersistService, FilePersistService>();
-            services.AddTransient<R4MvcGenerator, R4MvcGenerator>();
+            services.AddTransient<R4MvcGeneratorService, R4MvcGeneratorService>();
         }
     }
 }

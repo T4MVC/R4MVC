@@ -5,6 +5,6 @@ namespace R4Mvc.Tools.Services
 {
     public interface IControllerRewriterService
     {
-        IReadOnlyCollection<ControllerDefinition> RewriteControllers(CSharpCompilation compiler);
+        IList<ControllerDefinition> RewriteControllers(CSharpCompilation compiler);
     }
 }

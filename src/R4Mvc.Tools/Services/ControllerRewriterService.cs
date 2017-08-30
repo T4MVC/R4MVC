@@ -20,7 +20,7 @@ namespace R4Mvc.Tools.Services
             _settings = settings.Value;
         }
 
-        public IReadOnlyCollection<ControllerDefinition> RewriteControllers(CSharpCompilation compiler)
+        public IList<ControllerDefinition> RewriteControllers(CSharpCompilation compiler)
         {
             var controllers = new Dictionary<string, ControllerDefinition>();
 
@@ -66,7 +66,7 @@ namespace R4Mvc.Tools.Services
                 }
             }
 
-            return controllers.Values;
+            return controllers.Values.ToList();
         }
     }
 }

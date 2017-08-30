@@ -12,6 +12,15 @@ namespace R4Mvc.Tools
         public INamedTypeSymbol Symbol { get; set; }
 
         public IList<string> FilePaths = new List<string>();
+        public IList<View> Views { get; set; } = new List<View>();
+
+        private string _fullyQualifiedGeneratedName = null;
+        public string FullyQualifiedGeneratedName
+        {
+            get => _fullyQualifiedGeneratedName ?? $"{Namespace}.{Name}Controller";
+            set => _fullyQualifiedGeneratedName = value;
+        }
+        public string FullyQualifiedR4ClassName { get; set; }
 
         public string GetFilePath()
         {
