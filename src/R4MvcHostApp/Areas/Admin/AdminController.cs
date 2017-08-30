@@ -13,6 +13,6 @@ namespace R4MvcHostApp.Areas.Admin
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
-        }      
+        }
     }
 }

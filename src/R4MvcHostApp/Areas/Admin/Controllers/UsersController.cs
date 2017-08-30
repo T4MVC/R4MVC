@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace R4MvcHostApp.Areas.Admin.Controllers
@@ -38,6 +39,11 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
         public virtual int PublicNonActionMethodMustBeExcludedWithNonAction()
         {
             return 1;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
         }
     }
 }
