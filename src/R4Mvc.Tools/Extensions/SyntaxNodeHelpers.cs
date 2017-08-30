@@ -46,21 +46,21 @@ namespace R4Mvc.Tools.Extensions
             return !method.GetAttributes().Any(a => a.AttributeClass.ToDisplayString() == typeof(GeneratedCodeAttribute).FullName);
         }
 
-        public static IEnumerable<IMethodSymbol> GetPublicNonGeneratedMethods(this ITypeSymbol controller)
+        public static IEnumerable<IMethodSymbol> GetPublicNonGeneratedMethods(this ITypeSymbol controller, string[] mvcMethodNames)
         {
             return controller.GetMembers()
                 .OfType<IMethodSymbol>()
                 .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
                 .Where(IsNotR4MVCGenerated)
-                .Where(IsAction);
+                .Where(m=> IsAction(m, mvcMethodNames));
         }
 
-        public static bool IsAction(this IMethodSymbol method)
+        public static bool IsAction(this IMethodSymbol method, string[] mvcMethodNames)
         {
-            var returnsVoid = method.ReturnsVoid;
             var explicitlyExcluded = method.GetAttributes().Where(a => a.AttributeClass.InheritsFrom<NonActionAttribute>()).Any();
+            var isMvcMethod = Array.IndexOf(mvcMethodNames, method.Name) >= 0;
 
-            return returnsVoid == false && explicitlyExcluded == false;
+            return isMvcMethod == false && explicitlyExcluded == false;
         }
 
         public static FieldDeclarationSyntax CreateFieldWithDefaultInitializer(string fieldName, string typeName, params SyntaxKind[] modifiers)
@@ -225,13 +225,13 @@ namespace R4Mvc.Tools.Extensions
             return node.AddMembers(ctorNode);
         }
 
-        public static ClassDeclarationSyntax WithSubClassMembersAsStrings(this ClassDeclarationSyntax node, ITypeSymbol controllerClass, string className, params SyntaxKind[] modifiers)
+        public static ClassDeclarationSyntax WithSubClassMembersAsStrings(this ClassDeclarationSyntax node, ITypeSymbol controllerClass, string className, string[] mvcMethodNames, params SyntaxKind[] modifiers)
         {
             // create ActionConstants sub class
             var actionNameClass = ClassDeclaration(className)
                 .WithModifiers(SyntaxKind.PublicKeyword)
                 .WithGeneratedNonUserCodeAttributes();
-            foreach (var actionName in controllerClass.GetPublicNonGeneratedMethods().GroupBy(x => x.Name))
+            foreach (var actionName in controllerClass.GetPublicNonGeneratedMethods(mvcMethodNames).GroupBy(x => x.Name))
             {
                 actionNameClass = actionNameClass.WithStringField(actionName.Key, actionName.Key, false, modifiers);
             }

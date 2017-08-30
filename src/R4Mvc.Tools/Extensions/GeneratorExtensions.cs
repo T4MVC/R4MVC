@@ -14,24 +14,27 @@ namespace R4Mvc.Tools.Extensions
     {
         public static ClassDeclarationSyntax WithActionNameClass(
             this ClassDeclarationSyntax node,
-            ITypeSymbol controllerClass)
+            ITypeSymbol controllerClass, string[] mvcMethodNames)
         {
             // create ActionNames sub class using symbol method names
             return node.WithSubClassMembersAsStrings(
                 controllerClass,
                 "ActionNamesClass",
+                mvcMethodNames,
                 SyntaxKind.PublicKeyword,
                 SyntaxKind.ReadOnlyKeyword);
         }
 
         public static ClassDeclarationSyntax WithActionConstantsClass(
             this ClassDeclarationSyntax node,
-            ITypeSymbol controllerClass)
+            ITypeSymbol controllerClass,
+            string[] mvcMethodNames)
         {
             // create ActionConstants sub class
             return node.WithSubClassMembersAsStrings(
                 controllerClass,
                 "ActionNameConstants",
+                mvcMethodNames,
                 SyntaxKind.PublicKeyword,
                 SyntaxKind.ConstKeyword);
         }

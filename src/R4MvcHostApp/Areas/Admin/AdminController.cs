@@ -8,33 +8,11 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace R4MvcHostApp.Areas.Admin
 {
     [AdminArea]
-    public partial class AdminController : Controller
+    public abstract partial class AdminController : Controller
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
-        }
-
-
-        protected virtual void NonActionMethodVoidReturn()
-        {
-
-        }
-
-        protected virtual int NonActionMethodWithReturnValue()
-        {
-            return 1;
-        }
-
-        public virtual void PublicNonActionMethodVoidReturn()
-        {
-
-        }
-
-        [NonAction]
-        public virtual int PublicNonActionMethodMustBeExcludedWithNonAction()
-        {
-            return 1;
-        }
+        }      
     }
 }

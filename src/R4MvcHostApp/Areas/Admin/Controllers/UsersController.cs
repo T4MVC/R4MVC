@@ -33,5 +33,11 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
         {
             return View();
         }
+
+        [NonAction]
+        public virtual int PublicNonActionMethodMustBeExcludedWithNonAction()
+        {
+            return 1;
+        }
     }
 }

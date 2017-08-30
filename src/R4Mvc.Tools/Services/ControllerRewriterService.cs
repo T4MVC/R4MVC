@@ -20,7 +20,7 @@ namespace R4Mvc.Tools.Services
             _settings = settings.Value;
         }
 
-        public IReadOnlyCollection<ControllerDefinition> RewriteControllers(CSharpCompilation compiler)
+        public IReadOnlyCollection<ControllerDefinition> RewriteControllers(CSharpCompilation compiler, string[] mvcMethodNames)
         {
             var controllers = new Dictionary<string, ControllerDefinition>();
 
@@ -30,7 +30,7 @@ namespace R4Mvc.Tools.Services
                 if (tree.GetDiagnostics().Any(x => x.Severity == DiagnosticSeverity.Error)) continue;
 
                 // this first part, finds all the controller classes, modifies them and saves the changes
-                var controllerRewriter = new ControllerRewriter(compiler);
+                var controllerRewriter = new ControllerRewriter(compiler, mvcMethodNames);
                 var newNode = controllerRewriter.Visit(tree.GetRoot());
 
                 var classSyntaxTree = tree;
