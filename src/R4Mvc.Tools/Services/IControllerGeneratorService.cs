@@ -8,7 +8,7 @@ namespace R4Mvc.Tools.Services
     public interface IControllerGeneratorService
     {
         string GetControllerArea(INamedTypeSymbol controllerSymbol);
-        ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaKey, string areaName, string controllerName, string projectRoot);
-        ClassDeclarationSyntax GenerateR4Controller(INamedTypeSymbol controllerSymbol);
+        ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaKey, string areaName, string controllerName, string projectRoot, string[] mvcMethodNames);
+        ClassDeclarationSyntax GenerateR4Controller(INamedTypeSymbol controllerSymbol, string[] mvcMethodNames);
     }
 }

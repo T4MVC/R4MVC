@@ -18,9 +18,12 @@ namespace R4Mvc.Tools
 
         private readonly List<ClassDeclarationSyntax> _mvcControllerClassNodes = new List<ClassDeclarationSyntax>();
 
-        public ControllerRewriter(CSharpCompilation compiler)
+        private readonly string[] _mvcMethodNames;
+
+        public ControllerRewriter(CSharpCompilation compiler, string[] mvcMethodNames)
         {
             this._compiler = compiler;
+            this._mvcMethodNames = mvcMethodNames;
         }
 
         public ClassDeclarationSyntax[] MvcControllerClassNodes => this._mvcControllerClassNodes.ToArray();
@@ -56,10 +59,10 @@ namespace R4Mvc.Tools
             node = (MethodDeclarationSyntax)base.VisitMethodDeclaration(node);
 
             // only public methods not marked as virtual
-            if (node.Modifiers.Any(SyntaxKind.PublicKeyword) && !node.Modifiers.Any(SyntaxKind.VirtualKeyword))
+            if (node.Modifiers.Any(SyntaxKind.PublicKeyword) && !node.Modifiers.Any(SyntaxKind.VirtualKeyword) && !node.Modifiers.Any(SyntaxKind.OverrideKeyword) )
             {
                 var symbol = _compiler.GetSemanticModel(node.SyntaxTree).GetDeclaredSymbol(node);
-                if (ControllerShouldBeProcessed(symbol.ContainingType))
+                if (ControllerShouldBeProcessed(symbol.ContainingType) && symbol.IsAction(_mvcMethodNames))
                 {
                     Debug.WriteLine(
                         "R4MVC - Marking controller method {0} as virtual from {1}",

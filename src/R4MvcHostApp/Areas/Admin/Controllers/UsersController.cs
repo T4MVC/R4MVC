@@ -3,15 +3,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace R4MvcHostApp.Areas.Admin.Controllers
 {
-    [AdminArea]
-    public partial class UsersController : Controller
+    public partial class UsersController : AdminController
     {
+        IUrlHelper _urlHelper;
+        public UsersController(IUrlHelper urlHelper)
+        {
+            _urlHelper = urlHelper;
+
+        }
+
         public virtual IActionResult Index()
         {
             return View();
+        }
+
+        public virtual IActionResult Edit()
+        {
+            var url = Url.Action(Actions.Index());
+
+            return RedirectToAction(Actions.Index());
+        }
+
+        [NonAction]
+        public IActionResult ActionExcluded()
+        {
+            return View();
+        }
+
+        [NonAction]
+        public virtual int PublicNonActionMethodMustBeExcludedWithNonAction()
+        {
+            return 1;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            base.OnActionExecuting(context);
         }
     }
 }

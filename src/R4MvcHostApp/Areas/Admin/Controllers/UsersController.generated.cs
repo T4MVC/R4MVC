@@ -18,11 +18,6 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
     public partial class UsersController
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public UsersController()
-        {
-        }
-
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         protected UsersController(Dummy d)
         {
         }
@@ -69,12 +64,14 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
         public class ActionNamesClass
         {
             public readonly string Index = "Index";
+            public readonly string Edit = "Edit";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
             public const string Index = "Index";
+            public const string Edit = "Edit";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -112,6 +109,16 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Index);
             IndexOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void EditOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult Edit()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Edit);
+            EditOverride(callInfo);
             return callInfo;
         }
     }

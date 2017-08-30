@@ -24,9 +24,8 @@ namespace R4Mvc.Tools.Services
 
         public string GetControllerArea(INamedTypeSymbol controllerSymbol)
         {
-            var areaAttribute = controllerSymbol.GetAttributes()
-                .Where(a => a.AttributeClass.InheritsFrom<AreaAttribute>())
-                .FirstOrDefault();
+            var areaAttribute = SearchAreaAttribute(controllerSymbol);
+
             if (areaAttribute == null)
                 return string.Empty;
 
@@ -53,7 +52,23 @@ namespace R4Mvc.Tools.Services
             return string.Empty;
         }
 
-        public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaKey, string areaName, string controllerName, string projectRoot)
+
+        AttributeData SearchAreaAttribute(INamedTypeSymbol controllerSymbol)
+        {
+            var current = controllerSymbol;
+            AttributeData result = null;
+
+            while (current != null && result == null)
+            {
+                result = current.GetAttributes().Where(a => a.AttributeClass.InheritsFrom<AreaAttribute>()).FirstOrDefault();
+                current = current.BaseType;
+            }
+
+            return result;
+        }
+
+
+        public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaKey, string areaName, string controllerName, string projectRoot, string[] mvcMethodNames)
         {
             // build controller partial class node 
             // add a default constructor if there are some but none are zero length
@@ -77,7 +92,7 @@ namespace R4Mvc.Tools.Services
 
             // add all method stubs, TODO criteria for this: only public virtual actionresults?
             // add subclasses, fields, properties, constants for action names
-            genControllerClass = AddParameterlessMethods(genControllerClass, controllerSymbol);
+            genControllerClass = AddParameterlessMethods(genControllerClass, controllerSymbol, mvcMethodNames);
             var actionsExpression = !string.IsNullOrEmpty(areaKey)
                 ? SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix + "." + areaKey, controllerName)
                 : SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix, controllerName);
@@ -103,14 +118,14 @@ namespace R4Mvc.Tools.Services
                         SyntaxKind.PublicKeyword,
                         SyntaxKind.ConstKeyword)
                     .WithStaticFieldBackedProperty("ActionNames", "ActionNamesClass", SyntaxKind.PublicKeyword)
-                    .WithActionNameClass(controllerSymbol)
-                    .WithActionConstantsClass(controllerSymbol)
+                    .WithActionNameClass(controllerSymbol, mvcMethodNames)
+                    .WithActionConstantsClass(controllerSymbol, mvcMethodNames)
                     .WithViewsClass(controllerName, areaName, _viewLocator.FindViews(projectRoot));
 
             return genControllerClass;
         }
 
-        public ClassDeclarationSyntax GenerateR4Controller(INamedTypeSymbol controllerSymbol)
+        public ClassDeclarationSyntax GenerateR4Controller(INamedTypeSymbol controllerSymbol, string[] mvcMethodNames)
         {
             // create R4MVC_[Controller] class inheriting from partial
             var r4ControllerClass = ClassDeclaration(GetR4MVCControllerClassName(controllerSymbol))
@@ -118,7 +133,7 @@ namespace R4Mvc.Tools.Services
                 .WithGeneratedNonUserCodeAttributes()
                 .WithBaseTypes(controllerSymbol.ToQualifiedName())
                 .WithDefaultDummyBaseConstructor(false, SyntaxKind.PublicKeyword);
-            r4ControllerClass = AddMethodOverrides(r4ControllerClass, controllerSymbol);
+            r4ControllerClass = AddMethodOverrides(r4ControllerClass, controllerSymbol, mvcMethodNames);
             return r4ControllerClass;
         }
 
@@ -186,9 +201,9 @@ namespace R4Mvc.Tools.Services
             return node.AddMembers(methods);
         }
 
-        private ClassDeclarationSyntax AddParameterlessMethods(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
+        private ClassDeclarationSyntax AddParameterlessMethods(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol, string[] mvcMethodNames)
         {
-            var methods = mvcSymbol.GetPublicNonGeneratedMethods()
+            var methods = mvcSymbol.GetPublicNonGeneratedMethods(mvcMethodNames)
                 .GroupBy(m => m.Name)
                 .Where(g => !g.Any(m => m.Parameters.Length == 0))
                 .Select(g => MethodDeclaration(IdentifierName("IActionResult"), Identifier(g.Key))
@@ -207,10 +222,10 @@ namespace R4Mvc.Tools.Services
             return node.AddMembers(methods.ToArray());
         }
 
-        private ClassDeclarationSyntax AddMethodOverrides(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
+        private ClassDeclarationSyntax AddMethodOverrides(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol, string[] mvcMethodNames)
         {
             const string overrideMethodSuffix = "Override";
-            var methods = mvcSymbol.GetPublicNonGeneratedMethods()
+            var methods = mvcSymbol.GetPublicNonGeneratedMethods(mvcMethodNames)
                 .SelectMany(m =>
                 {
                     var statements = new List<StatementSyntax>
@@ -278,6 +293,7 @@ namespace R4Mvc.Tools.Services
                 });
             return node.AddMembers(methods.ToArray());
         }
+
 
         internal static string GetR4MVCControllerClassName(INamedTypeSymbol controllerClass)
         {
