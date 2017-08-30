@@ -30,7 +30,7 @@ namespace R4Mvc.Tools
             // grab the symbol first and pass to other visitors first
             var symbol = _compiler.GetSemanticModel(node.SyntaxTree).GetDeclaredSymbol(node);
             var newNode = (ClassDeclarationSyntax)base.VisitClassDeclaration(node);
-            if (symbol.InheritsFrom<Controller>() && !IsForcedExclusion(symbol))
+            if (ControllerShouldBeProcessed(symbol))
             {
                 // hold a list of all controller classes to use later for the generator
                 _mvcControllerClassNodes.Add(node);
@@ -45,12 +45,11 @@ namespace R4Mvc.Tools
             return newNode;
         }
 
-        private static bool IsForcedExclusion(INamedTypeSymbol symbol)
-        {
-            // need to fully qualify attribute type for reliable matching
-            var r4attribute = symbol.GetAttributes().FirstOrDefault(x => x.AttributeClass.ToDisplayString() == typeof(R4MvcExcludeAttribute).FullName);
-            return r4attribute != null;
-        }
+        private static bool ControllerShouldBeProcessed(INamedTypeSymbol symbol)
+            => symbol.DeclaredAccessibility == Accessibility.Public &&
+                !symbol.IsAbstract &&
+                symbol.InheritsFrom<Controller>() &&
+                !symbol.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<R4MvcExcludeAttribute>());
 
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
@@ -60,7 +59,7 @@ namespace R4Mvc.Tools
             if (node.Modifiers.Any(SyntaxKind.PublicKeyword) && !node.Modifiers.Any(SyntaxKind.VirtualKeyword))
             {
                 var symbol = _compiler.GetSemanticModel(node.SyntaxTree).GetDeclaredSymbol(node);
-                if (symbol.ContainingType.InheritsFrom<Controller>())
+                if (ControllerShouldBeProcessed(symbol.ContainingType))
                 {
                     Debug.WriteLine(
                         "R4MVC - Marking controller method {0} as virtual from {1}",
