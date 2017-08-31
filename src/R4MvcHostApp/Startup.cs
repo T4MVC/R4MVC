@@ -54,7 +54,7 @@ namespace R4MvcHostApp
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
 
-            ModelUnbinderHelpers.ModelUnbinders.Add(typeof(Areas.Admin.Models.Index2ViewModel), new R4Mvc.ModelUnbinders.SimplePropertyModelUnbinder());
+            ModelUnbinderHelpers.ModelUnbinders.Add(typeof(Areas.Admin.Models.Index2ViewModel), new SimplePropertyModelUnbinder());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
