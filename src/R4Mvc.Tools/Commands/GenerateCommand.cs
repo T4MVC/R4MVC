@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.Setup.Configuration;
+using R4Mvc.Tools.Extensions;
 using R4Mvc.Tools.Services;
 
 namespace R4Mvc.Tools.Commands
@@ -45,6 +46,7 @@ namespace R4Mvc.Tools.Commands
             }
 
             var compilation = await project.GetCompilationAsync() as CSharpCompilation;
+            SyntaxNodeHelpers.PopulateControllerClassMethodNames(compilation);
 
             var controllers = _controllerRewriter.RewriteControllers(compilation);
             var allViewFiles = _viewLocator.FindViews(projectRoot);

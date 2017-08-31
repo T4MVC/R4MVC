@@ -33,24 +33,15 @@ namespace R4Mvc.Tools.Services
                 var controllerRewriter = new ControllerRewriter(compiler);
                 var newNode = controllerRewriter.Visit(tree.GetRoot());
 
-                var classSyntaxTree = tree;
-                if (!newNode.IsEquivalentTo(tree.GetRoot()))
-                {
-                    // node has changed, update syntaxtree and persist to file
-                    compiler = compiler.ReplaceSyntaxTree(tree, newNode.SyntaxTree);
-                    _filePersistService.WriteFile(newNode, tree.FilePath);
-                    classSyntaxTree = newNode.SyntaxTree;
-                }
-
                 // save the controller nodes from each visit to pass to the generator
                 foreach (var controllerNode in controllerRewriter.MvcControllerClassNodes)
                 {
                     var cNamespace = controllerNode.FirstAncestorOrSelf<NamespaceDeclarationSyntax>().Name.ToFullString().Trim();
-                    var cSymbol = compiler.GetSemanticModel(classSyntaxTree).GetDeclaredSymbol(controllerNode);
+                    var cSymbol = compiler.GetSemanticModel(tree).GetDeclaredSymbol(controllerNode);
                     var cFullName = cNamespace + "." + cSymbol.Name;
                     if (controllers.ContainsKey(cFullName))
                     {
-                        controllers[cFullName].FilePaths.Add(classSyntaxTree.FilePath);
+                        controllers[cFullName].FilePaths.Add(tree.FilePath);
                         continue;
                     }
 
@@ -61,8 +52,15 @@ namespace R4Mvc.Tools.Services
                         Name = cSymbol.Name.TrimEnd("Controller"),
                         Area = cAreaName,
                         Symbol = cSymbol,
-                        FilePaths = new List<string> { classSyntaxTree.FilePath },
+                        FilePaths = new List<string> { tree.FilePath },
                     };
+                }
+
+                if (!newNode.IsEquivalentTo(tree.GetRoot()))
+                {
+                    // node has changed, update syntaxtree and persist to file
+                    compiler = compiler.ReplaceSyntaxTree(tree, newNode.SyntaxTree);
+                    _filePersistService.WriteFile(newNode, tree.FilePath);
                 }
             }
 

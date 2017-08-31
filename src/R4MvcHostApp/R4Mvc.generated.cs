@@ -253,6 +253,7 @@ namespace R4Mvc
 
     public partial class AdminAreaClass
     {
+        public readonly R4MvcHostApp.Areas.Admin.Controllers.PagesController Pages = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_PagesController();
         public readonly R4MvcHostApp.Areas.Admin.Controllers.UsersController Users = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_UsersController();
         public readonly R4Mvc.AdminArea_SharedController Shared = new R4Mvc.AdminArea_SharedController();
     }

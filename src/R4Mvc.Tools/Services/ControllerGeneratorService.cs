@@ -24,9 +24,13 @@ namespace R4Mvc.Tools.Services
 
         public string GetControllerArea(INamedTypeSymbol controllerSymbol)
         {
-            var areaAttribute = controllerSymbol.GetAttributes()
-                .Where(a => a.AttributeClass.InheritsFrom<AreaAttribute>())
-                .FirstOrDefault();
+            AttributeData areaAttribute = null;
+            var typeSymbol = controllerSymbol;
+            while (typeSymbol != null && areaAttribute == null)
+            {
+                areaAttribute = typeSymbol.GetAttributes().FirstOrDefault(a => a.AttributeClass.InheritsFrom<AreaAttribute>());
+                typeSymbol = typeSymbol.BaseType;
+            }
             if (areaAttribute == null)
                 return string.Empty;
 
