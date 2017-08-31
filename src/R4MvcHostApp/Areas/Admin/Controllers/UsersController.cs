@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using R4MvcHostApp.Areas.Admin.Models;
 
 namespace R4MvcHostApp.Areas.Admin.Controllers
 {
@@ -13,7 +13,7 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
 
         static UsersController()
         {
-            ModelUnbinderHelpers.ModelUnbinders.Add(typeof(Index2ViewModel), new R4Mvc.ModelUnbinders.SimplePropertyModelUnbinder());
+           
         }
 
         public virtual IActionResult Index()
@@ -29,11 +29,5 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
         }
     }
 
-    public class Index2ViewModel
-    {
-        public string Id { get; set; }
-        public int Value { get; set; }
 
-        public string UnbindedUrl { get; set; }
-    }
 }

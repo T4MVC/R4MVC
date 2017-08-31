@@ -96,9 +96,11 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
             public class _ViewNamesClass
             {
                 public readonly string Index = "Index";
+                public readonly string Index2 = "Index2";
             }
 
             public string Index = "~/Areas/Admin/Views/Users/Index.cshtml";
+            public string Index2 = "~/Areas/Admin/Views/Users/Index2.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
@@ -125,9 +127,9 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
         }
 
         [NonAction]
-        partial void Index2Override(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Areas.Admin.Controllers.Index2ViewModel model);
+        partial void Index2Override(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, R4MvcHostApp.Areas.Admin.Models.Index2ViewModel model);
         [NonAction]
-        public override Microsoft.AspNetCore.Mvc.IActionResult Index2(R4MvcHostApp.Areas.Admin.Controllers.Index2ViewModel model)
+        public override Microsoft.AspNetCore.Mvc.IActionResult Index2(R4MvcHostApp.Areas.Admin.Models.Index2ViewModel model)
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Index2);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
