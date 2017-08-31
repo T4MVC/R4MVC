@@ -10,12 +10,6 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
     [AdminArea]
     public partial class UsersController : Controller
     {
-
-        static UsersController()
-        {
-           
-        }
-
         public virtual IActionResult Index()
         {
             return View();
@@ -28,6 +22,4 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
             return View(model);
         }
     }
-
-
 }
