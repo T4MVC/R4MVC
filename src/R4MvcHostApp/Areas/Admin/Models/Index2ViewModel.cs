@@ -9,7 +9,5 @@ namespace R4MvcHostApp.Areas.Admin.Models
     {
         public string Id { get; set; }
         public int Value { get; set; }
-
-        public string UnbindedUrl { get; set; }
     }
 }
