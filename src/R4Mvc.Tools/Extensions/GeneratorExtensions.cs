@@ -114,11 +114,5 @@ namespace R4Mvc.Tools.Extensions
 
             return node.AddMembers(dummyClass);
         }
-
-        public static string Replace(this string s, char[] separators, string newVal)
-        {
-            var temp = s.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-            return Join(newVal, temp);
-        }
     }
 }

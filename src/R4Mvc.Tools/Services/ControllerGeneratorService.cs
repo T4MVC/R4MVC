@@ -82,7 +82,7 @@ namespace R4Mvc.Tools.Services
             // add all method stubs, TODO criteria for this: only public virtual actionresults?
             // add subclasses, fields, properties, constants for action names
             genControllerClass = AddParameterlessMethods(genControllerClass, controllerSymbol);
-            var actionsExpression = !string.IsNullOrEmpty(areaKey)
+            var actionsExpression = areaKey != null
                 ? SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix + "." + areaKey, controllerName)
                 : SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix, controllerName);
             genControllerClass =

@@ -10,7 +10,7 @@ namespace R4Mvc.Tools
         {
             var pathParts = relativePath.ToString().Split('/', '\\');
 
-            FileName = pathParts.Last().Replace(new[] { '.', '-', ' ' }, "_");
+            FileName = pathParts.Last();
             RelativePath = relativePath;
             Container = string.Join("/", pathParts.Take(pathParts.Length - 1));
         }

@@ -55,7 +55,7 @@ namespace R4Mvc.Tools.Commands
             {
                 var controller = controllers
                     .Where(c => string.Equals(c.Name, view.ControllerName, StringComparison.OrdinalIgnoreCase))
-                    .Where(c => string.Equals(c.Area ?? "", view.AreaName ?? "", StringComparison.OrdinalIgnoreCase))
+                    .Where(c => string.Equals(c.Area, view.AreaName, StringComparison.OrdinalIgnoreCase))
                     .FirstOrDefault();
                 if (controller == null)
                     controllers.Add(controller = new ControllerDefinition
@@ -67,9 +67,9 @@ namespace R4Mvc.Tools.Commands
             }
 
             var allControllers = controllers.ToLookup(c => c.Area);
-            var areaMap = controllers.Select(c => c.Area).Where(a => !string.IsNullOrWhiteSpace(a)).Distinct(StringComparer.OrdinalIgnoreCase).ToDictionary(a => a);
+            var areaMap = controllers.Select(c => c.Area).Where(a => !string.IsNullOrEmpty(a)).Distinct(StringComparer.OrdinalIgnoreCase).ToDictionary(a => a);
             foreach (var area in areaMap.Keys.ToArray())
-                if (allControllers[""].Any(c => c.Name == area))
+                if (allControllers[string.Empty].Any(c => c.Name == area))
                     areaMap[area] = area + "Area";
 
             _generatorService.Generate(projectRoot, allControllers, areaMap);

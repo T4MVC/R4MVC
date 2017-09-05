@@ -19,6 +19,7 @@ public static partial class Links
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public static partial class css
     {
+        public static string _site_css = "~/css/.site.css";
         public static string site_css = "~/css/site.css";
         public static string site_min_css = "~/css/site.min.css";
     }
@@ -80,7 +81,7 @@ public static partial class Links
                 }
             }
 
-            public static string bower_json = "~/lib/bootstrap/.bower.json";
+            public static string _bower_json = "~/lib/bootstrap/.bower.json";
             public static string LICENSE = "~/lib/bootstrap/LICENSE";
         }
 
@@ -110,24 +111,24 @@ public static partial class Links
                 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
                 public static partial class unobtrusive
                 {
-                    public static string bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
+                    public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
                     public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
                     public static string jquery_validate_unobtrusive_min_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js";
                 }
 
-                public static string bower_json = "~/lib/jquery-validation/.bower.json";
+                public static string _bower_json = "~/lib/jquery-validation/.bower.json";
                 public static string LICENSE_md = "~/lib/jquery-validation/LICENSE.md";
             }
 
             [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public static partial class validation_unobtrusive
             {
-                public static string bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
+                public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
                 public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
                 public static string jquery_validate_unobtrusive_min_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js";
             }
 
-            public static string bower_json = "~/lib/jquery/.bower.json";
+            public static string _bower_json = "~/lib/jquery/.bower.json";
             public static string LICENSE_txt = "~/lib/jquery/LICENSE.txt";
         }
 
@@ -146,19 +147,19 @@ public static partial class Links
             [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public static partial class unobtrusive
             {
-                public static string bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
+                public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
                 public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
                 public static string jquery_validate_unobtrusive_min_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js";
             }
 
-            public static string bower_json = "~/lib/jquery-validation/.bower.json";
+            public static string _bower_json = "~/lib/jquery-validation/.bower.json";
             public static string LICENSE_md = "~/lib/jquery-validation/LICENSE.md";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public static partial class jquery_validation_unobtrusive
         {
-            public static string bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
+            public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
             public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
             public static string jquery_validate_unobtrusive_min_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js";
         }

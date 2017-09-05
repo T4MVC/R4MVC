@@ -57,7 +57,7 @@ namespace R4Mvc.Tools.Services
                 var namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
                 foreach (var controller in namespaceGroup)
                 {
-                    var areaKey = !string.IsNullOrWhiteSpace(controller.Area) ? areaMap[controller.Area] : "";
+                    var areaKey = !string.IsNullOrEmpty(controller.Area) ? areaMap[controller.Area] : null;
                     var genControllerClass = _controllerGenerator.GeneratePartialController(controller.Symbol, areaKey, controller.Area, controller.Name, projectRoot);
                     var r4ControllerClass = _controllerGenerator.GenerateR4Controller(controller.Symbol);
                     controller.FullyQualifiedR4ClassName = $"{namespaceGroup.Key}.{r4ControllerClass.Identifier}";
@@ -93,7 +93,7 @@ namespace R4Mvc.Tools.Services
                 controller.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
             }
 
-            foreach (var area in controllers.Where(a => !string.IsNullOrWhiteSpace(a.Key)))
+            foreach (var area in controllers.Where(a => !string.IsNullOrEmpty(a.Key)))
             {
                 var areaClass = ClassDeclaration(area.Key + "AreaClass")
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
@@ -113,11 +113,11 @@ namespace R4Mvc.Tools.Services
             var mvcStaticClass = ClassDeclaration(_settings.HelpersPrefix)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes();
-            foreach (var area in controllers.Where(a => !string.IsNullOrWhiteSpace(a.Key)))
+            foreach (var area in controllers.Where(a => !string.IsNullOrEmpty(a.Key)))
             {
                 mvcStaticClass = mvcStaticClass.WithStaticFieldBackedProperty(areaMap[area.Key], $"{_settings.R4MvcNamespace}.{area.Key}AreaClass", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
             }
-            foreach (var controller in controllers[""])
+            foreach (var controller in controllers[string.Empty])
             {
                 mvcStaticClass = mvcStaticClass.AddMembers(
                     SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
