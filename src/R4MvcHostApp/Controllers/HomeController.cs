@@ -31,5 +31,15 @@ namespace R4MvcHostApp.Controllers
         {
             return View();
         }
+
+        public virtual Task<IActionResult> TaskActionResult()
+        {
+            return Task.FromResult(View() as IActionResult);
+        }
+
+        public virtual Task TaskResult()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

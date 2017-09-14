@@ -247,15 +247,18 @@ namespace R4Mvc.Tools.Services
                                         .ToArray())));
                     statements.Add(
                         // return callInfo;
-                        m.ReturnType.ToString().Contains("Task<")
+                        m.ReturnType.ToString().Contains("Task<") || m.ReturnType.ToString().EndsWith("Task")
                             ? ReturnStatement(
                                 InvocationExpression(
                                     SyntaxNodeHelpers.MemberAccess("Task", "FromResult"))
                                     .WithArgumentList(
-                                        BinaryExpression(
-                                            SyntaxKind.AsExpression,
-                                            IdentifierName("callInfo"),
-                                            IdentifierName(m.ReturnType.ToString().Substring(m.ReturnType.ToString().IndexOf('<') + 1).TrimEnd('>')))))
+                                        m.ReturnType.ToString().Contains("<")
+                                            ? (ExpressionSyntax)BinaryExpression(
+                                                SyntaxKind.AsExpression,
+                                                IdentifierName("callInfo"),
+                                                IdentifierName(m.ReturnType.ToString().Substring(m.ReturnType.ToString().IndexOf('<') + 1).TrimEnd('>')))
+                                            : IdentifierName("callInfo")
+                                        ))
                             : ReturnStatement(IdentifierName("callInfo")));
                     return new[]
                     {

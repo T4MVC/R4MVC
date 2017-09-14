@@ -72,6 +72,8 @@ namespace R4MvcHostApp.Controllers
             public readonly string About = "About";
             public readonly string Contact = "Contact";
             public readonly string Error = "Error";
+            public readonly string TaskActionResult = "TaskActionResult";
+            public readonly string TaskResult = "TaskResult";
             public readonly string ExtensionTest = "ExtensionTest";
         }
 
@@ -82,6 +84,8 @@ namespace R4MvcHostApp.Controllers
             public const string About = "About";
             public const string Contact = "Contact";
             public const string Error = "Error";
+            public const string TaskActionResult = "TaskActionResult";
+            public const string TaskResult = "TaskResult";
             public const string ExtensionTest = "ExtensionTest";
         }
 
@@ -174,6 +178,26 @@ namespace R4MvcHostApp.Controllers
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Error);
             ErrorOverride(callInfo);
             return callInfo;
+        }
+
+        [NonAction]
+        partial void TaskActionResultOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> TaskActionResult()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskActionResult);
+            TaskActionResultOverride(callInfo);
+            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+        }
+
+        [NonAction]
+        partial void TaskResultOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override System.Threading.Tasks.Task TaskResult()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskResult);
+            TaskResultOverride(callInfo);
+            return Task.FromResult(callInfo);
         }
 
         [NonAction]
