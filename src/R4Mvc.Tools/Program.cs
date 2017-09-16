@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using R4Mvc.Tools.Commands;
 using R4Mvc.Tools.Locators;
 using R4Mvc.Tools.Services;
@@ -71,6 +72,7 @@ namespace R4Mvc.Tools
         {
             services.AddOptions();
             services.Configure<Settings>(configuration);
+            services.AddTransient(sc => sc.GetService<IOptions<Settings>>().Value);
 
             services.AddTransient<GenerateCommand, GenerateCommand>();
 

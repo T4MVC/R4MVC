@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Extensions.Options;
 using R4Mvc.Tools.Extensions;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +15,10 @@ namespace R4Mvc.Tools.Services
         private readonly IViewLocatorService _viewLocator;
         private readonly Settings _settings;
 
-        public ControllerGeneratorService(IViewLocatorService viewLocator, IOptions<Settings> settings)
+        public ControllerGeneratorService(IViewLocatorService viewLocator, Settings settings)
         {
             _viewLocator = viewLocator;
-            _settings = settings.Value;
+            _settings = settings;
         }
 
         public string GetControllerArea(INamedTypeSymbol controllerSymbol)

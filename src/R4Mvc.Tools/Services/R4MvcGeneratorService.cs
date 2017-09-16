@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Extensions.Options;
 using R4Mvc.Tools.Extensions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -38,14 +37,14 @@ namespace R4Mvc.Tools.Services
             IStaticFileGeneratorService staticFileGenerator,
             IFilePersistService filePersistService,
             IViewLocatorService viewLocator,
-            IOptions<Settings> settings)
+            Settings settings)
         {
             _controllerRewriter = controllerRewriter;
             _controllerGenerator = controllerGenerator;
             _staticFileGenerator = staticFileGenerator;
             _filePersistService = filePersistService;
             _viewLocator = viewLocator;
-            _settings = settings.Value;
+            _settings = settings;
         }
 
         public void Generate(string projectRoot, ILookup<string, ControllerDefinition> controllers, IDictionary<string, string> areaMap)
@@ -142,7 +141,7 @@ namespace R4Mvc.Tools.Services
             CompleteAndWriteFile(r4mvcNode, Path.Combine(projectRoot, R4MvcGeneratorService.R4MvcFileName));
         }
 
-        private CompilationUnitSyntax NewCompilationUnit()
+        public CompilationUnitSyntax NewCompilationUnit()
         {
             // Create the root node and add usings, header, pragma
             return SyntaxFactory.CompilationUnit()

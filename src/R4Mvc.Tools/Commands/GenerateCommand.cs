@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
-using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.Setup.Configuration;
 using R4Mvc.Tools.Extensions;
 using R4Mvc.Tools.Services;
@@ -17,12 +16,12 @@ namespace R4Mvc.Tools.Commands
         private readonly IViewLocatorService _viewLocator;
         private readonly R4MvcGeneratorService _generatorService;
         private readonly Settings _settings;
-        public GenerateCommand(IControllerRewriterService controllerRewriter, IViewLocatorService viewLocator, R4MvcGeneratorService generatorService, IOptions<Settings> settings)
+        public GenerateCommand(IControllerRewriterService controllerRewriter, IViewLocatorService viewLocator, R4MvcGeneratorService generatorService, Settings settings)
         {
             _controllerRewriter = controllerRewriter;
             _viewLocator = viewLocator;
             _generatorService = generatorService;
-            _settings = settings.Value;
+            _settings = settings;
         }
 
         public async Task Run(string projectPath)

@@ -3,7 +3,6 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Extensions.Options;
 using R4Mvc.Tools.Extensions;
 
 namespace R4Mvc.Tools.Services
@@ -13,11 +12,11 @@ namespace R4Mvc.Tools.Services
         private readonly IFilePersistService _filePersistService;
         private readonly IControllerGeneratorService _controllerGenerator;
         private readonly Settings _settings;
-        public ControllerRewriterService(IFilePersistService filePersistService, IControllerGeneratorService controllerGenerator, IOptions<Settings> settings)
+        public ControllerRewriterService(IFilePersistService filePersistService, IControllerGeneratorService controllerGenerator, Settings settings)
         {
             _filePersistService = filePersistService;
             _controllerGenerator = controllerGenerator;
-            _settings = settings.Value;
+            _settings = settings;
         }
 
         public IList<ControllerDefinition> RewriteControllers(CSharpCompilation compiler)

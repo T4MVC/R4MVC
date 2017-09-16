@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Extensions.Options;
 using R4Mvc.Tools.Extensions;
 using R4Mvc.Tools.Locators;
 using static R4Mvc.Tools.Extensions.SyntaxNodeHelpers;
@@ -16,10 +15,10 @@ namespace R4Mvc.Tools.Services
         private readonly IEnumerable<IStaticFileLocator> _staticFileLocators;
         private readonly Settings _settings;
 
-        public StaticFileGeneratorService(IEnumerable<IStaticFileLocator> staticFileLocators, IOptions<Settings> settings)
+        public StaticFileGeneratorService(IEnumerable<IStaticFileLocator> staticFileLocators, Settings settings)
         {
             _staticFileLocators = staticFileLocators;
-            _settings = settings.Value;
+            _settings = settings;
         }
 
         public MemberDeclarationSyntax GenerateStaticFiles(string projectRoot)
