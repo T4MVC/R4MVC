@@ -29,16 +29,13 @@ namespace R4Mvc.Test
             Assert.Collection(actionClass.BaseList.Types,
                 t => Assert.Equal("ActionResult", (t.Type as IdentifierNameSyntax).Identifier.Value),
                 t => Assert.Equal("IR4MvcActionResult", (t.Type as IdentifierNameSyntax).Identifier.Value));
-            Assert.Collection(actionClass.Members,
+            Assert.Contains(actionClass.Members,
                 m =>
                 {
                     var constructor = Assert.IsType<ConstructorDeclarationSyntax>(m).AssertIsPublic();
                     Assert.Equal(4, constructor.ParameterList.Parameters.Count);
-                },
-                m => Assert.IsType<PropertyDeclarationSyntax>(m).AssertIsPublic().AssertName("Controller"),
-                m => Assert.IsType<PropertyDeclarationSyntax>(m).AssertIsPublic().AssertName("Action"),
-                m => Assert.IsType<PropertyDeclarationSyntax>(m).AssertIsPublic().AssertName("Protocol"),
-                m => Assert.IsType<PropertyDeclarationSyntax>(m).AssertIsPublic().AssertName("RouteValueDictionary"));
+                    return true;
+                });
         }
 
         [Fact]
@@ -51,16 +48,13 @@ namespace R4Mvc.Test
             Assert.Collection(actionClass.BaseList.Types,
                 t => Assert.Equal("JsonResult", (t.Type as IdentifierNameSyntax).Identifier.Value),
                 t => Assert.Equal("IR4MvcActionResult", (t.Type as IdentifierNameSyntax).Identifier.Value));
-            Assert.Collection(actionClass.Members,
+            Assert.Contains(actionClass.Members,
                 m =>
                 {
                     var constructor = Assert.IsType<ConstructorDeclarationSyntax>(m).AssertIsPublic();
                     Assert.Equal(4, constructor.ParameterList.Parameters.Count);
-                },
-                m => Assert.IsType<PropertyDeclarationSyntax>(m).AssertIsPublic().AssertName("Controller"),
-                m => Assert.IsType<PropertyDeclarationSyntax>(m).AssertIsPublic().AssertName("Action"),
-                m => Assert.IsType<PropertyDeclarationSyntax>(m).AssertIsPublic().AssertName("Protocol"),
-                m => Assert.IsType<PropertyDeclarationSyntax>(m).AssertIsPublic().AssertName("RouteValueDictionary"));
+                    return true;
+                });
         }
     }
 }

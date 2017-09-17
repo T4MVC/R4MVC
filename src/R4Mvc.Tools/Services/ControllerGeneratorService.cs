@@ -56,17 +56,17 @@ namespace R4Mvc.Tools.Services
             return string.Empty;
         }
 
-        public ClassDeclarationSyntax GeneratePartialController(INamedTypeSymbol controllerSymbol, string areaKey, string areaName, string controllerName, string projectRoot)
+        public ClassDeclarationSyntax GeneratePartialController(ControllerDefinition controller)
         {
             // build controller partial class node 
             // add a default constructor if there are some but none are zero length
-            var genControllerClass = ClassDeclaration(controllerSymbol.Name)
+            var genControllerClass = ClassDeclaration(controller.Symbol.Name)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword);
-            var controllerTypeParams = controllerSymbol.TypeParameters.Select(tp => TypeParameter(tp.Name)).ToArray();
+            var controllerTypeParams = controller.Symbol.TypeParameters.Select(tp => TypeParameter(tp.Name)).ToArray();
             if (controllerTypeParams.Length > 0)
                 genControllerClass = genControllerClass.AddTypeParameterListParameters(controllerTypeParams);
 
-            var gotCustomConstructors = controllerSymbol.Constructors
+            var gotCustomConstructors = controller.Symbol.Constructors
                 .Where(c => c.DeclaredAccessibility == Accessibility.Public)
                 .Where(SyntaxNodeHelpers.IsNotR4MVCGenerated)
                 .Where(c => !c.IsImplicitlyDeclared)
@@ -80,48 +80,51 @@ namespace R4Mvc.Tools.Services
 
             // add all method stubs, TODO criteria for this: only public virtual actionresults?
             // add subclasses, fields, properties, constants for action names
-            genControllerClass = AddParameterlessMethods(genControllerClass, controllerSymbol);
-            var actionsExpression = areaKey != null
-                ? SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix + "." + areaKey, controllerName)
-                : SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix, controllerName);
+            genControllerClass = AddParameterlessMethods(genControllerClass, controller.Symbol);
+            var actionsExpression = controller.AreaKey != null
+                ? SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix + "." + controller.AreaKey, controller.Name)
+                : SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix, controller.Name);
             genControllerClass =
                 genControllerClass
-                    .WithProperty("Actions", controllerSymbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
+                    .WithProperty("Actions", controller.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
                     .WithStringField(
                         "Area",
-                        areaName,
+                        controller.Area,
                         true,
                         SyntaxKind.PublicKeyword,
                         SyntaxKind.ReadOnlyKeyword)
                     .WithStringField(
                         "Name",
-                        controllerName,
+                        controller.Name,
                         true,
                         SyntaxKind.PublicKeyword,
                         SyntaxKind.ReadOnlyKeyword)
                     .WithStringField(
                         "NameConst",
-                        controllerName,
+                        controller.Name,
                         true,
                         SyntaxKind.PublicKeyword,
                         SyntaxKind.ConstKeyword)
                     .WithStaticFieldBackedProperty("ActionNames", "ActionNamesClass", SyntaxKind.PublicKeyword)
-                    .WithActionNameClass(controllerSymbol)
-                    .WithActionConstantsClass(controllerSymbol)
-                    .WithViewsClass(controllerName, areaName, _viewLocator.FindViews(projectRoot));
+                    .WithActionNameClass(controller.Symbol)
+                    .WithActionConstantsClass(controller.Symbol)
+                    .WithViewsClass(controller.Name, controller.Area, controller.Views);
 
             return genControllerClass;
         }
 
-        public ClassDeclarationSyntax GenerateR4Controller(INamedTypeSymbol controllerSymbol)
+        public ClassDeclarationSyntax GenerateR4Controller(ControllerDefinition controller)
         {
             // create R4MVC_[Controller] class inheriting from partial
-            var r4ControllerClass = ClassDeclaration(GetR4MVCControllerClassName(controllerSymbol))
+            var className = GetR4MVCControllerClassName(controller.Symbol);
+            controller.FullyQualifiedR4ClassName = $"{controller.Namespace}.{className}";
+
+            var r4ControllerClass = ClassDeclaration(className)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes()
-                .WithBaseTypes(controllerSymbol.ToQualifiedName())
+                .WithBaseTypes(controller.Symbol.ToQualifiedName())
                 .WithDefaultDummyBaseConstructor(false, SyntaxKind.PublicKeyword);
-            r4ControllerClass = AddMethodOverrides(r4ControllerClass, controllerSymbol);
+            r4ControllerClass = AddMethodOverrides(r4ControllerClass, controller.Symbol);
             return r4ControllerClass;
         }
 

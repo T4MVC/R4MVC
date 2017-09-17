@@ -181,29 +181,6 @@ namespace R4Mvc
         public static Dummy Instance = new Dummy();
     }
 
-    public partial class AdminArea_SharedController
-    {
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public class ViewsClass
-        {
-            [GeneratedCode("R4Mvc", "1.0")]
-            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
-            public _ViewNamesClass ViewNames => s_ViewNames;
-            public class _ViewNamesClass
-            {
-                public readonly string _Layout = "_Layout";
-            }
-
-            public string _Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
-        }
-
-        [GeneratedCode("R4Mvc", "1.0")]
-        static readonly ViewsClass s_Views = new ViewsClass();
-        [GeneratedCode("R4Mvc", "1.0")]
-        public ViewsClass Views => s_Views;
-    }
-
     public partial class SharedController
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -244,6 +221,29 @@ namespace R4Mvc
             {
                 public readonly string Test = "Test";
             }
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ViewsClass s_Views = new ViewsClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ViewsClass Views => s_Views;
+    }
+
+    public partial class AdminArea_SharedController
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ViewsClass
+        {
+            [GeneratedCode("R4Mvc", "1.0")]
+            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _ViewNamesClass ViewNames => s_ViewNames;
+            public class _ViewNamesClass
+            {
+                public readonly string _Layout = "_Layout";
+            }
+
+            public string _Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]

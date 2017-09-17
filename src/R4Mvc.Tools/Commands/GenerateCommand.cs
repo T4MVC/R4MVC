@@ -65,13 +65,14 @@ namespace R4Mvc.Tools.Commands
                 controller.Views.Add(view);
             }
 
-            var allControllers = controllers.ToLookup(c => c.Area);
             var areaMap = controllers.Select(c => c.Area).Where(a => !string.IsNullOrEmpty(a)).Distinct(StringComparer.OrdinalIgnoreCase).ToDictionary(a => a);
             foreach (var area in areaMap.Keys.ToArray())
-                if (allControllers[string.Empty].Any(c => c.Name == area))
+                if (controllers.Any(c => c.Area == string.Empty && c.Name == area))
                     areaMap[area] = area + "Area";
+            foreach (var controller in controllers.Where(a => !string.IsNullOrEmpty(a.Area)))
+                controller.AreaKey = areaMap[controller.Area];
 
-            _generatorService.Generate(projectRoot, allControllers, areaMap);
+            _generatorService.Generate(projectRoot, controllers);
         }
         private void ConfigureMSBuild()
         {

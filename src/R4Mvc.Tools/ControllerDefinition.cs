@@ -11,6 +11,7 @@ namespace R4Mvc.Tools
         public string Area { get; set; }
         public INamedTypeSymbol Symbol { get; set; }
 
+        public string AreaKey { get; set; }
         public IList<string> FilePaths = new List<string>();
         public IList<View> Views { get; set; } = new List<View>();
 

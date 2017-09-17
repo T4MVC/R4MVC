@@ -47,21 +47,20 @@ namespace R4Mvc.Tools.Services
             _settings = settings;
         }
 
-        public void Generate(string projectRoot, ILookup<string, ControllerDefinition> controllers, IDictionary<string, string> areaMap)
+        public void Generate(string projectRoot, IList<ControllerDefinition> controllers)
         {
+            var areaControllers = controllers.ToLookup(c => c.Area);
+
             // Processing controllers
             var generatedControllers = new List<NamespaceDeclarationSyntax>();
-            foreach (var namespaceGroup in controllers.SelectMany(c => c).Where(c => c.Namespace != null).GroupBy(c => c.Namespace))
+            foreach (var namespaceGroup in controllers.Where(c => c.Namespace != null).GroupBy(c => c.Namespace).OrderBy(c => c.Key))
             {
                 var namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
-                foreach (var controller in namespaceGroup)
+                foreach (var controller in namespaceGroup.OrderBy(c => c.Name))
                 {
-                    var areaKey = !string.IsNullOrEmpty(controller.Area) ? areaMap[controller.Area] : null;
-                    var genControllerClass = _controllerGenerator.GeneratePartialController(controller.Symbol, areaKey, controller.Area, controller.Name, projectRoot);
-                    var r4ControllerClass = _controllerGenerator.GenerateR4Controller(controller.Symbol);
-                    controller.FullyQualifiedR4ClassName = $"{namespaceGroup.Key}.{r4ControllerClass.Identifier}";
-                    namespaceNode = namespaceNode
-                        .AddMembers(genControllerClass, r4ControllerClass);
+                    namespaceNode = namespaceNode.AddMembers(
+                        _controllerGenerator.GeneratePartialController(controller),
+                        _controllerGenerator.GenerateR4Controller(controller));
 
                     if (_settings.SplitIntoMutipleFiles)
                     {
@@ -78,45 +77,19 @@ namespace R4Mvc.Tools.Services
             // R4MVC namespace used for the areas and Dummy class
             var r4Namespace = NamespaceDeclaration(ParseName(_settings.R4MvcNamespace))
                 // add the dummy class using in the derived controller partial class
-                .WithDummyClass();
-            foreach (var controller in controllers.SelectMany(c => c).Where(c => c.Namespace == null))
-            {
-                var className = !string.IsNullOrEmpty(controller.Area)
-                    ? $"{controller.Area}Area_{controller.Name}Controller"
-                    : $"{controller.Name}Controller";
-                var controllerClass = ClassDeclaration(className)
-                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                    .WithViewsClass(controller.Name, controller.Area, controller.Views);
-                r4Namespace = r4Namespace.AddMembers(controllerClass);
-
-                controller.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
-            }
-
-            foreach (var area in controllers.Where(a => !string.IsNullOrEmpty(a.Key)))
-            {
-                var areaClass = ClassDeclaration(area.Key + "AreaClass")
-                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                    .AddMembers(area
-                        .Select(c => SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
-                            c.Name,
-                            c.FullyQualifiedGeneratedName,
-                            c.FullyQualifiedR4ClassName ?? c.FullyQualifiedGeneratedName,
-                            SyntaxKind.PublicKeyword,
-                            SyntaxKind.ReadOnlyKeyword))
-                        .Cast<MemberDeclarationSyntax>()
-                        .ToArray());
-                r4Namespace = r4Namespace.AddMembers(areaClass);
-            }
+                .WithDummyClass()
+                .AddMembers(CreateViewOnlyControllerClasses(controllers).ToArray<MemberDeclarationSyntax>())
+                .AddMembers(CreateAreaAccessorClasses(areaControllers).ToArray<MemberDeclarationSyntax>());
 
             // create static MVC class and add controller fields 
             var mvcStaticClass = ClassDeclaration(_settings.HelpersPrefix)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes();
-            foreach (var area in controllers.Where(a => !string.IsNullOrEmpty(a.Key)))
+            foreach (var area in areaControllers.Where(a => !string.IsNullOrEmpty(a.Key)).OrderBy(a => a.Key))
             {
-                mvcStaticClass = mvcStaticClass.WithStaticFieldBackedProperty(areaMap[area.Key], $"{_settings.R4MvcNamespace}.{area.Key}AreaClass", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+                mvcStaticClass = mvcStaticClass.WithStaticFieldBackedProperty(area.First().AreaKey, $"{_settings.R4MvcNamespace}.{area.Key}AreaClass", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
             }
-            foreach (var controller in controllers[string.Empty])
+            foreach (var controller in areaControllers[string.Empty].OrderBy(c => c.Namespace == null).ThenBy(c => c.Name))
             {
                 mvcStaticClass = mvcStaticClass.AddMembers(
                     SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
@@ -131,7 +104,7 @@ namespace R4Mvc.Tools.Services
             var staticFileNode = _staticFileGenerator.GenerateStaticFiles(projectRoot);
 
             var r4mvcNode = NewCompilationUnit()
-                    .AddMembers(generatedControllers.Cast<MemberDeclarationSyntax>().ToArray())
+                    .AddMembers(generatedControllers.ToArray<MemberDeclarationSyntax>())
                     .AddMembers(
                         staticFileNode,
                         r4Namespace,
@@ -139,6 +112,41 @@ namespace R4Mvc.Tools.Services
                         ActionResultClass(),
                         JsonResultClass());
             CompleteAndWriteFile(r4mvcNode, Path.Combine(projectRoot, R4MvcGeneratorService.R4MvcFileName));
+        }
+
+        public IEnumerable<ClassDeclarationSyntax> CreateViewOnlyControllerClasses(IList<ControllerDefinition> controllers)
+        {
+            foreach (var controller in controllers.Where(c => c.Namespace == null))
+            {
+                var className = !string.IsNullOrEmpty(controller.Area)
+                    ? $"{controller.Area}Area_{controller.Name}Controller"
+                    : $"{controller.Name}Controller";
+                var controllerClass = ClassDeclaration(className)
+                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                    .WithViewsClass(controller.Name, controller.Area, controller.Views);
+                controller.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
+
+                yield return controllerClass;
+            }
+        }
+
+        public IEnumerable<ClassDeclarationSyntax> CreateAreaAccessorClasses(ILookup<string, ControllerDefinition> areaControllers)
+        {
+            foreach (var area in areaControllers.Where(a => !string.IsNullOrEmpty(a.Key)).OrderBy(a => a.Key))
+            {
+                var areaClass = ClassDeclaration(area.Key + "AreaClass")
+                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                    .AddMembers(area
+                        .OrderBy(c => c.Namespace == null).ThenBy(c => c.Name)
+                        .Select(c => SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
+                            c.Name,
+                            c.FullyQualifiedGeneratedName,
+                            c.FullyQualifiedR4ClassName ?? c.FullyQualifiedGeneratedName,
+                            SyntaxKind.PublicKeyword,
+                            SyntaxKind.ReadOnlyKeyword))
+                        .ToArray<MemberDeclarationSyntax>());
+                yield return areaClass;
+            }
         }
 
         public CompilationUnitSyntax NewCompilationUnit()

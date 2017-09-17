@@ -57,16 +57,14 @@ namespace R4Mvc.Tools.Extensions
             var viewNameFields =
                 controllerViews.Select(
                     x => CreateStringFieldDeclaration(x.ViewName, x.ViewName, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
-                    .Cast<MemberDeclarationSyntax>()
-                    .ToArray();
+                    .ToArray<MemberDeclarationSyntax>();
             viewNamesClassNode = viewNamesClassNode.AddMembers(viewNameFields);
 
             viewClassNode = viewClassNode.AddMembers(viewNamesClassNode);
             var viewFields =
                 controllerViews.Select(
                     x => CreateStringFieldDeclaration(x.ViewName, x.RelativePath.ToString(), SyntaxKind.PublicKeyword))
-                    .Cast<MemberDeclarationSyntax>()
-                    .ToArray();
+                    .ToArray<MemberDeclarationSyntax>();
             viewClassNode = viewClassNode.AddMembers(viewFields);
 
             foreach (var templateKind in allControllerViews.Where(x => !string.IsNullOrEmpty(x.Key)))
@@ -93,8 +91,7 @@ namespace R4Mvc.Tools.Extensions
             var staticNodes =
                 staticFiles.Select(
                     x => CreateStringFieldDeclaration(x.FileName, x.RelativePath.ToString(), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword))
-                    .Cast<MemberDeclarationSyntax>()
-                    .ToArray();
+                    .ToArray<MemberDeclarationSyntax>();
             return node.AddMembers(staticNodes);
         }
 

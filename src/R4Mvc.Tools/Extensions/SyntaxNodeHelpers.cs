@@ -165,7 +165,7 @@ namespace R4Mvc.Tools.Extensions
 
         public static ClassDeclarationSyntax WithBaseTypes(this ClassDeclarationSyntax node, params string[] types)
         {
-            return node.AddBaseListTypes(types.Select(x => SimpleBaseType(ParseTypeName(x))).Cast<BaseTypeSyntax>().ToArray());
+            return node.AddBaseListTypes(types.Select(x => SimpleBaseType(ParseTypeName(x))).ToArray<BaseTypeSyntax>());
         }
 
         public static string ToQualifiedName(this ITypeSymbol symbol)
