@@ -39,7 +39,7 @@ for:
 
   init:
   - ps: $Env:VersionSuffixParam = "--version-suffix"
-  - ps: $Env:VersionSuffixValue = ("ci-" + $Env:APPVEYOR_REPO_BRANCH.Substring(8) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
+  - ps: $Env:VersionSuffixValue = ("ci--" + $Env:APPVEYOR_REPO_BRANCH.Substring(8) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
   deploy:
     provider: NuGet

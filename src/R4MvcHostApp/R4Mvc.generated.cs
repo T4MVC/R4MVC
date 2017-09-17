@@ -14,6 +14,114 @@ using Microsoft.AspNetCore.Routing;
 using R4Mvc;
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+public static partial class MVC
+{
+    [GeneratedCode("R4Mvc", "1.0")]
+    static readonly R4Mvc.AdminAreaClass s_AdminArea = new R4Mvc.AdminAreaClass();
+    [GeneratedCode("R4Mvc", "1.0")]
+    public static R4Mvc.AdminAreaClass AdminArea => s_AdminArea;
+    public static readonly R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.R4MVC_AccountController();
+    public static readonly R4MvcHostApp.Controllers.AdminController Admin = new R4MvcHostApp.Controllers.R4MVC_AdminController();
+    public static readonly R4MvcHostApp.Controllers.HomeController Home = new R4MvcHostApp.Controllers.R4MVC_HomeController();
+    public static readonly R4MvcHostApp.Controllers.ManageController Manage = new R4MvcHostApp.Controllers.R4MVC_ManageController();
+    public static readonly R4Mvc.SharedController Shared = new R4Mvc.SharedController();
+}
+
+namespace R4Mvc
+{
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public class Dummy
+    {
+        private Dummy()
+        {
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        public static Dummy Instance = new Dummy();
+    }
+
+    public partial class SharedController
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ViewsClass
+        {
+            [GeneratedCode("R4Mvc", "1.0")]
+            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _ViewNamesClass ViewNames => s_ViewNames;
+            public class _ViewNamesClass
+            {
+                public readonly string Error = "Error";
+                public readonly string _Layout = "_Layout";
+                public readonly string _LoginPartial = "_LoginPartial";
+                public readonly string _ValidationScriptsPartial = "_ValidationScriptsPartial";
+            }
+
+            public string Error = "~/Views/Shared/Error.cshtml";
+            public string _Layout = "~/Views/Shared/_Layout.cshtml";
+            public string _LoginPartial = "~/Views/Shared/_LoginPartial.cshtml";
+            public string _ValidationScriptsPartial = "~/Views/Shared/_ValidationScriptsPartial.cshtml";
+            [GeneratedCode("R4Mvc", "1.0")]
+            static readonly _DisplayTemplatesClass s_DisplayTemplates = new _DisplayTemplatesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _DisplayTemplatesClass DisplayTemplates => s_DisplayTemplates;
+            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+            public partial class _DisplayTemplatesClass
+            {
+                public readonly string Test = "Test";
+            }
+
+            [GeneratedCode("R4Mvc", "1.0")]
+            static readonly _EditorTemplatesClass s_EditorTemplates = new _EditorTemplatesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _EditorTemplatesClass EditorTemplates => s_EditorTemplates;
+            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+            public partial class _EditorTemplatesClass
+            {
+                public readonly string Test = "Test";
+            }
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ViewsClass s_Views = new ViewsClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ViewsClass Views => s_Views;
+    }
+
+    public partial class AdminArea_SharedController
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ViewsClass
+        {
+            [GeneratedCode("R4Mvc", "1.0")]
+            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _ViewNamesClass ViewNames => s_ViewNames;
+            public class _ViewNamesClass
+            {
+                public readonly string _Layout = "_Layout";
+            }
+
+            public string _Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ViewsClass s_Views = new ViewsClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ViewsClass Views => s_Views;
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class AdminAreaClass
+    {
+        public readonly string Name = "Admin";
+        public readonly R4MvcHostApp.Areas.Admin.Controllers.PagesController Pages = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_PagesController();
+        public readonly R4MvcHostApp.Areas.Admin.Controllers.UsersController Users = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_UsersController();
+        public readonly R4Mvc.AdminArea_SharedController Shared = new R4Mvc.AdminArea_SharedController();
+    }
+}
+
+[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 public static partial class Links
 {
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -166,112 +274,6 @@ public static partial class Links
     }
 
     public static string favicon_ico = "~/favicon.ico";
-}
-
-namespace R4Mvc
-{
-    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public class Dummy
-    {
-        private Dummy()
-        {
-        }
-
-        [GeneratedCode("R4Mvc", "1.0")]
-        public static Dummy Instance = new Dummy();
-    }
-
-    public partial class SharedController
-    {
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public class ViewsClass
-        {
-            [GeneratedCode("R4Mvc", "1.0")]
-            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
-            public _ViewNamesClass ViewNames => s_ViewNames;
-            public class _ViewNamesClass
-            {
-                public readonly string Error = "Error";
-                public readonly string _Layout = "_Layout";
-                public readonly string _LoginPartial = "_LoginPartial";
-                public readonly string _ValidationScriptsPartial = "_ValidationScriptsPartial";
-            }
-
-            public string Error = "~/Views/Shared/Error.cshtml";
-            public string _Layout = "~/Views/Shared/_Layout.cshtml";
-            public string _LoginPartial = "~/Views/Shared/_LoginPartial.cshtml";
-            public string _ValidationScriptsPartial = "~/Views/Shared/_ValidationScriptsPartial.cshtml";
-            [GeneratedCode("R4Mvc", "1.0")]
-            static readonly _DisplayTemplatesClass s_DisplayTemplates = new _DisplayTemplatesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
-            public _DisplayTemplatesClass DisplayTemplates => s_DisplayTemplates;
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-            public partial class _DisplayTemplatesClass
-            {
-                public readonly string Test = "Test";
-            }
-
-            [GeneratedCode("R4Mvc", "1.0")]
-            static readonly _EditorTemplatesClass s_EditorTemplates = new _EditorTemplatesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
-            public _EditorTemplatesClass EditorTemplates => s_EditorTemplates;
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-            public partial class _EditorTemplatesClass
-            {
-                public readonly string Test = "Test";
-            }
-        }
-
-        [GeneratedCode("R4Mvc", "1.0")]
-        static readonly ViewsClass s_Views = new ViewsClass();
-        [GeneratedCode("R4Mvc", "1.0")]
-        public ViewsClass Views => s_Views;
-    }
-
-    public partial class AdminArea_SharedController
-    {
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public class ViewsClass
-        {
-            [GeneratedCode("R4Mvc", "1.0")]
-            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
-            public _ViewNamesClass ViewNames => s_ViewNames;
-            public class _ViewNamesClass
-            {
-                public readonly string _Layout = "_Layout";
-            }
-
-            public string _Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
-        }
-
-        [GeneratedCode("R4Mvc", "1.0")]
-        static readonly ViewsClass s_Views = new ViewsClass();
-        [GeneratedCode("R4Mvc", "1.0")]
-        public ViewsClass Views => s_Views;
-    }
-
-    public partial class AdminAreaClass
-    {
-        public readonly R4MvcHostApp.Areas.Admin.Controllers.PagesController Pages = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_PagesController();
-        public readonly R4MvcHostApp.Areas.Admin.Controllers.UsersController Users = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_UsersController();
-        public readonly R4Mvc.AdminArea_SharedController Shared = new R4Mvc.AdminArea_SharedController();
-    }
-}
-
-[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-public static partial class MVC
-{
-    [GeneratedCode("R4Mvc", "1.0")]
-    static readonly R4Mvc.AdminAreaClass s_AdminArea = new R4Mvc.AdminAreaClass();
-    [GeneratedCode("R4Mvc", "1.0")]
-    public static R4Mvc.AdminAreaClass AdminArea => s_AdminArea;
-    public static readonly R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.R4MVC_AccountController();
-    public static readonly R4MvcHostApp.Controllers.AdminController Admin = new R4MvcHostApp.Controllers.R4MVC_AdminController();
-    public static readonly R4MvcHostApp.Controllers.HomeController Home = new R4MvcHostApp.Controllers.R4MVC_HomeController();
-    public static readonly R4MvcHostApp.Controllers.ManageController Manage = new R4MvcHostApp.Controllers.R4MVC_ManageController();
-    public static readonly R4Mvc.SharedController Shared = new R4Mvc.SharedController();
 }
 
 internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult : ActionResult, IR4MvcActionResult

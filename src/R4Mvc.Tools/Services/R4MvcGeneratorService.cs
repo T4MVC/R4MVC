@@ -51,7 +51,7 @@ namespace R4Mvc.Tools.Services
         {
             var areaControllers = controllers.ToLookup(c => c.Area);
 
-            // Processing controllers
+            // Processing controllers, generating partial and derived controller classes for R4Mvc
             var generatedControllers = new List<NamespaceDeclarationSyntax>();
             foreach (var namespaceGroup in controllers.Where(c => c.Namespace != null).GroupBy(c => c.Namespace).OrderBy(c => c.Key))
             {
@@ -62,6 +62,7 @@ namespace R4Mvc.Tools.Services
                         _controllerGenerator.GeneratePartialController(controller),
                         _controllerGenerator.GenerateR4Controller(controller));
 
+                    // If SplitIntoMutipleFiles is set, store the generated classes alongside the controller files.
                     if (_settings.SplitIntoMutipleFiles)
                     {
                         var controllerFile = NewCompilationUnit()
@@ -70,6 +71,8 @@ namespace R4Mvc.Tools.Services
                         namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
                     }
                 }
+
+                // If SplitIntoMutipleFiles is NOT set, bundle them all in R4Mvc
                 if (!_settings.SplitIntoMutipleFiles)
                     generatedControllers.Add(namespaceNode);
             }
@@ -79,9 +82,9 @@ namespace R4Mvc.Tools.Services
                 // add the dummy class using in the derived controller partial class
                 .WithDummyClass()
                 .AddMembers(CreateViewOnlyControllerClasses(controllers).ToArray<MemberDeclarationSyntax>())
-                .AddMembers(CreateAreaAccessorClasses(areaControllers).ToArray<MemberDeclarationSyntax>());
+                .AddMembers(CreateAreaClasses(areaControllers).ToArray<MemberDeclarationSyntax>());
 
-            // create static MVC class and add controller fields 
+            // create static MVC class and add the area and controller fields
             var mvcStaticClass = ClassDeclaration(_settings.HelpersPrefix)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes();
@@ -101,22 +104,23 @@ namespace R4Mvc.Tools.Services
                         SyntaxKind.ReadOnlyKeyword));
             }
 
+            // Generate a list of all static files from the wwwroot path
             var staticFileNode = _staticFileGenerator.GenerateStaticFiles(projectRoot);
 
             var r4mvcNode = NewCompilationUnit()
-                    .AddMembers(generatedControllers.ToArray<MemberDeclarationSyntax>())
                     .AddMembers(
-                        staticFileNode,
-                        r4Namespace,
                         mvcStaticClass,
+                        r4Namespace,
+                        staticFileNode,
                         ActionResultClass(),
-                        JsonResultClass());
+                        JsonResultClass())
+                    .AddMembers(generatedControllers.ToArray<MemberDeclarationSyntax>());
             CompleteAndWriteFile(r4mvcNode, Path.Combine(projectRoot, R4MvcGeneratorService.R4MvcFileName));
         }
 
         public IEnumerable<ClassDeclarationSyntax> CreateViewOnlyControllerClasses(IList<ControllerDefinition> controllers)
         {
-            foreach (var controller in controllers.Where(c => c.Namespace == null))
+            foreach (var controller in controllers.Where(c => c.Namespace == null).OrderBy(c => c.Area).ThenBy(c => c.Name))
             {
                 var className = !string.IsNullOrEmpty(controller.Area)
                     ? $"{controller.Area}Area_{controller.Name}Controller"
@@ -130,12 +134,14 @@ namespace R4Mvc.Tools.Services
             }
         }
 
-        public IEnumerable<ClassDeclarationSyntax> CreateAreaAccessorClasses(ILookup<string, ControllerDefinition> areaControllers)
+        public IEnumerable<ClassDeclarationSyntax> CreateAreaClasses(ILookup<string, ControllerDefinition> areaControllers)
         {
             foreach (var area in areaControllers.Where(a => !string.IsNullOrEmpty(a.Key)).OrderBy(a => a.Key))
             {
                 var areaClass = ClassDeclaration(area.Key + "AreaClass")
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                    .WithGeneratedNonUserCodeAttributes()
+                    .WithStringField("Name", area.Key, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
                     .AddMembers(area
                         .OrderBy(c => c.Namespace == null).ThenBy(c => c.Name)
                         .Select(c => SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(

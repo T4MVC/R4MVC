@@ -1,7 +1,8 @@
 ## R4MVC
 
 [![Build status](https://ci.appveyor.com/api/projects/status/sw4jwy7gtedra5bv?svg=true)](https://ci.appveyor.com/project/T4MVC/r4mvc)
-[![Build status](https://img.shields.io/nuget/v/R4Mvc.svg)](https://www.nuget.org/packages/R4Mvc)
+[![R4Mvc on NuGet](https://img.shields.io/nuget/v/R4Mvc.svg)](https://www.nuget.org/packages/R4Mvc)  
+CI build: [![R4Mvc on MyGet](https://img.shields.io/myget/r4mvc/vpre/R4Mvc.svg)](https://github.com/T4MVC/R4MVC/wiki/CI-Builds)
 
 R4MVC is a Roslyn code generator for ASP.NET MVC Core apps that creates strongly typed helpers that eliminate the use of literal strings in many places.  
 
