@@ -45,7 +45,7 @@ namespace R4Mvc.Tools
             return newNode;
         }
 
-        private static bool ControllerShouldBeProcessed(INamedTypeSymbol symbol)
+        internal static bool ControllerShouldBeProcessed(INamedTypeSymbol symbol)
             => symbol.DeclaredAccessibility == Accessibility.Public &&
                 !symbol.IsAbstract &&
                 symbol.InheritsFrom<Controller>() &&
