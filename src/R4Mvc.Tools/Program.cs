@@ -78,7 +78,6 @@ namespace R4Mvc.Tools
 
             services.AddSingleton(typeof(IEnumerable<IViewLocator>), new[] { new DefaultRazorViewLocator() });
             services.AddSingleton(typeof(IEnumerable<IStaticFileLocator>), new[] { new DefaultStaticFileLocator() });
-            services.AddTransient<IViewLocatorService, ViewLocatorService>();
             services.AddTransient<IStaticFileGeneratorService, StaticFileGeneratorService>();
             services.AddTransient<IControllerRewriterService, ControllerRewriterService>();
             services.AddTransient<IControllerGeneratorService, ControllerGeneratorService>();

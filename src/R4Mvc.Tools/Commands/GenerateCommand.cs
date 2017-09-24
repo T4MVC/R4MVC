@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.VisualStudio.Setup.Configuration;
 using R4Mvc.Tools.Extensions;
+using R4Mvc.Tools.Locators;
 using R4Mvc.Tools.Services;
 
 namespace R4Mvc.Tools.Commands
@@ -14,13 +15,13 @@ namespace R4Mvc.Tools.Commands
     public class GenerateCommand
     {
         private readonly IControllerRewriterService _controllerRewriter;
-        private readonly IViewLocatorService _viewLocator;
+        private readonly IEnumerable<IViewLocator> _viewLocators;
         private readonly R4MvcGeneratorService _generatorService;
         private readonly Settings _settings;
-        public GenerateCommand(IControllerRewriterService controllerRewriter, IViewLocatorService viewLocator, R4MvcGeneratorService generatorService, Settings settings)
+        public GenerateCommand(IControllerRewriterService controllerRewriter, IEnumerable<IViewLocator> viewLocators, R4MvcGeneratorService generatorService, Settings settings)
         {
             _controllerRewriter = controllerRewriter;
-            _viewLocator = viewLocator;
+            _viewLocators = viewLocators;
             _generatorService = generatorService;
             _settings = settings;
         }
@@ -52,7 +53,7 @@ namespace R4Mvc.Tools.Commands
 
             // Analyse the controllers in the project (updating them to be partial), as well as locate all the view files
             var controllers = _controllerRewriter.RewriteControllers(compilation);
-            var allViewFiles = _viewLocator.FindViews(projectRoot);
+            var allViewFiles = _viewLocators.SelectMany(x => x.Find(projectRoot));
 
             // Assign view files to controllers
             foreach (var views in allViewFiles.GroupBy(v => new { v.AreaName, v.ControllerName }))

@@ -12,12 +12,10 @@ namespace R4Mvc.Tools.Services
 {
     public class ControllerGeneratorService : IControllerGeneratorService
     {
-        private readonly IViewLocatorService _viewLocator;
         private readonly Settings _settings;
 
-        public ControllerGeneratorService(IViewLocatorService viewLocator, Settings settings)
+        public ControllerGeneratorService(Settings settings)
         {
-            _viewLocator = viewLocator;
             _settings = settings;
         }
 

@@ -15,7 +15,6 @@ namespace R4Mvc.Tools.Services
         private readonly IControllerGeneratorService _controllerGenerator;
         private readonly IStaticFileGeneratorService _staticFileGenerator;
         private readonly IFilePersistService _filePersistService;
-        private readonly IViewLocatorService _viewLocator;
         private readonly Settings _settings;
 
         private static readonly string[] pragmaCodes = { "1591", "3008", "3009", "0108" };
@@ -36,14 +35,12 @@ namespace R4Mvc.Tools.Services
             IControllerGeneratorService controllerGenerator,
             IStaticFileGeneratorService staticFileGenerator,
             IFilePersistService filePersistService,
-            IViewLocatorService viewLocator,
             Settings settings)
         {
             _controllerRewriter = controllerRewriter;
             _controllerGenerator = controllerGenerator;
             _staticFileGenerator = staticFileGenerator;
             _filePersistService = filePersistService;
-            _viewLocator = viewLocator;
             _settings = settings;
         }
 
