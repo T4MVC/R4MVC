@@ -44,7 +44,7 @@ namespace R4Mvc.Tools.Services
                 !SyntaxFacts.IsValidIdentifier(name))
             {
                 if (i++ > 10)
-                    return name; // Sanity check.. The look might be loopy!
+                    return name; // Sanity check.. The loop might be loopy!
                 name = "_" + name;
             }
             return name;

@@ -20,7 +20,7 @@ namespace R4Mvc.Tools
 
         public ControllerRewriter(CSharpCompilation compiler)
         {
-            this._compiler = compiler;
+            _compiler = compiler;
         }
 
         public ClassDeclarationSyntax[] MvcControllerClassNodes => this._mvcControllerClassNodes.ToArray();

@@ -27,8 +27,9 @@ namespace R4Mvc.Tools
         {
             return FilePaths
                 .OrderByDescending(f => f.Contains("/Controllers/"))
-                .OrderBy(f => f)
-                .FirstOrDefault();
+                .ThenByDescending(f => !f.Contains(".generated.cs"))
+                .ThenBy(f => f)
+                .First();
         }
     }
 }
