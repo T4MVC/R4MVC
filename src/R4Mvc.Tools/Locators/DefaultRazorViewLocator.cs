@@ -68,9 +68,10 @@ namespace R4Mvc.Tools.Locators
 
         private View GetView(string filePath, string controllerName, string areaName, string templateKind = null)
         {
+            var templateKindSegment = templateKind != null ? templateKind + "/" : null;
             var relativePath = !string.IsNullOrEmpty(areaName)
-                ? $"~/Areas/{areaName}/Views/{controllerName}/{Path.GetFileName(filePath)}"
-                : $"~/Views/{controllerName}/{Path.GetFileName(filePath)}";
+                ? $"~/Areas/{areaName}/Views/{controllerName}/{templateKindSegment}{Path.GetFileName(filePath)}"
+                : $"~/Views/{controllerName}/{templateKindSegment}{Path.GetFileName(filePath)}";
             return new View(areaName, controllerName, Path.GetFileNameWithoutExtension(filePath), new Uri(relativePath, UriKind.Relative), templateKind);
         }
     }

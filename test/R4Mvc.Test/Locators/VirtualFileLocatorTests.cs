@@ -13,10 +13,14 @@ namespace R4Mvc.Test.Locators
             @"D:\Project\Startup.cs",
             @"D:\Project\Areas\Admin\Controllers\HomeController.cs",
             @"D:\Project\Areas\Admin\Views\Home\Index.cshtml",
+            @"D:\Project\Areas\Admin\Views\Shared\EditorTemplates\User.cshtml",
             @"D:\Project\Areas\Admin\Views\Shared\_Layout.cshtml",
             @"D:\Project\Controllers\UsersController.cshtml",
+            @"D:\Project\Views\EditorTemplates\User.cshtml",
+            @"D:\Project\Views\Users\EditorTemplates\User.cshtml",
             @"D:\Project\Views\Users\Index.cshtml",
             @"D:\Project\Views\Users\Details.cshtml",
+            @"D:\Project\wwwroot\lib\jslib\core.js",
             @"D:\Project\wwwroot\js\site.js",
             @"D:\Project\wwwroot\css\site.css",
             @"D:\Project\wwwroot\favicon.ico",
@@ -71,10 +75,18 @@ namespace R4Mvc.Test.Locators
             Assert.Empty(_locator.GetFiles(@"D:\Project\Views", "*"));
             Assert.Empty(_locator.GetFiles(@"D:\Project\Views", "*.cshtml"));
             Assert.Collection(_locator.GetFiles(@"D:\Project\Views", "*.cshtml", true),
+                f => Assert.Equal(@"D:\Project\Views\EditorTemplates\User.cshtml", f),
+                f => Assert.Equal(@"D:\Project\Views\Users\EditorTemplates\User.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Views\Users\Index.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Views\Users\Details.cshtml", f)
             );
+            Assert.Collection(_locator.GetFiles(@"D:\Project\Areas\", "*.cshtml", true),
+                f => Assert.Equal(@"D:\Project\Areas\Admin\Views\Home\Index.cshtml", f),
+                f => Assert.Equal(@"D:\Project\Areas\Admin\Views\Shared\EditorTemplates\User.cshtml", f),
+                f => Assert.Equal(@"D:\Project\Areas\Admin\Views\Shared\_Layout.cshtml", f)
+            );
             Assert.Collection(_locator.GetFiles(@"D:\Project\wwwroot", "*", true),
+                f => Assert.Equal(@"D:\Project\wwwroot\lib\jslib\core.js", f),
                 f => Assert.Equal(@"D:\Project\wwwroot\js\site.js", f),
                 f => Assert.Equal(@"D:\Project\wwwroot\css\site.css", f),
                 f => Assert.Equal(@"D:\Project\wwwroot\favicon.ico", f)
