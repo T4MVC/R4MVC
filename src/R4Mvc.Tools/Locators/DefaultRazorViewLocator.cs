@@ -1,20 +1,26 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
+using Path = System.IO.Path;
 
 namespace R4Mvc.Tools.Locators
 {
     public class DefaultRazorViewLocator : IViewLocator
     {
+        private readonly IFileLocator _fileLocator;
+        public DefaultRazorViewLocator(IFileLocator fileLocator)
+        {
+            _fileLocator = fileLocator;
+        }
+
         public IEnumerable<View> Find(string projectRoot)
         {
             foreach (var view in FindViews(projectRoot, string.Empty))
                 yield return view;
 
             var areasPath = Path.Combine(projectRoot, "Areas");
-            if (Directory.Exists(areasPath))
+            if (_fileLocator.DirectoryExists(areasPath))
             {
-                foreach (var areaPath in Directory.GetDirectories(areasPath))
+                foreach (var areaPath in _fileLocator.GetDirectories(areasPath))
                 {
                     var areaName = Path.GetFileName(areaPath);
                     foreach (var view in FindViews(areaPath, areaName))
@@ -26,12 +32,12 @@ namespace R4Mvc.Tools.Locators
         private IEnumerable<View> FindViews(string root, string areaName)
         {
             var viewsPath = Path.Combine(root, "Views");
-            if (Directory.Exists(viewsPath))
+            if (_fileLocator.DirectoryExists(viewsPath))
             {
-                foreach (var controllerPath in Directory.GetDirectories(viewsPath))
+                foreach (var controllerPath in _fileLocator.GetDirectories(viewsPath))
                 {
                     var controllerName = Path.GetFileName(controllerPath);
-                    foreach (var file in Directory.GetFiles(Path.Combine(viewsPath, controllerName), "*.cshtml"))
+                    foreach (var file in _fileLocator.GetFiles(Path.Combine(viewsPath, controllerName), "*.cshtml"))
                     {
                         var relativePath = !string.IsNullOrEmpty(areaName)
                             ? $"~/Areas/{areaName}/Views/{controllerName}/{Path.GetFileName(file)}"
@@ -40,18 +46,18 @@ namespace R4Mvc.Tools.Locators
                     }
 
                     var templatesPath = Path.Combine(controllerPath, "DisplayTemplates");
-                    if (Directory.Exists(templatesPath))
+                    if (_fileLocator.DirectoryExists(templatesPath))
                     {
-                        foreach (var file in Directory.GetFiles(templatesPath, "*.cshtml"))
+                        foreach (var file in _fileLocator.GetFiles(templatesPath, "*.cshtml"))
                         {
                             yield return GetView(file, controllerName, areaName, Path.GetFileName(templatesPath));
                         }
                     }
 
                     templatesPath = Path.Combine(controllerPath, "EditorTemplates");
-                    if (Directory.Exists(templatesPath))
+                    if (_fileLocator.DirectoryExists(templatesPath))
                     {
-                        foreach (var file in Directory.GetFiles(templatesPath, "*.cshtml"))
+                        foreach (var file in _fileLocator.GetFiles(templatesPath, "*.cshtml"))
                         {
                             yield return GetView(file, controllerName, areaName, Path.GetFileName(templatesPath));
                         }
