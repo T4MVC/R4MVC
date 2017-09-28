@@ -6,9 +6,9 @@ using R4Mvc.Tools;
 using R4Mvc.Tools.Services;
 using Xunit;
 
-namespace R4Mvc.Test
+namespace R4Mvc.Test.Services
 {
-    public class R4MvcGeneratorTests
+    public class R4MvcGeneratorServiceTests
     {
         private IFilePersistService DummyPersistService => new Mock<IFilePersistService>().Object;
         private R4MvcGeneratorService GetGeneratorService(

@@ -49,5 +49,23 @@ namespace R4Mvc.Test
             Assert.Equal(expectedName, method.Identifier.Value);
             return method;
         }
+
+        public static ClassDeclarationSyntax AssertIsClass(this MemberDeclarationSyntax member, string name)
+        {
+            var classMember = Assert.IsType<ClassDeclarationSyntax>(member);
+            Assert.Equal(name, classMember.Identifier.Value);
+            return classMember;
+        }
+
+        public static FieldDeclarationSyntax AssertIsSingleField(this MemberDeclarationSyntax member, string name)
+        {
+            var field = Assert.IsType<FieldDeclarationSyntax>(member);
+            Assert.Collection(field.Declaration.Variables, v =>
+            {
+                var variable = Assert.IsType<VariableDeclaratorSyntax>(v);
+                Assert.Equal(name, variable.Identifier.Value);
+            });
+            return field;
+        }
     }
 }

@@ -7,92 +7,80 @@ namespace R4Mvc.Test.Locators
     /// </summary>
     public class VirtualFileLocatorTests
     {
-        private VirtualFileLocator _locator = new VirtualFileLocator(new[]
+        [Theory]
+        [InlineData(@"D:\Project")]
+        [InlineData(@"D:\Project\")]
+        [InlineData(@"D:\Project\Areas")]
+        [InlineData(@"D:\Project\Areas\Admin\Views\Home")]
+        [InlineData(@"D:\Project\Areas\Admin\Views\Home\")]
+        public void PathExists(string path)
         {
-            @"D:\Project\Program.cs",
-            @"D:\Project\Startup.cs",
-            @"D:\Project\Areas\Admin\Controllers\HomeController.cs",
-            @"D:\Project\Areas\Admin\Views\Home\Index.cshtml",
-            @"D:\Project\Areas\Admin\Views\Shared\EditorTemplates\User.cshtml",
-            @"D:\Project\Areas\Admin\Views\Shared\_Layout.cshtml",
-            @"D:\Project\Controllers\UsersController.cshtml",
-            @"D:\Project\Views\EditorTemplates\User.cshtml",
-            @"D:\Project\Views\Users\EditorTemplates\User.cshtml",
-            @"D:\Project\Views\Users\Index.cshtml",
-            @"D:\Project\Views\Users\Details.cshtml",
-            @"D:\Project\wwwroot\lib\jslib\core.js",
-            @"D:\Project\wwwroot\js\site.js",
-            @"D:\Project\wwwroot\css\site.css",
-            @"D:\Project\wwwroot\favicon.ico",
-        });
+            Assert.True(VirtualFileLocator.Default.DirectoryExists(path));
+        }
 
-        [Fact]
-        public void VirtualFileLocator_PathExists()
+        [Theory]
+        [InlineData(@"C:\Project")]
+        [InlineData(@"D:\Project\Areas\Views\Home\Index")]
+        [InlineData(@"D:\Project\Areas\Views\Home\Index.cshtml")]
+        public void PathExists_False(string path)
         {
-            Assert.True(_locator.DirectoryExists(@"D:\Project"));
-            Assert.True(_locator.DirectoryExists(@"D:\Project\"));
-            Assert.True(_locator.DirectoryExists(@"D:\Project\Areas"));
-            Assert.True(_locator.DirectoryExists(@"D:\Project\Areas\Admin\Views\Home"));
-            Assert.True(_locator.DirectoryExists(@"D:\Project\Areas\Admin\Views\Home\"));
-            Assert.False(_locator.DirectoryExists(@"C:\Project"));
-            Assert.False(_locator.DirectoryExists(@"D:\Project\Areas\Views\Home\Index"));
-            Assert.False(_locator.DirectoryExists(@"D:\Project\Areas\Views\Home\Index.cshtml"));
+            Assert.False(VirtualFileLocator.Default.DirectoryExists(path));
         }
 
         [Fact]
-        public void VirtualFileLocator_Directories()
+        public void Directories()
         {
-            Assert.Collection(_locator.GetDirectories(@"D:\Project"),
+            Assert.Collection(VirtualFileLocator.Default.GetDirectories(@"D:\Project"),
                 p => Assert.Equal(@"D:\Project\Areas", p),
                 p => Assert.Equal(@"D:\Project\Controllers", p),
                 p => Assert.Equal(@"D:\Project\Views", p),
                 p => Assert.Equal(@"D:\Project\wwwroot", p)
             );
-            Assert.Collection(_locator.GetDirectories(@"D:\Project\"),
+            Assert.Collection(VirtualFileLocator.Default.GetDirectories(@"D:\Project\"),
                 p => Assert.Equal(@"D:\Project\Areas", p),
                 p => Assert.Equal(@"D:\Project\Controllers", p),
                 p => Assert.Equal(@"D:\Project\Views", p),
                 p => Assert.Equal(@"D:\Project\wwwroot", p)
             );
-            Assert.Collection(_locator.GetDirectories(@"D:\Project\Areas"),
+            Assert.Collection(VirtualFileLocator.Default.GetDirectories(@"D:\Project\Areas"),
                 p => Assert.Equal(@"D:\Project\Areas\Admin", p)
             );
-            Assert.Collection(_locator.GetDirectories(@"D:\Project\Areas\Admin"),
+            Assert.Collection(VirtualFileLocator.Default.GetDirectories(@"D:\Project\Areas\Admin"),
                 p => Assert.Equal(@"D:\Project\Areas\Admin\Controllers", p),
                 p => Assert.Equal(@"D:\Project\Areas\Admin\Views", p)
             );
-            Assert.Empty(_locator.GetDirectories(@"D:\Project\Areas\Admin\Controllers"));
-            Assert.Empty(_locator.GetDirectories(@"C:\Project"));
+            Assert.Empty(VirtualFileLocator.Default.GetDirectories(@"D:\Project\Areas\Admin\Controllers"));
+            Assert.Empty(VirtualFileLocator.Default.GetDirectories(@"C:\Project"));
         }
 
         [Fact]
-        public void VirtualFileLocator_Files()
+        public void Files()
         {
-            Assert.Collection(_locator.GetFiles(@"D:\Project", "*"),
+            Assert.Collection(VirtualFileLocator.Default.GetFiles(@"D:\Project", "*"),
                 f => Assert.Equal(@"D:\Project\Program.cs", f),
                 f => Assert.Equal(@"D:\Project\Startup.cs", f)
             );
-            Assert.Empty(_locator.GetFiles(@"D:\Project\Views", "*"));
-            Assert.Empty(_locator.GetFiles(@"D:\Project\Views", "*.cshtml"));
-            Assert.Collection(_locator.GetFiles(@"D:\Project\Views", "*.cshtml", true),
+            Assert.Empty(VirtualFileLocator.Default.GetFiles(@"D:\Project\Views", "*"));
+            Assert.Empty(VirtualFileLocator.Default.GetFiles(@"D:\Project\Views", "*.cshtml"));
+            Assert.Collection(VirtualFileLocator.Default.GetFiles(@"D:\Project\Views", "*.cshtml", true),
                 f => Assert.Equal(@"D:\Project\Views\EditorTemplates\User.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Views\Users\EditorTemplates\User.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Views\Users\Index.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Views\Users\Details.cshtml", f)
             );
-            Assert.Collection(_locator.GetFiles(@"D:\Project\Areas\", "*.cshtml", true),
+            Assert.Collection(VirtualFileLocator.Default.GetFiles(@"D:\Project\Areas\", "*.cshtml", true),
                 f => Assert.Equal(@"D:\Project\Areas\Admin\Views\Home\Index.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Areas\Admin\Views\Shared\EditorTemplates\User.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Areas\Admin\Views\Shared\_Layout.cshtml", f)
             );
-            Assert.Collection(_locator.GetFiles(@"D:\Project\wwwroot", "*", true),
+            Assert.Collection(VirtualFileLocator.Default.GetFiles(@"D:\Project\wwwroot", "*", true),
                 f => Assert.Equal(@"D:\Project\wwwroot\lib\jslib\core.js", f),
                 f => Assert.Equal(@"D:\Project\wwwroot\js\site.js", f),
                 f => Assert.Equal(@"D:\Project\wwwroot\css\site.css", f),
                 f => Assert.Equal(@"D:\Project\wwwroot\favicon.ico", f)
             );
-            Assert.Empty(_locator.GetFiles(@"D:\Project\wwwroot", "*.cshtml", true));
-            Assert.Empty(_locator.GetFiles(@"C:\Project", "*"));
+            Assert.Empty(VirtualFileLocator.Default.GetFiles(@"D:\Project\wwwroot", "*.cshtml", true));
+            Assert.Empty(VirtualFileLocator.Default.GetFiles(@"C:\Project", "*"));
         }
     }
 }

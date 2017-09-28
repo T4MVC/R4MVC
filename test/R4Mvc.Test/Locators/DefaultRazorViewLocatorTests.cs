@@ -5,29 +5,10 @@ namespace R4Mvc.Test.Locators
 {
     public class DefaultRazorViewLocatorTests
     {
-        private VirtualFileLocator _locator = new VirtualFileLocator(new[]
-        {
-            @"D:\Project\Program.cs",
-            @"D:\Project\Startup.cs",
-            @"D:\Project\Areas\Admin\Controllers\HomeController.cs",
-            @"D:\Project\Areas\Admin\Views\Home\Index.cshtml",
-            @"D:\Project\Areas\Admin\Views\Shared\EditorTemplates\User.cshtml",
-            @"D:\Project\Areas\Admin\Views\Shared\_Layout.cshtml",
-            @"D:\Project\Controllers\UsersController.cshtml",
-            @"D:\Project\Views\EditorTemplates\User.cshtml",
-            @"D:\Project\Views\Users\EditorTemplates\User.cshtml",
-            @"D:\Project\Views\Users\Index.cshtml",
-            @"D:\Project\Views\Users\Details.cshtml",
-            @"D:\Project\wwwroot\lib\jslib\core.js",
-            @"D:\Project\wwwroot\js\site.js",
-            @"D:\Project\wwwroot\css\site.css",
-            @"D:\Project\wwwroot\favicon.ico",
-        });
-
         [Fact]
-        public void RazorViewLocator()
+        public void BasicProject()
         {
-            var locator = new DefaultRazorViewLocator(_locator);
+            var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default);
             Assert.Collection(locator.Find(@"D:\Project"),
                 v =>
                 {
@@ -89,9 +70,9 @@ namespace R4Mvc.Test.Locators
         }
 
         [Fact]
-        public void RazorViewLocator_AreaProjectPath()
+        public void AreaAsProjectPath()
         {
-            var locator = new DefaultRazorViewLocator(_locator);
+            var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default);
             Assert.Collection(locator.Find(@"D:\Project\Areas\Admin"),
                 v =>
                 {
@@ -121,14 +102,15 @@ namespace R4Mvc.Test.Locators
 
         }
 
-        [Fact]
-        public void RazorViewLocator_WrongProjectPaths()
+        [Theory]
+        [InlineData(@"C:\Project")]
+        [InlineData(@"D:\")]
+        [InlineData(@"D:\Project\Views")]
+        [InlineData(@"D:\Project\Areas")]
+        public void WrongProjectPaths(string path)
         {
-            var locator = new DefaultRazorViewLocator(_locator);
-            Assert.Empty(locator.Find(@"C:\Project"));
-            Assert.Empty(locator.Find(@"D:\"));
-            Assert.Empty(locator.Find(@"D:\Project\Views"));
-            Assert.Empty(locator.Find(@"D:\Project\Areas"));
+            var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default);
+            Assert.Empty(locator.Find(path));
         }
     }
 }

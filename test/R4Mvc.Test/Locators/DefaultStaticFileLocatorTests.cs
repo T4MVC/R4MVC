@@ -5,29 +5,10 @@ namespace R4Mvc.Test.Locators
 {
     public class DefaultStaticFileLocatorTests
     {
-        private VirtualFileLocator _locator = new VirtualFileLocator(new[]
-        {
-            @"D:\Project\Program.cs",
-            @"D:\Project\Startup.cs",
-            @"D:\Project\Areas\Admin\Controllers\HomeController.cs",
-            @"D:\Project\Areas\Admin\Views\Home\Index.cshtml",
-            @"D:\Project\Areas\Admin\Views\Shared\EditorTemplates\User.cshtml",
-            @"D:\Project\Areas\Admin\Views\Shared\_Layout.cshtml",
-            @"D:\Project\Controllers\UsersController.cshtml",
-            @"D:\Project\Views\EditorTemplates\User.cshtml",
-            @"D:\Project\Views\Users\EditorTemplates\User.cshtml",
-            @"D:\Project\Views\Users\Index.cshtml",
-            @"D:\Project\Views\Users\Details.cshtml",
-            @"D:\Project\wwwroot\lib\jslib\core.js",
-            @"D:\Project\wwwroot\js\site.js",
-            @"D:\Project\wwwroot\css\site.css",
-            @"D:\Project\wwwroot\favicon.ico",
-        });
-
         [Fact]
         public void StaticFileLocator()
         {
-            var locator = new DefaultStaticFileLocator(_locator);
+            var locator = new DefaultStaticFileLocator(VirtualFileLocator.Default);
             Assert.Collection(locator.Find(@"D:\Project\wwwroot"),
                 f =>
                 {
