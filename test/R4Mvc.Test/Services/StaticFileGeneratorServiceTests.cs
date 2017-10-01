@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using R4Mvc.Test.Locators;
 using R4Mvc.Tools.Locators;
 using R4Mvc.Tools.Services;
@@ -25,6 +24,15 @@ namespace R4Mvc.Test.Services
         public void SanitiseName(string name, string sanitisedName)
         {
             Assert.Equal(sanitisedName, StaticFileGeneratorService.SanitiseName(name));
+        }
+
+        [Fact]
+        public void CreateLinks()
+        {
+            var settings = new Tools.Settings();
+            var staticFileGeneratorService = new StaticFileGeneratorService(new IStaticFileLocator[0], settings);
+            var result = staticFileGeneratorService.GenerateStaticFiles(VirtualFileLocator.ProjectRoot);
+            result.AssertIsClass(settings.LinksNamespace).AssertIs(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword);
         }
 
         [Fact]

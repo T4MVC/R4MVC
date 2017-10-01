@@ -23,7 +23,7 @@ namespace R4Mvc.Tools.Services
 
         public MemberDeclarationSyntax GenerateStaticFiles(string projectRoot)
         {
-            var staticFilesRoot = Path.Combine(projectRoot, "wwwroot");
+            var staticFilesRoot = GetStaticFilesPath(projectRoot);
             var staticfiles = _staticFileLocators.SelectMany(x => x.Find(staticFilesRoot));
 
             var linksClass = SyntaxFactory.ClassDeclaration(_settings.LinksNamespace)
@@ -32,6 +32,9 @@ namespace R4Mvc.Tools.Services
             linksClass = AddStaticFiles(linksClass, string.Empty, staticfiles);
             return linksClass;
         }
+
+        // This will eventually read the Startup class, to identify the location(s) of the static roots
+        public string GetStaticFilesPath(string projectRoot) => Path.Combine(projectRoot, "wwwroot");
 
         public static string SanitiseName(string name)
         {
