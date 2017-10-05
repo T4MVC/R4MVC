@@ -187,7 +187,7 @@ namespace R4MvcHostApp.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskActionResult);
             TaskActionResultOverride(callInfo);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -197,7 +197,7 @@ namespace R4MvcHostApp.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskResult);
             TaskResultOverride(callInfo);
-            return Task.FromResult(callInfo);
+            return System.Threading.Tasks.Task.FromResult(callInfo);
         }
 
         [NonAction]

@@ -1,10 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using R4Mvc.Tools.Extensions;
-using System.Collections.Generic;
-using System.Linq;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static R4Mvc.Tools.Extensions.SyntaxNodeHelpers;
 
@@ -245,18 +246,19 @@ namespace R4Mvc.Tools.Services
                                     new[] { IdentifierName("callInfo") }
                                         .Concat(m.Parameters.Select(p => IdentifierName(p.Name)))
                                         .ToArray())));
+                    var returnType = m.ReturnType as INamedTypeSymbol;
                     statements.Add(
                         // return callInfo;
-                        m.ReturnType.ToString().Contains("Task<") || m.ReturnType.ToString().EndsWith("Task")
+                        returnType.InheritsFrom<Task>() == true
                             ? ReturnStatement(
                                 InvocationExpression(
-                                    SyntaxNodeHelpers.MemberAccess("Task", "FromResult"))
+                                    SyntaxNodeHelpers.MemberAccess(typeof(Task).FullName, "FromResult"))
                                     .WithArgumentList(
-                                        m.ReturnType.ToString().Contains("<")
+                                        returnType.TypeArguments.Length > 0
                                             ? (ExpressionSyntax)BinaryExpression(
                                                 SyntaxKind.AsExpression,
                                                 IdentifierName("callInfo"),
-                                                IdentifierName(m.ReturnType.ToString().Substring(m.ReturnType.ToString().IndexOf('<') + 1).TrimEnd('>')))
+                                                IdentifierName(returnType.TypeArguments[0].ToString()))
                                             : IdentifierName("callInfo")
                                         ))
                             : ReturnStatement(IdentifierName("callInfo")));

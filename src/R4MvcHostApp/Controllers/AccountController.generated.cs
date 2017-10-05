@@ -221,7 +221,7 @@ namespace R4MvcHostApp.Controllers
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Login);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             LoginOverride(callInfo, returnUrl);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -233,7 +233,7 @@ namespace R4MvcHostApp.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             LoginOverride(callInfo, model, returnUrl);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -256,7 +256,7 @@ namespace R4MvcHostApp.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             RegisterOverride(callInfo, model, returnUrl);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -266,7 +266,7 @@ namespace R4MvcHostApp.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Logout);
             LogoutOverride(callInfo);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -290,7 +290,7 @@ namespace R4MvcHostApp.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "remoteError", remoteError);
             ExternalLoginCallbackOverride(callInfo, returnUrl, remoteError);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -302,7 +302,7 @@ namespace R4MvcHostApp.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             ExternalLoginConfirmationOverride(callInfo, model, returnUrl);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -314,7 +314,7 @@ namespace R4MvcHostApp.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "userId", userId);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
             ConfirmEmailOverride(callInfo, userId, code);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -335,7 +335,7 @@ namespace R4MvcHostApp.Controllers
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ForgotPassword);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ForgotPasswordOverride(callInfo, model);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -367,7 +367,7 @@ namespace R4MvcHostApp.Controllers
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPassword);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ResetPasswordOverride(callInfo, model);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -389,7 +389,7 @@ namespace R4MvcHostApp.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "rememberMe", rememberMe);
             SendCodeOverride(callInfo, returnUrl, rememberMe);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.ActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.ActionResult);
         }
 
         [NonAction]
@@ -400,7 +400,7 @@ namespace R4MvcHostApp.Controllers
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.SendCode);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             SendCodeOverride(callInfo, model);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -413,7 +413,7 @@ namespace R4MvcHostApp.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "rememberMe", rememberMe);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             VerifyCodeOverride(callInfo, provider, rememberMe, returnUrl);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
@@ -424,7 +424,7 @@ namespace R4MvcHostApp.Controllers
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.VerifyCode);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             VerifyCodeOverride(callInfo, model);
-            return Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
 
         [NonAction]
