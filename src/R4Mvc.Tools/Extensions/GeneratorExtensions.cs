@@ -69,21 +69,45 @@ namespace R4Mvc.Tools.Extensions
 
             foreach (var templateKind in allControllerViews.Where(x => !string.IsNullOrEmpty(x.Key)))
             {
-                var className = $"_{templateKind.Key}Class";
-                var templateClass = SyntaxFactory.ClassDeclaration(className)
-                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                    .WithGeneratedNonUserCodeAttributes();
-                templateClass = templateClass.AddMembers(
-                    templateKind.Select(t => CreateStringFieldDeclaration(t.ViewName, t.ViewName, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)).ToArray());
-
                 viewClassNode = viewClassNode
-                    .WithStaticFieldBackedProperty(templateKind.Key, className, SyntaxKind.PublicKeyword)
-                    .AddMembers(templateClass);
+                    .WithSubViewsClass(controllerName, areaName, templateKind, templateKind.Key);
             }
 
             return node
                 .AddMembers(viewClassNode)
                 .WithStaticFieldBackedProperty("Views", "ViewsClass", SyntaxKind.PublicKeyword);
+        }
+
+        public static ClassDeclarationSyntax WithSubViewsClass(this ClassDeclarationSyntax node, string controllerName, string areaName, IEnumerable<View> viewFiles, string templateKind = null)
+        {
+            const string viewNamesClass = "_ViewNamesClass";
+
+            var viewNamesClassNode = SyntaxFactory.ClassDeclaration(viewNamesClass).WithModifiers(SyntaxKind.PublicKeyword);
+            var controllerViews = viewFiles.ToImmutableArray();
+            var viewNameFields =
+                controllerViews.Select(
+                    x => CreateStringFieldDeclaration(x.ViewName, x.ViewName, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
+                    .ToArray<MemberDeclarationSyntax>();
+            viewNamesClassNode = viewNamesClassNode.AddMembers(viewNameFields);
+            
+            var className = $"_{templateKind}Class";
+            var templateClass = SyntaxFactory.ClassDeclaration(className)
+                .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                .WithGeneratedNonUserCodeAttributes()
+                .WithStaticFieldBackedProperty("ViewNames", viewNamesClass, SyntaxKind.PublicKeyword);
+
+            templateClass = templateClass.AddMembers(viewNamesClassNode);
+            var viewFields =
+                controllerViews.Select(
+                        x => CreateStringFieldDeclaration(x.ViewName, x.RelativePath.ToString(), SyntaxKind.PublicKeyword))
+                    .ToArray<MemberDeclarationSyntax>();
+            templateClass = templateClass.AddMembers(viewFields);
+
+            node = node
+                .WithStaticFieldBackedProperty(templateKind, className, SyntaxKind.PublicKeyword)
+                .AddMembers(templateClass);
+
+            return node;
         }
 
         public static ClassDeclarationSyntax WithStaticFieldsForFiles(this ClassDeclarationSyntax node, IEnumerable<StaticFile> staticFiles)
