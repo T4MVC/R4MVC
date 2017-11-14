@@ -30,7 +30,16 @@ namespace R4Mvc.Tools.Services
 
                 // this first part, finds all the controller classes, modifies them and saves the changes
                 var controllerRewriter = new ControllerRewriter(compiler);
-                var newNode = controllerRewriter.Visit(tree.GetRoot());
+                SyntaxNode newNode;
+                try
+                {
+                    newNode = controllerRewriter.Visit(tree.GetRoot());
+                }
+                catch
+                {
+                    // If roslyn can't get the root of the tree, just continue to the next item
+                    continue;
+                }
 
                 // save the controller nodes from each visit to pass to the generator
                 foreach (var controllerNode in controllerRewriter.MvcControllerClassNodes)
