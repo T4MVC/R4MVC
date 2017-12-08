@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using static R4Mvc.Tools.Extensions.SyntaxNodeHelpers;
-using static System.String;
 
 namespace R4Mvc.Tools.Extensions
 {
@@ -40,7 +39,8 @@ namespace R4Mvc.Tools.Extensions
         {
             var allControllerViews = viewFiles
                 .Where(x => string.Equals(x.ControllerName, controllerName, StringComparison.CurrentCultureIgnoreCase) && string.Equals(x.AreaName, areaName, StringComparison.OrdinalIgnoreCase))
-                .GroupBy(v => v.TemplateKind);
+                .GroupBy(v => v.TemplateKind)
+                .ToList();
 
             // create subclass called ViewsClass
             // create ViewNames get property returning static instance of _ViewNamesClass subclass
@@ -81,7 +81,7 @@ namespace R4Mvc.Tools.Extensions
         public static ClassDeclarationSyntax WithSubViewsClass(this ClassDeclarationSyntax node, string controllerName, string areaName, IEnumerable<View> viewFiles, string templateKind = null)
         {
             const string viewNamesClass = "_ViewNamesClass";
-
+            
             var viewNamesClassNode = SyntaxFactory.ClassDeclaration(viewNamesClass).WithModifiers(SyntaxKind.PublicKeyword);
             var controllerViews = viewFiles.ToImmutableArray();
             var viewNameFields =
@@ -97,9 +97,10 @@ namespace R4Mvc.Tools.Extensions
                 .WithStaticFieldBackedProperty("ViewNames", viewNamesClass, SyntaxKind.PublicKeyword);
 
             templateClass = templateClass.AddMembers(viewNamesClassNode);
+            var isAspNetTemplateDirectory = IsAspNetTemplateDirectory(templateKind);
             var viewFields =
                 controllerViews.Select(
-                        x => CreateStringFieldDeclaration(x.ViewName, x.RelativePath.ToString(), SyntaxKind.PublicKeyword))
+                        x => CreateStringFieldDeclaration(x.ViewName, isAspNetTemplateDirectory ? x.ViewName : x.RelativePath.ToString(), SyntaxKind.PublicKeyword))
                     .ToArray<MemberDeclarationSyntax>();
             templateClass = templateClass.AddMembers(viewFields);
 
@@ -108,6 +109,11 @@ namespace R4Mvc.Tools.Extensions
                 .AddMembers(templateClass);
 
             return node;
+        }
+
+        private static bool IsAspNetTemplateDirectory(string templateKind)
+        {
+            return templateKind == "DisplayTemplates" || templateKind == "EditorTemplates";
         }
 
         public static ClassDeclarationSyntax WithStaticFieldsForFiles(this ClassDeclarationSyntax node, IEnumerable<StaticFile> staticFiles)
