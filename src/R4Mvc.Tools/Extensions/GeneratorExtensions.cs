@@ -56,14 +56,14 @@ namespace R4Mvc.Tools.Extensions
             var controllerViews = allControllerViews.Where(x => string.IsNullOrEmpty(x.Key)).SelectMany(x => x).ToImmutableArray();
             var viewNameFields =
                 controllerViews.Select(
-                    x => CreateStringFieldDeclaration(x.ViewName, x.ViewName, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
+                    x => CreateStringFieldDeclaration(x.ViewName.SanitiseFieldName(), x.ViewName, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
                     .ToArray<MemberDeclarationSyntax>();
             viewNamesClassNode = viewNamesClassNode.AddMembers(viewNameFields);
 
             viewClassNode = viewClassNode.AddMembers(viewNamesClassNode);
             var viewFields =
                 controllerViews.Select(
-                    x => CreateStringFieldDeclaration(x.ViewName, x.RelativePath.ToString(), SyntaxKind.PublicKeyword))
+                    x => CreateStringFieldDeclaration(x.ViewName.SanitiseFieldName(), x.RelativePath.ToString(), SyntaxKind.PublicKeyword))
                     .ToArray<MemberDeclarationSyntax>();
             viewClassNode = viewClassNode.AddMembers(viewFields);
 

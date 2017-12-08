@@ -52,12 +52,14 @@ namespace R4Mvc
             public class _ViewNamesClass
             {
                 public readonly string Error = "Error";
+                public readonly string View_File_With_Dots = "View.File.With.Dots";
                 public readonly string _Layout = "_Layout";
                 public readonly string _LoginPartial = "_LoginPartial";
                 public readonly string _ValidationScriptsPartial = "_ValidationScriptsPartial";
             }
 
             public string Error = "~/Views/Shared/Error.cshtml";
+            public string View_File_With_Dots = "~/Views/Shared/View.File.With.Dots.cshtml";
             public string _Layout = "~/Views/Shared/_Layout.cshtml";
             public string _LoginPartial = "~/Views/Shared/_LoginPartial.cshtml";
             public string _ValidationScriptsPartial = "~/Views/Shared/_ValidationScriptsPartial.cshtml";

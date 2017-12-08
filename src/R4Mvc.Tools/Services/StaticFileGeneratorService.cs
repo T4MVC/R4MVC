@@ -36,23 +36,6 @@ namespace R4Mvc.Tools.Services
         // This will eventually read the Startup class, to identify the location(s) of the static roots
         public string GetStaticFilesPath(string projectRoot) => Path.Combine(projectRoot, "wwwroot");
 
-        public static string SanitiseName(string name)
-        {
-            name = Regex.Replace(name, @"[\W\b]", "_", RegexOptions.IgnoreCase);
-            name = Regex.Replace(name, @"^\d", @"_$0");
-
-            int i = 0;
-            while (SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None ||
-                SyntaxFacts.GetContextualKeywordKind(name) != SyntaxKind.None ||
-                !SyntaxFacts.IsValidIdentifier(name))
-            {
-                if (i++ > 10)
-                    return name; // Sanity check.. The loop might be loopy!
-                name = "_" + name;
-            }
-            return name;
-        }
-
         public ClassDeclarationSyntax AddStaticFiles(ClassDeclarationSyntax parentClass, string path, IEnumerable<StaticFile> files)
         {
             var paths = files
@@ -72,7 +55,7 @@ namespace R4Mvc.Tools.Services
             foreach (var childPath in paths)
             {
                 var childFiles = files.Where(f => f.Container.StartsWith(childPath));
-                var className = SanitiseName(childPath.Substring(path.Length > 0 ? path.Length + 1 : 0));
+                var className = childPath.Substring(path.Length > 0 ? path.Length + 1 : 0).SanitiseFieldName();
                 var containerClass = SyntaxFactory.ClassDeclaration(className)
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                     .WithGeneratedNonUserCodeAttributes();
@@ -84,7 +67,7 @@ namespace R4Mvc.Tools.Services
             foreach (var file in localFiles)
             {
                 parentClass = parentClass.AddMembers(
-                    CreateStringFieldDeclaration(SanitiseName(file.FileName), "~/" + file.RelativePath.ToString(), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword));
+                    CreateStringFieldDeclaration(file.FileName.SanitiseFieldName(), "~/" + file.RelativePath.ToString(), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword));
             }
             return parentClass;
         }
