@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
-using Microsoft.VisualStudio.Setup.Configuration;
 using R4Mvc.Tools.Extensions;
 using R4Mvc.Tools.Locators;
 using R4Mvc.Tools.Services;
@@ -29,7 +28,6 @@ namespace R4Mvc.Tools.Commands
         public async Task Run(string projectPath)
         {
             var projectRoot = Path.GetDirectoryName(projectPath);
-            ConfigureMSBuild();
 
             // Load the project and check for compilation errors
             var workspace = MSBuildWorkspace.Create();
@@ -88,42 +86,6 @@ namespace R4Mvc.Tools.Commands
                 if (controllers.Any(c => c.Area == string.Empty && c.Name == area))
                     areaMap[area] = area + "Area";
             return areaMap;
-        }
-
-        private void ConfigureMSBuild()
-        {
-            var query = new SetupConfiguration();
-            var query2 = (ISetupConfiguration2)query;
-
-            try
-            {
-                if (query2.GetInstanceForCurrentProcess() is ISetupInstance2 instance)
-                {
-                    Environment.SetEnvironmentVariable("VSINSTALLDIR", instance.GetInstallationPath());
-                    Environment.SetEnvironmentVariable("VisualStudioVersion", @"15.0");
-                    return;
-                }
-            }
-            catch { }
-
-            var instances = new ISetupInstance[1];
-            var e = query2.EnumAllInstances();
-            int fetched;
-            do
-            {
-                e.Next(1, instances, out fetched);
-                if (fetched > 0)
-                {
-                    var instance = instances[0] as ISetupInstance2;
-                    if (instance.GetInstallationVersion().StartsWith("15."))
-                    {
-                        Environment.SetEnvironmentVariable("VSINSTALLDIR", instance.GetInstallationPath());
-                        Environment.SetEnvironmentVariable("VisualStudioVersion", @"15.0");
-                        return;
-                    }
-                }
-            }
-            while (fetched > 0);
         }
     }
 }

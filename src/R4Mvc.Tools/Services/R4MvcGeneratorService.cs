@@ -59,8 +59,8 @@ namespace R4Mvc.Tools.Services
                         _controllerGenerator.GeneratePartialController(controller),
                         _controllerGenerator.GenerateR4Controller(controller));
 
-                    // If SplitIntoMutipleFiles is set, store the generated classes alongside the controller files.
-                    if (_settings.SplitIntoMutipleFiles)
+                    // If SplitIntoMultipleFiles is set, store the generated classes alongside the controller files.
+                    if (_settings.SplitIntoMultipleFiles)
                     {
                         var controllerFile = NewCompilationUnit()
                             .AddMembers(namespaceNode);
@@ -69,8 +69,8 @@ namespace R4Mvc.Tools.Services
                     }
                 }
 
-                // If SplitIntoMutipleFiles is NOT set, bundle them all in R4Mvc
-                if (!_settings.SplitIntoMutipleFiles)
+                // If SplitIntoMultipleFiles is NOT set, bundle them all in R4Mvc
+                if (!_settings.SplitIntoMultipleFiles)
                     generatedControllers.Add(namespaceNode);
             }
 
