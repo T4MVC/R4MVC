@@ -35,12 +35,17 @@ namespace R4Mvc.Tools.Extensions
                 SyntaxKind.ConstKeyword);
         }
 
-        public static ClassDeclarationSyntax WithViewsClass(this ClassDeclarationSyntax node, string controllerName, string areaName, IEnumerable<View> viewFiles)
+        public static ClassDeclarationSyntax WithViewsClass(this ClassDeclarationSyntax node, string controllerName,
+            string areaName, IEnumerable<View> viewFiles)
         {
             var allControllerViews = viewFiles
-                .Where(x => string.Equals(x.ControllerName, controllerName, StringComparison.CurrentCultureIgnoreCase) && string.Equals(x.AreaName, areaName, StringComparison.OrdinalIgnoreCase))
+                .Where(x =>
+                    string.Equals(x.ControllerName, controllerName, StringComparison.CurrentCultureIgnoreCase) &&
+                    string.Equals(x.AreaName, areaName, StringComparison.OrdinalIgnoreCase))
                 .GroupBy(v => v.TemplateKind)
                 .ToList();
+            var controllerViews = allControllerViews.Where(x => string.IsNullOrEmpty(x.Key)).SelectMany(x => x)
+                .ToImmutableArray();
 
             // create subclass called ViewsClass
             // create ViewNames get property returning static instance of _ViewNamesClass subclass
@@ -52,25 +57,20 @@ namespace R4Mvc.Tools.Extensions
                 .WithGeneratedNonUserCodeAttributes()
                 .WithStaticFieldBackedProperty("ViewNames", viewNamesClass, SyntaxKind.PublicKeyword);
 
-            var viewNamesClassNode = SyntaxFactory.ClassDeclaration(viewNamesClass).WithModifiers(SyntaxKind.PublicKeyword);
-            var controllerViews = allControllerViews.Where(x => string.IsNullOrEmpty(x.Key)).SelectMany(x => x).ToImmutableArray();
-            var viewNameFields =
-                controllerViews.Select(
-                    x => CreateStringFieldDeclaration(x.ViewName.SanitiseFieldName(), x.ViewName, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
-                    .ToArray<MemberDeclarationSyntax>();
-            viewNamesClassNode = viewNamesClassNode.AddMembers(viewNameFields);
+            var viewNamesClassNode = CreateViewNamesClassNode(viewNamesClass, controllerViews);
 
             viewClassNode = viewClassNode.AddMembers(viewNamesClassNode);
             var viewFields =
                 controllerViews.Select(
-                    x => CreateStringFieldDeclaration(x.ViewName.SanitiseFieldName(), x.RelativePath.ToString(), SyntaxKind.PublicKeyword))
+                        x => CreateStringFieldDeclaration(x.ViewName.SanitiseFieldName(), x.RelativePath.ToString(),
+                            SyntaxKind.PublicKeyword))
                     .ToArray<MemberDeclarationSyntax>();
             viewClassNode = viewClassNode.AddMembers(viewFields);
 
             foreach (var templateKind in allControllerViews.Where(x => !string.IsNullOrEmpty(x.Key)))
             {
                 viewClassNode = viewClassNode
-                    .WithSubViewsClass(controllerName, areaName, templateKind, templateKind.Key);
+                    .WithSubViewsClass(templateKind, templateKind.Key);
             }
 
             return node
@@ -78,37 +78,53 @@ namespace R4Mvc.Tools.Extensions
                 .WithStaticFieldBackedProperty("Views", "ViewsClass", SyntaxKind.PublicKeyword);
         }
 
-        public static ClassDeclarationSyntax WithSubViewsClass(this ClassDeclarationSyntax node, string controllerName, string areaName, IEnumerable<View> viewFiles, string templateKind = null)
+        public static ClassDeclarationSyntax WithSubViewsClass(this ClassDeclarationSyntax node,
+            IEnumerable<View> viewFiles, string templateKind = null)
         {
-            const string viewNamesClass = "_ViewNamesClass";
-            
-            var viewNamesClassNode = SyntaxFactory.ClassDeclaration(viewNamesClass).WithModifiers(SyntaxKind.PublicKeyword);
+            var isAspNetTemplateDirectory = IsAspNetTemplateDirectory(templateKind);
+
             var controllerViews = viewFiles.ToImmutableArray();
-            var viewNameFields =
-                controllerViews.Select(
-                    x => CreateStringFieldDeclaration(x.ViewName, x.ViewName, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
-                    .ToArray<MemberDeclarationSyntax>();
-            viewNamesClassNode = viewNamesClassNode.AddMembers(viewNameFields);
-            
             var className = $"_{templateKind}Class";
             var templateClass = SyntaxFactory.ClassDeclaration(className)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                .WithGeneratedNonUserCodeAttributes()
-                .WithStaticFieldBackedProperty("ViewNames", viewNamesClass, SyntaxKind.PublicKeyword);
+                .WithGeneratedNonUserCodeAttributes();
 
-            templateClass = templateClass.AddMembers(viewNamesClassNode);
-            var isAspNetTemplateDirectory = IsAspNetTemplateDirectory(templateKind);
+            if (!isAspNetTemplateDirectory)
+            {
+                const string viewNamesClass = "_ViewNamesClass";
+                var viewNamesClassNode = CreateViewNamesClassNode(viewNamesClass, controllerViews);
+                templateClass = templateClass
+                    .AddMembers(viewNamesClassNode)
+                    .WithStaticFieldBackedProperty("ViewNames", viewNamesClass, SyntaxKind.PublicKeyword);
+            }
+
             var viewFields =
                 controllerViews.Select(
-                        x => CreateStringFieldDeclaration(x.ViewName, isAspNetTemplateDirectory ? x.ViewName : x.RelativePath.ToString(), SyntaxKind.PublicKeyword))
+                        x => CreateStringFieldDeclaration(x.ViewName.SanitiseFieldName(),
+                            isAspNetTemplateDirectory ? x.ViewName : x.RelativePath.ToString(),
+                            SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
                     .ToArray<MemberDeclarationSyntax>();
             templateClass = templateClass.AddMembers(viewFields);
 
             node = node
-                .WithStaticFieldBackedProperty(templateKind, className, SyntaxKind.PublicKeyword)
-                .AddMembers(templateClass);
+                .AddMembers(templateClass)
+                .WithStaticFieldBackedProperty(templateKind, className, SyntaxKind.PublicKeyword);
 
             return node;
+        }
+
+        private static ClassDeclarationSyntax CreateViewNamesClassNode(string viewNamesClass,
+            ImmutableArray<View> controllerViews)
+        {
+            var viewNamesClassNode =
+                SyntaxFactory.ClassDeclaration(viewNamesClass).WithModifiers(SyntaxKind.PublicKeyword);
+            var viewNameFields =
+                controllerViews.Select(
+                        x => CreateStringFieldDeclaration(x.ViewName.SanitiseFieldName(), x.ViewName,
+                            SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
+                    .ToArray<MemberDeclarationSyntax>();
+            viewNamesClassNode = viewNamesClassNode.AddMembers(viewNameFields);
+            return viewNamesClassNode;
         }
 
         private static bool IsAspNetTemplateDirectory(string templateKind)
@@ -116,11 +132,13 @@ namespace R4Mvc.Tools.Extensions
             return templateKind == "DisplayTemplates" || templateKind == "EditorTemplates";
         }
 
-        public static ClassDeclarationSyntax WithStaticFieldsForFiles(this ClassDeclarationSyntax node, IEnumerable<StaticFile> staticFiles)
+        public static ClassDeclarationSyntax WithStaticFieldsForFiles(this ClassDeclarationSyntax node,
+            IEnumerable<StaticFile> staticFiles)
         {
             var staticNodes =
                 staticFiles.Select(
-                    x => CreateStringFieldDeclaration(x.FileName, x.RelativePath.ToString(), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword))
+                        x => CreateStringFieldDeclaration(x.FileName, x.RelativePath.ToString(),
+                            SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword))
                     .ToArray<MemberDeclarationSyntax>();
             return node.AddMembers(staticNodes);
         }
@@ -134,10 +152,11 @@ namespace R4Mvc.Tools.Extensions
         public static NamespaceDeclarationSyntax WithDummyClass(this NamespaceDeclarationSyntax node)
         {
             var dummyClass = SyntaxFactory.ClassDeclaration(Constants.DummyClass)
-                    .WithModifiers(SyntaxKind.PublicKeyword)
-                    .WithGeneratedNonUserCodeAttributes()
-                    .WithDefaultConstructor(false, SyntaxKind.PrivateKeyword)
-                    .WithField(Constants.DummyClassInstance, Constants.DummyClass, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+                .WithModifiers(SyntaxKind.PublicKeyword)
+                .WithGeneratedNonUserCodeAttributes()
+                .WithDefaultConstructor(false, SyntaxKind.PrivateKeyword)
+                .WithField(Constants.DummyClassInstance, Constants.DummyClass, SyntaxKind.PublicKeyword,
+                    SyntaxKind.StaticKeyword);
 
             return node.AddMembers(dummyClass);
         }
