@@ -34,7 +34,7 @@ namespace R4Mvc.Tools.Services
         }
 
         // This will eventually read the Startup class, to identify the location(s) of the static roots
-        public string GetStaticFilesPath(string projectRoot) => Path.Combine(projectRoot, "wwwroot");
+        public string GetStaticFilesPath(string projectRoot) => Path.Combine(projectRoot, _settings.wwwroot);
 
         public ClassDeclarationSyntax AddStaticFiles(ClassDeclarationSyntax parentClass, string path, IEnumerable<StaticFile> files)
         {
