@@ -24,7 +24,8 @@ namespace R4Mvc.Tools.Services
         public MemberDeclarationSyntax GenerateStaticFiles(string projectRoot)
         {
             var staticFilesRoot = GetStaticFilesPath(projectRoot);
-            var staticfiles = _staticFileLocators.SelectMany(x => x.Find(staticFilesRoot));
+            var staticfiles = _staticFileLocators.SelectMany(x => x.Find(staticFilesRoot))
+                .Where(r=> _settings.IncludeContainer(r.Container));
 
             var linksClass = SyntaxFactory.ClassDeclaration(_settings.LinksNamespace)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
