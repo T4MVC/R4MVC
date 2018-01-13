@@ -218,12 +218,24 @@ namespace R4Mvc.Tools.Services
             var methods = mvcSymbol.GetPublicNonGeneratedMethods()
                 .SelectMany(m =>
                 {
+                    var callInfoType = Constants.ActionResultClass;
+                    if (m.ReturnType.InheritsFrom<JsonResult>())
+                        callInfoType = Constants.JsonResultClass;
+                    else if (m.ReturnType.InheritsFrom<ContentResult>())
+                        callInfoType = Constants.ContentResultClass;
+                    else if (m.ReturnType.InheritsFrom<RedirectResult>())
+                        callInfoType = Constants.RedirectResultClass;
+                    else if (m.ReturnType.InheritsFrom<RedirectToActionResult>())
+                        callInfoType = Constants.RedirectToActionResultClass;
+                    else if (m.ReturnType.InheritsFrom<RedirectToRouteResult>())
+                        callInfoType = Constants.RedirectToRouteResultClass;
+
                     var statements = new List<StatementSyntax>
                     {
                         // var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
                         LocalDeclarationStatement(
                             SyntaxNodeHelpers.VariableDeclaration("callInfo",
-                                ObjectCreationExpression(IdentifierName(Constants.ActionResultClass))
+                                ObjectCreationExpression(IdentifierName(callInfoType))
                                     .WithArgumentList(
                                         IdentifierName("Area"),
                                         IdentifierName("Name"),
@@ -268,7 +280,7 @@ namespace R4Mvc.Tools.Services
                             .WithModifiers(SyntaxKind.PartialKeyword)
                             .WithNonActionAttribute()
                             .AddParameterListParameters(
-                                Parameter(Identifier("callInfo")).WithType(IdentifierName(Constants.ActionResultClass)))
+                                Parameter(Identifier("callInfo")).WithType(IdentifierName(callInfoType)))
                             .AddParameterListParameters(m.Parameters
                                 .Select(p => Parameter(Identifier(p.Name))
                                     .WithType(IdentifierName(p.Type.ToString())))

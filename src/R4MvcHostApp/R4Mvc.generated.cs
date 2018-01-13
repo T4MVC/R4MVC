@@ -358,5 +358,133 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult : JsonResult, I
         set;
     }
 }
+
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ContentResult : ContentResult, IR4MvcActionResult
+{
+    public R4Mvc_Microsoft_AspNetCore_Mvc_ContentResult(string area, string controller, string action, string protocol = null)
+    {
+        this.InitMVCT4Result(area, controller, action, protocol);
+    }
+
+    public string Controller
+    {
+        get;
+        set;
+    }
+
+    public string Action
+    {
+        get;
+        set;
+    }
+
+    public string Protocol
+    {
+        get;
+        set;
+    }
+
+    public RouteValueDictionary RouteValueDictionary
+    {
+        get;
+        set;
+    }
+}
+
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectResult : RedirectResult, IR4MvcActionResult
+{
+    public R4Mvc_Microsoft_AspNetCore_Mvc_RedirectResult(string area, string controller, string action, string protocol = null): base (" ")
+    {
+        this.InitMVCT4Result(area, controller, action, protocol);
+    }
+
+    public string Controller
+    {
+        get;
+        set;
+    }
+
+    public string Action
+    {
+        get;
+        set;
+    }
+
+    public string Protocol
+    {
+        get;
+        set;
+    }
+
+    public RouteValueDictionary RouteValueDictionary
+    {
+        get;
+        set;
+    }
+}
+
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToActionResult : RedirectToActionResult, IR4MvcActionResult
+{
+    public R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToActionResult(string area, string controller, string action, string protocol = null): base (" ", " ", " ")
+    {
+        this.InitMVCT4Result(area, controller, action, protocol);
+    }
+
+    public string Controller
+    {
+        get;
+        set;
+    }
+
+    public string Action
+    {
+        get;
+        set;
+    }
+
+    public string Protocol
+    {
+        get;
+        set;
+    }
+
+    public RouteValueDictionary RouteValueDictionary
+    {
+        get;
+        set;
+    }
+}
+
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToRouteResult : RedirectToRouteResult, IR4MvcActionResult
+{
+    public R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToRouteResult(string area, string controller, string action, string protocol = null): base (null)
+    {
+        this.InitMVCT4Result(area, controller, action, protocol);
+    }
+
+    public string Controller
+    {
+        get;
+        set;
+    }
+
+    public string Action
+    {
+        get;
+        set;
+    }
+
+    public string Protocol
+    {
+        get;
+        set;
+    }
+
+    public RouteValueDictionary RouteValueDictionary
+    {
+        get;
+        set;
+    }
+}
 #pragma warning restore 1591, 3008, 3009, 0108
 

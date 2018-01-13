@@ -8,8 +8,13 @@
         internal const string DummyClass = "Dummy";
         internal const string DummyClassInstance = "Instance";
 
-        internal const string ActionResultClass = ProjectName + "_Microsoft_AspNetCore_Mvc_ActionResult";
-        internal const string JsonResultClass = ProjectName + "_Microsoft_AspNetCore_Mvc_JsonResult";
+        private const string ActionResultNamespace = "_Microsoft_AspNetCore_Mvc_";
+        internal const string ActionResultClass = ProjectName + ActionResultNamespace + "ActionResult";
+        internal const string JsonResultClass = ProjectName + ActionResultNamespace + "JsonResult";
+        internal const string ContentResultClass = ProjectName + ActionResultNamespace + "ContentResult";
+        internal const string RedirectResultClass = ProjectName + ActionResultNamespace + "RedirectResult";
+        internal const string RedirectToActionResultClass = ProjectName + ActionResultNamespace + "RedirectToActionResult";
+        internal const string RedirectToRouteResultClass = ProjectName + ActionResultNamespace + "RedirectToRouteResult";
 
         internal static class ConfigKeys
         {

@@ -53,6 +53,48 @@ namespace R4MvcHostApp.Controllers
             return RedirectToActionPermanent(taskResult.Result);
         }
 
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult ActionMethod()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ActionMethod);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult JsonMethod()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.JsonMethod);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult ContentMethod()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ContentMethod);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult RedirectMethod()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.RedirectMethod);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult RedirectToActionMethod()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.RedirectToActionMethod);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult RedirectToRouteMethod()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.RedirectToRouteMethod);
+        }
+
         [GeneratedCode("R4Mvc", "1.0")]
         public HomeController Actions => MVC.Home;
         [GeneratedCode("R4Mvc", "1.0")]
@@ -74,6 +116,12 @@ namespace R4MvcHostApp.Controllers
             public readonly string Error = "Error";
             public readonly string TaskActionResult = "TaskActionResult";
             public readonly string TaskResult = "TaskResult";
+            public readonly string ActionMethod = "ActionMethod";
+            public readonly string JsonMethod = "JsonMethod";
+            public readonly string ContentMethod = "ContentMethod";
+            public readonly string RedirectMethod = "RedirectMethod";
+            public readonly string RedirectToActionMethod = "RedirectToActionMethod";
+            public readonly string RedirectToRouteMethod = "RedirectToRouteMethod";
             public readonly string ExtensionTest = "ExtensionTest";
         }
 
@@ -86,6 +134,12 @@ namespace R4MvcHostApp.Controllers
             public const string Error = "Error";
             public const string TaskActionResult = "TaskActionResult";
             public const string TaskResult = "TaskResult";
+            public const string ActionMethod = "ActionMethod";
+            public const string JsonMethod = "JsonMethod";
+            public const string ContentMethod = "ContentMethod";
+            public const string RedirectMethod = "RedirectMethod";
+            public const string RedirectToActionMethod = "RedirectToActionMethod";
+            public const string RedirectToRouteMethod = "RedirectToRouteMethod";
             public const string ExtensionTest = "ExtensionTest";
         }
 
@@ -218,6 +272,72 @@ namespace R4MvcHostApp.Controllers
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskResult);
             TaskResultOverride(callInfo);
             return System.Threading.Tasks.Task.FromResult(callInfo);
+        }
+
+        [NonAction]
+        partial void ActionMethodOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, int id);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.ActionResult ActionMethod(int id)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ActionMethod);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
+            ActionMethodOverride(callInfo, id);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void JsonMethodOverride(R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult callInfo, int id);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.JsonResult JsonMethod(int id)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult(Area, Name, ActionNames.JsonMethod);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
+            JsonMethodOverride(callInfo, id);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ContentMethodOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ContentResult callInfo, int id);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.ContentResult ContentMethod(int id)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ContentResult(Area, Name, ActionNames.ContentMethod);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
+            ContentMethodOverride(callInfo, id);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void RedirectMethodOverride(R4Mvc_Microsoft_AspNetCore_Mvc_RedirectResult callInfo, int id);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.RedirectResult RedirectMethod(int id)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RedirectResult(Area, Name, ActionNames.RedirectMethod);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
+            RedirectMethodOverride(callInfo, id);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void RedirectToActionMethodOverride(R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToActionResult callInfo, int id);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.RedirectToActionResult RedirectToActionMethod(int id)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToActionResult(Area, Name, ActionNames.RedirectToActionMethod);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
+            RedirectToActionMethodOverride(callInfo, id);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void RedirectToRouteMethodOverride(R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToRouteResult callInfo, int id);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.RedirectToRouteResult RedirectToRouteMethod(int id)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToRouteResult(Area, Name, ActionNames.RedirectToRouteMethod);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
+            RedirectToRouteMethodOverride(callInfo, id);
+            return callInfo;
         }
 
         [NonAction]

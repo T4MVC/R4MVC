@@ -41,5 +41,35 @@ namespace R4MvcHostApp.Controllers
         {
             return Task.CompletedTask;
         }
+
+        public virtual ActionResult ActionMethod(int id)
+        {
+            return View();
+        }
+
+        public virtual JsonResult JsonMethod(int id)
+        {
+            return Json(new object());
+        }
+
+        public virtual ContentResult ContentMethod(int id)
+        {
+            return Content("Hello World");
+        }
+
+        public virtual RedirectResult RedirectMethod(int id)
+        {
+            return Redirect(" ");
+        }
+
+        public virtual RedirectToActionResult RedirectToActionMethod(int id)
+        {
+            return RedirectToAction(" ");
+        }
+
+        public virtual RedirectToRouteResult RedirectToRouteMethod(int id)
+        {
+            return RedirectToRoute(null);
+        }
     }
 }
