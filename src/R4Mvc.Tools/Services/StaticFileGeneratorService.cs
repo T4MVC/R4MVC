@@ -24,7 +24,8 @@ namespace R4Mvc.Tools.Services
         public MemberDeclarationSyntax GenerateStaticFiles(string projectRoot)
         {
             var staticFilesRoot = GetStaticFilesPath(projectRoot);
-            var staticfiles = _staticFileLocators.SelectMany(x => x.Find(staticFilesRoot));
+            var staticfiles = _staticFileLocators.SelectMany(x => x.Find(staticFilesRoot))
+                .Where(r=> _settings.IncludeContainer(r.Container));
 
             var linksClass = SyntaxFactory.ClassDeclaration(_settings.LinksNamespace)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
@@ -34,7 +35,7 @@ namespace R4Mvc.Tools.Services
         }
 
         // This will eventually read the Startup class, to identify the location(s) of the static roots
-        public string GetStaticFilesPath(string projectRoot) => Path.Combine(projectRoot, "wwwroot");
+        public string GetStaticFilesPath(string projectRoot) => Path.Combine(projectRoot, _settings.wwwroot);
 
         public ClassDeclarationSyntax AddStaticFiles(ClassDeclarationSyntax parentClass, string path, IEnumerable<StaticFile> files)
         {
