@@ -247,7 +247,6 @@ public static partial class Links
                 }
 
                 public static string _bower_json = "~/lib/jquery-validation/.bower.json";
-                public static string LICENSE_md = "~/lib/jquery-validation/LICENSE.md";
             }
 
             [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -259,7 +258,6 @@ public static partial class Links
             }
 
             public static string _bower_json = "~/lib/jquery/.bower.json";
-            public static string LICENSE_txt = "~/lib/jquery/LICENSE.txt";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -283,7 +281,6 @@ public static partial class Links
             }
 
             public static string _bower_json = "~/lib/jquery-validation/.bower.json";
-            public static string LICENSE_md = "~/lib/jquery-validation/LICENSE.md";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
