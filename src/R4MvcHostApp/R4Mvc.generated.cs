@@ -63,12 +63,18 @@ namespace R4Mvc
             public string _Layout = "~/Views/Shared/_Layout.cshtml";
             public string _LoginPartial = "~/Views/Shared/_LoginPartial.cshtml";
             public string _ValidationScriptsPartial = "~/Views/Shared/_ValidationScriptsPartial.cshtml";
+            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+            public partial class _DisplayTemplatesClass
+            {
+                public readonly string Test = "Test";
+            }
+
             [GeneratedCode("R4Mvc", "1.0")]
             static readonly _DisplayTemplatesClass s_DisplayTemplates = new _DisplayTemplatesClass();
             [GeneratedCode("R4Mvc", "1.0")]
             public _DisplayTemplatesClass DisplayTemplates => s_DisplayTemplates;
             [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-            public partial class _DisplayTemplatesClass
+            public partial class _EditorTemplatesClass
             {
                 public readonly string Test = "Test";
             }
@@ -78,10 +84,24 @@ namespace R4Mvc
             [GeneratedCode("R4Mvc", "1.0")]
             public _EditorTemplatesClass EditorTemplates => s_EditorTemplates;
             [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-            public partial class _EditorTemplatesClass
+            public partial class _OtherTemplatesClass
             {
-                public readonly string Test = "Test";
+                public class _ViewNamesClass
+                {
+                    public readonly string Test = "Test";
+                }
+
+                [GeneratedCode("R4Mvc", "1.0")]
+                static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+                [GeneratedCode("R4Mvc", "1.0")]
+                public _ViewNamesClass ViewNames => s_ViewNames;
+                public readonly string Test = "~/Views/Shared/OtherTemplates/Test.cshtml";
             }
+
+            [GeneratedCode("R4Mvc", "1.0")]
+            static readonly _OtherTemplatesClass s_OtherTemplates = new _OtherTemplatesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _OtherTemplatesClass OtherTemplates => s_OtherTemplates;
         }
 
         [GeneratedCode("R4Mvc", "1.0")]

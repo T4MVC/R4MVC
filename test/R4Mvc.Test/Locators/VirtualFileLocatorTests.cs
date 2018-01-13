@@ -65,6 +65,7 @@ namespace R4Mvc.Test.Locators
             Assert.Collection(VirtualFileLocator.Default.GetFiles(@"D:\Project\Views", "*.cshtml", true),
                 f => Assert.Equal(@"D:\Project\Views\EditorTemplates\User.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Views\Users\EditorTemplates\User.cshtml", f),
+                f => Assert.Equal(@"D:\Project\Views\Users\Toolbars\ProToolbar.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Views\Users\Index.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Views\Users\Details.cshtml", f)
             );

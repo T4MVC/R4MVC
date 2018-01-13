@@ -27,6 +27,7 @@ namespace R4Mvc.Test.Locators
                 @"D:\Project\Controllers\UsersController.cshtml",
                 @"D:\Project\Views\EditorTemplates\User.cshtml",
                 @"D:\Project\Views\Users\EditorTemplates\User.cshtml",
+                @"D:\Project\Views\Users\Toolbars\ProToolbar.cshtml",
                 @"D:\Project\Views\Users\Index.cshtml",
                 @"D:\Project\Views\Users\Details.cshtml",
                 @"D:\Project\wwwroot\lib\jslib\core.js",

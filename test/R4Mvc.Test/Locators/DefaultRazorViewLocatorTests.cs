@@ -44,6 +44,14 @@ namespace R4Mvc.Test.Locators
                 },
                 v =>
                 {
+                    Assert.Equal("", v.AreaName);
+                    Assert.Equal("Users", v.ControllerName);
+                    Assert.Equal("ProToolbar", v.ViewName);
+                    Assert.Equal("~/Views/Users/Toolbars/ProToolbar.cshtml", v.RelativePath.ToString());
+                    Assert.Equal("Toolbars", v.TemplateKind);
+                },
+                v =>
+                {
                     Assert.Equal("Admin", v.AreaName);
                     Assert.Equal("Home", v.ControllerName);
                     Assert.Equal("Index", v.ViewName);

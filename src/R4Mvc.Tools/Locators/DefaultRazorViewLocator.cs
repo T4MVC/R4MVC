@@ -45,21 +45,11 @@ namespace R4Mvc.Tools.Locators
                         yield return GetView(file, controllerName, areaName);
                     }
 
-                    var templatesPath = Path.Combine(controllerPath, "DisplayTemplates");
-                    if (_fileLocator.DirectoryExists(templatesPath))
+                    foreach (var directory in _fileLocator.GetDirectories(controllerPath))
                     {
-                        foreach (var file in _fileLocator.GetFiles(templatesPath, "*.cshtml"))
+                        foreach (var file in _fileLocator.GetFiles(directory, "*.cshtml"))
                         {
-                            yield return GetView(file, controllerName, areaName, Path.GetFileName(templatesPath));
-                        }
-                    }
-
-                    templatesPath = Path.Combine(controllerPath, "EditorTemplates");
-                    if (_fileLocator.DirectoryExists(templatesPath))
-                    {
-                        foreach (var file in _fileLocator.GetFiles(templatesPath, "*.cshtml"))
-                        {
-                            yield return GetView(file, controllerName, areaName, Path.GetFileName(templatesPath));
+                            yield return GetView(file, controllerName, areaName, Path.GetFileName(directory));
                         }
                     }
                 }
