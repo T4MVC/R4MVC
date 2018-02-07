@@ -31,11 +31,10 @@ namespace R4Mvc.Tools.Commands
 
             // Load the project and check for compilation errors
             var workspace = MSBuildWorkspace.Create();
-            var domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var msBuildAssembly = domainAssemblies.FirstOrDefault(a => a.GetName().Name == "Microsoft.Build");
-            Console.WriteLine("MSBuild version: " + msBuildAssembly?.GetName().Version + " from " + msBuildAssembly?.Location);
+            DumpMsBuildAssemblies("clean workspace");
 
             var project = await workspace.OpenProjectAsync(projectPath);
+            DumpMsBuildAssemblies("project loaded");
             if (workspace.Diagnostics.Count > 0)
             {
                 var foundErrors = false;
@@ -81,6 +80,15 @@ namespace R4Mvc.Tools.Commands
 
             // Generate the R4Mvc.generated.cs file
             _generatorService.Generate(projectRoot, controllers);
+        }
+
+        private void DumpMsBuildAssemblies(string stage)
+        {
+            var domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var msBuildAssemblies = domainAssemblies.Where(a => a.GetName().Name.StartsWith("Microsoft.Build") || a.GetName().Name.StartsWith("Microsoft.CodeAnalysis")).ToList();
+            Console.WriteLine($"MSBuild loaded assemblies (stage: {stage}): ");
+            foreach (var assembly in msBuildAssemblies)
+                Console.WriteLine($"  {assembly.GetName().Name}: {assembly?.GetName().Version} from {assembly?.Location}");
         }
 
         public IDictionary<string, string> GenerateAreaMap(IEnumerable<ControllerDefinition> controllers)
