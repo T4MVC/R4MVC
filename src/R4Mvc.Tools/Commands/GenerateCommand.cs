@@ -31,6 +31,10 @@ namespace R4Mvc.Tools.Commands
 
             // Load the project and check for compilation errors
             var workspace = MSBuildWorkspace.Create();
+            var domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var msBuildAssembly = domainAssemblies.FirstOrDefault(a => a.GetName().Name == "Microsoft.Build");
+            Console.WriteLine("MSBuild version: " + msBuildAssembly?.GetName().Version);
+
             var project = await workspace.OpenProjectAsync(projectPath);
             if (workspace.Diagnostics.Count > 0)
             {
