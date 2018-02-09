@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using R4Mvc.Tools.CodeGen;
 using R4Mvc.Tools.Extensions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -188,25 +189,23 @@ namespace R4Mvc.Tools.Services
                 .WithAutoStringProperty("Protocol", SyntaxKind.PublicKeyword)
                 .WithAutoProperty("RouteValueDictionary", IdentifierName("RouteValueDictionary"), SyntaxKind.PublicKeyword);
 
-        private ConstructorDeclarationSyntax CreateIActionResultConstructor(string className)
-            => ConstructorDeclaration(className)
+        private ConstructorMethodBuilder CreateIActionResultConstructor(string className)
+            => new ConstructorMethodBuilder(className)
                 .WithModifiers(SyntaxKind.PublicKeyword)
-                .AddParameterListParameters(
-                    Parameter(Identifier("area")).WithType(SyntaxNodeHelpers.PredefinedStringType()),
-                    Parameter(Identifier("controller")).WithType(SyntaxNodeHelpers.PredefinedStringType()),
-                    Parameter(Identifier("action")).WithType(SyntaxNodeHelpers.PredefinedStringType()),
-                    Parameter(Identifier("protocol")).WithType(SyntaxNodeHelpers.PredefinedStringType())
-                        .WithDefault(EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression))))
-                .WithBody(
-                    Block(
-                        ExpressionStatement(
-                            InvocationExpression(
-                                SyntaxNodeHelpers.MemberAccess("this", "InitMVCT4Result"))
-                                .WithArgumentList(
-                                    IdentifierName("area"),
-                                    IdentifierName("controller"),
-                                    IdentifierName("action"),
-                                    IdentifierName("protocol")))));
+                .WithStringParameter("area")
+                .WithStringParameter("controller")
+                .WithStringParameter("action")
+                .WithStringParameter("protocol", true)
+                .WithStatement(
+                    ExpressionStatement(
+                        InvocationExpression(
+                            SyntaxNodeHelpers.MemberAccess("this", "InitMVCT4Result"))
+                            .WithArgumentList(
+                                IdentifierName("area"),
+                                IdentifierName("controller"),
+                                IdentifierName("action"),
+                                IdentifierName("protocol"))))
+                as ConstructorMethodBuilder;
 
         public ClassDeclarationSyntax ActionResultClass()
         {
@@ -214,7 +213,7 @@ namespace R4Mvc.Tools.Services
             var result = ClassDeclaration(Constants.ActionResultClass)
                 .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
                 .WithBaseTypes("ActionResult", "IR4MvcActionResult")
-                .AddMembers(constructor);
+                .AddMembers(constructor.Build());
             result = AddIActionResultProperties(result);
             return result;
         }
@@ -222,11 +221,11 @@ namespace R4Mvc.Tools.Services
         public ClassDeclarationSyntax JsonResultClass()
         {
             var constructor = CreateIActionResultConstructor(Constants.JsonResultClass)
-                .WithInitializer(ConstructorInitializer(SyntaxKind.BaseConstructorInitializer, ArgumentList(SingletonSeparatedList(Argument(LiteralExpression(SyntaxKind.NullLiteralExpression))))));
+                .WithBaseConstructorCall(p => p.Null);
             var result = ClassDeclaration(Constants.JsonResultClass)
                 .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
                 .WithBaseTypes("JsonResult", "IR4MvcActionResult")
-                .AddMembers(constructor);
+                .AddMembers(constructor.Build());
             result = AddIActionResultProperties(result);
             return result;
         }
@@ -237,7 +236,7 @@ namespace R4Mvc.Tools.Services
             var result = ClassDeclaration(Constants.ContentResultClass)
                 .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
                 .WithBaseTypes("ContentResult", "IR4MvcActionResult")
-                .AddMembers(constructor);
+                .AddMembers(constructor.Build());
             result = AddIActionResultProperties(result);
             return result;
         }
@@ -245,11 +244,11 @@ namespace R4Mvc.Tools.Services
         public ClassDeclarationSyntax RedirectResultClass()
         {
             var constructor = CreateIActionResultConstructor(Constants.RedirectResultClass)
-                .WithInitializer(ConstructorInitializer(SyntaxKind.BaseConstructorInitializer, ArgumentList(SingletonSeparatedList(Argument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(" ")))))));
+                .WithBaseConstructorCall(p => p.Space);
             var result = ClassDeclaration(Constants.RedirectResultClass)
                 .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
                 .WithBaseTypes("RedirectResult", "IR4MvcActionResult")
-                .AddMembers(constructor);
+                .AddMembers(constructor.Build());
             result = AddIActionResultProperties(result);
             return result;
         }
@@ -257,16 +256,11 @@ namespace R4Mvc.Tools.Services
         public ClassDeclarationSyntax RedirectToActionResultClass()
         {
             var constructor = CreateIActionResultConstructor(Constants.RedirectToActionResultClass)
-                .WithInitializer(ConstructorInitializer(SyntaxKind.BaseConstructorInitializer, ArgumentList(SeparatedList(new[]
-                {
-                    Argument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(" "))),
-                    Argument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(" "))),
-                    Argument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(" "))),
-                }))));
+                .WithBaseConstructorCall(p => p.Space, p => p.Space, p => p.Space);
             var result = ClassDeclaration(Constants.RedirectToActionResultClass)
                 .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
                 .WithBaseTypes("RedirectToActionResult", "IR4MvcActionResult")
-                .AddMembers(constructor);
+                .AddMembers(constructor.Build());
             result = AddIActionResultProperties(result);
             return result;
         }
@@ -274,11 +268,11 @@ namespace R4Mvc.Tools.Services
         public ClassDeclarationSyntax RedirectToRouteResultClass()
         {
             var constructor = CreateIActionResultConstructor(Constants.RedirectToRouteResultClass)
-                .WithInitializer(ConstructorInitializer(SyntaxKind.BaseConstructorInitializer, ArgumentList(SingletonSeparatedList(Argument(LiteralExpression(SyntaxKind.NullLiteralExpression))))));
+                .WithBaseConstructorCall(p => p.Null);
             var result = ClassDeclaration(Constants.RedirectToRouteResultClass)
                 .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
                 .WithBaseTypes("RedirectToRouteResult", "IR4MvcActionResult")
-                .AddMembers(constructor);
+                .AddMembers(constructor.Build());
             result = AddIActionResultProperties(result);
             return result;
         }
