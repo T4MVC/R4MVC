@@ -142,7 +142,7 @@ namespace R4Mvc.Tools.Extensions
             return Attribute(IdentifierName("GeneratedCode"), arguments);
         }
 
-        private static AttributeListSyntax GeneratedNonUserCodeAttributeList()
+        public static AttributeListSyntax GeneratedNonUserCodeAttributeList()
             => AttributeList(SeparatedList(new[] { CreateGeneratedCodeAttribute(), Attribute(IdentifierName("DebuggerNonUserCode")) }));
 
         public static MethodDeclarationSyntax WithGeneratedNonUserCodeAttributes(this MethodDeclarationSyntax node)

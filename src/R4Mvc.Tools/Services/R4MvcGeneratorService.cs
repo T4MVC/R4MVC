@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -160,7 +161,7 @@ namespace R4Mvc.Tools.Services
         public CompilationUnitSyntax NewCompilationUnit()
         {
             // Create the root node and add usings, header, pragma
-            return SyntaxFactory.CompilationUnit()
+            return CompilationUnit()
                     .WithUsings(
                         "System.CodeDom.Compiler",
                         "System.Diagnostics",
@@ -182,15 +183,10 @@ namespace R4Mvc.Tools.Services
             _filePersistService.WriteFile(contents, filePath);
         }
 
-        private ClassDeclarationSyntax AddIActionResultProperties(ClassDeclarationSyntax node)
-            => node
-                .WithAutoStringProperty("Controller", SyntaxKind.PublicKeyword)
-                .WithAutoStringProperty("Action", SyntaxKind.PublicKeyword)
-                .WithAutoStringProperty("Protocol", SyntaxKind.PublicKeyword)
-                .WithAutoProperty("RouteValueDictionary", IdentifierName("RouteValueDictionary"), SyntaxKind.PublicKeyword);
-
-        private ConstructorMethodBuilder CreateIActionResultConstructor(string className)
-            => new ConstructorMethodBuilder(className)
+        private ClassDeclarationSyntax IActionResultDerivedClass(string className, string baseClassName,
+            Func<ConstructorMethodBuilder, ConstructorMethodBuilder> constructorChange = null)
+        {
+            var constructor = new ConstructorMethodBuilder(className)
                 .WithModifiers(SyntaxKind.PublicKeyword)
                 .WithStringParameter("area")
                 .WithStringParameter("controller")
@@ -206,75 +202,41 @@ namespace R4Mvc.Tools.Services
                                 IdentifierName("action"),
                                 IdentifierName("protocol"))))
                 as ConstructorMethodBuilder;
+            if (constructorChange != null)
+                constructor = constructorChange(constructor);
+
+            var result = new ClassBuilder(className)
+                .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
+                .WithBaseTypes(baseClassName, "IR4MvcActionResult")
+                .WithConstructor(constructor.Build())
+                .WithStringProperty("Controller")
+                .WithStringProperty("Action")
+                .WithStringProperty("Protocol")
+                .WithProperty("RouteValueDictionary", "RouteValueDictionary");
+
+            return result.Build();
+        }
 
         public ClassDeclarationSyntax ActionResultClass()
-        {
-            var constructor = CreateIActionResultConstructor(Constants.ActionResultClass);
-            var result = ClassDeclaration(Constants.ActionResultClass)
-                .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
-                .WithBaseTypes("ActionResult", "IR4MvcActionResult")
-                .AddMembers(constructor.Build());
-            result = AddIActionResultProperties(result);
-            return result;
-        }
+            => IActionResultDerivedClass(Constants.ActionResultClass, "ActionResult");
 
         public ClassDeclarationSyntax JsonResultClass()
-        {
-            var constructor = CreateIActionResultConstructor(Constants.JsonResultClass)
-                .WithBaseConstructorCall(p => p.Null);
-            var result = ClassDeclaration(Constants.JsonResultClass)
-                .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
-                .WithBaseTypes("JsonResult", "IR4MvcActionResult")
-                .AddMembers(constructor.Build());
-            result = AddIActionResultProperties(result);
-            return result;
-        }
+            => IActionResultDerivedClass(Constants.JsonResultClass, "JsonResult",
+                c => c.WithBaseConstructorCall(p => p.Null));
 
         public ClassDeclarationSyntax ContentResultClass()
-        {
-            var constructor = CreateIActionResultConstructor(Constants.ContentResultClass);
-            var result = ClassDeclaration(Constants.ContentResultClass)
-                .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
-                .WithBaseTypes("ContentResult", "IR4MvcActionResult")
-                .AddMembers(constructor.Build());
-            result = AddIActionResultProperties(result);
-            return result;
-        }
+            => IActionResultDerivedClass(Constants.ContentResultClass, "ContentResult");
 
         public ClassDeclarationSyntax RedirectResultClass()
-        {
-            var constructor = CreateIActionResultConstructor(Constants.RedirectResultClass)
-                .WithBaseConstructorCall(p => p.Space);
-            var result = ClassDeclaration(Constants.RedirectResultClass)
-                .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
-                .WithBaseTypes("RedirectResult", "IR4MvcActionResult")
-                .AddMembers(constructor.Build());
-            result = AddIActionResultProperties(result);
-            return result;
-        }
+            => IActionResultDerivedClass(Constants.RedirectResultClass, "RedirectResult",
+                c => c.WithBaseConstructorCall(p => p.Space));
 
         public ClassDeclarationSyntax RedirectToActionResultClass()
-        {
-            var constructor = CreateIActionResultConstructor(Constants.RedirectToActionResultClass)
-                .WithBaseConstructorCall(p => p.Space, p => p.Space, p => p.Space);
-            var result = ClassDeclaration(Constants.RedirectToActionResultClass)
-                .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
-                .WithBaseTypes("RedirectToActionResult", "IR4MvcActionResult")
-                .AddMembers(constructor.Build());
-            result = AddIActionResultProperties(result);
-            return result;
-        }
+            => IActionResultDerivedClass(Constants.RedirectToActionResultClass, "RedirectToActionResult",
+                c => c.WithBaseConstructorCall(p => p.Space, p => p.Space, p => p.Space));
 
         public ClassDeclarationSyntax RedirectToRouteResultClass()
-        {
-            var constructor = CreateIActionResultConstructor(Constants.RedirectToRouteResultClass)
-                .WithBaseConstructorCall(p => p.Null);
-            var result = ClassDeclaration(Constants.RedirectToRouteResultClass)
-                .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
-                .WithBaseTypes("RedirectToRouteResult", "IR4MvcActionResult")
-                .AddMembers(constructor.Build());
-            result = AddIActionResultProperties(result);
-            return result;
-        }
+            => IActionResultDerivedClass(Constants.RedirectToRouteResultClass, "RedirectToRouteResult",
+                c => c.WithBaseConstructorCall(p => p.Null));
     }
 }
