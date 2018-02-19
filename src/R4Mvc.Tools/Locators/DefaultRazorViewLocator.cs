@@ -12,7 +12,7 @@ namespace R4Mvc.Tools.Locators
             _fileLocator = fileLocator;
         }
 
-        public IEnumerable<View> Find(string projectRoot)
+        public IEnumerable<View> Find(string projectRoot, IEnumerable<ControllerDefinition> controllers)
         {
             foreach (var view in FindViews(projectRoot, string.Empty))
                 yield return view;
@@ -28,6 +28,7 @@ namespace R4Mvc.Tools.Locators
                 }
             }
         }
+
 
         private IEnumerable<View> FindViews(string root, string areaName)
         {

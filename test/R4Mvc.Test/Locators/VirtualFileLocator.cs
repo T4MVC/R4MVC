@@ -36,6 +36,16 @@ namespace R4Mvc.Test.Locators
                 @"D:\Project\wwwroot\favicon.ico",
             });
 
+        public static VirtualFileLocator FeatureFolders
+            => new VirtualFileLocator(new[]
+            {
+                @"D:\Project\Areas\Features\Home\HomeController.cs",
+                @"D:\Project\Areas\Features\Home\Index.cshtml",
+
+                @"D:\Project\AreaWithFeatures\Home\HomeController.cs",
+                @"D:\Project\AreaWithFeatures\Home\Index.cshtml",
+            });
+
         public bool DirectoryExists(string path)
             => _paths.Any(p => p.StartsWith(path.TrimEnd('\\') + "\\"));
 

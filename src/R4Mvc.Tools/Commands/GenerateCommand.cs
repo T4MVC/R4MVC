@@ -54,7 +54,7 @@ namespace R4Mvc.Tools.Commands
 
             // Analyse the controllers in the project (updating them to be partial), as well as locate all the view files
             var controllers = _controllerRewriter.RewriteControllers(compilation);
-            var allViewFiles = _viewLocators.SelectMany(x => x.Find(projectRoot));
+            var allViewFiles = _viewLocators.SelectMany(x => x.Find(projectRoot, controllers.AsEnumerable()));
 
             // Assign view files to controllers
             foreach (var views in allViewFiles.GroupBy(v => new { v.AreaName, v.ControllerName }))

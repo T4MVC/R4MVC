@@ -81,7 +81,10 @@ namespace R4MvcHostApp.AreaWithFeatures.Home
             public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
+                public readonly string Index = "Index";
             }
+
+            public string Index = "~\\AreaWithFeatures\\Home\\Index.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]

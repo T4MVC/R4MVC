@@ -33,7 +33,6 @@ public static partial class MVC
     public static readonly R4MvcHostApp.Controllers.HomeController Home = new R4MvcHostApp.Controllers.R4MVC_HomeController();
     public static readonly R4MvcHostApp.Controllers.ManageController Manage = new R4MvcHostApp.Controllers.R4MVC_ManageController();
     public static readonly R4Mvc.SharedController Shared = new R4Mvc.SharedController();
-    public static readonly R4Mvc.ViewsController Views = new R4Mvc.ViewsController();
 }
 
 namespace R4Mvc
@@ -111,31 +110,6 @@ namespace R4Mvc
             static readonly _OtherTemplatesClass s_OtherTemplates = new _OtherTemplatesClass();
             [GeneratedCode("R4Mvc", "1.0")]
             public _OtherTemplatesClass OtherTemplates => s_OtherTemplates;
-        }
-
-        [GeneratedCode("R4Mvc", "1.0")]
-        static readonly ViewsClass s_Views = new ViewsClass();
-        [GeneratedCode("R4Mvc", "1.0")]
-        public ViewsClass Views => s_Views;
-    }
-
-    public partial class ViewsController
-    {
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public class ViewsClass
-        {
-            [GeneratedCode("R4Mvc", "1.0")]
-            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
-            public _ViewNamesClass ViewNames => s_ViewNames;
-            public class _ViewNamesClass
-            {
-                public readonly string _ViewImports = "_ViewImports";
-                public readonly string _ViewStart = "_ViewStart";
-            }
-
-            public string _ViewImports = "~\\Views\\_ViewImports.cshtml";
-            public string _ViewStart = "~\\Views\\_ViewStart.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
