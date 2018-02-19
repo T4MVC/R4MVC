@@ -20,11 +20,20 @@ public static partial class MVC
     static readonly R4Mvc.AdminAreaClass s_AdminArea = new R4Mvc.AdminAreaClass();
     [GeneratedCode("R4Mvc", "1.0")]
     public static R4Mvc.AdminAreaClass AdminArea => s_AdminArea;
+    [GeneratedCode("R4Mvc", "1.0")]
+    static readonly R4Mvc.AreaWithFeaturesAreaClass s_AreaWithFeatures = new R4Mvc.AreaWithFeaturesAreaClass();
+    [GeneratedCode("R4Mvc", "1.0")]
+    public static R4Mvc.AreaWithFeaturesAreaClass AreaWithFeatures => s_AreaWithFeatures;
+    [GeneratedCode("R4Mvc", "1.0")]
+    static readonly R4Mvc.FeaturesAreaClass s_Features = new R4Mvc.FeaturesAreaClass();
+    [GeneratedCode("R4Mvc", "1.0")]
+    public static R4Mvc.FeaturesAreaClass Features => s_Features;
     public static readonly R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.R4MVC_AccountController();
     public static readonly R4MvcHostApp.Controllers.AdminController Admin = new R4MvcHostApp.Controllers.R4MVC_AdminController();
     public static readonly R4MvcHostApp.Controllers.HomeController Home = new R4MvcHostApp.Controllers.R4MVC_HomeController();
     public static readonly R4MvcHostApp.Controllers.ManageController Manage = new R4MvcHostApp.Controllers.R4MVC_ManageController();
     public static readonly R4Mvc.SharedController Shared = new R4Mvc.SharedController();
+    public static readonly R4Mvc.ViewsController Views = new R4Mvc.ViewsController();
 }
 
 namespace R4Mvc
@@ -110,6 +119,31 @@ namespace R4Mvc
         public ViewsClass Views => s_Views;
     }
 
+    public partial class ViewsController
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ViewsClass
+        {
+            [GeneratedCode("R4Mvc", "1.0")]
+            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            [GeneratedCode("R4Mvc", "1.0")]
+            public _ViewNamesClass ViewNames => s_ViewNames;
+            public class _ViewNamesClass
+            {
+                public readonly string _ViewImports = "_ViewImports";
+                public readonly string _ViewStart = "_ViewStart";
+            }
+
+            public string _ViewImports = "~\\Views\\_ViewImports.cshtml";
+            public string _ViewStart = "~\\Views\\_ViewStart.cshtml";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ViewsClass s_Views = new ViewsClass();
+        [GeneratedCode("R4Mvc", "1.0")]
+        public ViewsClass Views => s_Views;
+    }
+
     public partial class AdminArea_SharedController
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -140,6 +174,20 @@ namespace R4Mvc
         public readonly R4MvcHostApp.Areas.Admin.Controllers.PagesController Pages = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_PagesController();
         public readonly R4MvcHostApp.Areas.Admin.Controllers.UsersController Users = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_UsersController();
         public readonly R4Mvc.AdminArea_SharedController Shared = new R4Mvc.AdminArea_SharedController();
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class AreaWithFeaturesAreaClass
+    {
+        public readonly string Name = "AreaWithFeatures";
+        public readonly R4MvcHostApp.AreaWithFeatures.Home.HomeController Home = new R4MvcHostApp.AreaWithFeatures.Home.R4MVC_HomeController();
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class FeaturesAreaClass
+    {
+        public readonly string Name = "Features";
+        public readonly R4MvcHostApp.Areas.Features.Home.HomeController Home = new R4MvcHostApp.Areas.Features.Home.R4MVC_HomeController();
     }
 }
 
