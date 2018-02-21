@@ -1,22 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.Extensions.Configuration;
 using R4Mvc.Tools.Extensions;
 using R4Mvc.Tools.Locators;
 using R4Mvc.Tools.Services;
 
 namespace R4Mvc.Tools.Commands
 {
-    public class GenerateCommand
+    [Description(Description)]
+    public class GenerateCommand : ICommand
     {
+        public const string Summary = "Run the R4Mvc generator against the selected project";
+        private const string Description = Summary + @"
+Usage: generate [project-path] [options]
+project-path:
+    Path to the project's .cshtml file";
+
         private readonly IControllerRewriterService _controllerRewriter;
         private readonly IEnumerable<IViewLocator> _viewLocators;
         private readonly R4MvcGeneratorService _generatorService;
         private readonly Settings _settings;
+        private bool _debugMsBuild = false;
         public GenerateCommand(IControllerRewriterService controllerRewriter, IEnumerable<IViewLocator> viewLocators, R4MvcGeneratorService generatorService, Settings settings)
         {
             _controllerRewriter = controllerRewriter;
@@ -25,8 +35,10 @@ namespace R4Mvc.Tools.Commands
             _settings = settings;
         }
 
-        public async Task Run(string projectPath)
+        public async Task Run(string projectPath, IConfiguration configuration)
         {
+            if (configuration["debugmsbuild"] != null)
+                _debugMsBuild = true;
             var projectRoot = Path.GetDirectoryName(projectPath);
 
             // Load the project and check for compilation errors
@@ -84,8 +96,12 @@ namespace R4Mvc.Tools.Commands
 
         private void DumpMsBuildAssemblies(string stage)
         {
+            if (!_debugMsBuild)
+                return;
+
             var domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             var msBuildAssemblies = domainAssemblies.Where(a => a.GetName().Name.StartsWith("Microsoft.Build") || a.GetName().Name.StartsWith("Microsoft.CodeAnalysis")).ToList();
+            Console.WriteLine();
             Console.WriteLine($"MSBuild loaded assemblies (stage: {stage}): ");
             foreach (var assembly in msBuildAssemblies)
                 Console.WriteLine($"  {assembly.GetName().Name}: {assembly?.GetName().Version} from {assembly?.Location}");
