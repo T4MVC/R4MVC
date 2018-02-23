@@ -20,6 +20,10 @@ public static partial class MVC
     static readonly R4Mvc.AdminAreaClass s_AdminArea = new R4Mvc.AdminAreaClass();
     [GeneratedCode("R4Mvc", "1.0")]
     public static R4Mvc.AdminAreaClass AdminArea => s_AdminArea;
+    [GeneratedCode("R4Mvc", "1.0")]
+    static readonly R4Mvc.FeatureAreaClass s_Feature = new R4Mvc.FeatureAreaClass();
+    [GeneratedCode("R4Mvc", "1.0")]
+    public static R4Mvc.FeatureAreaClass Feature => s_Feature;
     public static readonly R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.R4MVC_AccountController();
     public static readonly R4MvcHostApp.Controllers.AdminController Admin = new R4MvcHostApp.Controllers.R4MVC_AdminController();
     public static readonly R4MvcHostApp.Controllers.HomeController Home = new R4MvcHostApp.Controllers.R4MVC_HomeController();
@@ -140,6 +144,13 @@ namespace R4Mvc
         public readonly R4MvcHostApp.Areas.Admin.Controllers.PagesController Pages = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_PagesController();
         public readonly R4MvcHostApp.Areas.Admin.Controllers.UsersController Users = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_UsersController();
         public readonly R4Mvc.AdminArea_SharedController Shared = new R4Mvc.AdminArea_SharedController();
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class FeatureAreaClass
+    {
+        public readonly string Name = "Feature";
+        public readonly R4MvcHostApp.Feature.Home.HomeController Home = new R4MvcHostApp.Feature.Home.R4MVC_HomeController();
     }
 }
 
@@ -293,6 +304,15 @@ public static partial class Links
     }
 
     public static string favicon_ico = "~/favicon.ico";
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public static partial class Feature
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public static partial class Home
+        {
+            public static string JavaScript_js = "~/Feature/Home/JavaScript.js";
+        }
+    }
 }
 
 internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult : ActionResult, IR4MvcActionResult

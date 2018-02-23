@@ -30,6 +30,15 @@ namespace R4Mvc.Tools.Services
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes();
             linksClass = AddStaticFiles(linksClass, string.Empty, staticfiles);
+
+            foreach (var path in _settings.AbsoluteStaticFilesPaths)
+            {
+                staticfiles = _staticFileLocators.SelectMany(x => x.Find(Path.Combine(projectRoot)))
+                    .Where(r => r.Container.StartsWith(path))
+                    .ToArray();
+                linksClass = AddStaticFiles(linksClass, "", staticfiles);
+            }
+
             return linksClass;
         }
 

@@ -1,3 +1,4 @@
 ﻿{
-  "ExcludedStaticFileExtensions": [ ".txt", ".md" ]
+  "ExcludedStaticFileExtensions": [ ".txt", ".md", ".cs", ".cshtml" ],
+  "AbsoluteStaticFilesPaths" :  ["Feature"]
 }
