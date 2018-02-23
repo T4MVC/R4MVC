@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.IO;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace R4Mvc.Tools.Extensions
@@ -29,6 +30,15 @@ namespace R4Mvc.Tools.Extensions
                 name = "_" + name;
             }
             return name;
+        }
+
+        public static string GetRelativePath(this string path, string rootPath)
+        {
+            path = Path.GetFullPath(path);
+            rootPath = Path.GetFullPath(rootPath);
+            if (!path.StartsWith(rootPath))
+                return path;
+            return path.Substring(rootPath.Length);
         }
     }
 }

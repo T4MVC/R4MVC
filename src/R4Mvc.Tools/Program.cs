@@ -92,10 +92,12 @@ namespace R4Mvc.Tools
             services.AddTransient(sc => sc.GetService<IOptions<Settings>>().Value);
 
             services.AddTransient<GenerateCommand, GenerateCommand>();
+            services.AddTransient<RemoveCommand, RemoveCommand>();
 
             services.AddTransient<IViewLocator, DefaultRazorViewLocator>();
             services.AddTransient<IStaticFileLocator, DefaultStaticFileLocator>();
             services.AddTransient<IFileLocator, PhysicalFileLocator>();
+            services.AddTransient<IGeneratedFileTesterService, GeneratedFileTesterService>();
             services.AddTransient<IStaticFileGeneratorService, StaticFileGeneratorService>();
             services.AddTransient<IControllerRewriterService, ControllerRewriterService>();
             services.AddTransient<IControllerGeneratorService, ControllerGeneratorService>();

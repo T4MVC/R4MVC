@@ -26,13 +26,15 @@ project-path:
         private readonly IEnumerable<IViewLocator> _viewLocators;
         private readonly R4MvcGeneratorService _generatorService;
         private readonly Settings _settings;
+        private readonly IGeneratedFileTesterService _generatedFileTesterService;
         private bool _debugMsBuild = false;
-        public GenerateCommand(IControllerRewriterService controllerRewriter, IEnumerable<IViewLocator> viewLocators, R4MvcGeneratorService generatorService, Settings settings)
+        public GenerateCommand(IControllerRewriterService controllerRewriter, IEnumerable<IViewLocator> viewLocators, R4MvcGeneratorService generatorService, Settings settings, IGeneratedFileTesterService generatedFileTesterService)
         {
             _controllerRewriter = controllerRewriter;
             _viewLocators = viewLocators;
             _generatorService = generatorService;
             _settings = settings;
+            _generatedFileTesterService = generatedFileTesterService;
         }
 
         public async Task Run(string projectPath, IConfiguration configuration)
@@ -92,6 +94,24 @@ project-path:
 
             // Generate the R4Mvc.generated.cs file
             _generatorService.Generate(projectRoot, controllers);
+
+            // Cleanup old generated files
+            var generatedFiles = Directory.GetFiles(projectRoot, "*.generated.cs", SearchOption.AllDirectories);
+            foreach (var file in generatedFiles)
+            {
+                if (File.Exists(file.Replace(".generated.cs", ".cs")) ||
+                    string.Equals(Constants.R4MvcFileName, Path.GetFileName(file)))
+                    continue;
+
+                using (var fileStream = File.OpenRead(file))
+                {
+                    if (await _generatedFileTesterService.IsGenerated(fileStream))
+                    {
+                        Console.WriteLine("Deleting " + file.GetRelativePath(projectRoot));
+                        File.Delete(file);
+                    }
+                }
+            }
         }
 
         private void DumpMsBuildAssemblies(string stage)

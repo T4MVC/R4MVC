@@ -17,6 +17,10 @@ namespace R4Mvc.Tools.Commands
                     args = args.Skip(1).ToArray();
                     return typeof(GenerateCommand);
 
+                case "remove":
+                    args = args.Skip(1).ToArray();
+                    return typeof(RemoveCommand);
+
                 default:
                     return null;
             }
@@ -27,6 +31,7 @@ namespace R4Mvc.Tools.Commands
             Console.WriteLine("Usage: dotnet r4mvc {command} [arguments]");
             Console.WriteLine("Available commands:");
             Console.WriteLine("  generate   " + GenerateCommand.Summary);
+            Console.WriteLine("  remove     " + RemoveCommand.Summary);
         }
 
         public static void DisplayHelp(Type commandType)
