@@ -14,6 +14,7 @@ namespace R4Mvc.Tools.CodeGen
         private SyntaxKind[] _modifiers = null;
         private IList<ParameterSyntax> _parameters = new List<ParameterSyntax>();
         private IList<ExpressionStatementSyntax> _statements = new List<ExpressionStatementSyntax>();
+        private bool _useGeneratedAttributes = false;
 
         protected MethodBuilder() { }
         public MethodBuilder(string name, string returnType = null)
@@ -30,11 +31,24 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
+        public MethodBuilder WithGeneratedNonUserCodeAttributes()
+        {
+            _useGeneratedAttributes = true;
+            return this;
+        }
+
         public MethodBuilder WithStringParameter(string name, bool defaultsToNull = false)
         {
             var parameter = Parameter(Identifier(name)).WithType(SyntaxNodeHelpers.PredefinedStringType());
             if (defaultsToNull)
                 parameter = parameter.WithDefault(EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression)));
+            _parameters.Add(parameter);
+            return this;
+        }
+
+        public MethodBuilder WithParameter(string name, string type)
+        {
+            var parameter = Parameter(Identifier(name)).WithType(ParseTypeName(type));
             _parameters.Add(parameter);
             return this;
         }
@@ -54,8 +68,10 @@ namespace R4Mvc.Tools.CodeGen
                         method = method.WithModifiers(_modifiers);
                     if (_parameters.Count > 0)
                         method = method.AddParameterListParameters(_parameters.ToArray());
-                    if (_statements.Count > 0)
-                        method = method.WithBody(Block(_statements.ToArray()));
+                    if (_useGeneratedAttributes)
+                        method = method.AddAttributeLists(SyntaxNodeHelpers.GeneratedNonUserCodeAttributeList());
+
+                    method = method.WithBody(Block(_statements.ToArray()));
                     return method;
 
                 case ConstructorDeclarationSyntax constructor:
@@ -63,8 +79,10 @@ namespace R4Mvc.Tools.CodeGen
                         constructor = constructor.WithModifiers(_modifiers);
                     if (_parameters.Count > 0)
                         constructor = constructor.AddParameterListParameters(_parameters.ToArray());
-                    if (_statements.Count > 0)
-                        constructor = constructor.WithBody(Block(_statements.ToArray()));
+                    if (_useGeneratedAttributes)
+                        constructor = constructor.AddAttributeLists(SyntaxNodeHelpers.GeneratedNonUserCodeAttributeList());
+
+                    constructor = constructor.WithBody(Block(_statements.ToArray()));
                     return constructor;
 
                 default:

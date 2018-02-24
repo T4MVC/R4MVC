@@ -186,33 +186,32 @@ namespace R4Mvc.Tools.Services
         private ClassDeclarationSyntax IActionResultDerivedClass(string className, string baseClassName,
             Func<ConstructorMethodBuilder, ConstructorMethodBuilder> constructorChange = null)
         {
-            var constructor = new ConstructorMethodBuilder(className)
-                .WithModifiers(SyntaxKind.PublicKeyword)
-                .WithStringParameter("area")
-                .WithStringParameter("controller")
-                .WithStringParameter("action")
-                .WithStringParameter("protocol", true)
-                .WithStatement(
-                    ExpressionStatement(
-                        InvocationExpression(
-                            SyntaxNodeHelpers.MemberAccess("this", "InitMVCT4Result"))
-                            .WithArgumentList(
-                                IdentifierName("area"),
-                                IdentifierName("controller"),
-                                IdentifierName("action"),
-                                IdentifierName("protocol"))))
-                as ConstructorMethodBuilder;
-            if (constructorChange != null)
-                constructor = constructorChange(constructor);
-
-            var result = new ClassBuilder(className)
+            var result = new ClassBuilder(className)                                    // internal partial class {className}
                 .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
-                .WithBaseTypes(baseClassName, "IR4MvcActionResult")
-                .WithConstructor(constructor.Build())
-                .WithStringProperty("Controller")
-                .WithStringProperty("Action")
-                .WithStringProperty("Protocol")
-                .WithProperty("RouteValueDictionary", "RouteValueDictionary");
+                .WithBaseTypes(baseClassName, "IR4MvcActionResult")                     // : {baseClassName}, IR4MvcActionResult
+                .WithConstructor(constructor =>
+                {
+                    constructor
+                        .WithModifiers(SyntaxKind.PublicKeyword)                        // public ctor(
+                        .WithStringParameter("area")                                    //  string area,
+                        .WithStringParameter("controller")                              //  string controller,
+                        .WithStringParameter("action")                                  //  string action,
+                        .WithStringParameter("protocol", defaultsToNull: true)          //  string protocol = null)
+                        .WithStatement(
+                            ExpressionStatement(
+                                InvocationExpression(
+                                    SyntaxNodeHelpers.MemberAccess("this", "InitMVCT4Result"))  // this.InitMVCT4Result(
+                                    .WithArgumentList(
+                                        IdentifierName("area"),                                 //   area,
+                                        IdentifierName("controller"),                           //   controller,
+                                        IdentifierName("action"),                               //   action,
+                                        IdentifierName("protocol"))));                          //   protocol);
+                    constructorChange?.Invoke(constructor);
+                })
+                .WithStringProperty("Controller")                                       // public string Controller { get; set; }
+                .WithStringProperty("Action")                                           // public string Action { get; set; }
+                .WithStringProperty("Protocol")                                         // public string Protocol { get; set; }
+                .WithProperty("RouteValueDictionary", "RouteValueDictionary");          // public RouteValueDictionary RouteValueDictionary { get; set; }
 
             return result.Build();
         }
@@ -222,21 +221,21 @@ namespace R4Mvc.Tools.Services
 
         public ClassDeclarationSyntax JsonResultClass()
             => IActionResultDerivedClass(Constants.JsonResultClass, "JsonResult",
-                c => c.WithBaseConstructorCall(p => p.Null));
+                c => c.WithBaseConstructorCall(p => p.Null));                           // ctor : base(null)
 
         public ClassDeclarationSyntax ContentResultClass()
             => IActionResultDerivedClass(Constants.ContentResultClass, "ContentResult");
 
         public ClassDeclarationSyntax RedirectResultClass()
             => IActionResultDerivedClass(Constants.RedirectResultClass, "RedirectResult",
-                c => c.WithBaseConstructorCall(p => p.Space));
+                c => c.WithBaseConstructorCall(p => p.Space));                          // ctor : base(" ")
 
         public ClassDeclarationSyntax RedirectToActionResultClass()
             => IActionResultDerivedClass(Constants.RedirectToActionResultClass, "RedirectToActionResult",
-                c => c.WithBaseConstructorCall(p => p.Space, p => p.Space, p => p.Space));
+                c => c.WithBaseConstructorCall(p => p.Space, p => p.Space, p => p.Space));  // ctor : base(" ", " ", " ")
 
         public ClassDeclarationSyntax RedirectToRouteResultClass()
             => IActionResultDerivedClass(Constants.RedirectToRouteResultClass, "RedirectToRouteResult",
-                c => c.WithBaseConstructorCall(p => p.Null));
+                c => c.WithBaseConstructorCall(p => p.Null));                           // ctor : base(null)
     }
 }

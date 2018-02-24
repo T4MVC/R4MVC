@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using R4Mvc.Tools.CodeGen;
 using R4Mvc.Tools.Extensions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static R4Mvc.Tools.Extensions.SyntaxNodeHelpers;
@@ -59,11 +60,9 @@ namespace R4Mvc.Tools.Services
         {
             // build controller partial class node 
             // add a default constructor if there are some but none are zero length
-            var genControllerClass = ClassDeclaration(controller.Symbol.Name)
-                .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword);
-            var controllerTypeParams = controller.Symbol.TypeParameters.Select(tp => TypeParameter(tp.Name)).ToArray();
-            if (controllerTypeParams.Length > 0)
-                genControllerClass = genControllerClass.AddTypeParameterListParameters(controllerTypeParams);
+            var genControllerClass2 = new ClassBuilder(controller.Symbol.Name)              // public partial {controllerClass}
+                .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                .WithTypeParameters(controller.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()); // optional <T1, T2, …>
 
             var gotCustomConstructors = controller.Symbol.Constructors
                 .Where(c => c.DeclaredAccessibility == Accessibility.Public)
@@ -71,10 +70,16 @@ namespace R4Mvc.Tools.Services
                 .Where(c => !c.IsImplicitlyDeclared)
                 .Any();
             if (!gotCustomConstructors)
-            {
-                genControllerClass = genControllerClass.WithDefaultConstructor(true, SyntaxKind.PublicKeyword);
-            }
-            genControllerClass = genControllerClass.WithDummyConstructor(true, SyntaxKind.ProtectedKeyword);
+                genControllerClass2.WithConstructor(c => c                                  // public ctor() { }
+                    .WithModifiers(SyntaxKind.PublicKeyword)
+                    .WithGeneratedNonUserCodeAttributes());                                 // [GeneratedCode, DebuggerNonUserCode]
+            genControllerClass2.WithConstructor(c => c                                      // public ctor(Dummy d) {}
+                .WithModifiers(SyntaxKind.ProtectedKeyword)
+                .WithGeneratedNonUserCodeAttributes()                                       // [GeneratedCode, DebuggerNonUserCode]
+                .WithParameter("d", Constants.DummyClass));
+
+            var genControllerClass = genControllerClass2.Build();
+
             genControllerClass = AddRedirectMethods(genControllerClass);
 
             // add all method stubs, TODO criteria for this: only public virtual actionresults?

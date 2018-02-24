@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
+﻿using System;
+using System.Linq;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using R4Mvc.Tools.Extensions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -24,7 +26,15 @@ namespace R4Mvc.Tools.CodeGen
 
         public ClassBuilder WithBaseTypes(params string[] classNames)
         {
-            _class = _class.WithBaseTypes(classNames);
+            if (classNames.Length > 0)
+                _class = _class.AddBaseListTypes(classNames.Select(c => SimpleBaseType(ParseTypeName(c))).ToArray<BaseTypeSyntax>());
+            return this;
+        }
+
+        public ClassBuilder WithTypeParameters(params string[] typeParams)
+        {
+            if (typeParams.Length > 0)
+                _class = _class.AddTypeParameterListParameters(typeParams.Select(tp => TypeParameter(tp)).ToArray());
             return this;
         }
 
@@ -35,7 +45,13 @@ namespace R4Mvc.Tools.CodeGen
         }
 
         public ClassBuilder WithMethod(MemberDeclarationSyntax method) => WithMember(method);
-        public ClassBuilder WithConstructor(MemberDeclarationSyntax method) => WithMember(method);
+        public ClassBuilder WithConstructor(Action<ConstructorMethodBuilder> constructorOptions)
+        {
+            var constructor = new ConstructorMethodBuilder(_className);
+            constructorOptions(constructor);
+            WithMember(constructor.Build());
+            return this;
+        }
 
         public ClassBuilder WithGeneratedNonUserCodeAttributes()
         {
