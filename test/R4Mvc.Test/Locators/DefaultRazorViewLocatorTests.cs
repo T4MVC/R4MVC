@@ -1,4 +1,5 @@
-﻿using R4Mvc.Tools.Locators;
+﻿using R4Mvc.Tools;
+using R4Mvc.Tools.Locators;
 using Xunit;
 
 namespace R4Mvc.Test.Locators
@@ -8,7 +9,7 @@ namespace R4Mvc.Test.Locators
         [Fact]
         public void BasicProject()
         {
-            var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default);
+            var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default, new Settings());
             Assert.Collection(locator.Find(@"D:\Project"),
                 v =>
                 {
@@ -80,7 +81,7 @@ namespace R4Mvc.Test.Locators
         [Fact]
         public void AreaAsProjectPath()
         {
-            var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default);
+            var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default, new Settings());
             Assert.Collection(locator.Find(@"D:\Project\Areas\Admin"),
                 v =>
                 {
@@ -117,8 +118,64 @@ namespace R4Mvc.Test.Locators
         [InlineData(@"D:\Project\Areas")]
         public void WrongProjectPaths(string path)
         {
-            var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default);
+            var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default, new Settings());
             Assert.Empty(locator.Find(path));
+        }
+
+        [Fact]
+        public void FeatureFolders_Disabled()
+        {
+            var locator = new DefaultRazorViewLocator(VirtualFileLocator.FeaturesProj, new Settings());
+            Assert.Collection(locator.Find(@"D:\Project"),
+                v =>
+                {
+                    Assert.Equal("", v.AreaName);
+                    Assert.Equal("Home", v.ControllerName);
+                    Assert.Equal("Index", v.ViewName);
+                    Assert.Equal("~/Views/Home/Index.cshtml", v.RelativePath.ToString());
+                    Assert.Null(v.TemplateKind);
+                }
+            );
+        }
+
+        [Fact]
+        public void FeatureFolders_Enabled()
+        {
+            var locator = new DefaultRazorViewLocator(VirtualFileLocator.FeaturesProj, new Settings { FeatureFolders = new Settings.FeatureFoldersClass { Enabled = true } });
+            Assert.Collection(locator.Find(@"D:\Project"),
+                v =>
+                {
+                    Assert.Equal("", v.AreaName);
+                    Assert.Equal("Users", v.ControllerName);
+                    Assert.Equal("Index", v.ViewName);
+                    Assert.Equal("~/Features/Users/Index.cshtml", v.RelativePath.ToString());
+                    Assert.Null(v.TemplateKind);
+                },
+                v =>
+                {
+                    Assert.Equal("", v.AreaName);
+                    Assert.Equal("Users", v.ControllerName);
+                    Assert.Equal("Details", v.ViewName);
+                    Assert.Equal("~/Features/Users/Details.cshtml", v.RelativePath.ToString());
+                    Assert.Null(v.TemplateKind);
+                },
+                v =>
+                {
+                    Assert.Equal("Admin", v.AreaName);
+                    Assert.Equal("Home", v.ControllerName);
+                    Assert.Equal("Index", v.ViewName);
+                    Assert.Equal("~/Areas/Admin/Features/Home/Index.cshtml", v.RelativePath.ToString());
+                    Assert.Null(v.TemplateKind);
+                },
+                v =>
+                {
+                    Assert.Equal("", v.AreaName);
+                    Assert.Equal("Home", v.ControllerName);
+                    Assert.Equal("Index", v.ViewName);
+                    Assert.Equal("~/Views/Home/Index.cshtml", v.RelativePath.ToString());
+                    Assert.Null(v.TemplateKind);
+                }
+            );
         }
     }
 }
