@@ -1,3 +1,6 @@
 ﻿{
-  "ExcludedStaticFileExtensions": [ ".txt", ".md" ]
+  "ExcludedStaticFileExtensions": [ ".txt", ".md" ],
+  "FeatureFolders": {
+    "Enabled": true
+  }
 }

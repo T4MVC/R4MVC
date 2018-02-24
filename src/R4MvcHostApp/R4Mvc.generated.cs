@@ -22,6 +22,7 @@ public static partial class MVC
     public static R4Mvc.AdminAreaClass AdminArea => s_AdminArea;
     public static readonly R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.R4MVC_AccountController();
     public static readonly R4MvcHostApp.Controllers.AdminController Admin = new R4MvcHostApp.Controllers.R4MVC_AdminController();
+    public static readonly R4MvcHostApp.Features.Calculator.CalculatorController Calculator = new R4MvcHostApp.Features.Calculator.R4MVC_CalculatorController();
     public static readonly R4MvcHostApp.Controllers.HomeController Home = new R4MvcHostApp.Controllers.R4MVC_HomeController();
     public static readonly R4MvcHostApp.Controllers.ManageController Manage = new R4MvcHostApp.Controllers.R4MVC_ManageController();
     public static readonly R4Mvc.SharedController Shared = new R4Mvc.SharedController();
@@ -138,6 +139,7 @@ namespace R4Mvc
     {
         public readonly string Name = "Admin";
         public readonly R4MvcHostApp.Areas.Admin.Controllers.PagesController Pages = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_PagesController();
+        public readonly R4MvcHostApp.Areas.Admin.Features.TaxCalculator.TaxCalculatorController TaxCalculator = new R4MvcHostApp.Areas.Admin.Features.TaxCalculator.R4MVC_TaxCalculatorController();
         public readonly R4MvcHostApp.Areas.Admin.Controllers.UsersController Users = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_UsersController();
         public readonly R4Mvc.AdminArea_SharedController Shared = new R4Mvc.AdminArea_SharedController();
     }
