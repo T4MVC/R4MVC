@@ -117,7 +117,7 @@ namespace R4Mvc.Tools.Services
                         RedirectToActionResultClass(),
                         RedirectToRouteResultClass())
                     .AddMembers(generatedControllers.ToArray<MemberDeclarationSyntax>());
-            Console.WriteLine("Generating " + Path.PathSeparator + Constants.R4MvcFileName);
+            Console.WriteLine("Generating " + Path.DirectorySeparatorChar + Constants.R4MvcFileName);
             CompleteAndWriteFile(r4mvcNode, Path.Combine(projectRoot, Constants.R4MvcFileName));
         }
 
