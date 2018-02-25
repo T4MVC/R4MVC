@@ -78,38 +78,26 @@ namespace R4Mvc.Tools.Services
                 .WithGeneratedNonUserCodeAttributes()                                       // [GeneratedCode, DebuggerNonUserCode]
                 .WithParameter("d", Constants.DummyClass));
 
-            var genControllerClass = genControllerClass2.Build();
+            AddRedirectMethods(genControllerClass2);
+            AddParameterlessMethods(genControllerClass2, controller.Symbol);
 
-            genControllerClass = AddRedirectMethods(genControllerClass);
-
-            // add all method stubs, TODO criteria for this: only public virtual actionresults?
-            // add subclasses, fields, properties, constants for action names
-            genControllerClass = AddParameterlessMethods(genControllerClass, controller.Symbol);
             var actionsExpression = controller.AreaKey != null
                 ? SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix + "." + controller.AreaKey, controller.Name)
                 : SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix, controller.Name);
+            genControllerClass2
+                .WithExpressionProperty("Actions", controller.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
+                .WithStringField("Area", controller.Area, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
+                .WithStringField("Name", controller.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
+                .WithStringField("NameConst", controller.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
+                .WithStaticFieldBackedProperty("ActionNames", "ActionNamesClass", SyntaxKind.PublicKeyword);
+
+
+            var genControllerClass = genControllerClass2.Build();
+
+            // add all method stubs, TODO criteria for this: only public virtual actionresults?
+            // add subclasses, fields, properties, constants for action names
             genControllerClass =
                 genControllerClass
-                    .WithProperty("Actions", controller.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
-                    .WithStringField(
-                        "Area",
-                        controller.Area,
-                        true,
-                        SyntaxKind.PublicKeyword,
-                        SyntaxKind.ReadOnlyKeyword)
-                    .WithStringField(
-                        "Name",
-                        controller.Name,
-                        true,
-                        SyntaxKind.PublicKeyword,
-                        SyntaxKind.ReadOnlyKeyword)
-                    .WithStringField(
-                        "NameConst",
-                        controller.Name,
-                        true,
-                        SyntaxKind.PublicKeyword,
-                        SyntaxKind.ConstKeyword)
-                    .WithStaticFieldBackedProperty("ActionNames", "ActionNamesClass", SyntaxKind.PublicKeyword)
                     .WithActionNameClass(controller.Symbol)
                     .WithActionConstantsClass(controller.Symbol)
                     .WithViewsClass(controller.Name, controller.Area, controller.Views);
@@ -132,89 +120,50 @@ namespace R4Mvc.Tools.Services
             return r4ControllerClass;
         }
 
-        private ClassDeclarationSyntax AddRedirectMethods(ClassDeclarationSyntax node)
+        private void AddRedirectMethods(ClassBuilder genControllerClass)
         {
-            var methods = new[]
-            {
-                MethodDeclaration(IdentifierName("RedirectToRouteResult"), Identifier("RedirectToAction"))
+            genControllerClass
+                .WithMethod("RedirectToAction", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
-                    .AddParameterListParameters(
-                        Parameter(Identifier("result")).WithType(IdentifierName("IActionResult")))
-                    .WithBody(
-                        Block(
-                            // var callInfo = result.GetR4MvcResult();
-                            LocalDeclarationStatement(
-                                SyntaxNodeHelpers.VariableDeclaration("callInfo",
-                                    InvocationExpression(SyntaxNodeHelpers.MemberAccess("result", "GetR4MvcResult")))),
-                            // return RedirectToRoute(callInfo.RouteValueDictionary);
-                            ReturnStatement(
-                                InvocationExpression(IdentifierName("RedirectToRoute"))
-                                    .WithArgumentList(
-                                        SyntaxNodeHelpers.MemberAccess("callInfo", "RouteValueDictionary"))))),
-                MethodDeclaration(IdentifierName("RedirectToRouteResult"), Identifier("RedirectToAction"))
+                    .WithParameter("result", "IActionResult")
+                    .WithBody(b => b
+                        .VariableFromMethodCall("callInfo", "result", "GetR4MvcResult")                 // var callInfo = result.GetR4MvcResult();
+                        .ReturnMethodCall(null, "RedirectToRoute", "callInfo.RouteValueDictionary")))   // return RedirectToRoute(callInfo.RouteValueDictionary);
+                .WithMethod("RedirectToAction", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
-                    .AddParameterListParameters(
-                        Parameter(Identifier("taskResult")).WithGenericType("Task", "IActionResult"))
-                    .WithBody(
-                        Block(
-                            // return RedirectToAction(taskResult.Result);
-                            ReturnStatement(
-                                InvocationExpression(IdentifierName("RedirectToAction"))
-                                    .WithArgumentList(
-                                        SyntaxNodeHelpers.MemberAccess("taskResult", "Result"))))),
-                MethodDeclaration(IdentifierName("RedirectToRouteResult"), Identifier("RedirectToActionPermanent"))
+                    .WithParameter("taskResult", "Task<IActionResult>")
+                    .WithBody(b => b
+                        .ReturnMethodCall(null, "RedirectToAction", "taskResult.Result")))              // return RedirectToAction(taskResult.Result);
+                .WithMethod("RedirectToActionPermanent", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
-                    .AddParameterListParameters(
-                        Parameter(Identifier("result")).WithType(IdentifierName("IActionResult")))
-                    .WithBody(
-                        Block(
-                            // var callInfo = result.GetR4MvcResult();
-                            LocalDeclarationStatement(
-                                SyntaxNodeHelpers.VariableDeclaration("callInfo",
-                                    InvocationExpression(SyntaxNodeHelpers.MemberAccess("result", "GetR4MvcResult")))),
-                            // return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
-                            ReturnStatement(
-                                InvocationExpression(IdentifierName("RedirectToRoutePermanent"))
-                                    .WithArgumentList(
-                                        SyntaxNodeHelpers.MemberAccess("callInfo", "RouteValueDictionary"))))),
-                MethodDeclaration(IdentifierName("RedirectToRouteResult"), Identifier("RedirectToActionPermanent"))
+                    .WithParameter("result", "IActionResult")
+                    .WithBody(b => b
+                        .VariableFromMethodCall("callInfo", "result", "GetR4MvcResult")                         // var callInfo = result.GetR4MvcResult();
+                        .ReturnMethodCall(null, "RedirectToRoutePermanent", "callInfo.RouteValueDictionary")))  // return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
+                .WithMethod("RedirectToActionPermanent", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
-                    .AddParameterListParameters(
-                        Parameter(Identifier("taskResult")).WithGenericType("Task", "IActionResult"))
-                    .WithBody(
-                        Block(
-                            // return RedirectToActionPermanent(taskResult.Result);
-                            ReturnStatement(
-                                InvocationExpression(IdentifierName("RedirectToActionPermanent"))
-                                    .WithArgumentList(
-                                        SyntaxNodeHelpers.MemberAccess("taskResult", "Result"))))),
-            };
-            return node.AddMembers(methods);
+                    .WithParameter("taskResult", "Task<IActionResult>")
+                    .WithBody(b => b
+                        .ReturnMethodCall(null, "RedirectToActionPermanent", "taskResult.Result")));    // return RedirectToActionPermanent(taskResult.Result);
         }
 
-        private ClassDeclarationSyntax AddParameterlessMethods(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
+        private void AddParameterlessMethods(ClassBuilder genControllerClass, ITypeSymbol mvcSymbol)
         {
             var methods = mvcSymbol.GetPublicNonGeneratedMethods()
                 .GroupBy(m => m.Name)
-                .Where(g => !g.Any(m => m.Parameters.Length == 0))
-                .Select(g => MethodDeclaration(IdentifierName("IActionResult"), Identifier(g.Key))
-                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.VirtualKeyword)
-                    .WithNonActionAttribute()
-                    .WithGeneratedNonUserCodeAttributes()
-                    .WithBody(
-                        Block(
-                            // return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
-                            ReturnStatement(
-                                ObjectCreationExpression(IdentifierName(Constants.ActionResultClass))
-                                    .WithArgumentList(
-                                        IdentifierName("Area"),
-                                        IdentifierName("Name"),
-                                        SyntaxNodeHelpers.MemberAccess("ActionNames", g.Key))))));
-            return node.AddMembers(methods.ToArray());
+                .Where(g => !g.Any(m => m.Parameters.Length == 0));
+            foreach (var method in methods)
+                genControllerClass
+                    .WithMethod(method.Key, "IActionResult", m => m
+                        .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.VirtualKeyword)
+                        .WithNonActionAttribute()
+                        .WithGeneratedNonUserCodeAttributes()
+                        .WithBody(b => b                            // return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action}); 
+                            .ReturnNew(Constants.ActionResultClass, "Area", "Name", "ActionNames." + method.Key)));
         }
 
         private ClassDeclarationSyntax AddMethodOverrides(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)

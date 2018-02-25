@@ -183,31 +183,20 @@ namespace R4Mvc.Tools.Services
             _filePersistService.WriteFile(contents, filePath);
         }
 
-        private ClassDeclarationSyntax IActionResultDerivedClass(string className, string baseClassName,
-            Func<ConstructorMethodBuilder, ConstructorMethodBuilder> constructorChange = null)
+        private ClassDeclarationSyntax IActionResultDerivedClass(string className, string baseClassName, Action<ConstructorMethodBuilder> constructorParts = null)
         {
             var result = new ClassBuilder(className)                                    // internal partial class {className}
                 .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
                 .WithBaseTypes(baseClassName, "IR4MvcActionResult")                     // : {baseClassName}, IR4MvcActionResult
-                .WithConstructor(constructor =>
-                {
-                    constructor
-                        .WithModifiers(SyntaxKind.PublicKeyword)                        // public ctor(
-                        .WithStringParameter("area")                                    //  string area,
-                        .WithStringParameter("controller")                              //  string controller,
-                        .WithStringParameter("action")                                  //  string action,
-                        .WithStringParameter("protocol", defaultsToNull: true)          //  string protocol = null)
-                        .WithStatement(
-                            ExpressionStatement(
-                                InvocationExpression(
-                                    SyntaxNodeHelpers.MemberAccess("this", "InitMVCT4Result"))  // this.InitMVCT4Result(
-                                    .WithArgumentList(
-                                        IdentifierName("area"),                                 //   area,
-                                        IdentifierName("controller"),                           //   controller,
-                                        IdentifierName("action"),                               //   action,
-                                        IdentifierName("protocol"))));                          //   protocol);
-                    constructorChange?.Invoke(constructor);
-                })
+                .WithConstructor(c => c
+                    .WithOther(constructorParts)
+                    .WithModifiers(SyntaxKind.PublicKeyword)                        // public ctor(
+                    .WithStringParameter("area")                                    //  string area,
+                    .WithStringParameter("controller")                              //  string controller,
+                    .WithStringParameter("action")                                  //  string action,
+                    .WithStringParameter("protocol", defaultsToNull: true)          //  string protocol = null)
+                    .WithBody(b => b                                                // this.InitMVCT4Result(area, controller, action, protocol);
+                        .MethodCall("this", "InitMVCT4Result", "area", "controller", "action", "protocol")))
                 .WithStringProperty("Controller")                                       // public string Controller { get; set; }
                 .WithStringProperty("Action")                                           // public string Action { get; set; }
                 .WithStringProperty("Protocol")                                         // public string Protocol { get; set; }

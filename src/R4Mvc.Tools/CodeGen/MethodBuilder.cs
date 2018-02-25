@@ -13,8 +13,8 @@ namespace R4Mvc.Tools.CodeGen
         protected BaseMethodDeclarationSyntax _method;
         private SyntaxKind[] _modifiers = null;
         private IList<ParameterSyntax> _parameters = new List<ParameterSyntax>();
-        private IList<ExpressionStatementSyntax> _statements = new List<ExpressionStatementSyntax>();
-        private bool _useGeneratedAttributes = false;
+        private BlockSyntax _bodyBlock;
+        private bool _useGeneratedAttributes = false, _useNonActionAttribute;
 
         protected MethodBuilder() { }
         public MethodBuilder(string name, string returnType = null)
@@ -37,6 +37,12 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
+        public MethodBuilder WithNonActionAttribute()
+        {
+            _useNonActionAttribute = true;
+            return this;
+        }
+
         public MethodBuilder WithStringParameter(string name, bool defaultsToNull = false)
         {
             var parameter = Parameter(Identifier(name)).WithType(SyntaxNodeHelpers.PredefinedStringType());
@@ -53,9 +59,11 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
-        public MethodBuilder WithStatement(ExpressionStatementSyntax statement)
+        public MethodBuilder WithBody(Action<BodyBuilder> bodyParts)
         {
-            _statements.Add(statement);
+            var bodyBuilder = new BodyBuilder();
+            bodyParts(bodyBuilder);
+            _bodyBlock = bodyBuilder.Build();
             return this;
         }
 
@@ -68,10 +76,12 @@ namespace R4Mvc.Tools.CodeGen
                         method = method.WithModifiers(_modifiers);
                     if (_parameters.Count > 0)
                         method = method.AddParameterListParameters(_parameters.ToArray());
+                    if (_useNonActionAttribute)
+                        method = SyntaxNodeHelpers.WithNonActionAttribute(method);
                     if (_useGeneratedAttributes)
                         method = method.AddAttributeLists(SyntaxNodeHelpers.GeneratedNonUserCodeAttributeList());
 
-                    method = method.WithBody(Block(_statements.ToArray()));
+                    method = method.WithBody(_bodyBlock ?? Block());
                     return method;
 
                 case ConstructorDeclarationSyntax constructor:
@@ -82,7 +92,7 @@ namespace R4Mvc.Tools.CodeGen
                     if (_useGeneratedAttributes)
                         constructor = constructor.AddAttributeLists(SyntaxNodeHelpers.GeneratedNonUserCodeAttributeList());
 
-                    constructor = constructor.WithBody(Block(_statements.ToArray()));
+                    constructor = constructor.WithBody(_bodyBlock ?? Block());
                     return constructor;
 
                 default:

@@ -24,6 +24,12 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
+        public ConstructorMethodBuilder WithOther(Action<ConstructorMethodBuilder> otherParts)
+        {
+            otherParts?.Invoke(this);
+            return this;
+        }
+
         public override MemberDeclarationSyntax Build()
         {
             var constructor = _method as ConstructorDeclarationSyntax;

@@ -44,11 +44,17 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
-        public ClassBuilder WithMethod(MemberDeclarationSyntax method) => WithMember(method);
-        public ClassBuilder WithConstructor(Action<ConstructorMethodBuilder> constructorOptions)
+        public ClassBuilder WithMethod(string name, string returnType, Action<MethodBuilder> methodParts)
+        {
+            var method = new MethodBuilder(name, returnType);
+            methodParts(method);
+            WithMember(method.Build());
+            return this;
+        }
+        public ClassBuilder WithConstructor(Action<ConstructorMethodBuilder> constructorParts)
         {
             var constructor = new ConstructorMethodBuilder(_className);
-            constructorOptions(constructor);
+            constructorParts(constructor);
             WithMember(constructor.Build());
             return this;
         }
@@ -72,8 +78,15 @@ namespace R4Mvc.Tools.CodeGen
             _class = _class.WithAutoProperty(name, type, modifiers);
             return this;
         }
+        public ClassBuilder WithExpressionProperty(string name, string type, ExpressionSyntax value, params SyntaxKind[] modifiers)
+        {
+            var property = SyntaxNodeHelpers.CreateProperty(name, type, value, modifiers)
+                .WithGeneratedAttribute();
+            _class = _class.AddMembers(property);
+            return this;
+        }
 
-        public ClassBuilder WithField(string name, string value, bool includeGeneratedAttribute = true, params SyntaxKind[] modifiers)
+        public ClassBuilder WithStringField(string name, string value, bool includeGeneratedAttribute = true, params SyntaxKind[] modifiers)
         {
             var fieldDeclaration = SyntaxNodeHelpers.CreateStringFieldDeclaration(name, value, modifiers);
             if (includeGeneratedAttribute)
@@ -82,8 +95,14 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
-        public ClassBuilder WithFieldBackedProperty()
+        public ClassBuilder WithStaticFieldBackedProperty(string name, string type, params SyntaxKind[] modifiers)
         {
+            var fieldName = "s_" + name;
+            _class = _class.AddMembers(
+                SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(fieldName, type, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
+                    .WithGeneratedAttribute(),
+                SyntaxNodeHelpers.CreateProperty(name, type, IdentifierName(fieldName), modifiers)
+                    .WithGeneratedAttribute());
             return this;
         }
 
