@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using R4Mvc.Tools.Extensions;
@@ -10,28 +11,65 @@ namespace R4Mvc.Tools.CodeGen
     {
         private IList<StatementSyntax> _expressions = new List<StatementSyntax>();
 
-        public ExpressionSyntax MethodCallExpression(string entityName, string methodName, params string[] arguments)
+        private ExpressionSyntax[] GetArguments(ICollection<object> arguments)
+        {
+            return arguments.Select(a =>
+            {
+                switch (a)
+                {
+                    case string argumentName:
+                        return IdentifierName(argumentName);
+                    case ExpressionSyntax argumentExpression:
+                        return argumentExpression;
+                    default:
+                        throw new InvalidOperationException("Argument of wrong type passed. Has to be String or ExpressionSyntax");
+                }
+            })
+            .ToArray();
+        }
+
+        private ExpressionSyntax MethodCallExpression(string entityName, string methodName, ICollection<object> arguments)
         {
             var methodCallExpression = entityName != null
                 ? InvocationExpression(SyntaxNodeHelpers.MemberAccess(entityName, methodName))
                 : InvocationExpression(IdentifierName(methodName));
-            if (arguments?.Length > 0)
-                methodCallExpression = methodCallExpression.WithArgumentList(arguments.Select(a => IdentifierName(a)).ToArray());
+            if (arguments?.Count > 0)
+                methodCallExpression = methodCallExpression.WithArgumentList(GetArguments(arguments));
             return methodCallExpression;
         }
 
-        public ExpressionSyntax NewExpression(string entityType, params string[] arguments)
+        private ExpressionSyntax NewObjectExpression(string entityType, ICollection<object> arguments)
         {
             var newExpression = ObjectCreationExpression(IdentifierName(entityType));
-            if (arguments?.Length > 0)
-                newExpression = newExpression.WithArgumentList(arguments.Select(a => IdentifierName(a)).ToArray());
+            if (arguments?.Count > 0)
+                newExpression = newExpression.WithArgumentList(GetArguments(arguments));
             return newExpression;
         }
 
-        public BodyBuilder MethodCall(string entityName, string methodName, params string[] arguments)
+        public BodyBuilder MethodCall(string entityName, string methodName, params object[] arguments)
         {
             var methodCallExpression = MethodCallExpression(entityName, methodName, arguments);
             _expressions.Add(ExpressionStatement(methodCallExpression));
+            return this;
+        }
+
+        public BodyBuilder ReturnMethodCall(string entityName, string methodName, params object[] arguments)
+        {
+            var methodCallExpression = MethodCallExpression(entityName, methodName, arguments);
+            _expressions.Add(ReturnStatement(methodCallExpression));
+            return this;
+        }
+
+        public BodyBuilder ReturnNewObject(string entityType, params object[] arguments)
+        {
+            var newExpression = NewObjectExpression(entityType, arguments);
+            _expressions.Add(ReturnStatement(newExpression));
+            return this;
+        }
+
+        public BodyBuilder ReturnVariable(string variableName)
+        {
+            _expressions.Add(ReturnStatement(IdentifierName(variableName)));
             return this;
         }
 
@@ -43,17 +81,19 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
-        public BodyBuilder ReturnMethodCall(string entityName, string methodName, params string[] arguments)
+        public BodyBuilder VariableFromNewObject(string variableName, string entityType, params string[] arguments)
         {
-            var methodCallExpression = MethodCallExpression(entityName, methodName, arguments);
-            _expressions.Add(ReturnStatement(methodCallExpression));
+            var newExpression = NewObjectExpression(entityType, arguments);
+            var variableExpression = SyntaxNodeHelpers.VariableDeclaration(variableName, newExpression);
+            _expressions.Add(LocalDeclarationStatement(variableExpression));
             return this;
         }
 
-        public BodyBuilder ReturnNew(string entityType, params string[] arguments)
+        public BodyBuilder ForMany<TEntity>(IEnumerable<TEntity> items, Action<BodyBuilder, TEntity> action)
         {
-            var newExpression = NewExpression(entityType, arguments);
-            _expressions.Add(ReturnStatement(newExpression));
+            if (items != null)
+                foreach (var item in items)
+                    action(this, item);
             return this;
         }
 

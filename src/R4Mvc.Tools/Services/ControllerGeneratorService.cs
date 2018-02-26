@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -111,13 +111,15 @@ namespace R4Mvc.Tools.Services
             var className = GetR4MVCControllerClassName(controller.Symbol);
             controller.FullyQualifiedR4ClassName = $"{controller.Namespace}.{className}";
 
-            var r4ControllerClass = ClassDeclaration(className)
+            var r4ControllerClass = new ClassBuilder(className)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes()
                 .WithBaseTypes(controller.Symbol.ToQualifiedName())
-                .WithDefaultDummyBaseConstructor(false, SyntaxKind.PublicKeyword);
-            r4ControllerClass = AddMethodOverrides(r4ControllerClass, controller.Symbol);
-            return r4ControllerClass;
+                .WithConstructor(c => c
+                    .WithBaseConstructorCall(m => IdentifierName(Constants.DummyClass + "." + Constants.DummyClassInstance))
+                    .WithModifiers(SyntaxKind.PublicKeyword));
+            AddMethodOverrides(r4ControllerClass, controller.Symbol);
+            return r4ControllerClass.Build();
         }
 
         private void AddRedirectMethods(ClassBuilder genControllerClass)
@@ -163,95 +165,66 @@ namespace R4Mvc.Tools.Services
                         .WithNonActionAttribute()
                         .WithGeneratedNonUserCodeAttributes()
                         .WithBody(b => b                            // return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action}); 
-                            .ReturnNew(Constants.ActionResultClass, "Area", "Name", "ActionNames." + method.Key)));
+                            .ReturnNewObject(Constants.ActionResultClass, "Area", "Name", "ActionNames." + method.Key)));
         }
 
-        private ClassDeclarationSyntax AddMethodOverrides(ClassDeclarationSyntax node, ITypeSymbol mvcSymbol)
+        private void AddMethodOverrides(ClassBuilder classBuilder, ITypeSymbol mvcSymbol)
         {
             const string overrideMethodSuffix = "Override";
-            var methods = mvcSymbol.GetPublicNonGeneratedMethods()
-                .SelectMany(m =>
-                {
-                    var callInfoType = Constants.ActionResultClass;
-                    if (m.ReturnType.InheritsFrom<JsonResult>())
-                        callInfoType = Constants.JsonResultClass;
-                    else if (m.ReturnType.InheritsFrom<ContentResult>())
-                        callInfoType = Constants.ContentResultClass;
-                    else if (m.ReturnType.InheritsFrom<RedirectResult>())
-                        callInfoType = Constants.RedirectResultClass;
-                    else if (m.ReturnType.InheritsFrom<RedirectToActionResult>())
-                        callInfoType = Constants.RedirectToActionResultClass;
-                    else if (m.ReturnType.InheritsFrom<RedirectToRouteResult>())
-                        callInfoType = Constants.RedirectToRouteResultClass;
+            foreach (var method in mvcSymbol.GetPublicNonGeneratedMethods())
+            {
+                var callInfoType = Constants.ActionResultClass;
+                if (method.ReturnType.InheritsFrom<JsonResult>())
+                    callInfoType = Constants.JsonResultClass;
+                else if (method.ReturnType.InheritsFrom<ContentResult>())
+                    callInfoType = Constants.ContentResultClass;
+                else if (method.ReturnType.InheritsFrom<RedirectResult>())
+                    callInfoType = Constants.RedirectResultClass;
+                else if (method.ReturnType.InheritsFrom<RedirectToActionResult>())
+                    callInfoType = Constants.RedirectToActionResultClass;
+                else if (method.ReturnType.InheritsFrom<RedirectToRouteResult>())
+                    callInfoType = Constants.RedirectToRouteResultClass;
 
-                    var statements = new List<StatementSyntax>
-                    {
-                        // var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
-                        LocalDeclarationStatement(
-                            SyntaxNodeHelpers.VariableDeclaration("callInfo",
-                                ObjectCreationExpression(IdentifierName(callInfoType))
-                                    .WithArgumentList(
-                                        IdentifierName("Area"),
-                                        IdentifierName("Name"),
-                                        SyntaxNodeHelpers.MemberAccess("ActionNames", m.Name)))),
-                    };
-                    foreach (var param in m.Parameters)
-                        statements.Add(
-                            ExpressionStatement(
-                                InvocationExpression(
-                                    SyntaxNodeHelpers.MemberAccess("ModelUnbinderHelpers", "AddRouteValues"))
-                                    .WithArgumentList(
-                                        SyntaxNodeHelpers.MemberAccess("callInfo", "RouteValueDictionary"),
-                                        LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(param.Name)),
-                                        IdentifierName(param.Name))));
-                    statements.Add(
-                        // {Action}Override(callInfo, {parameters});
-                        ExpressionStatement(
-                            InvocationExpression(IdentifierName(m.Name + overrideMethodSuffix))
-                                .WithArgumentList(
-                                    new[] { IdentifierName("callInfo") }
-                                        .Concat(m.Parameters.Select(p => IdentifierName(p.Name)))
-                                        .ToArray())));
-                    var returnType = m.ReturnType as INamedTypeSymbol;
-                    statements.Add(
-                        // return callInfo;
-                        returnType.InheritsFrom<Task>() == true
-                            ? ReturnStatement(
-                                InvocationExpression(
-                                    SyntaxNodeHelpers.MemberAccess(typeof(Task).FullName, "FromResult"))
-                                    .WithArgumentList(
-                                        returnType.TypeArguments.Length > 0
-                                            ? (ExpressionSyntax)BinaryExpression(
-                                                SyntaxKind.AsExpression,
-                                                IdentifierName("callInfo"),
-                                                IdentifierName(returnType.TypeArguments[0].ToString()))
-                                            : IdentifierName("callInfo")
-                                        ))
-                            : ReturnStatement(IdentifierName("callInfo")));
-                    return new[]
-                    {
-                        MethodDeclaration(PredefinedType(Token(SyntaxKind.VoidKeyword)), Identifier(m.Name + overrideMethodSuffix))
-                            .WithModifiers(SyntaxKind.PartialKeyword)
-                            .WithNonActionAttribute()
-                            .AddParameterListParameters(
-                                Parameter(Identifier("callInfo")).WithType(IdentifierName(callInfoType)))
-                            .AddParameterListParameters(m.Parameters
-                                .Select(p => Parameter(Identifier(p.Name))
-                                    .WithType(IdentifierName(p.Type.ToString())))
-                                .ToArray())
-                            .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                        MethodDeclaration(IdentifierName(m.ReturnType.ToString()), Identifier(m.Name))
-                            .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
-                            .WithNonActionAttribute()
-                            .AddParameterListParameters(m.Parameters
-                                .Select(p => Parameter(Identifier(p.Name))
-                                    .WithType(IdentifierName(p.Type.ToString())))
-                                .ToArray())
-                            .WithBody(
-                                Block(statements.ToArray())),
-                    };
-                });
-            return node.AddMembers(methods.ToArray());
+
+                var bodyBuilder = new BodyBuilder()
+                    // var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
+                    .VariableFromNewObject("callInfo", callInfoType, "Area", "Name", "ActionNames." + method.Name)
+                    .ForMany(method.Parameters, (b, p) => b
+                        // ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "paramName", paramName);
+                        .MethodCall("ModelUnbinderHelpers", "AddRouteValues", "callInfo.RouteValueDictionary", ParameterSource.Instance.String(p.Name), p.Name))
+                    // {Action}Override(callInfo, {parameters});
+                    .MethodCall(null, method.Name + overrideMethodSuffix, new[] { "callInfo" }.Concat(method.Parameters.Select(p => p.Name)).ToArray());
+
+                var returnType = method.ReturnType as INamedTypeSymbol;
+                if (returnType.InheritsFrom<Task>() == true)
+                {
+                    var result = returnType.TypeArguments.Length > 0
+                        ? "callInfo as " + returnType.TypeArguments[0]
+                        : "callInfo";
+                    // return Task.FromResult(callInfo as TResult);
+                    bodyBuilder.ReturnMethodCall(typeof(Task).FullName, "FromResult", result);
+                }
+                else
+                {
+                    // return callInfo;
+                    bodyBuilder.ReturnVariable("callInfo");
+                }
+
+                classBuilder
+                    .WithMethod(method.Name + overrideMethodSuffix, null, m => m
+                        .WithModifiers(SyntaxKind.PartialKeyword)
+                        .WithNonActionAttribute()
+                        .WithParameter("callInfo", callInfoType)
+                        .ForMany(method.Parameters, (m2, p) => m2
+                            .WithParameter(p.Name, p.Type.ToString()))
+                        .WithNoBody())
+                    .WithMethod(method.Name, method.ReturnType.ToString(), m => m
+                        .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
+                        .WithNonActionAttribute()
+                        .ForMany(method.Parameters, (m2, p) => m2
+                            .WithParameter(p.Name, p.Type.ToString()))
+                        .WithBody(bodyBuilder));
+            }
         }
 
         internal static string GetR4MVCControllerClassName(INamedTypeSymbol controllerClass)

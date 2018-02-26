@@ -14,7 +14,7 @@ namespace R4Mvc.Tools.CodeGen
         private SyntaxKind[] _modifiers = null;
         private IList<ParameterSyntax> _parameters = new List<ParameterSyntax>();
         private BlockSyntax _bodyBlock;
-        private bool _useGeneratedAttributes = false, _useNonActionAttribute;
+        private bool _useGeneratedAttributes = false, _useNonActionAttribute = false, _noBody = false;
 
         protected MethodBuilder() { }
         public MethodBuilder(string name, string returnType = null)
@@ -59,11 +59,37 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
+        public MethodBuilder WithBody(BodyBuilder bodyBuilder)
+        {
+            _bodyBlock = bodyBuilder.Build();
+            return this;
+        }
+
         public MethodBuilder WithBody(Action<BodyBuilder> bodyParts)
         {
             var bodyBuilder = new BodyBuilder();
             bodyParts(bodyBuilder);
             _bodyBlock = bodyBuilder.Build();
+            return this;
+        }
+
+        public MethodBuilder WithNoBody()
+        {
+            _noBody = true;
+            return this;
+        }
+
+        public MethodBuilder WithOther(Action<MethodBuilder> otherParts)
+        {
+            otherParts?.Invoke(this);
+            return this;
+        }
+
+        public MethodBuilder ForMany<TEntity>(IEnumerable<TEntity> items, Action<MethodBuilder, TEntity> action)
+        {
+            if (items != null)
+                foreach (var item in items)
+                    action(this, item);
             return this;
         }
 
@@ -81,7 +107,10 @@ namespace R4Mvc.Tools.CodeGen
                     if (_useGeneratedAttributes)
                         method = method.AddAttributeLists(SyntaxNodeHelpers.GeneratedNonUserCodeAttributeList());
 
-                    method = method.WithBody(_bodyBlock ?? Block());
+                    if (_bodyBlock != null || !_noBody)
+                        method = method.WithBody(_bodyBlock ?? Block());
+                    else
+                        method = method.WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
                     return method;
 
                 case ConstructorDeclarationSyntax constructor:
@@ -98,19 +127,6 @@ namespace R4Mvc.Tools.CodeGen
                 default:
                     throw new NotSupportedException();
             }
-        }
-
-        public class ParameterSource
-        {
-            private ParameterSource() { }
-            private static ParameterSource _instance;
-            public static ParameterSource Instance => _instance ?? (_instance = new ParameterSource());
-
-            public ExpressionSyntax Null => LiteralExpression(SyntaxKind.NullLiteralExpression);
-            public ExpressionSyntax True => LiteralExpression(SyntaxKind.TrueLiteralExpression);
-            public ExpressionSyntax False => LiteralExpression(SyntaxKind.FalseLiteralExpression);
-            public ExpressionSyntax EmptyString => LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(""));
-            public ExpressionSyntax Space => LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(" "));
         }
     }
 }
