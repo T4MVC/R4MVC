@@ -7,7 +7,8 @@ namespace R4Mvc.Tools.Locators
 {
     public class DefaultRazorViewLocator : IViewLocator
     {
-        private const string ViewsFolder = "Views";
+        protected const string ViewsFolder = "Views";
+        protected const string AreasFolder = "Areas";
 
         private readonly IFileLocator _fileLocator;
         private readonly Settings _settings;
@@ -18,53 +19,52 @@ namespace R4Mvc.Tools.Locators
             _settings = settings;
         }
 
-        public IEnumerable<View> Find(string projectRoot)
+        protected virtual string GetViewsRoot(string projectRoot) => Path.Combine(projectRoot, ViewsFolder);
+        protected virtual string GetAreaViewsRoot(string areaRoot, string areaName) => Path.Combine(areaRoot, ViewsFolder);
+
+        public virtual IEnumerable<View> Find(string projectRoot)
         {
-            if (_settings.FeatureFolders?.Enabled == true && !string.Equals(ViewsFolder, _settings.FeatureFolders.FeaturesPath, StringComparison.OrdinalIgnoreCase))
-                foreach (var view in FindAllViews(projectRoot, _settings.FeatureFolders.FeaturesPath))
+            foreach (var (Area, Controller, path) in FindControllerViewFolders(projectRoot))
+                foreach (var view in FindViews(projectRoot, Area, Controller, path))
                     yield return view;
-
-            foreach (var view in FindAllViews(projectRoot, ViewsFolder))
-                yield return view;
         }
 
-        public IEnumerable<View> FindAllViews(string projectRoot, string viewsFolder)
+        protected IEnumerable<(string Area, string Controller, string Path)> FindControllerViewFolders(string projectRoot)
         {
-            foreach (var view in FindViews(projectRoot, projectRoot, string.Empty, viewsFolder))
-                yield return view;
-
-            var areasPath = Path.Combine(projectRoot, "Areas");
-            if (_fileLocator.DirectoryExists(areasPath))
-            {
-                foreach (var areaPath in _fileLocator.GetDirectories(areasPath))
-                {
-                    var areaName = Path.GetFileName(areaPath);
-                    foreach (var view in FindViews(projectRoot, areaPath, areaName, viewsFolder))
-                        yield return view;
-                }
-            }
-        }
-
-        private IEnumerable<View> FindViews(string projectRoot, string root, string areaName, string viewsFolder)
-        {
-            var viewsPath = Path.Combine(root, viewsFolder);
-            if (_fileLocator.DirectoryExists(viewsPath))
-            {
-                foreach (var controllerPath in _fileLocator.GetDirectories(viewsPath))
+            var viewsRoot = GetViewsRoot(projectRoot);
+            if (_fileLocator.DirectoryExists(viewsRoot))
+                foreach (var controllerPath in _fileLocator.GetDirectories(viewsRoot))
                 {
                     var controllerName = Path.GetFileName(controllerPath);
-                    foreach (var file in _fileLocator.GetFiles(Path.Combine(viewsPath, controllerName), "*.cshtml"))
-                    {
-                        yield return GetView(projectRoot, file, controllerName, areaName);
-                    }
+                    yield return (string.Empty, controllerName, controllerPath);
+                }
 
-                    foreach (var directory in _fileLocator.GetDirectories(controllerPath))
+            var areasPath = Path.Combine(projectRoot, AreasFolder);
+            if (_fileLocator.DirectoryExists(areasPath))
+                foreach (var areaRoot in _fileLocator.GetDirectories(areasPath))
+                {
+                    var areaName = Path.GetFileName(areaRoot);
+                    viewsRoot = GetAreaViewsRoot(areaRoot, areaName);
+                    foreach (var controllerPath in _fileLocator.GetDirectories(viewsRoot))
                     {
-                        foreach (var file in _fileLocator.GetFiles(directory, "*.cshtml"))
-                        {
-                            yield return GetView(projectRoot, file, controllerName, areaName, Path.GetFileName(directory));
-                        }
+                        var controllerName = Path.GetFileName(controllerPath);
+                        yield return (areaName, controllerName, controllerPath);
                     }
+                }
+        }
+
+        protected virtual IEnumerable<View> FindViews(string projectRoot, string areaName, string controllerName, string controllerPath)
+        {
+            foreach (var file in _fileLocator.GetFiles(controllerPath, "*.cshtml"))
+            {
+                yield return GetView(projectRoot, file, controllerName, areaName);
+            }
+
+            foreach (var directory in _fileLocator.GetDirectories(controllerPath))
+            {
+                foreach (var file in _fileLocator.GetFiles(directory, "*.cshtml"))
+                {
+                    yield return GetView(projectRoot, file, controllerName, areaName, Path.GetFileName(directory));
                 }
             }
         }

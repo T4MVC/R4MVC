@@ -33,12 +33,14 @@ namespace R4Mvc.Test.Locators
             Assert.Collection(VirtualFileLocator.Default.GetDirectories(@"D:\Project"),
                 p => Assert.Equal(@"D:\Project\Areas", p),
                 p => Assert.Equal(@"D:\Project\Controllers", p),
+                p => Assert.Equal(@"D:\Project\Features", p),
                 p => Assert.Equal(@"D:\Project\Views", p),
                 p => Assert.Equal(@"D:\Project\wwwroot", p)
             );
             Assert.Collection(VirtualFileLocator.Default.GetDirectories(@"D:\Project\"),
                 p => Assert.Equal(@"D:\Project\Areas", p),
                 p => Assert.Equal(@"D:\Project\Controllers", p),
+                p => Assert.Equal(@"D:\Project\Features", p),
                 p => Assert.Equal(@"D:\Project\Views", p),
                 p => Assert.Equal(@"D:\Project\wwwroot", p)
             );
@@ -47,6 +49,7 @@ namespace R4Mvc.Test.Locators
             );
             Assert.Collection(VirtualFileLocator.Default.GetDirectories(@"D:\Project\Areas\Admin"),
                 p => Assert.Equal(@"D:\Project\Areas\Admin\Controllers", p),
+                p => Assert.Equal(@"D:\Project\Areas\Admin\Features", p),
                 p => Assert.Equal(@"D:\Project\Areas\Admin\Views", p)
             );
             Assert.Empty(VirtualFileLocator.Default.GetDirectories(@"D:\Project\Areas\Admin\Controllers"));
@@ -70,6 +73,7 @@ namespace R4Mvc.Test.Locators
                 f => Assert.Equal(@"D:\Project\Views\Users\Details.cshtml", f)
             );
             Assert.Collection(VirtualFileLocator.Default.GetFiles(@"D:\Project\Areas\", "*.cshtml", true),
+                f => Assert.Equal(@"D:\Project\Areas\Admin\Features\Home\Index.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Areas\Admin\Views\Home\Index.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Areas\Admin\Views\Shared\EditorTemplates\User.cshtml", f),
                 f => Assert.Equal(@"D:\Project\Areas\Admin\Views\Shared\_Layout.cshtml", f)
