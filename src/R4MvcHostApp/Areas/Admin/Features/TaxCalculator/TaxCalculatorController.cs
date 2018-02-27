@@ -16,5 +16,11 @@ namespace R4MvcHostApp.Areas.Admin.Features.TaxCalculator
         {
             return View();
         }
+
+        // Can use this call to see which view files is the framework trying to use
+        public virtual IActionResult NoView()
+        {
+            return View();
+        }
     }
 }
