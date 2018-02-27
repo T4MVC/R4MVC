@@ -24,9 +24,13 @@ namespace R4Mvc.Tools.Locators
 
         public virtual IEnumerable<View> Find(string projectRoot)
         {
-            foreach (var (Area, Controller, path) in FindControllerViewFolders(projectRoot))
-                foreach (var view in FindViews(projectRoot, Area, Controller, path))
+            foreach (var (Area, Controller, Path) in FindControllerViewFolders(projectRoot))
+            {
+                if (!_fileLocator.DirectoryExists(Path))
+                    continue;
+                foreach (var view in FindViews(projectRoot, Area, Controller, Path))
                     yield return view;
+            }
         }
 
         protected IEnumerable<(string Area, string Controller, string Path)> FindControllerViewFolders(string projectRoot)
@@ -45,11 +49,12 @@ namespace R4Mvc.Tools.Locators
                 {
                     var areaName = Path.GetFileName(areaRoot);
                     viewsRoot = GetAreaViewsRoot(areaRoot, areaName);
-                    foreach (var controllerPath in _fileLocator.GetDirectories(viewsRoot))
-                    {
-                        var controllerName = Path.GetFileName(controllerPath);
-                        yield return (areaName, controllerName, controllerPath);
-                    }
+                    if (_fileLocator.DirectoryExists(viewsRoot))
+                        foreach (var controllerPath in _fileLocator.GetDirectories(viewsRoot))
+                        {
+                            var controllerName = Path.GetFileName(controllerPath);
+                            yield return (areaName, controllerName, controllerPath);
+                        }
                 }
         }
 

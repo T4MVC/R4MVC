@@ -20,6 +20,10 @@ public static partial class MVC
     static readonly R4Mvc.AdminAreaClass s_AdminArea = new R4Mvc.AdminAreaClass();
     [GeneratedCode("R4Mvc", "1.0")]
     public static R4Mvc.AdminAreaClass AdminArea => s_AdminArea;
+    [GeneratedCode("R4Mvc", "1.0")]
+    static readonly R4Mvc.MembersAreaClass s_Members = new R4Mvc.MembersAreaClass();
+    [GeneratedCode("R4Mvc", "1.0")]
+    public static R4Mvc.MembersAreaClass Members => s_Members;
     public static readonly R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.R4MVC_AccountController();
     public static readonly R4MvcHostApp.Controllers.AdminController Admin = new R4MvcHostApp.Controllers.R4MVC_AdminController();
     public static readonly R4MvcHostApp.Features.Calculator.CalculatorController Calculator = new R4MvcHostApp.Features.Calculator.R4MVC_CalculatorController();
@@ -138,10 +142,18 @@ namespace R4Mvc
     public partial class AdminAreaClass
     {
         public readonly string Name = "Admin";
+        public readonly R4MvcHostApp.Areas.Admin.MisplacedFeature.MisplacedFeatureController MisplacedFeature = new R4MvcHostApp.Areas.Admin.MisplacedFeature.R4MVC_MisplacedFeatureController();
         public readonly R4MvcHostApp.Areas.Admin.Controllers.PagesController Pages = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_PagesController();
         public readonly R4MvcHostApp.Areas.Admin.Features.TaxCalculator.TaxCalculatorController TaxCalculator = new R4MvcHostApp.Areas.Admin.Features.TaxCalculator.R4MVC_TaxCalculatorController();
         public readonly R4MvcHostApp.Areas.Admin.Controllers.UsersController Users = new R4MvcHostApp.Areas.Admin.Controllers.R4MVC_UsersController();
         public readonly R4Mvc.AdminArea_SharedController Shared = new R4Mvc.AdminArea_SharedController();
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class MembersAreaClass
+    {
+        public readonly string Name = "Members";
+        public readonly R4MvcHostApp.Areas.Members.Awards.AwardsController Awards = new R4MvcHostApp.Areas.Members.Awards.R4MVC_AwardsController();
     }
 }
 

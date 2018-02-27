@@ -1,6 +1,7 @@
 ﻿{
   "ExcludedStaticFileExtensions": [ ".txt", ".md" ],
   "FeatureFolders": {
-    "Enabled": true
+    "Enabled": true,
+    "FeatureOnlyAreas": ["Members"]
   }
 }
