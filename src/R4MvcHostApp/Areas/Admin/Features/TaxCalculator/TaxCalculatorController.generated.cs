@@ -69,12 +69,14 @@ namespace R4MvcHostApp.Areas.Admin.Features.TaxCalculator
         public class ActionNamesClass
         {
             public readonly string Index = "Index";
+            public readonly string NoView = "NoView";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
             public const string Index = "Index";
+            public const string NoView = "NoView";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -112,6 +114,16 @@ namespace R4MvcHostApp.Areas.Admin.Features.TaxCalculator
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Index);
             IndexOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void NoViewOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult NoView()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.NoView);
+            NoViewOverride(callInfo);
             return callInfo;
         }
     }
