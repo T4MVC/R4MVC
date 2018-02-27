@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +50,12 @@ namespace R4MvcHostApp
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
+
+            services.Configure<RazorViewEngineOptions>(options =>
+            {
+                options.AreaViewLocationFormats.Add("/{2}/{1}/{0}.cshtml");
+                options.AreaViewLocationFormats.Add("/Areas/{2}/{1}/{0}.cshtml");
+            });
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();

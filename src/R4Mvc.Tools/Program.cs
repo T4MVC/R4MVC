@@ -95,6 +95,7 @@ namespace R4Mvc.Tools
             services.AddTransient<RemoveCommand, RemoveCommand>();
 
             services.AddTransient<IViewLocator, DefaultRazorViewLocator>();
+            services.AddTransient<IViewLocator, FeatureFoldersViewLocator>();
             services.AddTransient<IStaticFileLocator, DefaultStaticFileLocator>();
             services.AddTransient<IFileLocator, PhysicalFileLocator>();
             services.AddTransient<IGeneratedFileTesterService, GeneratedFileTesterService>();

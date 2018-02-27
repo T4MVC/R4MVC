@@ -1,15 +1,26 @@
-﻿using R4Mvc.Tools.Locators;
+﻿using System;
+using R4Mvc.Tools;
+using R4Mvc.Tools.Locators;
 using Xunit;
 
 namespace R4Mvc.Test.Locators
 {
     public class DefaultRazorViewLocatorTests
     {
+        ControllerDefinition[] _controllers;
+
+        public DefaultRazorViewLocatorTests()
+        {
+            _controllers = Array.Empty<ControllerDefinition>();
+        }
+
         [Fact]
         public void BasicProject()
         {
             var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default);
-            Assert.Collection(locator.Find(@"D:\Project"),
+           
+
+            Assert.Collection(locator.Find(@"D:\Project", _controllers),
                 v =>
                 {
                     Assert.Equal("", v.AreaName);
@@ -81,7 +92,7 @@ namespace R4Mvc.Test.Locators
         public void AreaAsProjectPath()
         {
             var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default);
-            Assert.Collection(locator.Find(@"D:\Project\Areas\Admin"),
+            Assert.Collection(locator.Find(@"D:\Project\Areas\Admin", _controllers),
                 v =>
                 {
                     Assert.Equal("", v.AreaName);
@@ -118,7 +129,7 @@ namespace R4Mvc.Test.Locators
         public void WrongProjectPaths(string path)
         {
             var locator = new DefaultRazorViewLocator(VirtualFileLocator.Default);
-            Assert.Empty(locator.Find(path));
+            Assert.Empty(locator.Find(path, _controllers));
         }
     }
 }

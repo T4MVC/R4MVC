@@ -36,5 +36,8 @@
   <ItemGroup>
     <ProjectReference Include="..\R4Mvc\R4Mvc.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\Features\Views\" />
+  </ItemGroup>
 
 </Project>
