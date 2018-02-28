@@ -58,9 +58,10 @@ namespace R4Mvc.Tools.Services
 
         public ClassDeclarationSyntax GeneratePartialController(ControllerDefinition controller)
         {
+
             // build controller partial class node 
             // add a default constructor if there are some but none are zero length
-            var genControllerClass2 = new ClassBuilder(controller.Symbol.Name)              // public partial {controllerClass}
+            var genControllerClass = new ClassBuilder(controller.Symbol.Name)               // public partial {controllerClass}
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                 .WithTypeParameters(controller.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()); // optional <T1, T2, …>
 
@@ -70,39 +71,40 @@ namespace R4Mvc.Tools.Services
                 .Where(c => !c.IsImplicitlyDeclared)
                 .Any();
             if (!gotCustomConstructors)
-                genControllerClass2.WithConstructor(c => c                                  // public ctor() { }
+                genControllerClass.WithConstructor(c => c                                   // public ctor() { }
                     .WithModifiers(SyntaxKind.PublicKeyword)
                     .WithGeneratedNonUserCodeAttributes());                                 // [GeneratedCode, DebuggerNonUserCode]
-            genControllerClass2.WithConstructor(c => c                                      // public ctor(Dummy d) {}
+            genControllerClass.WithConstructor(c => c                                       // public ctor(Dummy d) {}
                 .WithModifiers(SyntaxKind.ProtectedKeyword)
                 .WithGeneratedNonUserCodeAttributes()                                       // [GeneratedCode, DebuggerNonUserCode]
                 .WithParameter("d", Constants.DummyClass));
 
-            AddRedirectMethods(genControllerClass2);
-            AddParameterlessMethods(genControllerClass2, controller.Symbol);
+            AddRedirectMethods(genControllerClass);
+            AddParameterlessMethods(genControllerClass, controller.Symbol);
 
             var actionsExpression = controller.AreaKey != null
                 ? SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix + "." + controller.AreaKey, controller.Name)
                 : SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix, controller.Name);
-            genControllerClass2
+            var controllerMethodNames = SyntaxNodeHelpers.GetPublicNonGeneratedMethods(controller.Symbol).Select(m => m.Name).Distinct().ToArray();
+            genControllerClass
                 .WithExpressionProperty("Actions", controller.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
                 .WithStringField("Area", controller.Area, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
                 .WithStringField("Name", controller.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
                 .WithStringField("NameConst", controller.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
-                .WithStaticFieldBackedProperty("ActionNames", "ActionNamesClass", SyntaxKind.PublicKeyword);
+                .WithStaticFieldBackedProperty("ActionNames", "ActionNamesClass", SyntaxKind.PublicKeyword)
+                .WithChildClass("ActionNamesClass", ac => ac
+                    .WithModifiers(SyntaxKind.PublicKeyword)
+                    .WithGeneratedNonUserCodeAttributes()
+                    .ForMany(controllerMethodNames, (c, m) => c
+                        .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
+                .WithChildClass("ActionNameConstants", ac => ac
+                    .WithModifiers(SyntaxKind.PublicKeyword)
+                    .WithGeneratedNonUserCodeAttributes()
+                    .ForMany(controllerMethodNames, (c, m) => c
+                        .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)))
+                .WithViewsClass(controller.Views);
 
-
-            var genControllerClass = genControllerClass2.Build();
-
-            // add all method stubs, TODO criteria for this: only public virtual actionresults?
-            // add subclasses, fields, properties, constants for action names
-            genControllerClass =
-                genControllerClass
-                    .WithActionNameClass(controller.Symbol)
-                    .WithActionConstantsClass(controller.Symbol)
-                    .WithViewsClass(controller.Name, controller.Area, controller.Views);
-
-            return genControllerClass;
+            return genControllerClass.Build();
         }
 
         public ClassDeclarationSyntax GenerateR4Controller(ControllerDefinition controller)

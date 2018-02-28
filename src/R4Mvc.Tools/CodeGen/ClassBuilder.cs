@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -9,14 +10,15 @@ namespace R4Mvc.Tools.CodeGen
 {
     public class ClassBuilder
     {
-        private readonly string _className;
         private ClassDeclarationSyntax _class;
 
         public ClassBuilder(string className)
         {
-            _className = className;
+            Name = className;
             _class = ClassDeclaration(className);
         }
+
+        public string Name { get; }
 
         public ClassBuilder WithModifiers(params SyntaxKind[] modifiers)
         {
@@ -51,11 +53,20 @@ namespace R4Mvc.Tools.CodeGen
             WithMember(method.Build());
             return this;
         }
+
         public ClassBuilder WithConstructor(Action<ConstructorMethodBuilder> constructorParts)
         {
-            var constructor = new ConstructorMethodBuilder(_className);
+            var constructor = new ConstructorMethodBuilder(Name);
             constructorParts(constructor);
             WithMember(constructor.Build());
+            return this;
+        }
+
+        public ClassBuilder WithChildClass(string className, Action<ClassBuilder> classOptions)
+        {
+            var classBuilder = new ClassBuilder(className);
+            classOptions(classBuilder);
+            _class = _class.AddMembers(classBuilder.Build());
             return this;
         }
 
@@ -95,6 +106,12 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
+        public ClassBuilder WithField(string name, string type, params SyntaxKind[] modifiers)
+        {
+            _class = _class.WithField(name, type, modifiers);
+            return this;
+        }
+
         public ClassBuilder WithStaticFieldBackedProperty(string name, string type, params SyntaxKind[] modifiers)
         {
             var fieldName = "s_" + name;
@@ -103,6 +120,14 @@ namespace R4Mvc.Tools.CodeGen
                     .WithGeneratedAttribute(),
                 SyntaxNodeHelpers.CreateProperty(name, type, IdentifierName(fieldName), modifiers)
                     .WithGeneratedAttribute());
+            return this;
+        }
+
+        public ClassBuilder ForMany<TEntity>(IEnumerable<TEntity> items, Action<ClassBuilder, TEntity> action)
+        {
+            if (items != null)
+                foreach (var item in items)
+                    action(this, item);
             return this;
         }
 

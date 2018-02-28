@@ -129,9 +129,10 @@ namespace R4Mvc.Tools.Services
                 var className = !string.IsNullOrEmpty(controller.Area)
                     ? $"{controller.Area}Area_{controller.Name}Controller"
                     : $"{controller.Name}Controller";
-                var controllerClass = ClassDeclaration(className)
+                var controllerClass = new ClassBuilder(className)
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                    .WithViewsClass(controller.Name, controller.Area, controller.Views);
+                    .WithViewsClass(controller.Views)
+                    .Build();
                 controller.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
 
                 yield return controllerClass;

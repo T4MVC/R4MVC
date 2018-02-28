@@ -145,9 +145,6 @@ namespace R4Mvc.Tools.Extensions
         public static AttributeListSyntax GeneratedNonUserCodeAttributeList()
             => AttributeList(SeparatedList(new[] { CreateGeneratedCodeAttribute(), Attribute(IdentifierName("DebuggerNonUserCode")) }));
 
-        public static MethodDeclarationSyntax WithGeneratedNonUserCodeAttributes(this MethodDeclarationSyntax node)
-            => node.AddAttributeLists(GeneratedNonUserCodeAttributeList());
-
         public static MethodDeclarationSyntax WithNonActionAttribute(this MethodDeclarationSyntax node)
             => node.AddAttributeLists(AttributeList(SingletonSeparatedList(Attribute(IdentifierName("NonAction")))));
 
@@ -162,11 +159,6 @@ namespace R4Mvc.Tools.Extensions
 
         public static PropertyDeclarationSyntax WithGeneratedAttribute(this PropertyDeclarationSyntax node)
             => node.AddAttributeLists(AttributeList(SingletonSeparatedList(CreateGeneratedCodeAttribute())));
-
-        public static ClassDeclarationSyntax WithBaseTypes(this ClassDeclarationSyntax node, params string[] types)
-        {
-            return node.AddBaseListTypes(types.Select(x => SimpleBaseType(ParseTypeName(x))).ToArray<BaseTypeSyntax>());
-        }
 
         public static string ToQualifiedName(this ITypeSymbol symbol)
         {
@@ -217,45 +209,6 @@ namespace R4Mvc.Tools.Extensions
             return node.AddMembers(ctorNode);
         }
 
-        public static ClassDeclarationSyntax WithDefaultDummyBaseConstructor(this ClassDeclarationSyntax node, bool includeGeneratedAttributes = true, params SyntaxKind[] modifiers)
-        {
-            var ctorNode = ConstructorDeclaration(node.Identifier.ToString())
-                .WithBody(Block())
-                .WithModifiers(modifiers)
-                .WithInitializer(ConstructorInitializer(SyntaxKind.BaseConstructorInitializer, ArgumentList(SeparatedList(new[] { Argument(MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, IdentifierName(Constants.DummyClass), IdentifierName(Constants.DummyClassInstance))) }))));
-            if (includeGeneratedAttributes)
-            {
-                ctorNode = ctorNode.WithGeneratedNonUserCodeAttributes();
-            }
-            return node.AddMembers(ctorNode);
-        }
-
-        public static ClassDeclarationSyntax WithDummyConstructor(this ClassDeclarationSyntax node, bool includeGeneratedAttributes = true, params SyntaxKind[] modifiers)
-        {
-            var ctorNode = ConstructorDeclaration(node.Identifier.ToString())
-                .WithBody(Block())
-                .WithModifiers(modifiers)
-                .AddParameterListParameters(Parameter(Identifier("d")).WithType(ParseTypeName(Constants.DummyClass)));
-            if (includeGeneratedAttributes)
-            {
-                ctorNode = ctorNode.WithGeneratedNonUserCodeAttributes();
-            }
-            return node.AddMembers(ctorNode);
-        }
-
-        public static ClassDeclarationSyntax WithSubClassMembersAsStrings(this ClassDeclarationSyntax node, ITypeSymbol controllerClass, string className, params SyntaxKind[] modifiers)
-        {
-            // create ActionConstants sub class
-            var actionNameClass = ClassDeclaration(className)
-                .WithModifiers(SyntaxKind.PublicKeyword)
-                .WithGeneratedNonUserCodeAttributes();
-            foreach (var actionName in controllerClass.GetPublicNonGeneratedMethods().GroupBy(x => x.Name))
-            {
-                actionNameClass = actionNameClass.WithStringField(actionName.Key, actionName.Key, false, modifiers);
-            }
-            return node.AddMembers(actionNameClass);
-        }
-
         public static ClassDeclarationSyntax WithStaticFieldBackedProperty(this ClassDeclarationSyntax node, string propertyName, string typeName, params SyntaxKind[] modifiers)
         {
             var fieldName = "s_" + propertyName;
@@ -272,16 +225,6 @@ namespace R4Mvc.Tools.Extensions
                 .WithGeneratedAttribute();
             return node.AddMembers(field);
         }
-
-        public static ClassDeclarationSyntax WithProperty(this ClassDeclarationSyntax node, string propertyName, string typeName, ExpressionSyntax value, params SyntaxKind[] modifiers)
-        {
-            var property = CreateProperty(propertyName, typeName, value, modifiers)
-                .WithGeneratedAttribute();
-            return node.AddMembers(property);
-        }
-
-        public static ClassDeclarationSyntax WithAutoStringProperty(this ClassDeclarationSyntax node, string propertyName, params SyntaxKind[] modifiers)
-            => WithAutoProperty(node, propertyName, PredefinedStringType(), modifiers);
 
         public static ClassDeclarationSyntax WithAutoProperty(this ClassDeclarationSyntax node, string propertyName, TypeSyntax type, params SyntaxKind[] modifiers)
         {
@@ -333,16 +276,6 @@ namespace R4Mvc.Tools.Extensions
                     VariableDeclarator(Identifier(name))
                         .WithInitializer(
                             EqualsValueClause(value))));
-        }
-
-        public static ParameterSyntax WithGenericType(this ParameterSyntax node, string genericName, params string[] typeArguments)
-        {
-            return node.WithType(
-                GenericName(Identifier(genericName))
-                    .WithTypeArgumentList(
-                        TypeArgumentList(
-                            SeparatedList<TypeSyntax>(
-                                typeArguments.Select(t => IdentifierName(t))))));
         }
 
         public static MemberAccessExpressionSyntax MemberAccess(string entityName, string memberName)
