@@ -91,7 +91,7 @@ namespace R4MvcHostApp.Areas.Admin.Features.TaxCalculator
                 public readonly string Index = "Index";
             }
 
-            public string Index = "~/Areas/Admin/Features/TaxCalculator/Index.cshtml";
+            public readonly string Index = "~/Areas/Admin/Features/TaxCalculator/Index.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]

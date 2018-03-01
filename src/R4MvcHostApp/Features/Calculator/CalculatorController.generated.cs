@@ -89,7 +89,7 @@ namespace R4MvcHostApp.Features.Calculator
                 public readonly string Index = "Index";
             }
 
-            public string Index = "~/Features/Calculator/Index.cshtml";
+            public readonly string Index = "~/Features/Calculator/Index.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]

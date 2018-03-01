@@ -58,25 +58,30 @@ namespace R4Mvc.Tools.Services
 
         public ClassDeclarationSyntax GeneratePartialController(ControllerDefinition controller)
         {
-
             // build controller partial class node 
-            // add a default constructor if there are some but none are zero length
             var genControllerClass = new ClassBuilder(controller.Symbol.Name)               // public partial {controllerClass}
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                 .WithTypeParameters(controller.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()); // optional <T1, T2, …>
 
+            // add a default constructor if there are some but none are zero length
             var gotCustomConstructors = controller.Symbol.Constructors
                 .Where(c => c.DeclaredAccessibility == Accessibility.Public)
                 .Where(SyntaxNodeHelpers.IsNotR4MVCGenerated)
                 .Where(c => !c.IsImplicitlyDeclared)
                 .Any();
             if (!gotCustomConstructors)
-                genControllerClass.WithConstructor(c => c                                   // public ctor() { }
+                /* [GeneratedCode, DebuggerNonUserCode]
+                 * public ctor() { }
+                 */
+                genControllerClass.WithConstructor(c => c
                     .WithModifiers(SyntaxKind.PublicKeyword)
-                    .WithGeneratedNonUserCodeAttributes());                                 // [GeneratedCode, DebuggerNonUserCode]
-            genControllerClass.WithConstructor(c => c                                       // public ctor(Dummy d) {}
+                    .WithGeneratedNonUserCodeAttributes());
+            /* [GeneratedCode, DebuggerNonUserCode]
+             * public ctor(Dummy d) {}
+             */
+            genControllerClass.WithConstructor(c => c
                 .WithModifiers(SyntaxKind.ProtectedKeyword)
-                .WithGeneratedNonUserCodeAttributes()                                       // [GeneratedCode, DebuggerNonUserCode]
+                .WithGeneratedNonUserCodeAttributes()
                 .WithParameter("d", Constants.DummyClass));
 
             AddRedirectMethods(genControllerClass);
@@ -92,15 +97,27 @@ namespace R4Mvc.Tools.Services
                 .WithStringField("Name", controller.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
                 .WithStringField("NameConst", controller.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
                 .WithStaticFieldBackedProperty("ActionNames", "ActionNamesClass", SyntaxKind.PublicKeyword)
+                /* [GeneratedCode, DebuggerNonUserCode]
+                 * public class ActionNamesClass
+                 * {
+                 *  public readonly string {action} = "{action}";
+                 * }
+                 */
                 .WithChildClass("ActionNamesClass", ac => ac
                     .WithModifiers(SyntaxKind.PublicKeyword)
                     .WithGeneratedNonUserCodeAttributes()
-                    .ForMany(controllerMethodNames, (c, m) => c
+                    .ForEach(controllerMethodNames, (c, m) => c
                         .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
+                /* [GeneratedCode, DebuggerNonUserCode]
+                 * public class ActionNameConstants
+                 * {
+                 *  public const string {action} = "{action}";
+                 * }
+                 */
                 .WithChildClass("ActionNameConstants", ac => ac
                     .WithModifiers(SyntaxKind.PublicKeyword)
                     .WithGeneratedNonUserCodeAttributes()
-                    .ForMany(controllerMethodNames, (c, m) => c
+                    .ForEach(controllerMethodNames, (c, m) => c
                         .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)))
                 .WithViewsClass(controller.Views);
 
@@ -109,10 +126,15 @@ namespace R4Mvc.Tools.Services
 
         public ClassDeclarationSyntax GenerateR4Controller(ControllerDefinition controller)
         {
-            // create R4MVC_[Controller] class inheriting from partial
             var className = GetR4MVCControllerClassName(controller.Symbol);
             controller.FullyQualifiedR4ClassName = $"{controller.Namespace}.{className}";
 
+            /* [GeneratedCode, DebuggerNonUserCode]
+             * public partial class R4MVC_{Controller} : {Controller}
+             * {
+             *  public R4MVC_{Controller}() : base(Dummy.Instance) {}
+             * }
+             */
             var r4ControllerClass = new ClassBuilder(className)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes()
@@ -127,32 +149,61 @@ namespace R4Mvc.Tools.Services
         private void AddRedirectMethods(ClassBuilder genControllerClass)
         {
             genControllerClass
+                /* [GeneratedCode, DebuggerNonUserCode]
+                 * protected RedirectToRouteResult RedirectToAction(IActionResult result)
+                 * {
+                 *  var callInfo = result.GetR4MvcResult();
+                 *  return RedirectToRoute(callInfo.RouteValueDictionary);
+                 * }
+                 */
                 .WithMethod("RedirectToAction", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
                     .WithParameter("result", "IActionResult")
                     .WithBody(b => b
-                        .VariableFromMethodCall("callInfo", "result", "GetR4MvcResult")                 // var callInfo = result.GetR4MvcResult();
-                        .ReturnMethodCall(null, "RedirectToRoute", "callInfo.RouteValueDictionary")))   // return RedirectToRoute(callInfo.RouteValueDictionary);
+                        .VariableFromMethodCall("callInfo", "result", "GetR4MvcResult")
+                        .ReturnMethodCall(null, "RedirectToRoute", "callInfo.RouteValueDictionary")))
+
+                /* [GeneratedCode, DebuggerNonUserCode]
+                 * protected RedirectToRouteResult RedirectToAction(Task<IActionResult> taskResult)
+                 * {
+                 *  return RedirectToAction(taskResult.Result);
+                 * }
+                */
                 .WithMethod("RedirectToAction", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
                     .WithParameter("taskResult", "Task<IActionResult>")
                     .WithBody(b => b
-                        .ReturnMethodCall(null, "RedirectToAction", "taskResult.Result")))              // return RedirectToAction(taskResult.Result);
+                        .ReturnMethodCall(null, "RedirectToAction", "taskResult.Result")))
+
+                /* [GeneratedCode, DebuggerNonUserCode]
+                 * protected RedirectToRouteResult RedirectToActionPermanent(IActionResult result)
+                 * {
+                 *  var callInfo = result.GetR4MvcResult();
+                 *  return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
+                 * }
+                 */
                 .WithMethod("RedirectToActionPermanent", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
                     .WithParameter("result", "IActionResult")
                     .WithBody(b => b
-                        .VariableFromMethodCall("callInfo", "result", "GetR4MvcResult")                         // var callInfo = result.GetR4MvcResult();
-                        .ReturnMethodCall(null, "RedirectToRoutePermanent", "callInfo.RouteValueDictionary")))  // return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
+                        .VariableFromMethodCall("callInfo", "result", "GetR4MvcResult")
+                        .ReturnMethodCall(null, "RedirectToRoutePermanent", "callInfo.RouteValueDictionary")))
+
+                /* [GeneratedCode, DebuggerNonUserCode]
+                 * protected RedirectToRouteResult RedirectToActionPermanent(Task<IActionResult> taskResult)
+                 * {
+                 *  return RedirectToActionPermanent(taskResult.Result);
+                 * }
+                */
                 .WithMethod("RedirectToActionPermanent", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
                     .WithParameter("taskResult", "Task<IActionResult>")
                     .WithBody(b => b
-                        .ReturnMethodCall(null, "RedirectToActionPermanent", "taskResult.Result")));    // return RedirectToActionPermanent(taskResult.Result);
+                        .ReturnMethodCall(null, "RedirectToActionPermanent", "taskResult.Result")));
         }
 
         private void AddParameterlessMethods(ClassBuilder genControllerClass, ITypeSymbol mvcSymbol)
@@ -162,11 +213,17 @@ namespace R4Mvc.Tools.Services
                 .Where(g => !g.Any(m => m.Parameters.Length == 0));
             foreach (var method in methods)
                 genControllerClass
-                    .WithMethod(method.Key, "IActionResult", m => m
+                    /* [GeneratedCode, DebuggerNonUserCode]
+                     * public virtual IActionResult {method.Key}()
+                     * {
+                     *  return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
+                     * }
+                     */
+                    .WithMethod(method.Key, "IActionResult", m => m 
                         .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.VirtualKeyword)
                         .WithNonActionAttribute()
                         .WithGeneratedNonUserCodeAttributes()
-                        .WithBody(b => b                            // return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action}); 
+                        .WithBody(b => b
                             .ReturnNewObject(Constants.ActionResultClass, "Area", "Name", "ActionNames." + method.Key)));
         }
 
@@ -188,15 +245,7 @@ namespace R4Mvc.Tools.Services
                     callInfoType = Constants.RedirectToRouteResultClass;
 
 
-                var bodyBuilder = new BodyBuilder()
-                    // var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
-                    .VariableFromNewObject("callInfo", callInfoType, "Area", "Name", "ActionNames." + method.Name)
-                    .ForMany(method.Parameters, (b, p) => b
-                        // ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "paramName", paramName);
-                        .MethodCall("ModelUnbinderHelpers", "AddRouteValues", "callInfo.RouteValueDictionary", ParameterSource.Instance.String(p.Name), p.Name))
-                    // {Action}Override(callInfo, {parameters});
-                    .MethodCall(null, method.Name + overrideMethodSuffix, new[] { "callInfo" }.Concat(method.Parameters.Select(p => p.Name)).ToArray());
-
+                Action<BodyBuilder> returnStatement;
                 var returnType = method.ReturnType as INamedTypeSymbol;
                 if (returnType.InheritsFrom<Task>() == true)
                 {
@@ -204,28 +253,46 @@ namespace R4Mvc.Tools.Services
                         ? "callInfo as " + returnType.TypeArguments[0]
                         : "callInfo";
                     // return Task.FromResult(callInfo as TResult);
-                    bodyBuilder.ReturnMethodCall(typeof(Task).FullName, "FromResult", result);
+                    returnStatement = b => b.ReturnMethodCall(typeof(Task).FullName, "FromResult", result);
                 }
                 else
                 {
                     // return callInfo;
-                    bodyBuilder.ReturnVariable("callInfo");
+                    returnStatement = b => b.ReturnVariable("callInfo");
                 }
 
                 classBuilder
+                    /* [NonAction]
+                     * partial void {action}Override({ActionResultType} callInfo, [… params]);
+                     */
                     .WithMethod(method.Name + overrideMethodSuffix, null, m => m
                         .WithModifiers(SyntaxKind.PartialKeyword)
                         .WithNonActionAttribute()
                         .WithParameter("callInfo", callInfoType)
-                        .ForMany(method.Parameters, (m2, p) => m2
+                        .ForEach(method.Parameters, (m2, p) => m2
                             .WithParameter(p.Name, p.Type.ToString()))
                         .WithNoBody())
+                    /* [NonAction]
+                     * public overrive {ActionResultType} {action}([… params])
+                     * {
+                     *  var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
+                     *  ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "paramName", paramName);
+                     *  {Action}Override(callInfo, {parameters});
+                     *  return callInfo;
+                     * }
+                     */
                     .WithMethod(method.Name, method.ReturnType.ToString(), m => m
                         .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
                         .WithNonActionAttribute()
-                        .ForMany(method.Parameters, (m2, p) => m2
+                        .ForEach(method.Parameters, (m2, p) => m2
                             .WithParameter(p.Name, p.Type.ToString()))
-                        .WithBody(bodyBuilder));
+                        .WithBody(b => b
+                            .VariableFromNewObject("callInfo", callInfoType, "Area", "Name", "ActionNames." + method.Name)
+                            .ForEach(method.Parameters, (cb, p) => cb
+                                .MethodCall("ModelUnbinderHelpers", "AddRouteValues", "callInfo.RouteValueDictionary", ParameterSource.Instance.String(p.Name), p.Name))
+                            .MethodCall(null, method.Name + overrideMethodSuffix, new[] { "callInfo" }.Concat(method.Parameters.Select(p => p.Name)).ToArray())
+                            .Statement(returnStatement)
+                        ));
             }
         }
 

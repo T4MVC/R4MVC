@@ -123,7 +123,7 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
-        public ClassBuilder ForMany<TEntity>(IEnumerable<TEntity> items, Action<ClassBuilder, TEntity> action)
+        public ClassBuilder ForEach<TEntity>(IEnumerable<TEntity> items, Action<ClassBuilder, TEntity> action)
         {
             if (items != null)
                 foreach (var item in items)

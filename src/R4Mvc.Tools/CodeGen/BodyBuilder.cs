@@ -89,7 +89,13 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
-        public BodyBuilder ForMany<TEntity>(IEnumerable<TEntity> items, Action<BodyBuilder, TEntity> action)
+        public BodyBuilder Statement(Action<BodyBuilder> statement)
+        {
+            statement(this);
+            return this;
+        }
+
+        public BodyBuilder ForEach<TEntity>(IEnumerable<TEntity> items, Action<BodyBuilder, TEntity> action)
         {
             if (items != null)
                 foreach (var item in items)

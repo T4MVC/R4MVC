@@ -89,7 +89,7 @@ namespace R4MvcHostApp.Areas.Members.Awards
                 public readonly string Index = "Index";
             }
 
-            public string Index = "~/Areas/Members/Awards/Index.cshtml";
+            public readonly string Index = "~/Areas/Members/Awards/Index.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]

@@ -85,7 +85,7 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
-        public MethodBuilder ForMany<TEntity>(IEnumerable<TEntity> items, Action<MethodBuilder, TEntity> action)
+        public MethodBuilder ForEach<TEntity>(IEnumerable<TEntity> items, Action<MethodBuilder, TEntity> action)
         {
             if (items != null)
                 foreach (var item in items)

@@ -185,19 +185,19 @@ namespace R4MvcHostApp.Controllers
                 public readonly string VerifyCode = "VerifyCode";
             }
 
-            public string AccessDenied = "~/Views/Account/AccessDenied.cshtml";
-            public string ConfirmEmail = "~/Views/Account/ConfirmEmail.cshtml";
-            public string ExternalLoginConfirmation = "~/Views/Account/ExternalLoginConfirmation.cshtml";
-            public string ExternalLoginFailure = "~/Views/Account/ExternalLoginFailure.cshtml";
-            public string ForgotPassword = "~/Views/Account/ForgotPassword.cshtml";
-            public string ForgotPasswordConfirmation = "~/Views/Account/ForgotPasswordConfirmation.cshtml";
-            public string Lockout = "~/Views/Account/Lockout.cshtml";
-            public string Login = "~/Views/Account/Login.cshtml";
-            public string Register = "~/Views/Account/Register.cshtml";
-            public string ResetPassword = "~/Views/Account/ResetPassword.cshtml";
-            public string ResetPasswordConfirmation = "~/Views/Account/ResetPasswordConfirmation.cshtml";
-            public string SendCode = "~/Views/Account/SendCode.cshtml";
-            public string VerifyCode = "~/Views/Account/VerifyCode.cshtml";
+            public readonly string AccessDenied = "~/Views/Account/AccessDenied.cshtml";
+            public readonly string ConfirmEmail = "~/Views/Account/ConfirmEmail.cshtml";
+            public readonly string ExternalLoginConfirmation = "~/Views/Account/ExternalLoginConfirmation.cshtml";
+            public readonly string ExternalLoginFailure = "~/Views/Account/ExternalLoginFailure.cshtml";
+            public readonly string ForgotPassword = "~/Views/Account/ForgotPassword.cshtml";
+            public readonly string ForgotPasswordConfirmation = "~/Views/Account/ForgotPasswordConfirmation.cshtml";
+            public readonly string Lockout = "~/Views/Account/Lockout.cshtml";
+            public readonly string Login = "~/Views/Account/Login.cshtml";
+            public readonly string Register = "~/Views/Account/Register.cshtml";
+            public readonly string ResetPassword = "~/Views/Account/ResetPassword.cshtml";
+            public readonly string ResetPasswordConfirmation = "~/Views/Account/ResetPasswordConfirmation.cshtml";
+            public readonly string SendCode = "~/Views/Account/SendCode.cshtml";
+            public readonly string VerifyCode = "~/Views/Account/VerifyCode.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]

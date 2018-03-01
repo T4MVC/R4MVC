@@ -146,12 +146,12 @@ namespace R4MvcHostApp.Controllers
                 public readonly string VerifyPhoneNumber = "VerifyPhoneNumber";
             }
 
-            public string AddPhoneNumber = "~/Views/Manage/AddPhoneNumber.cshtml";
-            public string ChangePassword = "~/Views/Manage/ChangePassword.cshtml";
-            public string Index = "~/Views/Manage/Index.cshtml";
-            public string ManageLogins = "~/Views/Manage/ManageLogins.cshtml";
-            public string SetPassword = "~/Views/Manage/SetPassword.cshtml";
-            public string VerifyPhoneNumber = "~/Views/Manage/VerifyPhoneNumber.cshtml";
+            public readonly string AddPhoneNumber = "~/Views/Manage/AddPhoneNumber.cshtml";
+            public readonly string ChangePassword = "~/Views/Manage/ChangePassword.cshtml";
+            public readonly string Index = "~/Views/Manage/Index.cshtml";
+            public readonly string ManageLogins = "~/Views/Manage/ManageLogins.cshtml";
+            public readonly string SetPassword = "~/Views/Manage/SetPassword.cshtml";
+            public readonly string VerifyPhoneNumber = "~/Views/Manage/VerifyPhoneNumber.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]

@@ -99,8 +99,8 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
                 public readonly string Index2 = "Index2";
             }
 
-            public string Index = "~/Areas/Admin/Views/Users/Index.cshtml";
-            public string Index2 = "~/Areas/Admin/Views/Users/Index2.cshtml";
+            public readonly string Index = "~/Areas/Admin/Views/Users/Index.cshtml";
+            public readonly string Index2 = "~/Areas/Admin/Views/Users/Index2.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
