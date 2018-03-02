@@ -232,25 +232,42 @@ namespace R4Mvc.Tools.Services
             const string overrideMethodSuffix = "Override";
             foreach (var method in mvcSymbol.GetPublicNonGeneratedMethods())
             {
+                var methodReturnType = method.ReturnType;
+                bool isTaskResult = false, isGenericTaskResult = false;
+                if (methodReturnType.InheritsFrom<Task>())
+                {
+                    isTaskResult = true;
+                    var taskReturnType = methodReturnType as INamedTypeSymbol;
+                    if (taskReturnType.TypeArguments.Length > 0)
+                    {
+                        methodReturnType = taskReturnType.TypeArguments[0];
+                        isGenericTaskResult = true;
+                    }
+                }
+
                 var callInfoType = Constants.ActionResultClass;
-                if (method.ReturnType.InheritsFrom<JsonResult>())
+                if (methodReturnType.InheritsFrom<JsonResult>())
                     callInfoType = Constants.JsonResultClass;
-                else if (method.ReturnType.InheritsFrom<ContentResult>())
+                else if (methodReturnType.InheritsFrom<ContentResult>())
                     callInfoType = Constants.ContentResultClass;
-                else if (method.ReturnType.InheritsFrom<RedirectResult>())
+                else if (methodReturnType.InheritsFrom<RedirectResult>())
                     callInfoType = Constants.RedirectResultClass;
-                else if (method.ReturnType.InheritsFrom<RedirectToActionResult>())
+                else if (methodReturnType.InheritsFrom<RedirectToActionResult>())
                     callInfoType = Constants.RedirectToActionResultClass;
-                else if (method.ReturnType.InheritsFrom<RedirectToRouteResult>())
+                else if (methodReturnType.InheritsFrom<RedirectToRouteResult>())
                     callInfoType = Constants.RedirectToRouteResultClass;
+                else if (!isTaskResult && !methodReturnType.InheritsFrom<IActionResult>())
+                {
+                    // Not a return type we support right now. Returning
+                    continue;
+                }
 
 
                 Action<BodyBuilder> returnStatement;
-                var returnType = method.ReturnType as INamedTypeSymbol;
-                if (returnType.InheritsFrom<Task>() == true)
+                if (isTaskResult)
                 {
-                    var result = returnType.TypeArguments.Length > 0
-                        ? "callInfo as " + returnType.TypeArguments[0]
+                    var result = isGenericTaskResult
+                        ? "callInfo as " + methodReturnType
                         : "callInfo";
                     // return Task.FromResult(callInfo as TResult);
                     returnStatement = b => b.ReturnMethodCall(typeof(Task).FullName, "FromResult", result);

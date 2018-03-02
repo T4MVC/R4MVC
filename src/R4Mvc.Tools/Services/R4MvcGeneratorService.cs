@@ -62,11 +62,11 @@ namespace R4Mvc.Tools.Services
                     // If SplitIntoMultipleFiles is set, store the generated classes alongside the controller files.
                     if (_settings.SplitIntoMultipleFiles)
                     {
-                        var controllerFile = NewCompilationUnit()
+                        var controllerFileContents = NewCompilationUnit()
                             .AddMembers(namespaceNode);
-                        var generatedFile = controller.GetFilePath().TrimEnd(".cs") + ".generated.cs";
-                        Console.WriteLine("Generating " + generatedFile.GetRelativePath(projectRoot));
-                        CompleteAndWriteFile(controllerFile, generatedFile);
+                        var generatedFilePath = controller.GetFilePath().TrimEnd(".cs") + ".generated.cs";
+                        Console.WriteLine("Generating " + generatedFilePath.GetRelativePath(projectRoot));
+                        CompleteAndWriteFile(controllerFileContents, generatedFilePath);
                         namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
                     }
                 }
@@ -78,8 +78,21 @@ namespace R4Mvc.Tools.Services
 
             // R4MVC namespace used for the areas and Dummy class
             var r4Namespace = NamespaceDeclaration(ParseName(_settings.R4MvcNamespace))
-                // add the dummy class using in the derived controller partial class
-                .WithDummyClass()
+                // add the dummy class uses in the derived controller partial class
+                /* [GeneratedCode, DebuggerNonUserCode]
+                 * public class Dummy
+                 * {
+                 *  private Dummy() {}
+                 *  public static Dummy Instance = new Dummy();
+                 * }
+                 */
+                 .AddMembers(new ClassBuilder(Constants.DummyClass)
+                    .WithModifiers(SyntaxKind.PublicKeyword)
+                    .WithGeneratedNonUserCodeAttributes()
+                    .WithConstructor(c => c
+                        .WithModifiers(SyntaxKind.PrivateKeyword))
+                    .WithField(Constants.DummyClassInstance, Constants.DummyClass, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
+                    .Build())
                 .AddMembers(CreateViewOnlyControllerClasses(controllers).ToArray<MemberDeclarationSyntax>())
                 .AddMembers(CreateAreaClasses(areaControllers).ToArray<MemberDeclarationSyntax>());
 

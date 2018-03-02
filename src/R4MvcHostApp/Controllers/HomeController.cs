@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using R4MvcHostApp.Models;
 
 namespace R4MvcHostApp.Controllers
 {
@@ -42,6 +43,11 @@ namespace R4MvcHostApp.Controllers
             return Task.CompletedTask;
         }
 
+        public virtual Task<JsonResult> TaskJsonResult()
+        {
+            return Task.FromResult(Json(null));
+        }
+
         public virtual ActionResult ActionMethod(int id)
         {
             return View();
@@ -70,6 +76,16 @@ namespace R4MvcHostApp.Controllers
         public virtual RedirectToRouteResult RedirectToRouteMethod(int id)
         {
             return RedirectToRoute(null);
+        }
+
+        public virtual ApplicationUser User()
+        {
+            return null;
+        }
+
+        public virtual ApplicationUser[] Users()
+        {
+            return null;
         }
     }
 }

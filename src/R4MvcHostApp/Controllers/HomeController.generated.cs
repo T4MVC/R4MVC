@@ -116,12 +116,15 @@ namespace R4MvcHostApp.Controllers
             public readonly string Error = "Error";
             public readonly string TaskActionResult = "TaskActionResult";
             public readonly string TaskResult = "TaskResult";
+            public readonly string TaskJsonResult = "TaskJsonResult";
             public readonly string ActionMethod = "ActionMethod";
             public readonly string JsonMethod = "JsonMethod";
             public readonly string ContentMethod = "ContentMethod";
             public readonly string RedirectMethod = "RedirectMethod";
             public readonly string RedirectToActionMethod = "RedirectToActionMethod";
             public readonly string RedirectToRouteMethod = "RedirectToRouteMethod";
+            public readonly string User = "User";
+            public readonly string Users = "Users";
             public readonly string ExtensionTest = "ExtensionTest";
         }
 
@@ -134,12 +137,15 @@ namespace R4MvcHostApp.Controllers
             public const string Error = "Error";
             public const string TaskActionResult = "TaskActionResult";
             public const string TaskResult = "TaskResult";
+            public const string TaskJsonResult = "TaskJsonResult";
             public const string ActionMethod = "ActionMethod";
             public const string JsonMethod = "JsonMethod";
             public const string ContentMethod = "ContentMethod";
             public const string RedirectMethod = "RedirectMethod";
             public const string RedirectToActionMethod = "RedirectToActionMethod";
             public const string RedirectToRouteMethod = "RedirectToRouteMethod";
+            public const string User = "User";
+            public const string Users = "Users";
             public const string ExtensionTest = "ExtensionTest";
         }
 
@@ -271,6 +277,16 @@ namespace R4MvcHostApp.Controllers
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskResult);
             TaskResultOverride(callInfo);
             return System.Threading.Tasks.Task.FromResult(callInfo);
+        }
+
+        [NonAction]
+        partial void TaskJsonResultOverride(R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult callInfo);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.JsonResult> TaskJsonResult()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult(Area, Name, ActionNames.TaskJsonResult);
+            TaskJsonResultOverride(callInfo);
+            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.JsonResult);
         }
 
         [NonAction]

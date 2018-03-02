@@ -16,9 +16,14 @@ namespace R4Mvc.Tools.Extensions
     {
         public static bool InheritsFrom<T>(this ITypeSymbol symbol)
         {
+            var matchingTypeName = typeof(T).FullName;
+            if (typeof(T).IsInterface)
+            {
+                return symbol.ToString() == matchingTypeName || symbol.AllInterfaces.Any(i => i.ToString() == matchingTypeName);
+            }
             while (true)
             {
-                if (symbol.TypeKind == TypeKind.Class && symbol.ToString() == typeof(T).FullName)
+                if (symbol.TypeKind == TypeKind.Class && symbol.ToString() == matchingTypeName)
                 {
                     return true;
                 }

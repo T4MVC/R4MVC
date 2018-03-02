@@ -83,24 +83,5 @@ namespace R4Mvc.Tools.Extensions
                 .WithMember(viewsClass.Build())
                 .WithStaticFieldBackedProperty("Views", viewsClass.Name, SyntaxKind.PublicKeyword);
         }
-
-        public static NamespaceDeclarationSyntax WithDummyClass(this NamespaceDeclarationSyntax node)
-        {
-            /* [GeneratedCode, DebuggerNonUserCode]
-             * public class Dummy
-             * {
-             *  private Dummy() {}
-             *  public static Dummy Instance = new Dummy();
-             * }
-             */
-            var dummyClass = new ClassBuilder(Constants.DummyClass)
-                .WithModifiers(SyntaxKind.PublicKeyword)
-                .WithGeneratedNonUserCodeAttributes()
-                .WithConstructor(c => c
-                    .WithModifiers(SyntaxKind.PrivateKeyword))
-                .WithField(Constants.DummyClassInstance, Constants.DummyClass, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
-
-            return node.AddMembers(dummyClass.Build());
-        }
     }
 }
