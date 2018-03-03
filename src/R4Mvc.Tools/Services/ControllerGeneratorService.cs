@@ -262,22 +262,6 @@ namespace R4Mvc.Tools.Services
                     continue;
                 }
 
-
-                Action<BodyBuilder> returnStatement;
-                if (isTaskResult)
-                {
-                    var result = isGenericTaskResult
-                        ? "callInfo as " + methodReturnType
-                        : "callInfo";
-                    // return Task.FromResult(callInfo as TResult);
-                    returnStatement = b => b.ReturnMethodCall(typeof(Task).FullName, "FromResult", result);
-                }
-                else
-                {
-                    // return callInfo;
-                    returnStatement = b => b.ReturnVariable("callInfo");
-                }
-
                 classBuilder
                     /* [NonAction]
                      * partial void {action}Override({ActionResultType} callInfo, [… params]);
@@ -308,7 +292,9 @@ namespace R4Mvc.Tools.Services
                             .ForEach(method.Parameters, (cb, p) => cb
                                 .MethodCall("ModelUnbinderHelpers", "AddRouteValues", "callInfo.RouteValueDictionary", ParameterSource.Instance.String(p.Name), p.Name))
                             .MethodCall(null, method.Name + overrideMethodSuffix, new[] { "callInfo" }.Concat(method.Parameters.Select(p => p.Name)).ToArray())
-                            .Statement(returnStatement)
+                            .Statement(rb => isTaskResult
+                                ? rb.ReturnMethodCall(typeof(Task).FullName, "FromResult", "callInfo" + (isGenericTaskResult ? " as " + methodReturnType : null))
+                                : rb.ReturnVariable("callInfo"))
                         ));
             }
         }

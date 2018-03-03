@@ -11,9 +11,9 @@ namespace R4Mvc.Tools.CodeGen
     {
         private IList<StatementSyntax> _expressions = new List<StatementSyntax>();
 
-        private ExpressionSyntax[] GetArguments(ICollection<object> arguments)
+        private ArgumentListSyntax GetArguments(ICollection<object> arguments)
         {
-            return arguments.Select(a =>
+            var result = arguments.Select(a =>
             {
                 switch (a)
                 {
@@ -25,7 +25,9 @@ namespace R4Mvc.Tools.CodeGen
                         throw new InvalidOperationException("Argument of wrong type passed. Has to be String or ExpressionSyntax");
                 }
             })
+            .Select(e => Argument(e))
             .ToArray();
+            return ArgumentList(SeparatedList(result));
         }
 
         private ExpressionSyntax MethodCallExpression(string entityName, string methodName, ICollection<object> arguments)
@@ -73,10 +75,20 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
+        private VariableDeclarationSyntax NewVariableDeclaration(string name, ExpressionSyntax value, string type = null)
+        {
+            return VariableDeclaration(IdentifierName(type ?? "var"))
+                .WithVariables(
+                    SingletonSeparatedList(
+                        VariableDeclarator(Identifier(name))
+                            .WithInitializer(
+                                EqualsValueClause(value))));
+        }
+
         public BodyBuilder VariableFromMethodCall(string variableName, string entityName, string methodName, params string[] arguments)
         {
             var methodCallExpression = MethodCallExpression(entityName, methodName, arguments);
-            var variableExpression = SyntaxNodeHelpers.VariableDeclaration(variableName, methodCallExpression);
+            var variableExpression = NewVariableDeclaration(variableName, methodCallExpression);
             _expressions.Add(LocalDeclarationStatement(variableExpression));
             return this;
         }
@@ -84,12 +96,12 @@ namespace R4Mvc.Tools.CodeGen
         public BodyBuilder VariableFromNewObject(string variableName, string entityType, params string[] arguments)
         {
             var newExpression = NewObjectExpression(entityType, arguments);
-            var variableExpression = SyntaxNodeHelpers.VariableDeclaration(variableName, newExpression);
+            var variableExpression = NewVariableDeclaration(variableName, newExpression);
             _expressions.Add(LocalDeclarationStatement(variableExpression));
             return this;
         }
 
-        public BodyBuilder Statement(Action<BodyBuilder> statement)
+        public BodyBuilder Statement(Func<BodyBuilder, BodyBuilder> statement)
         {
             statement(this);
             return this;

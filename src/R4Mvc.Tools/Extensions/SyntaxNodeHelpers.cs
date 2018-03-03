@@ -37,9 +37,6 @@ namespace R4Mvc.Tools.Extensions
             return false;
         }
 
-        public static TypeSyntax PredefinedStringType()
-            => PredefinedType(Token(SyntaxKind.StringKeyword));
-
         public static SyntaxToken[] CreateModifiers(params SyntaxKind[] kinds)
         {
             return kinds.Select(m => Token(TriviaList(), m, TriviaList(Space))).ToArray();
@@ -86,52 +83,6 @@ namespace R4Mvc.Tools.Extensions
                 .Where(IsMvcAction);
         }
 
-        public static FieldDeclarationSyntax CreateFieldWithDefaultInitializer(string fieldName, string typeName, params SyntaxKind[] modifiers)
-            => CreateFieldWithDefaultInitializer(fieldName, typeName, typeName, modifiers);
-
-        public static FieldDeclarationSyntax CreateFieldWithDefaultInitializer(string fieldName, string typeName, string valueTypeName, params SyntaxKind[] modifiers)
-        {
-            return FieldDeclaration(
-                VariableDeclaration(
-                    IdentifierName(typeName),
-                    fieldName,
-                    ObjectCreationExpression(IdentifierName(valueTypeName))
-                        .WithArgumentList(ArgumentList())))
-                .WithModifiers(modifiers);
-        }
-
-        public static FieldDeclarationSyntax CreateStringFieldDeclaration(string fieldName, string fieldValue, params SyntaxKind[] modifiers)
-        {
-            return FieldDeclaration(
-                VariableDeclaration(
-                    PredefinedStringType(),
-                    fieldName,
-                    LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(fieldValue))))
-                .WithModifiers(modifiers);
-        }
-
-        public static PropertyDeclarationSyntax CreateProperty(string propertyName, string typeName, ExpressionSyntax value, params SyntaxKind[] modifiers)
-        {
-            return PropertyDeclaration(IdentifierName(typeName), Identifier(propertyName))
-                .WithExpressionBody(ArrowExpressionClause(value))
-                .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
-                .WithModifiers(modifiers);
-        }
-
-        public static PropertyDeclarationSyntax CreateAutoProperty(string propertyName, TypeSyntax type, params SyntaxKind[] modifiers)
-        {
-            return PropertyDeclaration(type, propertyName)
-                .WithAccessorList(
-                    AccessorList(
-                        List<AccessorDeclarationSyntax>(
-                            new[]
-                            {
-                                AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                            })))
-                .WithModifiers(modifiers);
-        }
-
         private static AttributeSyntax CreateGeneratedCodeAttribute()
         {
             var arguments =
@@ -152,12 +103,6 @@ namespace R4Mvc.Tools.Extensions
 
         public static MethodDeclarationSyntax WithNonActionAttribute(this MethodDeclarationSyntax node)
             => node.AddAttributeLists(AttributeList(SingletonSeparatedList(Attribute(IdentifierName("NonAction")))));
-
-        public static ConstructorDeclarationSyntax WithGeneratedNonUserCodeAttributes(this ConstructorDeclarationSyntax node)
-            => node.AddAttributeLists(GeneratedNonUserCodeAttributeList());
-
-        public static ClassDeclarationSyntax WithGeneratedNonUserCodeAttributes(this ClassDeclarationSyntax node)
-            => node.AddAttributeLists(GeneratedNonUserCodeAttributeList());
 
         public static FieldDeclarationSyntax WithGeneratedAttribute(this FieldDeclarationSyntax node)
             => node.AddAttributeLists(AttributeList(SingletonSeparatedList(CreateGeneratedCodeAttribute())));
@@ -202,48 +147,6 @@ namespace R4Mvc.Tools.Extensions
             return node.WithLeadingTrivia(leadingTrivia);
         }
 
-        public static ClassDeclarationSyntax WithDefaultConstructor(this ClassDeclarationSyntax node, bool includeGeneratedAttributes = true, params SyntaxKind[] modifiers)
-        {
-            var ctorNode = ConstructorDeclaration(node.Identifier.ToString())
-                .WithBody(Block())
-                .WithModifiers(modifiers);
-            if (includeGeneratedAttributes)
-            {
-                ctorNode = ctorNode.WithGeneratedNonUserCodeAttributes();
-            }
-            return node.AddMembers(ctorNode);
-        }
-
-        public static ClassDeclarationSyntax WithStaticFieldBackedProperty(this ClassDeclarationSyntax node, string propertyName, string typeName, params SyntaxKind[] modifiers)
-        {
-            var fieldName = "s_" + propertyName;
-            return node.AddMembers(
-                CreateFieldWithDefaultInitializer(fieldName, typeName, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
-                    .WithGeneratedAttribute(),
-                CreateProperty(propertyName, typeName, IdentifierName(fieldName), modifiers)
-                    .WithGeneratedAttribute());
-        }
-
-        public static ClassDeclarationSyntax WithField(this ClassDeclarationSyntax node, string fieldName, string typeName, params SyntaxKind[] modifiers)
-        {
-            var field = CreateFieldWithDefaultInitializer(fieldName, typeName, modifiers)
-                .WithGeneratedAttribute();
-            return node.AddMembers(field);
-        }
-
-        public static ClassDeclarationSyntax WithAutoProperty(this ClassDeclarationSyntax node, string propertyName, TypeSyntax type, params SyntaxKind[] modifiers)
-        {
-            var property = CreateAutoProperty(propertyName, type, modifiers);
-            return node.AddMembers(property);
-        }
-
-        public static ClassDeclarationSyntax WithStringField(this ClassDeclarationSyntax node, string name, string value, bool includeGeneratedAttribute = true, params SyntaxKind[] modifiers)
-        {
-            var fieldDeclaration = CreateStringFieldDeclaration(name, value, modifiers);
-            if (includeGeneratedAttribute) fieldDeclaration = fieldDeclaration.WithGeneratedAttribute();
-            return node.AddMembers(fieldDeclaration);
-        }
-
         /// TODO: Can this use a aeparated list?
         public static ClassDeclarationSyntax WithModifiers(this ClassDeclarationSyntax node, params SyntaxKind[] modifiers)
         {
@@ -270,39 +173,12 @@ namespace R4Mvc.Tools.Extensions
             return node.AddModifiers(CreateModifiers(modifiers));
         }
 
-        public static VariableDeclarationSyntax VariableDeclaration(string name, ExpressionSyntax value)
-            => VariableDeclaration(IdentifierName("var"), name, value);
-
-        public static VariableDeclarationSyntax VariableDeclaration(TypeSyntax type, string name, ExpressionSyntax value)
-        {
-            return SyntaxFactory.VariableDeclaration(type)
-                .WithVariables(
-                SingletonSeparatedList(
-                    VariableDeclarator(Identifier(name))
-                        .WithInitializer(
-                            EqualsValueClause(value))));
-        }
-
         public static MemberAccessExpressionSyntax MemberAccess(string entityName, string memberName)
         {
             return MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 IdentifierName(entityName),
                 IdentifierName(memberName));
-        }
-
-        public static InvocationExpressionSyntax WithArgumentList(this InvocationExpressionSyntax node, params ExpressionSyntax[] arguments)
-        {
-            return node.WithArgumentList(
-                ArgumentList(
-                    SeparatedList(arguments.Select(e => Argument(e)))));
-        }
-
-        public static ObjectCreationExpressionSyntax WithArgumentList(this ObjectCreationExpressionSyntax node, params ExpressionSyntax[] arguments)
-        {
-            return node.WithArgumentList(
-                ArgumentList(
-                    SeparatedList(arguments.Select(e => Argument(e)))));
         }
     }
 }

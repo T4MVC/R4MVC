@@ -77,21 +77,30 @@ namespace R4Mvc.Tools.CodeGen
         }
 
         public ClassBuilder WithStringProperty(string name, SyntaxKind modifier = SyntaxKind.PublicKeyword)
-            => WithStringProperty(name, new[] { modifier });
-        public ClassBuilder WithStringProperty(string name, params SyntaxKind[] modifiers)
-            => WithProperty(name, PredefinedType(Token(SyntaxKind.StringKeyword)), modifiers);
+            => WithProperty(name, PredefinedType(Token(SyntaxKind.StringKeyword)), new[] { modifier });
         public ClassBuilder WithProperty(string name, string type, SyntaxKind modifier = SyntaxKind.PublicKeyword)
-            => WithProperty(name, type, new[] { modifier });
-        public ClassBuilder WithProperty(string name, string type, params SyntaxKind[] modifiers)
-            => WithProperty(name, IdentifierName(type), modifiers);
+            => WithProperty(name, IdentifierName(type), new[] { modifier });
         public ClassBuilder WithProperty(string name, TypeSyntax type, params SyntaxKind[] modifiers)
         {
-            _class = _class.WithAutoProperty(name, type, modifiers);
+            var prop = PropertyDeclaration(type, name)
+                .WithAccessorList(
+                    AccessorList(
+                        List(
+                            new[]
+                            {
+                                AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                                AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
+                            })))
+                .WithModifiers(modifiers);
+            _class = _class.AddMembers(prop);
             return this;
         }
         public ClassBuilder WithExpressionProperty(string name, string type, ExpressionSyntax value, params SyntaxKind[] modifiers)
         {
-            var property = SyntaxNodeHelpers.CreateProperty(name, type, value, modifiers)
+            var property = PropertyDeclaration(IdentifierName(type), name)
+                .WithExpressionBody(ArrowExpressionClause(value))
+                .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                .WithModifiers(modifiers)
                 .WithGeneratedAttribute();
             _class = _class.AddMembers(property);
             return this;
@@ -99,16 +108,42 @@ namespace R4Mvc.Tools.CodeGen
 
         public ClassBuilder WithStringField(string name, string value, bool includeGeneratedAttribute = true, params SyntaxKind[] modifiers)
         {
-            var fieldDeclaration = SyntaxNodeHelpers.CreateStringFieldDeclaration(name, value, modifiers);
+            var fieldDeclaration = FieldDeclaration(
+                VariableDeclaration(PredefinedType(Token(SyntaxKind.StringKeyword)))
+                    .WithVariables(
+                        SingletonSeparatedList(
+                            VariableDeclarator(Identifier(name))
+                                .WithInitializer(
+                                    EqualsValueClause(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(value)))))))
+                .WithModifiers(modifiers);
             if (includeGeneratedAttribute)
                 fieldDeclaration = fieldDeclaration.WithGeneratedAttribute();
             _class = _class.AddMembers(fieldDeclaration);
             return this;
         }
 
+        private FieldDeclarationSyntax CreateFieldInitialised(string name, string type, string valueType, params SyntaxKind[] modifiers)
+            => FieldDeclaration(
+                VariableDeclaration(IdentifierName(type))
+                    .WithVariables(
+                        SingletonSeparatedList(
+                            VariableDeclarator(Identifier(name))
+                                .WithInitializer(
+                                    EqualsValueClause(ObjectCreationExpression(IdentifierName(valueType))
+                                        .WithArgumentList(ArgumentList()))))))
+                .WithModifiers(modifiers);
+
         public ClassBuilder WithField(string name, string type, params SyntaxKind[] modifiers)
         {
-            _class = _class.WithField(name, type, modifiers);
+            var field = CreateFieldInitialised(name, type, type, modifiers).WithGeneratedAttribute();
+            _class = _class.AddMembers(field);
+            return this;
+        }
+
+        public ClassBuilder WithFieldInitialised(string name, string type, string valueType, params SyntaxKind[] modifiers)
+        {
+            var field = CreateFieldInitialised(name, type, valueType, modifiers);
+            _class = _class.AddMembers(field);
             return this;
         }
 
@@ -116,9 +151,12 @@ namespace R4Mvc.Tools.CodeGen
         {
             var fieldName = "s_" + name;
             _class = _class.AddMembers(
-                SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(fieldName, type, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
+                CreateFieldInitialised(fieldName, type, type, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword)
                     .WithGeneratedAttribute(),
-                SyntaxNodeHelpers.CreateProperty(name, type, IdentifierName(fieldName), modifiers)
+                PropertyDeclaration(IdentifierName(type), Identifier(name))
+                    .WithExpressionBody(ArrowExpressionClause(IdentifierName(fieldName)))
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
+                    .WithModifiers(modifiers)
                     .WithGeneratedAttribute());
             return this;
         }

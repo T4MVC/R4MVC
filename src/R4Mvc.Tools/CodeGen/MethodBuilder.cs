@@ -45,7 +45,7 @@ namespace R4Mvc.Tools.CodeGen
 
         public MethodBuilder WithStringParameter(string name, bool defaultsToNull = false)
         {
-            var parameter = Parameter(Identifier(name)).WithType(SyntaxNodeHelpers.PredefinedStringType());
+            var parameter = Parameter(Identifier(name)).WithType(PredefinedType(Token(SyntaxKind.StringKeyword)));
             if (defaultsToNull)
                 parameter = parameter.WithDefault(EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression)));
             _parameters.Add(parameter);
@@ -56,12 +56,6 @@ namespace R4Mvc.Tools.CodeGen
         {
             var parameter = Parameter(Identifier(name)).WithType(ParseTypeName(type));
             _parameters.Add(parameter);
-            return this;
-        }
-
-        public MethodBuilder WithBody(BodyBuilder bodyBuilder)
-        {
-            _bodyBlock = bodyBuilder.Build();
             return this;
         }
 
@@ -76,12 +70,6 @@ namespace R4Mvc.Tools.CodeGen
         public MethodBuilder WithNoBody()
         {
             _noBody = true;
-            return this;
-        }
-
-        public MethodBuilder WithOther(Action<MethodBuilder> otherParts)
-        {
-            otherParts?.Invoke(this);
             return this;
         }
 

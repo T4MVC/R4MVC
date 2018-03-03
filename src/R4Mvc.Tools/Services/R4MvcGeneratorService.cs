@@ -97,23 +97,20 @@ namespace R4Mvc.Tools.Services
                 .AddMembers(CreateAreaClasses(areaControllers).ToArray<MemberDeclarationSyntax>());
 
             // create static MVC class and add the area and controller fields
-            var mvcStaticClass = ClassDeclaration(_settings.HelpersPrefix)
+            var mvcStaticClass = new ClassBuilder(_settings.HelpersPrefix)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes();
             foreach (var area in areaControllers.Where(a => !string.IsNullOrEmpty(a.Key)).OrderBy(a => a.Key))
             {
-                mvcStaticClass = mvcStaticClass.WithStaticFieldBackedProperty(area.First().AreaKey, $"{_settings.R4MvcNamespace}.{area.Key}AreaClass", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+                mvcStaticClass.WithStaticFieldBackedProperty(area.First().AreaKey, $"{_settings.R4MvcNamespace}.{area.Key}AreaClass", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
             }
             foreach (var controller in areaControllers[string.Empty].OrderBy(c => c.Namespace == null).ThenBy(c => c.Name))
             {
-                mvcStaticClass = mvcStaticClass.AddMembers(
-                    SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
-                        controller.Name,
-                        controller.FullyQualifiedGeneratedName,
-                        controller.FullyQualifiedR4ClassName ?? controller.FullyQualifiedGeneratedName,
-                        SyntaxKind.PublicKeyword,
-                        SyntaxKind.StaticKeyword,
-                        SyntaxKind.ReadOnlyKeyword));
+                mvcStaticClass.WithFieldInitialised(
+                    controller.Name,
+                    controller.FullyQualifiedGeneratedName,
+                    controller.FullyQualifiedR4ClassName ?? controller.FullyQualifiedGeneratedName,
+                    SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
             }
 
             // Generate a list of all static files from the wwwroot path
@@ -121,7 +118,7 @@ namespace R4Mvc.Tools.Services
 
             var r4mvcNode = NewCompilationUnit()
                     .AddMembers(
-                        mvcStaticClass,
+                        mvcStaticClass.Build(),
                         r4Namespace,
                         staticFileNode,
                         ActionResultClass(),
@@ -156,20 +153,17 @@ namespace R4Mvc.Tools.Services
         {
             foreach (var area in areaControllers.Where(a => !string.IsNullOrEmpty(a.Key)).OrderBy(a => a.Key))
             {
-                var areaClass = ClassDeclaration(area.Key + "AreaClass")
+                var areaClass = new ClassBuilder(area.Key + "AreaClass")
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                     .WithGeneratedNonUserCodeAttributes()
                     .WithStringField("Name", area.Key, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
-                    .AddMembers(area
-                        .OrderBy(c => c.Namespace == null).ThenBy(c => c.Name)
-                        .Select(c => SyntaxNodeHelpers.CreateFieldWithDefaultInitializer(
+                    .ForEach(area.OrderBy(c => c.Namespace == null).ThenBy(c => c.Name), (cb, c) => cb
+                        .WithFieldInitialised(
                             c.Name,
                             c.FullyQualifiedGeneratedName,
                             c.FullyQualifiedR4ClassName ?? c.FullyQualifiedGeneratedName,
-                            SyntaxKind.PublicKeyword,
-                            SyntaxKind.ReadOnlyKeyword))
-                        .ToArray<MemberDeclarationSyntax>());
-                yield return areaClass;
+                            SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword));
+                yield return areaClass.Build();
             }
         }
 

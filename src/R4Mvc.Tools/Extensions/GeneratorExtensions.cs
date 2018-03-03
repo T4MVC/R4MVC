@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using R4Mvc.Tools.CodeGen;
 
 namespace R4Mvc.Tools.Extensions
