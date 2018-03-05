@@ -110,43 +110,6 @@ namespace R4Mvc.Tools.Extensions
         public static PropertyDeclarationSyntax WithGeneratedAttribute(this PropertyDeclarationSyntax node)
             => node.AddAttributeLists(AttributeList(SingletonSeparatedList(CreateGeneratedCodeAttribute())));
 
-        public static string ToQualifiedName(this ITypeSymbol symbol)
-        {
-            return string.Format("{0}.{1}", symbol.ContainingNamespace.ToString(), symbol.Name);
-        }
-
-        public static T WithPragmaCodes<T>(this T node, bool enable, params string[] codes) where T : SyntaxNode
-        {
-            // BUG pragma is not put on newline with normalizewhitespace as expected
-            var trivia = enable ? node.GetTrailingTrivia() : node.GetLeadingTrivia();
-            var pramaStatus = enable ? SyntaxKind.RestoreKeyword : SyntaxKind.DisableKeyword;
-            var pramaExpressions = SeparatedList(codes.Select(x => ParseExpression(x.ToString())));
-            var prama =
-                trivia.Add(ElasticCarriageReturnLineFeed)
-                    .Add(
-                        Trivia(
-                            PragmaWarningDirectiveTrivia(Token(pramaStatus), pramaExpressions, true)
-                                .NormalizeWhitespace()))
-                    .Add(ElasticCarriageReturnLineFeed);
-
-            return enable ? node.WithTrailingTrivia(prama) : node.WithLeadingTrivia(prama);
-        }
-
-        public static CompilationUnitSyntax WithUsings(this CompilationUnitSyntax node, params string[] namespaces)
-        {
-            var collection = namespaces.Select(ns => UsingDirective(ParseName(ns)));
-            var usings = List(collection);
-            return node.WithUsings(usings);
-        }
-
-        public static T WithHeader<T>(this T node, string headerText) where T : SyntaxNode
-        {
-            var leadingTrivia = node.GetLeadingTrivia()
-                .Add(Comment(headerText))
-                .Add(CarriageReturnLineFeed);
-            return node.WithLeadingTrivia(leadingTrivia);
-        }
-
         /// TODO: Can this use a aeparated list?
         public static ClassDeclarationSyntax WithModifiers(this ClassDeclarationSyntax node, params SyntaxKind[] modifiers)
         {
