@@ -17,7 +17,13 @@ namespace R4Mvc.Test.Services
             IStaticFileGeneratorService staticFileGenerator = null,
             IFilePersistService filePersistService = null,
             Settings settings = null)
-            => new R4MvcGeneratorService(controllerRewriter, controllerGenerator, staticFileGenerator, filePersistService ?? DummyPersistService, settings ?? new Settings());
+        {
+            if (settings == null)
+                settings = new Settings();
+            if (controllerGenerator == null)
+                controllerGenerator = new ControllerGeneratorService(settings);
+            return new R4MvcGeneratorService(controllerRewriter, controllerGenerator, staticFileGenerator, filePersistService ?? DummyPersistService, settings);
+        }
 
         [Fact]
         public void ViewControllers()
