@@ -24,7 +24,7 @@ When you're using tag helpers, instead of
 ```html
 <a asp-action="Details" asp-controller="Dinners" asp-route-id="@Model.DinnerID">Dinner Details</a>
 ```
-you can write
+you can write (after registering R4Mvc tag helpers in _ViewImports.cshtml with the directive: `@addTagHelper *, R4Mvc`)
 ```html
 <a mvc-action="MVC.Dinners.Details(Model.DinnerID)">Dinner Details</a>
 ```
