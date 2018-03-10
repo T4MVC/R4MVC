@@ -1,4 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Xunit;
@@ -7,6 +10,8 @@ namespace R4Mvc.Test
 {
     public static class TestExtensions
     {
+        public static IEnumerable<SyntaxKind> GetModifiers(this ClassDeclarationSyntax @class)
+            => @class.Modifiers.Select(m => m.Kind());
         public static ClassDeclarationSyntax AssertIs(this ClassDeclarationSyntax @class, params SyntaxKind[] kinds)
         {
             foreach (var kind in kinds)
