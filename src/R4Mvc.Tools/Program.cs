@@ -23,7 +23,7 @@ namespace R4Mvc.Tools
                 return;
             }
 
-            if (args.Length > 0 && args[0].Equals("help", StringComparison.OrdinalIgnoreCase))
+            if (args.Length > 0 && args[0].Equals("--help", StringComparison.OrdinalIgnoreCase))
             {
                 CommandResolver.DisplayHelp(commandType);
                 return;
