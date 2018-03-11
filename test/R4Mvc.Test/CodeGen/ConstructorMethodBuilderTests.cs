@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using R4Mvc.Tools.CodeGen;
 using Xunit;
 
@@ -27,7 +25,7 @@ namespace R4Mvc.Test.CodeGen
         public void Constructor_WithBaseConstructor(params string[] arguments)
         {
             var result = new ConstructorMethodBuilder("ClassName")
-                .WithBaseConstructorCall(arguments.Select<string, Func<ParameterSource, ExpressionSyntax>>(a => (p => SyntaxFactory.IdentifierName(a))).ToArray())
+                .WithBaseConstructorCall(arguments.Select(a => SyntaxFactory.IdentifierName(a)).ToArray())
                 .Build();
 
             Assert.Equal($"ClassName():base({string.Join(",", arguments)}){{}}", result.ToString());

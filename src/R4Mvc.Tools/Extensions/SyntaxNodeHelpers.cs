@@ -107,8 +107,8 @@ namespace R4Mvc.Tools.Extensions
         public static FieldDeclarationSyntax WithGeneratedAttribute(this FieldDeclarationSyntax node)
             => node.AddAttributeLists(AttributeList(SingletonSeparatedList(CreateGeneratedCodeAttribute())));
 
-        public static PropertyDeclarationSyntax WithGeneratedAttribute(this PropertyDeclarationSyntax node)
-            => node.AddAttributeLists(AttributeList(SingletonSeparatedList(CreateGeneratedCodeAttribute())));
+        public static PropertyDeclarationSyntax WithGeneratedNonUserCodeAttribute(this PropertyDeclarationSyntax node)
+            => node.AddAttributeLists(AttributeList(SeparatedList(new[] { CreateGeneratedCodeAttribute(), Attribute(IdentifierName("DebuggerNonUserCode")) })));
 
         /// TODO: Can this use a aeparated list?
         public static ClassDeclarationSyntax WithModifiers(this ClassDeclarationSyntax node, params SyntaxKind[] modifiers)

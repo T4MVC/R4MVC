@@ -2,24 +2,39 @@
 using R4Mvc.Tools.CodeGen;
 using Xunit;
 
-
 namespace R4Mvc.Test.CodeGen
 {
     public class ClassBuilderTests
     {
         const string GeneratedAttribute = "[GeneratedCode(\"R4Mvc\",\"1.0\")]";
+        const string GeneratedNonUserCodeAttribute = "[GeneratedCode(\"R4Mvc\",\"1.0\"),DebuggerNonUserCode]";
+
+        [Theory]
+        [InlineData("ClassName")]
+        [InlineData("Entity")]
+        public void Class_Name(string name)
+        {
+            var classBuilder = new ClassBuilder(name);
+            var result = classBuilder.Build();
+
+            result.AssertIsClass(name);
+            Assert.Equal(name, classBuilder.Name);
+            Assert.Empty(result.GetModifiers());
+            Assert.Equal($"class{name}{{}}", result.ToString());
+        }
 
         [Fact]
-        public void Class_Plain()
+        public void Class_Generated()
         {
-            var className = "ClassName";
+            var classBuilder = new ClassBuilder("ClassName");
 
-            var result = new ClassBuilder(className)
-                .Build();
+            Assert.False(classBuilder.IsGenerated);
+            Assert.Equal("classClassName{}", classBuilder.Build().ToString());
 
-            result.AssertIsClass(className);
-            Assert.Empty(result.GetModifiers());
-            Assert.Equal("classClassName{}", result.ToString());
+            classBuilder.WithGeneratedNonUserCodeAttributes();
+
+            Assert.True(classBuilder.IsGenerated);
+            Assert.Equal($"{GeneratedNonUserCodeAttribute}classClassName{{}}", classBuilder.Build().ToString());
         }
 
         [Theory]
@@ -33,7 +48,7 @@ namespace R4Mvc.Test.CodeGen
                 .Build();
 
             result.AssertIs(modifiers);
-            Assert.Equal(modifiers.ToStringModifiers() + "classClassName{}", result.ToString());
+            Assert.Equal($"{modifiers.ToStringModifiers()}classClassName{{}}", result.ToString());
         }
 
         [Theory]
@@ -58,8 +73,7 @@ namespace R4Mvc.Test.CodeGen
                 .WithTypeParameters(typeParameters)
                 .Build();
 
-            var typeParamsString = string.Join(",", typeParameters);
-            Assert.Equal($"classClassName<{typeParamsString}>{{}}", result.ToString());
+            Assert.Equal($"classClassName<{string.Join(",", typeParameters)}>{{}}", result.ToString());
         }
 
         [Fact]
@@ -74,28 +88,14 @@ namespace R4Mvc.Test.CodeGen
         }
 
         [Theory]
-        [InlineData("Name", "object", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)]
-        [InlineData("Name", "object", SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)]
-        [InlineData("_id", "Entity", SyntaxKind.PrivateKeyword)]
-        [InlineData("_id", "Entity")]
-        public void Class_WithField(string name, string type, params SyntaxKind[] modifiers)
-        {
-            var result = new ClassBuilder("ClassName")
-                .WithField(name, type, modifiers)
-                .Build();
-
-            Assert.Equal($"classClassName{{{GeneratedAttribute}{modifiers.ToStringModifiers()}{type}{name}=new{type}();}}", result.ToString());
-        }
-
-        [Theory]
         [InlineData("Name", "object", "Entity", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)]
         [InlineData("Name", "object", "Entity", SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)]
         [InlineData("_id", "Entity", "Entity2", SyntaxKind.PrivateKeyword)]
         [InlineData("_id", "Entity", "Entity2")]
-        public void Class_WithFieldInitialised(string name, string type, string valueType, params SyntaxKind[] modifiers)
+        public void Class_WithField(string name, string type, string valueType, params SyntaxKind[] modifiers)
         {
             var result = new ClassBuilder("ClassName")
-                .WithFieldInitialised(name, type, valueType, modifiers)
+                .WithField(name, type, valueType, modifiers)
                 .Build();
 
             Assert.Equal($"classClassName{{{modifiers.ToStringModifiers()}{type}{name}=new{valueType}();}}", result.ToString());
@@ -127,29 +127,17 @@ namespace R4Mvc.Test.CodeGen
         }
 
         [Theory]
-        [InlineData("Name", SyntaxKind.PublicKeyword)]
-        [InlineData("_id", SyntaxKind.PrivateKeyword)]
-        public void Class_WithStringProperty(string name, SyntaxKind modifier)
+        [InlineData("Name", "object", true, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)]
+        [InlineData("Name", "object", false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)]
+        [InlineData("_id", "Entity", true, SyntaxKind.PrivateKeyword)]
+        [InlineData("_id", "Entity", false)]
+        public void Class_WithFieldBackedProperty(string name, string type, bool useGeneratedAttribute, params SyntaxKind[] modifiers)
         {
             var result = new ClassBuilder("ClassName")
-                .WithStringProperty(name, modifier)
+                .WithStaticFieldBackedProperty(name, type, useGeneratedAttribute, modifiers)
                 .Build();
 
-            Assert.Equal($"classClassName{{{modifier.ToStringModifier()}string{name}{{get;set;}}}}", result.ToString());
-        }
-
-        [Theory]
-        [InlineData("Name", "object", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)]
-        [InlineData("Name", "object", SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)]
-        [InlineData("_id", "Entity", SyntaxKind.PrivateKeyword)]
-        [InlineData("_id", "Entity")]
-        public void Class_WithAutoProperty(string name, string type, params SyntaxKind[] modifiers)
-        {
-            var result = new ClassBuilder("ClassName")
-                .WithStaticFieldBackedProperty(name, type, modifiers)
-                .Build();
-
-            Assert.Equal($"classClassName{{{GeneratedAttribute}static readonly {type}s_{name}=new{type}();{GeneratedAttribute}{modifiers.ToStringModifiers()}{type}{name}=>s_{name};}}", result.ToString());
+            Assert.Equal($"classClassName{{{(useGeneratedAttribute ? GeneratedAttribute : null)}static readonly {type}s_{name}=new{type}();{(useGeneratedAttribute ? GeneratedNonUserCodeAttribute : null)}{modifiers.ToStringModifiers()}{type}{name}=>s_{name};}}", result.ToString());
         }
 
         [Theory]
@@ -163,7 +151,7 @@ namespace R4Mvc.Test.CodeGen
                 .WithExpressionProperty(name, type, source, modifiers)
                 .Build();
 
-            Assert.Equal($"classClassName{{{GeneratedAttribute}{modifiers.ToStringModifiers()}{type}{name}=>{source};}}", result.ToString());
+            Assert.Equal($"classClassName{{{GeneratedNonUserCodeAttribute}{modifiers.ToStringModifiers()}{type}{name}=>{source};}}", result.ToString());
         }
 
         [Theory]

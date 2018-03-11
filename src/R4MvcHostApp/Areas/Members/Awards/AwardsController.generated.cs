@@ -53,7 +53,7 @@ namespace R4MvcHostApp.Areas.Members.Awards
             return RedirectToActionPermanent(taskResult.Result);
         }
 
-        [GeneratedCode("R4Mvc", "1.0")]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public AwardsController Actions => MVC.Members.Awards;
         [GeneratedCode("R4Mvc", "1.0")]
         public readonly string Area = "Members";
@@ -63,7 +63,7 @@ namespace R4MvcHostApp.Areas.Members.Awards
         public const string NameConst = "Awards";
         [GeneratedCode("R4Mvc", "1.0")]
         static readonly ActionNamesClass s_ActionNames = new ActionNamesClass();
-        [GeneratedCode("R4Mvc", "1.0")]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public ActionNamesClass ActionNames => s_ActionNames;
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNamesClass
@@ -80,9 +80,7 @@ namespace R4MvcHostApp.Areas.Members.Awards
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ViewsClass
         {
-            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
             public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
@@ -94,7 +92,7 @@ namespace R4MvcHostApp.Areas.Members.Awards
 
         [GeneratedCode("R4Mvc", "1.0")]
         static readonly ViewsClass s_Views = new ViewsClass();
-        [GeneratedCode("R4Mvc", "1.0")]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public ViewsClass Views => s_Views;
     }
 

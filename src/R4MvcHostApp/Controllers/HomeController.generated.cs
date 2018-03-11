@@ -95,7 +95,7 @@ namespace R4MvcHostApp.Controllers
             return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.RedirectToRouteMethod);
         }
 
-        [GeneratedCode("R4Mvc", "1.0")]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public HomeController Actions => MVC.Home;
         [GeneratedCode("R4Mvc", "1.0")]
         public readonly string Area = "";
@@ -105,7 +105,7 @@ namespace R4MvcHostApp.Controllers
         public const string NameConst = "Home";
         [GeneratedCode("R4Mvc", "1.0")]
         static readonly ActionNamesClass s_ActionNames = new ActionNamesClass();
-        [GeneratedCode("R4Mvc", "1.0")]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public ActionNamesClass ActionNames => s_ActionNames;
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNamesClass
@@ -152,9 +152,7 @@ namespace R4MvcHostApp.Controllers
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ViewsClass
         {
-            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
             public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
@@ -166,36 +164,25 @@ namespace R4MvcHostApp.Controllers
             public readonly string About = "~/Views/Home/About.cshtml";
             public readonly string Contact = "~/Views/Home/Contact.cshtml";
             public readonly string Index = "~/Views/Home/Index.cshtml";
-            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _DisplayTemplatesClass s_DisplayTemplates = new _DisplayTemplatesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
             public _DisplayTemplatesClass DisplayTemplates => s_DisplayTemplates;
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public partial class _DisplayTemplatesClass
             {
                 public readonly string Test = "Test";
             }
 
-            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _EditorTemplatesClass s_EditorTemplates = new _EditorTemplatesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
             public _EditorTemplatesClass EditorTemplates => s_EditorTemplates;
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public partial class _EditorTemplatesClass
             {
                 public readonly string Test = "Test";
             }
 
-            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _OtherTemplatesClass s_OtherTemplates = new _OtherTemplatesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
             public _OtherTemplatesClass OtherTemplates => s_OtherTemplates;
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public partial class _OtherTemplatesClass
             {
-                [GeneratedCode("R4Mvc", "1.0")]
                 static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-                [GeneratedCode("R4Mvc", "1.0")]
                 public _ViewNamesClass ViewNames => s_ViewNames;
                 public class _ViewNamesClass
                 {
@@ -208,7 +195,7 @@ namespace R4MvcHostApp.Controllers
 
         [GeneratedCode("R4Mvc", "1.0")]
         static readonly ViewsClass s_Views = new ViewsClass();
-        [GeneratedCode("R4Mvc", "1.0")]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public ViewsClass Views => s_Views;
     }
 

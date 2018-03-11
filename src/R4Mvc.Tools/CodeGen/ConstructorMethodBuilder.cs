@@ -16,10 +16,10 @@ namespace R4Mvc.Tools.CodeGen
 
         private IList<ArgumentSyntax> _baseConstructorArguments = null;
 
-        public ConstructorMethodBuilder WithBaseConstructorCall(params Func<ParameterSource, ExpressionSyntax>[] arguments)
+        public ConstructorMethodBuilder WithBaseConstructorCall(params ExpressionSyntax[] arguments)
         {
             _baseConstructorArguments = arguments
-                .Select(a => Argument(a(ParameterSource.Instance)))
+                .Select(a => Argument(a))
                 .ToList();
             return this;
         }

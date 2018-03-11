@@ -28,14 +28,14 @@ namespace R4Mvc.Tools.Services
             var linksClass = new ClassBuilder(_settings.LinksNamespace)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes();
-            linksClass = AddStaticFiles(linksClass, string.Empty, staticfiles);
+            AddStaticFiles(linksClass, string.Empty, staticfiles);
             return linksClass.Build();
         }
 
         // This will eventually read the Startup class, to identify the location(s) of the static roots
         public string GetStaticFilesPath(string projectRoot) => Path.Combine(projectRoot, _settings.StaticFilesPath);
 
-        public ClassBuilder AddStaticFiles(ClassBuilder parentClass, string path, IEnumerable<StaticFile> files)
+        public void AddStaticFiles(ClassBuilder parentClass, string path, IEnumerable<StaticFile> files)
         {
             var paths = files
                 .Select(f => f.Container)
@@ -56,10 +56,9 @@ namespace R4Mvc.Tools.Services
                 var childFiles = files.Where(f => f.Container.StartsWith(childPath));
                 var className = childPath.Substring(path.Length > 0 ? path.Length + 1 : 0).SanitiseFieldName();
                 var containerClass = new ClassBuilder(className)
-                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
-                    .WithGeneratedNonUserCodeAttributes();
-                containerClass = AddStaticFiles(containerClass, childPath, childFiles);
-                parentClass = parentClass.WithMember(containerClass.Build());
+                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword);
+                AddStaticFiles(containerClass, childPath, childFiles);
+                parentClass.WithMember(containerClass.Build());
             }
 
             var localFiles = files.Where(f => f.Container == path);
@@ -67,7 +66,6 @@ namespace R4Mvc.Tools.Services
             {
                 parentClass.WithStringField(file.FileName.SanitiseFieldName(), "~/" + file.RelativePath.ToString(), false, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
             }
-            return parentClass;
         }
     }
 }

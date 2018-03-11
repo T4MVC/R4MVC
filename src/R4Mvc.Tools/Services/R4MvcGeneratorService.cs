@@ -79,7 +79,7 @@ namespace R4Mvc.Tools.Services
                     .WithGeneratedNonUserCodeAttributes()
                     .WithConstructor(c => c
                         .WithModifiers(SyntaxKind.PrivateKeyword))
-                    .WithField(Constants.DummyClassInstance, Constants.DummyClass, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
+                    .WithField(Constants.DummyClassInstance, Constants.DummyClass, Constants.DummyClass, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
                     .Build())
                 .AddMembers(CreateViewOnlyControllerClasses(controllers).ToArray<MemberDeclarationSyntax>())
                 .AddMembers(CreateAreaClasses(areaControllers).ToArray<MemberDeclarationSyntax>());
@@ -90,11 +90,11 @@ namespace R4Mvc.Tools.Services
                 .WithGeneratedNonUserCodeAttributes();
             foreach (var area in areaControllers.Where(a => !string.IsNullOrEmpty(a.Key)).OrderBy(a => a.Key))
             {
-                mvcStaticClass.WithStaticFieldBackedProperty(area.First().AreaKey, $"{_settings.R4MvcNamespace}.{area.Key}AreaClass", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+                mvcStaticClass.WithStaticFieldBackedProperty(area.First().AreaKey, $"{_settings.R4MvcNamespace}.{area.Key}AreaClass", false, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
             }
             foreach (var controller in areaControllers[string.Empty].OrderBy(c => c.Namespace == null).ThenBy(c => c.Name))
             {
-                mvcStaticClass.WithFieldInitialised(
+                mvcStaticClass.WithField(
                     controller.Name,
                     controller.FullyQualifiedGeneratedName,
                     controller.FullyQualifiedR4ClassName ?? controller.FullyQualifiedGeneratedName,
@@ -130,7 +130,8 @@ namespace R4Mvc.Tools.Services
                 controller.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
 
                 var controllerClass = new ClassBuilder(className)
-                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword);
+                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                    .WithGeneratedNonUserCodeAttributes();
                 _controllerGenerator.WithViewsClass(controllerClass, controller.Views);
                 yield return controllerClass.Build();
             }
@@ -145,7 +146,7 @@ namespace R4Mvc.Tools.Services
                     .WithGeneratedNonUserCodeAttributes()
                     .WithStringField("Name", area.Key, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
                     .ForEach(area.OrderBy(c => c.Namespace == null).ThenBy(c => c.Name), (cb, c) => cb
-                        .WithFieldInitialised(
+                        .WithField(
                             c.Name,
                             c.FullyQualifiedGeneratedName,
                             c.FullyQualifiedR4ClassName ?? c.FullyQualifiedGeneratedName,
@@ -157,6 +158,7 @@ namespace R4Mvc.Tools.Services
         private ClassDeclarationSyntax IActionResultDerivedClass(string className, string baseClassName, Action<ConstructorMethodBuilder> constructorParts = null)
         {
             var result = new ClassBuilder(className)                                    // internal partial class {className}
+                .WithGeneratedNonUserCodeAttributes()
                 .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
                 .WithBaseTypes(baseClassName, "IR4MvcActionResult")                     // : {baseClassName}, IR4MvcActionResult
                 .WithConstructor(c => c
@@ -168,9 +170,9 @@ namespace R4Mvc.Tools.Services
                     .WithParameter("protocol", "string", defaultsToNull: true)      //  string protocol = null)
                     .WithBody(b => b                                                    // this.InitMVCT4Result(area, controller, action, protocol);
                         .MethodCall("this", "InitMVCT4Result", "area", "controller", "action", "protocol")))
-                .WithStringProperty("Controller")                                       // public string Controller { get; set; }
-                .WithStringProperty("Action")                                           // public string Action { get; set; }
-                .WithStringProperty("Protocol")                                         // public string Protocol { get; set; }
+                .WithProperty("Controller", "string")                                   // public string Controller { get; set; }
+                .WithProperty("Action", "string")                                       // public string Action { get; set; }
+                .WithProperty("Protocol", "string")                                     // public string Protocol { get; set; }
                 .WithProperty("RouteValueDictionary", "RouteValueDictionary");          // public RouteValueDictionary RouteValueDictionary { get; set; }
 
             return result.Build();
@@ -181,21 +183,21 @@ namespace R4Mvc.Tools.Services
 
         public ClassDeclarationSyntax JsonResultClass()
             => IActionResultDerivedClass(Constants.JsonResultClass, "JsonResult",
-                c => c.WithBaseConstructorCall(p => p.Null));                           // ctor : base(null)
+                c => c.WithBaseConstructorCall(SimpleLiteral.Null));                           // ctor : base(null)
 
         public ClassDeclarationSyntax ContentResultClass()
             => IActionResultDerivedClass(Constants.ContentResultClass, "ContentResult");
 
         public ClassDeclarationSyntax RedirectResultClass()
             => IActionResultDerivedClass(Constants.RedirectResultClass, "RedirectResult",
-                c => c.WithBaseConstructorCall(p => p.Space));                          // ctor : base(" ")
+                c => c.WithBaseConstructorCall(SimpleLiteral.Space));                          // ctor : base(" ")
 
         public ClassDeclarationSyntax RedirectToActionResultClass()
             => IActionResultDerivedClass(Constants.RedirectToActionResultClass, "RedirectToActionResult",
-                c => c.WithBaseConstructorCall(p => p.Space, p => p.Space, p => p.Space));  // ctor : base(" ", " ", " ")
+                c => c.WithBaseConstructorCall(SimpleLiteral.Space, SimpleLiteral.Space, SimpleLiteral.Space));  // ctor : base(" ", " ", " ")
 
         public ClassDeclarationSyntax RedirectToRouteResultClass()
             => IActionResultDerivedClass(Constants.RedirectToRouteResultClass, "RedirectToRouteResult",
-                c => c.WithBaseConstructorCall(p => p.Null));                           // ctor : base(null)
+                c => c.WithBaseConstructorCall(SimpleLiteral.Null));                           // ctor : base(null)
     }
 }

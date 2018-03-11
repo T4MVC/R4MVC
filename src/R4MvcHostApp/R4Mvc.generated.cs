@@ -16,13 +16,9 @@ using R4Mvc;
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 public static partial class MVC
 {
-    [GeneratedCode("R4Mvc", "1.0")]
     static readonly R4Mvc.AdminAreaClass s_AdminArea = new R4Mvc.AdminAreaClass();
-    [GeneratedCode("R4Mvc", "1.0")]
     public static R4Mvc.AdminAreaClass AdminArea => s_AdminArea;
-    [GeneratedCode("R4Mvc", "1.0")]
     static readonly R4Mvc.MembersAreaClass s_Members = new R4Mvc.MembersAreaClass();
-    [GeneratedCode("R4Mvc", "1.0")]
     public static R4Mvc.MembersAreaClass Members => s_Members;
     public static readonly R4MvcHostApp.Controllers.AccountController Account = new R4MvcHostApp.Controllers.R4MVC_AccountController();
     public static readonly R4MvcHostApp.Controllers.AdminController Admin = new R4MvcHostApp.Controllers.R4MVC_AdminController();
@@ -41,18 +37,15 @@ namespace R4Mvc
         {
         }
 
-        [GeneratedCode("R4Mvc", "1.0")]
         public static Dummy Instance = new Dummy();
     }
 
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class SharedController
     {
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ViewsClass
         {
-            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
             public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
@@ -68,36 +61,25 @@ namespace R4Mvc
             public readonly string _Layout = "~/Views/Shared/_Layout.cshtml";
             public readonly string _LoginPartial = "~/Views/Shared/_LoginPartial.cshtml";
             public readonly string _ValidationScriptsPartial = "~/Views/Shared/_ValidationScriptsPartial.cshtml";
-            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _DisplayTemplatesClass s_DisplayTemplates = new _DisplayTemplatesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
             public _DisplayTemplatesClass DisplayTemplates => s_DisplayTemplates;
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public partial class _DisplayTemplatesClass
             {
                 public readonly string Test = "Test";
             }
 
-            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _EditorTemplatesClass s_EditorTemplates = new _EditorTemplatesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
             public _EditorTemplatesClass EditorTemplates => s_EditorTemplates;
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public partial class _EditorTemplatesClass
             {
                 public readonly string Test = "Test";
             }
 
-            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _OtherTemplatesClass s_OtherTemplates = new _OtherTemplatesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
             public _OtherTemplatesClass OtherTemplates => s_OtherTemplates;
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public partial class _OtherTemplatesClass
             {
-                [GeneratedCode("R4Mvc", "1.0")]
                 static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-                [GeneratedCode("R4Mvc", "1.0")]
                 public _ViewNamesClass ViewNames => s_ViewNames;
                 public class _ViewNamesClass
                 {
@@ -108,20 +90,16 @@ namespace R4Mvc
             }
         }
 
-        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ViewsClass s_Views = new ViewsClass();
-        [GeneratedCode("R4Mvc", "1.0")]
         public ViewsClass Views => s_Views;
     }
 
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class AdminArea_SharedController
     {
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ViewsClass
         {
-            [GeneratedCode("R4Mvc", "1.0")]
             static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            [GeneratedCode("R4Mvc", "1.0")]
             public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
@@ -131,9 +109,7 @@ namespace R4Mvc
             public readonly string _Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
         }
 
-        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ViewsClass s_Views = new ViewsClass();
-        [GeneratedCode("R4Mvc", "1.0")]
         public ViewsClass Views => s_Views;
     }
 
@@ -159,7 +135,6 @@ namespace R4Mvc
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 public static partial class Links
 {
-    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public static partial class css
     {
         public static string _site_css = "~/css/.site.css";
@@ -167,7 +142,6 @@ public static partial class Links
         public static string site_min_css = "~/css/site.min.css";
     }
 
-    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public static partial class images
     {
         public static string banner1_svg = "~/images/banner1.svg";
@@ -176,23 +150,18 @@ public static partial class Links
         public static string banner4_svg = "~/images/banner4.svg";
     }
 
-    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public static partial class js
     {
         public static string site_js = "~/js/site.js";
         public static string site_min_js = "~/js/site.min.js";
     }
 
-    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public static partial class lib
     {
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public static partial class bootstrap
         {
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public static partial class dist
             {
-                [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
                 public static partial class css
                 {
                     public static string bootstrap_theme_css = "~/lib/bootstrap/dist/css/bootstrap-theme.css";
@@ -205,7 +174,6 @@ public static partial class Links
                     public static string bootstrap_min_css_map = "~/lib/bootstrap/dist/css/bootstrap.min.css.map";
                 }
 
-                [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
                 public static partial class fonts
                 {
                     public static string glyphicons_halflings_regular_eot = "~/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.eot";
@@ -215,7 +183,6 @@ public static partial class Links
                     public static string glyphicons_halflings_regular_woff2 = "~/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2";
                 }
 
-                [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
                 public static partial class js
                 {
                     public static string bootstrap_js = "~/lib/bootstrap/dist/js/bootstrap.js";
@@ -228,10 +195,8 @@ public static partial class Links
             public static string LICENSE = "~/lib/bootstrap/LICENSE";
         }
 
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public static partial class jquery
         {
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public static partial class dist
             {
                 public static string jquery_js = "~/lib/jquery/dist/jquery.js";
@@ -239,10 +204,8 @@ public static partial class Links
                 public static string jquery_min_map = "~/lib/jquery/dist/jquery.min.map";
             }
 
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public static partial class validation
             {
-                [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
                 public static partial class dist
                 {
                     public static string additional_methods_js = "~/lib/jquery-validation/dist/additional-methods.js";
@@ -251,7 +214,6 @@ public static partial class Links
                     public static string jquery_validate_min_js = "~/lib/jquery-validation/dist/jquery.validate.min.js";
                 }
 
-                [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
                 public static partial class unobtrusive
                 {
                     public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
@@ -262,7 +224,6 @@ public static partial class Links
                 public static string _bower_json = "~/lib/jquery-validation/.bower.json";
             }
 
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public static partial class validation_unobtrusive
             {
                 public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
@@ -273,10 +234,8 @@ public static partial class Links
             public static string _bower_json = "~/lib/jquery/.bower.json";
         }
 
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public static partial class jquery_validation
         {
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public static partial class dist
             {
                 public static string additional_methods_js = "~/lib/jquery-validation/dist/additional-methods.js";
@@ -285,7 +244,6 @@ public static partial class Links
                 public static string jquery_validate_min_js = "~/lib/jquery-validation/dist/jquery.validate.min.js";
             }
 
-            [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
             public static partial class unobtrusive
             {
                 public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
@@ -296,7 +254,6 @@ public static partial class Links
             public static string _bower_json = "~/lib/jquery-validation/.bower.json";
         }
 
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public static partial class jquery_validation_unobtrusive
         {
             public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
@@ -308,6 +265,7 @@ public static partial class Links
     public static string favicon_ico = "~/favicon.ico";
 }
 
+[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult : ActionResult, IR4MvcActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(string area, string controller, string action, string protocol = null)
@@ -340,6 +298,7 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult : ActionResul
     }
 }
 
+[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult : JsonResult, IR4MvcActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult(string area, string controller, string action, string protocol = null): base (null)
@@ -372,6 +331,7 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult : JsonResult, I
     }
 }
 
+[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ContentResult : ContentResult, IR4MvcActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_ContentResult(string area, string controller, string action, string protocol = null)
@@ -404,6 +364,7 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ContentResult : ContentRes
     }
 }
 
+[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectResult : RedirectResult, IR4MvcActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_RedirectResult(string area, string controller, string action, string protocol = null): base (" ")
@@ -436,6 +397,7 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectResult : RedirectR
     }
 }
 
+[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToActionResult : RedirectToActionResult, IR4MvcActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToActionResult(string area, string controller, string action, string protocol = null): base (" ", " ", " ")
@@ -468,6 +430,7 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToActionResult : R
     }
 }
 
+[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToRouteResult : RedirectToRouteResult, IR4MvcActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToRouteResult(string area, string controller, string action, string protocol = null): base (null)

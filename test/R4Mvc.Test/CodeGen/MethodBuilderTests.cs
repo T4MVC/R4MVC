@@ -6,7 +6,7 @@ namespace R4Mvc.Test.CodeGen
 {
     public class MethodBuilderTests
     {
-        const string GeneratedAttribute = "[GeneratedCode(\"R4Mvc\",\"1.0\"),DebuggerNonUserCode]";
+        const string GeneratedNonUserCodeAttribute = "[GeneratedCode(\"R4Mvc\",\"1.0\"),DebuggerNonUserCode]";
 
         [Theory]
         [InlineData("VoidMethod", null)]
@@ -39,7 +39,7 @@ namespace R4Mvc.Test.CodeGen
                 .WithGeneratedNonUserCodeAttributes()
                 .Build();
 
-            Assert.Equal($"{GeneratedAttribute}voidMethodName(){{}}", result.ToString());
+            Assert.Equal($"{GeneratedNonUserCodeAttribute}voidMethodName(){{}}", result.ToString());
         }
 
         [Fact]
@@ -73,6 +73,17 @@ namespace R4Mvc.Test.CodeGen
                 .Build();
 
             Assert.Equal($"voidMethodName({type}{name}{(defaultsToNull ? "=null" : null)}){{}}", result.ToString());
+        }
+
+        [Fact]
+        public void Method_WithMultipleParameters()
+        {
+            var result = new MethodBuilder("MethodName")
+                .WithParameter("id", "int")
+                .WithParameter("name", "string", true)
+                .Build();
+
+            Assert.Equal("voidMethodName(intid,stringname=null){}", result.ToString());
         }
 
         [Fact]
