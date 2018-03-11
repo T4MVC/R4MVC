@@ -21,6 +21,12 @@
     <Description>R4Mvc is a tool that generates strongly typed helpers for ASP.NET Core MVC.</Description>
     <PackageTags>aspnetcore mvc r4mvc</PackageTags>
     <VersionPrefix>1.0.0</VersionPrefix>
+    <PackageReleaseNotes>
+! Fixed a crash when using the latest minor c# language version (e.g. 7.1)
+* Supporting more action result types (JsonResult, RedirectResult, etc)
++ Remove-R4MVC command added to remove and clean up R4Mvc from the project
++ Basic support for feature folders (full implementation soon to come!)
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
