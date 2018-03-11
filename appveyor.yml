@@ -26,7 +26,7 @@ for:
     - develop
 
   deploy:
-    provider: NuGet
+  - provider: NuGet
     server: https://www.myget.org/F/r4mvc/api/v2/package
     symbol_server: https://www.myget.org/F/r4mvc/symbols/api/v2/package
     api_key:
@@ -42,7 +42,7 @@ for:
   - ps: $Env:VersionSuffixValue = ("ci--" + $Env:APPVEYOR_REPO_BRANCH.Substring(8) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
   deploy:
-    provider: NuGet
+  - provider: NuGet
     server: https://www.myget.org/F/r4mvc/api/v2/package
     symbol_server: https://www.myget.org/F/r4mvc/symbols/api/v2/package
     api_key:
@@ -58,9 +58,16 @@ for:
   - ps: $Env:VersionSuffixValue = ($Env:APPVEYOR_REPO_BRANCH.Substring(11) + "-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
 
   deploy:
-    provider: NuGet
+  - provider: NuGet
     api_key:
       secure: oK/7qSZDyR1umPtWP8zAswwPfIE0FJPeEkkQQMRKj6e6eq0tdEIwbPh37lGBDeSi
+    artifact: /.*\.nupkg/
+
+  - provider: NuGet
+    server: https://www.myget.org/F/r4mvc/api/v2/package
+    symbol_server: https://www.myget.org/F/r4mvc/symbols/api/v2/package
+    api_key:
+      secure: DdgwyUm4/aaCfk28jRGRFgQpqcCp6OvuqCZLZaHjNAPHZuia0+PF01zC8JGpWfe7
     artifact: /.*\.nupkg/
 
 - branches:
@@ -72,7 +79,14 @@ for:
   - ps: $Env:VersionSuffixValue = $null
 
   deploy:
-    provider: NuGet
+  - provider: NuGet
     api_key:
       secure: oK/7qSZDyR1umPtWP8zAswwPfIE0FJPeEkkQQMRKj6e6eq0tdEIwbPh37lGBDeSi
+    artifact: /.*\.nupkg/
+
+  - provider: NuGet
+    server: https://www.myget.org/F/r4mvc/api/v2/package
+    symbol_server: https://www.myget.org/F/r4mvc/symbols/api/v2/package
+    api_key:
+      secure: DdgwyUm4/aaCfk28jRGRFgQpqcCp6OvuqCZLZaHjNAPHZuia0+PF01zC8JGpWfe7
     artifact: /.*\.nupkg/

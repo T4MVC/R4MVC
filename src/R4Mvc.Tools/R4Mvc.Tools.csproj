@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net462</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <AssemblyName>dotnet-r4mvc</AssemblyName>
     <ContentTargetFolders>tools</ContentTargetFolders>
     <DevelopmentDependency>True</DevelopmentDependency>
@@ -20,6 +21,12 @@
     <Description>R4Mvc is a tool that generates strongly typed helpers for ASP.NET Core MVC.</Description>
     <PackageTags>aspnetcore mvc r4mvc</PackageTags>
     <VersionPrefix>1.0.0</VersionPrefix>
+    <PackageReleaseNotes>
+! Fixed a crash when using the latest minor c# language version (e.g. 7.1)
+* Supporting more action result types (JsonResult, RedirectResult, etc)
++ Remove-R4MVC command added to remove and clean up R4Mvc from the project
++ Basic support for feature folders (full implementation soon to come!)
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,9 +46,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.3" />
-    <PackageReference Include="Microsoft.Build" Version="15.5.180" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.5.180" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.6.0" />
+    <PackageReference Include="Microsoft.Build" Version="15.6.82" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.6.82" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.6.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.0" />

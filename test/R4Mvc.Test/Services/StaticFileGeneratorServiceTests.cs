@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp;
 using R4Mvc.Test.Locators;
+using R4Mvc.Tools.CodeGen;
 using R4Mvc.Tools.Locators;
 using R4Mvc.Tools.Services;
 using Xunit;
@@ -25,10 +26,10 @@ namespace R4Mvc.Test.Services
             var staticFiles = staticFileLocator.Find(VirtualFileLocator.ProjectRoot_wwwroot);
             var staticFileGeneratorService = new StaticFileGeneratorService(new[] { staticFileLocator }, new Tools.Settings());
 
-            var c = SyntaxFactory.ClassDeclaration("Test");
-            c = staticFileGeneratorService.AddStaticFiles(c, string.Empty, staticFiles);
+            var c = new ClassBuilder("Test");
+            staticFileGeneratorService.AddStaticFiles(c, string.Empty, staticFiles);
 
-            Assert.Collection(c.Members,
+            Assert.Collection(c.Build().Members,
                 m =>
                 {
                     var pathClass = m.AssertIsClass("css");

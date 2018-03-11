@@ -1,10 +1,10 @@
 ﻿$ErrorActionPreference = 'Stop'
 
-#
-# Add-Migration
-#
-
 Register-TabExpansion Generate-R4MVC @{
+    Project = { GetProjects }
+}
+
+Register-TabExpansion Remove-R4MVC @{
     Project = { GetProjects }
 }
 
@@ -27,7 +27,29 @@ function Generate-R4MVC
     $dteProject = GetProject $Project
     $r4mvcPath = Join-Path (Split-Path $PSCommandPath) "dotnet-r4mvc.exe"
 
-    & $r4mvcPath $dteProject.FullName
+    & $r4mvcPath generate $dteProject.FullName
+}
+
+<#
+.SYNOPSIS
+    Removes traces of R4MVC from the project.
+
+.DESCRIPTION
+    Removes traces of R4MVC from the project.
+
+.PARAMETER Project
+    The project to use.
+#>
+function Remove-R4MVC
+{
+    [CmdletBinding(PositionalBinding = $false)]
+    param(
+        [string] $Project)
+
+    $dteProject = GetProject $Project
+    $r4mvcPath = Join-Path (Split-Path $PSCommandPath) "dotnet-r4mvc.exe"
+
+    & $r4mvcPath remove $dteProject.FullName
 }
 
 
@@ -48,8 +70,8 @@ function GetProject($projectName)
 # SIG # Begin signature block
 # MIIe8AYJKoZIhvcNAQcCoIIe4TCCHt0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU/CN4IFszH2QaisGToV7NUDFs
-# CNagghkcMIIF2DCCA8CgAwIBAgIQbDvSft08lJ6Vjiips8dXoDANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUvi9dUHff55An1juBlfMuwVdd
+# BiWgghkcMIIF2DCCA8CgAwIBAgIQbDvSft08lJ6Vjiips8dXoDANBgkqhkiG9w0B
 # AQsFADB9MQswCQYDVQQGEwJJTDEWMBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkG
 # A1UECxMiU2VjdXJlIERpZ2l0YWwgQ2VydGlmaWNhdGUgU2lnbmluZzEpMCcGA1UE
 # AxMgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMTUxMjE2MDEw
@@ -188,28 +210,28 @@ function GetProject($projectName)
 # dHkxIzAhBgNVBAMTGlN0YXJ0Q29tIENsYXNzIDIgT2JqZWN0IENBAhBAPVEUYJRI
 # bRTqOS7gDAEkMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAA
 # MBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgor
-# BgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBQHpEH09Y/v6M6Ke29g6H7HMdEMhTAN
-# BgkqhkiG9w0BAQEFAASCAgBy54N95s4cnJGg/HD/KGsgrZLh0OY8ctIYYoTYR5Nw
-# uUYbfrCRBQbwRRM+l8anlWOD5L0EfM1dYr5X0xtdWPMcoGtvnDnkBTt/jvN479bs
-# jwsEdul4BvrPUmaZ/1ofGisb0cMCgsMLGbVvsq8DFAqTkZ/F9DaPsGY/zpl+d9W8
-# kLlRuRRxFL33EgaZpedD/uaeOklKJbL3MkMmM/UhDJvKjXp5m4O5U+qWwCs8GjUx
-# g9AUe6Tc3+Eqy45RBdkMNOGBrGONFyggiLGDT36JAW4osor5OlZiukiYOrwV8DtV
-# 0Iz+8v9b5Hszwg1vCl6sUqppXZc+o5mF2ul0vzlSDvw08MzX8IEOByDat0/Mup6B
-# 8U2inRnm+8mq8BUl20wE2fMLle8VPnOWFlqXtS0SQMDbs1ca87IrohyLMddBLuqU
-# 7O81rtParkjXoc+oB07eyb6vT3HM8jw9MsLRYle7s5GqGTXHGjaBkkwmiuWrUGUv
-# /YPlKe6a22rpU143+MPqMrrs3jHdYuNGkq9vZON2P3M7Tj1H0VFwQwmpJNxnupAl
-# /azGXpdEdygeOaxhfAh1FWe1GWjvbT8pGeLvuVNuQWnaYa6PpCY2LDfcGJNCIsYY
-# cviUbAcVCHYQspAiUXzH/J2UkgK0Lzh85pBgrxBL/US+5o8eUKuwpOIeJ9s/wRO1
-# SKGCAg8wggILBgkqhkiG9w0BCQYxggH8MIIB+AIBATB2MGIxCzAJBgNVBAYTAlVT
+# BgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBRYyJnXzlVtPF1/LHXUfwzeY6TBTzAN
+# BgkqhkiG9w0BAQEFAASCAgAZ/th8g+Cy9KyPtKX/LmrOzc6iSMIZkQbG347hDGEK
+# SWRP77CgmOqM4bGXBcGqrIyPXTj9ZOIdavrXl6bY3XyBRSaUtsrEJnuvk1N8l+f2
+# H+7HwMcMUByLTDV1pKp0mxsIdjSYbZgwfCo155BFFWsJjfkwPiV31mBG8M/VgKb6
+# 2i5+7y/sXCP3WPEYpNdu1ZBF6lDwFtmaqjZ/hLJ0yW0HCbPKk5TfJNft7D94R6b+
+# dBeFgXvHPwM57UsgCdsjO9CUyb+0GOebme6LbjVvFIlWKuwkKAm7qnTTzAtKnw64
+# vjKs+YFeMIcIn7HFMYkf7iTlVgwWorCaMKy9egcoQ2LM+Q7F3cGXbzkXiS+9IwOq
+# 04yfPycmtPXm9/lo05x07FMDx8IPcedAohOGHxIB7joE67zScAfLuhSMilBS+kMd
+# cCgeiwRj/6YCHN6/ojvz7+8Ey4VusFw2BIcGvdDnCqczPIhm3+IHPKkPLIbiE4pX
+# sSpLIDByDpgHjDqh9tGt/xccWyHygT4RgwmCxf3pKkHW6aqZVKdd2rqtjoja1rEd
+# 6rxHmPoJIMlvwdBTX2tXTbzteP4KWJfFBP2fN756cTYIr6UBdfOdLt1/9KxQU2z/
+# +8pu+jH4UHtpiu/XWD6+ydyymi5bPMqEkon4aqo7UoTOKFp4WcjCOm/nE7jaM1pq
+# iKGCAg8wggILBgkqhkiG9w0BCQYxggH8MIIB+AIBATB2MGIxCzAJBgNVBAYTAlVT
 # MRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5j
 # b20xITAfBgNVBAMTGERpZ2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMQIQAwGaAjr/WLFr
 # 1tXq5hfwZjAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-# BgkqhkiG9w0BCQUxDxcNMTcwODEwMjIwMDU5WjAjBgkqhkiG9w0BCQQxFgQUu0Hr
-# sb16/dQKG2veDV8p6oiNc04wDQYJKoZIhvcNAQEBBQAEggEAHLLT5zwdqf5iYrES
-# T/1z4upGWdXQum8jhjBycTGUcBdGw2ahkxkyqUaiNoZ10mck/M0TBYmsv8pZp3oE
-# At/xwo8fo9LbNZT7g2TMaQIC+CJad9UwBAN318heBDPCdadd44QhKUsPNKUxBoGk
-# TjRKUfPDW9uEgGt2aZSbUj3ndKCse/XvKRLnsRoHnVC9CH4+UymzZEwJCvP1u8gi
-# epJWnoE1BSOxvKj0Zpu9fM74R6T01JpDXPA1ahfCmXvBrRCI2DQqkNOCbhYtN64d
-# GZTjk4cjZKOCsr6CSlD8uuGg29thOulh65VAKiiCdgZmwBbeJt4GMg2dXL93OaOB
-# 2KEX2A==
+# BgkqhkiG9w0BCQUxDxcNMTgwMjI4MDAxNDI5WjAjBgkqhkiG9w0BCQQxFgQUgdkO
+# WQg81Mw7cVh25mKmac1mjB8wDQYJKoZIhvcNAQEBBQAEggEAPZzw4i4U9gBVxhDs
+# /Rs/wHrWQxll0I+3B/qLsuDW5OJtlMHWC+qANs9RKT63JMxbC92ARzeoT53xv3nm
+# RPFAROJ0JtwGd5NpmLoj5L6Vf5tfgmA0jI5NduzzIRGM2H+vC2Ws4EdsE2n7aAHu
+# CDOlnhp0hO/IukXSAgRysvIG/ux49LA3Oj3eg4182Cqjbf75LG2PgO0E9vGZlDrU
+# 4KGpWsbYn73DjLtIKbSDj+9Syc2PB2rqXNs0ymgEaA74mZwg6tDS9xlaU69MCKR5
+# DyUlPwuNEOCW+wMyIMaNYegW4D6QERH5w1oH+0S73Wcd+/Da7pEcnpyLeBfoZnfl
+# qOxbmg==
 # SIG # End signature block

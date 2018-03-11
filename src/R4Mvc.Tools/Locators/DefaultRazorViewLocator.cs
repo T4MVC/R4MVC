@@ -1,68 +1,84 @@
 using System;
 using System.Collections.Generic;
+using R4Mvc.Tools.Extensions;
 using Path = System.IO.Path;
 
 namespace R4Mvc.Tools.Locators
 {
     public class DefaultRazorViewLocator : IViewLocator
     {
+        protected const string ViewsFolder = "Views";
+        protected const string AreasFolder = "Areas";
+
         private readonly IFileLocator _fileLocator;
-        public DefaultRazorViewLocator(IFileLocator fileLocator)
+        private readonly Settings _settings;
+
+        public DefaultRazorViewLocator(IFileLocator fileLocator, Settings settings)
         {
             _fileLocator = fileLocator;
+            _settings = settings;
         }
 
-        public IEnumerable<View> Find(string projectRoot)
-        {
-            foreach (var view in FindViews(projectRoot, string.Empty))
-                yield return view;
+        protected virtual string GetViewsRoot(string projectRoot) => Path.Combine(projectRoot, ViewsFolder);
+        protected virtual string GetAreaViewsRoot(string areaRoot, string areaName) => Path.Combine(areaRoot, ViewsFolder);
 
-            var areasPath = Path.Combine(projectRoot, "Areas");
-            if (_fileLocator.DirectoryExists(areasPath))
+        public virtual IEnumerable<View> Find(string projectRoot)
+        {
+            foreach (var (Area, Controller, Path) in FindControllerViewFolders(projectRoot))
             {
-                foreach (var areaPath in _fileLocator.GetDirectories(areasPath))
-                {
-                    var areaName = Path.GetFileName(areaPath);
-                    foreach (var view in FindViews(areaPath, areaName))
-                        yield return view;
-                }
+                if (!_fileLocator.DirectoryExists(Path))
+                    continue;
+                foreach (var view in FindViews(projectRoot, Area, Controller, Path))
+                    yield return view;
             }
         }
 
-        private IEnumerable<View> FindViews(string root, string areaName)
+        protected IEnumerable<(string Area, string Controller, string Path)> FindControllerViewFolders(string projectRoot)
         {
-            var viewsPath = Path.Combine(root, "Views");
-            if (_fileLocator.DirectoryExists(viewsPath))
-            {
-                foreach (var controllerPath in _fileLocator.GetDirectories(viewsPath))
+            var viewsRoot = GetViewsRoot(projectRoot);
+            if (_fileLocator.DirectoryExists(viewsRoot))
+                foreach (var controllerPath in _fileLocator.GetDirectories(viewsRoot))
                 {
                     var controllerName = Path.GetFileName(controllerPath);
-                    foreach (var file in _fileLocator.GetFiles(Path.Combine(viewsPath, controllerName), "*.cshtml"))
-                    {
-                        var relativePath = !string.IsNullOrEmpty(areaName)
-                            ? $"~/Areas/{areaName}/Views/{controllerName}/{Path.GetFileName(file)}"
-                            : $"~/Views/{controllerName}/{Path.GetFileName(file)}";
-                        yield return GetView(file, controllerName, areaName);
-                    }
+                    yield return (string.Empty, controllerName, controllerPath);
+                }
 
-                    foreach (var directory in _fileLocator.GetDirectories(controllerPath))
-                    {
-                        foreach (var file in _fileLocator.GetFiles(directory, "*.cshtml"))
+            var areasPath = Path.Combine(projectRoot, AreasFolder);
+            if (_fileLocator.DirectoryExists(areasPath))
+                foreach (var areaRoot in _fileLocator.GetDirectories(areasPath))
+                {
+                    var areaName = Path.GetFileName(areaRoot);
+                    viewsRoot = GetAreaViewsRoot(areaRoot, areaName);
+                    if (_fileLocator.DirectoryExists(viewsRoot))
+                        foreach (var controllerPath in _fileLocator.GetDirectories(viewsRoot))
                         {
-                            yield return GetView(file, controllerName, areaName, Path.GetFileName(directory));
+                            var controllerName = Path.GetFileName(controllerPath);
+                            yield return (areaName, controllerName, controllerPath);
                         }
-                    }
+                }
+        }
+
+        protected virtual IEnumerable<View> FindViews(string projectRoot, string areaName, string controllerName, string controllerPath)
+        {
+            foreach (var file in _fileLocator.GetFiles(controllerPath, "*.cshtml"))
+            {
+                yield return GetView(projectRoot, file, controllerName, areaName);
+            }
+
+            foreach (var directory in _fileLocator.GetDirectories(controllerPath))
+            {
+                foreach (var file in _fileLocator.GetFiles(directory, "*.cshtml"))
+                {
+                    yield return GetView(projectRoot, file, controllerName, areaName, Path.GetFileName(directory));
                 }
             }
         }
 
-        private View GetView(string filePath, string controllerName, string areaName, string templateKind = null)
+        private View GetView(string projectRoot, string filePath, string controllerName, string areaName, string templateKind = null)
         {
+            var relativePath = new Uri("~" + filePath.GetRelativePath(projectRoot).Replace("\\", "/"), UriKind.Relative);
             var templateKindSegment = templateKind != null ? templateKind + "/" : null;
-            var relativePath = !string.IsNullOrEmpty(areaName)
-                ? $"~/Areas/{areaName}/Views/{controllerName}/{templateKindSegment}{Path.GetFileName(filePath)}"
-                : $"~/Views/{controllerName}/{templateKindSegment}{Path.GetFileName(filePath)}";
-            return new View(areaName, controllerName, Path.GetFileNameWithoutExtension(filePath), new Uri(relativePath, UriKind.Relative), templateKind);
+            return new View(areaName, controllerName, Path.GetFileNameWithoutExtension(filePath), relativePath, templateKind);
         }
     }
 }

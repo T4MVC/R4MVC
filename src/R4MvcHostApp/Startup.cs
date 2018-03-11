@@ -48,7 +48,24 @@ namespace R4MvcHostApp
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddMvc();
+            services.AddMvc()
+                .AddRazorOptions(razorOptions =>
+                {
+                    // Standard feature views
+                    razorOptions.ViewLocationFormats.Add("/Features/{1}/{0}.cshtml");
+                    razorOptions.ViewLocationFormats.Add("/Features/{0}.cshtml");
+                    razorOptions.ViewLocationFormats.Add("/Features/Shared/{0}.cshtml");
+
+                    // Area feature views
+                    razorOptions.AreaViewLocationFormats.Add("/Areas/{2}/Features/{1}/{0}.cshtml");
+                    razorOptions.AreaViewLocationFormats.Add("/Areas/{2}/Features/{0}.cshtml");
+                    razorOptions.AreaViewLocationFormats.Add("/Areas/{2}/Features/Shared/{0}.cshtml");
+
+                    // Feature folder area views
+                    razorOptions.AreaViewLocationFormats.Add("/Areas/{2}/{1}/{0}.cshtml");
+                    razorOptions.AreaViewLocationFormats.Add("/Areas/{2}/{0}.cshtml");
+                    razorOptions.AreaViewLocationFormats.Add("/Areas/{2}/Shared/{0}.cshtml");
+                });
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();

@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using R4Mvc.Tools.CodeGen;
 using R4Mvc.Tools.Extensions;
 using R4Mvc.Tools.Locators;
-using static R4Mvc.Tools.Extensions.SyntaxNodeHelpers;
 
 namespace R4Mvc.Tools.Services
 {
@@ -26,17 +25,17 @@ namespace R4Mvc.Tools.Services
             var staticFilesRoot = GetStaticFilesPath(projectRoot);
             var staticfiles = _staticFileLocators.SelectMany(x => x.Find(staticFilesRoot));
 
-            var linksClass = SyntaxFactory.ClassDeclaration(_settings.LinksNamespace)
+            var linksClass = new ClassBuilder(_settings.LinksNamespace)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes();
-            linksClass = AddStaticFiles(linksClass, string.Empty, staticfiles);
-            return linksClass;
+            AddStaticFiles(linksClass, string.Empty, staticfiles);
+            return linksClass.Build();
         }
 
         // This will eventually read the Startup class, to identify the location(s) of the static roots
         public string GetStaticFilesPath(string projectRoot) => Path.Combine(projectRoot, _settings.StaticFilesPath);
 
-        public ClassDeclarationSyntax AddStaticFiles(ClassDeclarationSyntax parentClass, string path, IEnumerable<StaticFile> files)
+        public void AddStaticFiles(ClassBuilder parentClass, string path, IEnumerable<StaticFile> files)
         {
             var paths = files
                 .Select(f => f.Container)
@@ -56,20 +55,17 @@ namespace R4Mvc.Tools.Services
             {
                 var childFiles = files.Where(f => f.Container.StartsWith(childPath));
                 var className = childPath.Substring(path.Length > 0 ? path.Length + 1 : 0).SanitiseFieldName();
-                var containerClass = SyntaxFactory.ClassDeclaration(className)
-                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
-                    .WithGeneratedNonUserCodeAttributes();
-                containerClass = AddStaticFiles(containerClass, childPath, childFiles);
-                parentClass = parentClass.AddMembers(containerClass);
+                var containerClass = new ClassBuilder(className)
+                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword);
+                AddStaticFiles(containerClass, childPath, childFiles);
+                parentClass.WithMember(containerClass.Build());
             }
 
             var localFiles = files.Where(f => f.Container == path);
             foreach (var file in localFiles)
             {
-                parentClass = parentClass.AddMembers(
-                    CreateStringFieldDeclaration(file.FileName.SanitiseFieldName(), "~/" + file.RelativePath.ToString(), SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword));
+                parentClass.WithStringField(file.FileName.SanitiseFieldName(), "~/" + file.RelativePath.ToString(), false, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
             }
-            return parentClass;
         }
     }
 }

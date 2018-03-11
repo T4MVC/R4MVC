@@ -14,50 +14,67 @@ namespace R4Mvc.Tools
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            if (args.Length == 0)
+            var commandType = CommandResolver.GetCommand(ref args);
+            if (commandType == null)
             {
-                Console.WriteLine("Looking for project...");
-                var projFiles = Directory.GetFiles(Environment.CurrentDirectory, "*.csproj");
-                switch (projFiles.Length)
-                {
-                    case 1:
-                        args = projFiles;
-                        break;
-
-                    case 0:
-                        Console.WriteLine("Project path not found. Pass one as a parameter or run this within the project directory.");
-                        return;
-                    default:
-                        Console.WriteLine("More than one project file found. Aborting, just to be safe!");
-                        return;
-                }
-            }
-
-            var projectPath = Path.IsPathRooted(args[0]) ? args[0] : Path.Combine(Environment.CurrentDirectory, args[0]);
-            Console.WriteLine($"Project path: {projectPath}");
-
-            if (!File.Exists(projectPath))
-            {
-                Console.WriteLine("Project file doesn't exist");
+                CommandResolver.DisplayHelp();
                 return;
             }
 
-            var configuration = LoadConfiguration(args.Skip(1).ToArray(), projectPath);
+            if (args.Length > 0 && args[0].Equals("--help", StringComparison.OrdinalIgnoreCase))
+            {
+                CommandResolver.DisplayHelp(commandType);
+                return;
+            }
+
+            var projectPath = GetProjectPath(ref args);
+            if (projectPath == null)
+                return;
+            var configuration = LoadConfiguration(args, projectPath);
 
             var services = new ServiceCollection();
             ConfigureServices(services, configuration);
 
             var serviceProvider = services.BuildServiceProvider();
 
-            Run(projectPath, serviceProvider).Wait();
+            var command = serviceProvider.GetService(commandType) as ICommand;
+            await command.Run(projectPath, configuration);
         }
 
-        static Task Run(string projectPath, IServiceProvider serviceProvider)
+        static string GetProjectPath(ref string[] args)
         {
-            var command = serviceProvider.GetService<GenerateCommand>();
-            return command.Run(projectPath);
+            string projectPath = null;
+            if (args.Length > 0 && !args[0].StartsWith("-"))
+            {
+                projectPath = args[0];
+                args = args.Skip(1).ToArray();
+            }
+            if (!string.IsNullOrWhiteSpace(projectPath))
+            {
+                projectPath = Path.IsPathRooted(projectPath) ? projectPath : Path.Combine(Environment.CurrentDirectory, projectPath);
+                if (File.Exists(projectPath) && projectPath.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase))
+                    return projectPath;
+
+                Console.WriteLine("Invalid project path.");
+            }
+
+            Console.WriteLine("Project path not passed. Searching current path...");
+            var projFiles = Directory.GetFiles(Environment.CurrentDirectory, "*.csproj");
+            switch (projFiles.Length)
+            {
+                case 1:
+                    return projFiles[0];
+
+                case 0:
+                    Console.WriteLine("Project path not found. Pass one as a parameter or run this within the project directory.");
+                    break;
+                default:
+                    Console.WriteLine("More than one project file found. Aborting, just to be safe!");
+                    break;
+            }
+            return null;
         }
 
         static IConfigurationRoot LoadConfiguration(string[] args, string projectPath)
@@ -75,10 +92,13 @@ namespace R4Mvc.Tools
             services.AddTransient(sc => sc.GetService<IOptions<Settings>>().Value);
 
             services.AddTransient<GenerateCommand, GenerateCommand>();
+            services.AddTransient<RemoveCommand, RemoveCommand>();
 
+            services.AddTransient<IViewLocator, FeatureFolderRazorViewLocator>();
             services.AddTransient<IViewLocator, DefaultRazorViewLocator>();
             services.AddTransient<IStaticFileLocator, DefaultStaticFileLocator>();
             services.AddTransient<IFileLocator, PhysicalFileLocator>();
+            services.AddTransient<IGeneratedFileTesterService, GeneratedFileTesterService>();
             services.AddTransient<IStaticFileGeneratorService, StaticFileGeneratorService>();
             services.AddTransient<IControllerRewriterService, ControllerRewriterService>();
             services.AddTransient<IControllerGeneratorService, ControllerGeneratorService>();

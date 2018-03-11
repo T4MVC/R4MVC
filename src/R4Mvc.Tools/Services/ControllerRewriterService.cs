@@ -67,7 +67,12 @@ namespace R4Mvc.Tools.Services
                 if (!newNode.IsEquivalentTo(tree.GetRoot()))
                 {
                     // node has changed, update syntaxtree and persist to file
-                    compiler = compiler.ReplaceSyntaxTree(tree, newNode.SyntaxTree);
+
+                    // Updating the new syntax tree with the syntax options from the original tree
+                    // Seems like the new syntax tree might be generated with a different language version than the original. (see #79)
+                    var newTree = newNode.SyntaxTree.WithRootAndOptions(newNode.SyntaxTree.GetRoot(), tree.Options);
+
+                    compiler = compiler.ReplaceSyntaxTree(tree, newTree);
                     _filePersistService.WriteFile(newNode, tree.FilePath);
                 }
             }
