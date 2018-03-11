@@ -37,6 +37,8 @@ namespace R4Mvc.Tools.CodeGen
                 : InvocationExpression(IdentifierName(methodName));
             if (arguments?.Count > 0)
                 methodCallExpression = methodCallExpression.WithArgumentList(GetArguments(arguments));
+            else
+                methodCallExpression = methodCallExpression.WithArgumentList(ArgumentList());
             return methodCallExpression;
         }
 
@@ -45,6 +47,8 @@ namespace R4Mvc.Tools.CodeGen
             var newExpression = ObjectCreationExpression(IdentifierName(entityType));
             if (arguments?.Count > 0)
                 newExpression = newExpression.WithArgumentList(GetArguments(arguments));
+            else
+                newExpression = newExpression.WithArgumentList(ArgumentList());
             return newExpression;
         }
 

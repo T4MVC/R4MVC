@@ -43,18 +43,11 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
-        public MethodBuilder WithStringParameter(string name, bool defaultsToNull = false)
-        {
-            var parameter = Parameter(Identifier(name)).WithType(PredefinedType(Token(SyntaxKind.StringKeyword)));
-            if (defaultsToNull)
-                parameter = parameter.WithDefault(EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression)));
-            _parameters.Add(parameter);
-            return this;
-        }
-
-        public MethodBuilder WithParameter(string name, string type)
+        public MethodBuilder WithParameter(string name, string type, bool defaultsToNull = false)
         {
             var parameter = Parameter(Identifier(name)).WithType(ParseTypeName(type));
+            if (defaultsToNull)
+                parameter = parameter.WithDefault(EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression)));
             _parameters.Add(parameter);
             return this;
         }

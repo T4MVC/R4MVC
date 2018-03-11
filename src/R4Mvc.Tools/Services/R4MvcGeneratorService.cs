@@ -162,11 +162,11 @@ namespace R4Mvc.Tools.Services
                 .WithConstructor(c => c
                     .WithOther(constructorParts)
                     .WithModifiers(SyntaxKind.PublicKeyword)                        // public ctor(
-                    .WithStringParameter("area")                                    //  string area,
-                    .WithStringParameter("controller")                              //  string controller,
-                    .WithStringParameter("action")                                  //  string action,
-                    .WithStringParameter("protocol", defaultsToNull: true)          //  string protocol = null)
-                    .WithBody(b => b                                                // this.InitMVCT4Result(area, controller, action, protocol);
+                    .WithParameter("area", "string")                                //  string area,
+                    .WithParameter("controller", "string")                          //  string controller,
+                    .WithParameter("action", "string")                              //  string action,
+                    .WithParameter("protocol", "string", defaultsToNull: true)      //  string protocol = null)
+                    .WithBody(b => b                                                    // this.InitMVCT4Result(area, controller, action, protocol);
                         .MethodCall("this", "InitMVCT4Result", "area", "controller", "action", "protocol")))
                 .WithStringProperty("Controller")                                       // public string Controller { get; set; }
                 .WithStringProperty("Action")                                           // public string Action { get; set; }
