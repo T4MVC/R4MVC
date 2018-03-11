@@ -60,7 +60,7 @@ namespace R4Mvc.Tools.Services
 
         public ClassDeclarationSyntax GeneratePartialController(ControllerDefinition controller)
         {
-            // build controller partial class node 
+            // build controller partial class node
             var genControllerClass = new ClassBuilder(controller.Symbol.Name)               // public partial {controllerClass}
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                 .WithTypeParameters(controller.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()); // optional <T1, T2, …>
@@ -90,8 +90,8 @@ namespace R4Mvc.Tools.Services
             AddParameterlessMethods(genControllerClass, controller.Symbol);
 
             var actionsExpression = controller.AreaKey != null
-                ? SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix + "." + controller.AreaKey, controller.Name)
-                : SyntaxNodeHelpers.MemberAccess(_settings.HelpersPrefix, controller.Name);
+                ? _settings.HelpersPrefix + "." + controller.AreaKey + "." + controller.Name
+                : _settings.HelpersPrefix + "." + controller.Name;
             var controllerMethodNames = SyntaxNodeHelpers.GetPublicNonGeneratedMethods(controller.Symbol).Select(m => m.Name).Distinct().ToArray();
             genControllerClass
                 .WithExpressionProperty("Actions", controller.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
@@ -221,7 +221,7 @@ namespace R4Mvc.Tools.Services
                      *  return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
                      * }
                      */
-                    .WithMethod(method.Key, "IActionResult", m => m 
+                    .WithMethod(method.Key, "IActionResult", m => m
                         .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.VirtualKeyword)
                         .WithNonActionAttribute()
                         .WithGeneratedNonUserCodeAttributes()

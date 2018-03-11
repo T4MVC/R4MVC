@@ -95,10 +95,10 @@ namespace R4Mvc.Tools.CodeGen
             _class = _class.AddMembers(prop);
             return this;
         }
-        public ClassBuilder WithExpressionProperty(string name, string type, ExpressionSyntax value, params SyntaxKind[] modifiers)
+        public ClassBuilder WithExpressionProperty(string name, string type, string value, params SyntaxKind[] modifiers)
         {
             var property = PropertyDeclaration(IdentifierName(type), name)
-                .WithExpressionBody(ArrowExpressionClause(value))
+                .WithExpressionBody(ArrowExpressionClause(IdentifierName(value)))
                 .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
                 .WithModifiers(modifiers)
                 .WithGeneratedAttribute();
