@@ -46,8 +46,10 @@ namespace R4Mvc.TagHelpers
                 case IR4MvcActionResult t4mvcActionResult:
                     routeValues = t4mvcActionResult.RouteValueDictionary;
                     break;
-                case Task<IActionResult> taskActionResult when taskActionResult.Result is IR4MvcActionResult t4mvcActionResult:
-                    routeValues = t4mvcActionResult.RouteValueDictionary;
+                case Task task:
+                    var result = task.GetActionResult();
+                    if (result is IR4MvcActionResult taskActionResult)
+                        routeValues = taskActionResult.RouteValueDictionary;
                     break;
             }
 

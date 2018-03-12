@@ -162,6 +162,14 @@ namespace R4Mvc.Test.Services
         }
 
         [Fact]
+        public void FileResultClass()
+        {
+            var service = GetGeneratorService();
+            var actionClass = service.FileResultClass();
+            AssertIActionResultClass(actionClass, Constants.FileResultClass, "FileResult");
+        }
+
+        [Fact]
         public void RedirectResultClass()
         {
             var service = GetGeneratorService();

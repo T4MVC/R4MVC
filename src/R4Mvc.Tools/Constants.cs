@@ -14,6 +14,7 @@
         internal const string ActionResultClass = ProjectName + ActionResultNamespace + "ActionResult";
         internal const string JsonResultClass = ProjectName + ActionResultNamespace + "JsonResult";
         internal const string ContentResultClass = ProjectName + ActionResultNamespace + "ContentResult";
+        internal const string FileResultClass = ProjectName + ActionResultNamespace + "FileResult";
         internal const string RedirectResultClass = ProjectName + ActionResultNamespace + "RedirectResult";
         internal const string RedirectToActionResultClass = ProjectName + ActionResultNamespace + "RedirectToActionResult";
         internal const string RedirectToRouteResultClass = ProjectName + ActionResultNamespace + "RedirectToRouteResult";

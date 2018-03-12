@@ -112,6 +112,7 @@ namespace R4Mvc.Tools.Services
                         ActionResultClass(),
                         JsonResultClass(),
                         ContentResultClass(),
+                        FileResultClass(),
                         RedirectResultClass(),
                         RedirectToActionResultClass(),
                         RedirectToRouteResultClass())
@@ -187,6 +188,10 @@ namespace R4Mvc.Tools.Services
 
         public ClassDeclarationSyntax ContentResultClass()
             => IActionResultDerivedClass(Constants.ContentResultClass, "ContentResult");
+
+        public ClassDeclarationSyntax FileResultClass()
+            => IActionResultDerivedClass(Constants.FileResultClass, "FileResult",
+                c => c.WithBaseConstructorCall(SimpleLiteral.Null));                           // ctor : base(null)
 
         public ClassDeclarationSyntax RedirectResultClass()
             => IActionResultDerivedClass(Constants.RedirectResultClass, "RedirectResult",
