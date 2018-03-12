@@ -252,6 +252,8 @@ namespace R4Mvc.Tools.Services
                     callInfoType = Constants.JsonResultClass;
                 else if (methodReturnType.InheritsFrom<ContentResult>())
                     callInfoType = Constants.ContentResultClass;
+                else if (methodReturnType.InheritsFrom<FileResult>())
+                    callInfoType = Constants.FileResultClass;
                 else if (methodReturnType.InheritsFrom<RedirectResult>())
                     callInfoType = Constants.RedirectResultClass;
                 else if (methodReturnType.InheritsFrom<RedirectToActionResult>())

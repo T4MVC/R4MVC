@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
 
 namespace Microsoft.AspNetCore.Mvc
@@ -11,6 +13,61 @@ namespace Microsoft.AspNetCore.Mvc
             if (actionResult == null)
                 throw new InvalidOperationException("R4MVC was called incorrectly. You may need to force it to regenerate by running `dotnet r4mvc`");
             return actionResult;
+        }
+
+        public static IR4MvcActionResult GetR4MvcResult<TActionResult>(this Task<TActionResult> taskResult)
+            where TActionResult : IActionResult
+        {
+            return GetR4MvcResult(taskResult.Result);
+        }
+
+        public static IR4MvcActionResult GetR4MvcResult<TActionResult>(this Task taskResult)
+            where TActionResult : IActionResult
+        {
+            return GetR4MvcResult(GetActionResult(taskResult));
+        }
+
+        internal static IActionResult GetActionResult(this Task task)
+        {
+            switch (task)
+            {
+                case Task<IActionResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                case Task<ActionResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                case Task<ContentResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                case Task<FileResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                case Task<FileStreamResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                case Task<PhysicalFileResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                case Task<VirtualFileResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                case Task<JsonResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                case Task<RedirectResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                case Task<RedirectToActionResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                case Task<RedirectToRouteResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                case Task<LocalRedirectResult> taskIActionResult:
+                    return taskIActionResult.Result;
+                default:
+                    if (task.GetType().GetTypeInfo().IsGenericType)
+                    {
+                        var resultProp = task.GetType().GetTypeInfo().GetProperty("Result");
+                        if (resultProp != null)
+                        {
+                            var result = resultProp.GetValue(task);
+                            if (result is IActionResult actionResult)
+                                return actionResult;
+                        }
+                    }
+                    return null;
+            }
         }
 
         public static RouteValueDictionary GetRouteValueDictionary(this IActionResult result)
