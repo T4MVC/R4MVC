@@ -64,7 +64,10 @@ namespace R4Mvc.Tools.Services
             var localFiles = files.Where(f => f.Container == path);
             foreach (var file in localFiles)
             {
-                parentClass.WithStringField(file.FileName.SanitiseFieldName(), "~/" + file.RelativePath.ToString(), false, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+                var fieldName = file.FileName.SanitiseFieldName();
+                if (fieldName == parentClass.Name)
+                    fieldName += "_";
+                parentClass.WithStringField(fieldName, "~/" + file.RelativePath.ToString(), false, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
             }
         }
     }

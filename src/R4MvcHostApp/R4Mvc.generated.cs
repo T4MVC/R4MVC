@@ -137,6 +137,11 @@ public static partial class Links
 {
     public static partial class css
     {
+        public static partial class library_css
+        {
+            public static string library_css_ = "~/css/library.css/library.css";
+        }
+
         public static string _site_css = "~/css/.site.css";
         public static string site_css = "~/css/site.css";
         public static string site_min_css = "~/css/site.min.css";
@@ -152,6 +157,11 @@ public static partial class Links
 
     public static partial class js
     {
+        public static partial class library_js
+        {
+            public static string library_js_ = "~/js/library.js/library.js";
+        }
+
         public static string site_js = "~/js/site.js";
         public static string site_min_js = "~/js/site.min.js";
     }
