@@ -1,7 +1,19 @@
-﻿{
-  "ExcludedStaticFileExtensions": [ ".txt", ".md" ],
+{
+  "HelpersPrefix": "MVC",
+  "R4MvcNamespace": "R4Mvc",
+  "LinksNamespace": "Links",
+  "SplitIntoMultipleFiles": true,
+  "StaticFilesPath": "wwwroot",
+  "ExcludedStaticFileExtensions": [
+    ".txt",
+    ".md"
+  ],
   "FeatureFolders": {
     "Enabled": true,
-    "FeatureOnlyAreas": ["Members"]
+    "FeaturesPath": "Features",
+    "StaticFileAccess": false,
+    "FeatureOnlyAreas": [
+      "Members"
+    ]
   }
 }

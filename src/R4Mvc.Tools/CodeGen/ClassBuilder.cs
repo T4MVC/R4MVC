@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using R4Mvc.Tools.Extensions;
@@ -20,6 +21,14 @@ namespace R4Mvc.Tools.CodeGen
 
         public string Name { get; }
         public bool IsGenerated { get; private set; }
+
+        public ClassBuilder WithComment(string comment)
+        {
+            var trivia = _class.GetLeadingTrivia()
+                .Add(Comment(comment));
+            _class = _class.WithLeadingTrivia(trivia);
+            return this;
+        }
 
         public ClassBuilder WithModifiers(params SyntaxKind[] modifiers)
         {

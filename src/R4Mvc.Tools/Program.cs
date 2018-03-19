@@ -80,7 +80,7 @@ namespace R4Mvc.Tools
         static IConfigurationRoot LoadConfiguration(string[] args, string projectPath)
         {
             return new ConfigurationBuilder()
-                .AddJsonFile(Path.Combine(Path.GetDirectoryName(projectPath), "r4mvc.json"), optional: true)
+                .AddJsonFile(Path.Combine(Path.GetDirectoryName(projectPath), Constants.R4MvcSettingsFileName), optional: true)
                 .AddCommandLine(args)
                 .Build();
         }

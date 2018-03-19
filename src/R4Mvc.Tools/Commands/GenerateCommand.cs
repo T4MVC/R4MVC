@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using R4Mvc.Tools.CodeGen;
 using R4Mvc.Tools.Extensions;
 using R4Mvc.Tools.Locators;
 using R4Mvc.Tools.Services;
@@ -27,14 +29,16 @@ project-path:
         private readonly R4MvcGeneratorService _generatorService;
         private readonly Settings _settings;
         private readonly IGeneratedFileTesterService _generatedFileTesterService;
+        private readonly IFilePersistService _filePersistService;
         private bool _debugMsBuild = false;
-        public GenerateCommand(IControllerRewriterService controllerRewriter, IEnumerable<IViewLocator> viewLocators, R4MvcGeneratorService generatorService, Settings settings, IGeneratedFileTesterService generatedFileTesterService)
+        public GenerateCommand(IControllerRewriterService controllerRewriter, IEnumerable<IViewLocator> viewLocators, R4MvcGeneratorService generatorService, Settings settings, IGeneratedFileTesterService generatedFileTesterService, IFilePersistService filePersistService)
         {
             _controllerRewriter = controllerRewriter;
             _viewLocators = viewLocators;
             _generatorService = generatorService;
             _settings = settings;
             _generatedFileTesterService = generatedFileTesterService;
+            _filePersistService = filePersistService;
         }
 
         public async Task Run(string projectPath, IConfiguration configuration)
@@ -95,12 +99,21 @@ project-path:
             // Generate the R4Mvc.generated.cs file
             _generatorService.Generate(projectRoot, controllers);
 
+            // updating the r4mvc.json settings file
+            var r4MvcJsonFile = Path.Combine(projectRoot, Constants.R4MvcSettingsFileName);
+            File.WriteAllText(r4MvcJsonFile, JsonConvert.SerializeObject(_settings, Formatting.Indented));
+
+            // Ensuring a user customisable r4mvc.cs code file exists
+            var r4MvcFile = Path.Combine(projectRoot, Constants.R4MvcFileName);
+            if (!File.Exists(r4MvcFile))
+                CreateR4MvcUserFile(r4MvcFile);
+
             // Cleanup old generated files
             var generatedFiles = Directory.GetFiles(projectRoot, "*.generated.cs", SearchOption.AllDirectories);
             foreach (var file in generatedFiles)
             {
                 if (File.Exists(file.Replace(".generated.cs", ".cs")) ||
-                    string.Equals(Constants.R4MvcFileName, Path.GetFileName(file)))
+                    string.Equals(Constants.R4MvcGeneratedFileName, Path.GetFileName(file)))
                     continue;
 
                 using (var fileStream = File.OpenRead(file))
@@ -134,6 +147,17 @@ project-path:
                 if (controllers.Any(c => c.Area == string.Empty && c.Name == area))
                     areaMap[area] = area + "Area";
             return areaMap;
+        }
+
+        public void CreateR4MvcUserFile(string filePath)
+        {
+            var result = new CodeFileBuilder(_settings, false)
+                .WithMembers(new ClassBuilder("R4MvcExtensions")
+                    .WithModifiers(SyntaxKind.InternalKeyword)
+                    .WithComment("// Use this file to add custom extensions and helper methods to R4Mvc in your project")
+                    .Build())
+                .Build();
+            _filePersistService.WriteFile(result, filePath);
         }
     }
 }
