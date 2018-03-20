@@ -375,6 +375,39 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ContentResult : ContentRes
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_FileResult : FileResult, IR4MvcActionResult
+{
+    public R4Mvc_Microsoft_AspNetCore_Mvc_FileResult(string area, string controller, string action, string protocol = null): base (null)
+    {
+        this.InitMVCT4Result(area, controller, action, protocol);
+    }
+
+    public string Controller
+    {
+        get;
+        set;
+    }
+
+    public string Action
+    {
+        get;
+        set;
+    }
+
+    public string Protocol
+    {
+        get;
+        set;
+    }
+
+    public RouteValueDictionary RouteValueDictionary
+    {
+        get;
+        set;
+    }
+}
+
+[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectResult : RedirectResult, IR4MvcActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_RedirectResult(string area, string controller, string action, string protocol = null): base (" ")

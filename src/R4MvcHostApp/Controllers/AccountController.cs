@@ -15,7 +15,7 @@ using R4MvcHostApp.Services;
 
 namespace R4MvcHostApp.Controllers
 {
-    [Authorize]
+    [Authorize, RequireHttps]
     public partial class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

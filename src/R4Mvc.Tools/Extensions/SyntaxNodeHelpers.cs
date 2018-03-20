@@ -44,7 +44,7 @@ namespace R4Mvc.Tools.Extensions
 
         public static bool IsNotR4MVCGenerated(this ISymbol method)
         {
-            return !method.GetAttributes().Any(a => a.AttributeClass.ToDisplayString() == typeof(GeneratedCodeAttribute).FullName);
+            return !method.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<GeneratedCodeAttribute>());
         }
 
         private static string[] _controllerClassMethodNames = null;

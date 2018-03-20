@@ -52,63 +52,63 @@ namespace R4MvcHostApp.Controllers
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult Login()
         {
-            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Login);
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Login, "https");
         }
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult Register()
         {
-            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Register);
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Register, "https");
         }
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult ExternalLogin()
         {
-            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLogin);
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLogin, "https");
         }
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult ExternalLoginCallback()
         {
-            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginCallback);
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginCallback, "https");
         }
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult ExternalLoginConfirmation()
         {
-            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginConfirmation);
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginConfirmation, "https");
         }
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult ConfirmEmail()
         {
-            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ConfirmEmail);
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ConfirmEmail, "https");
         }
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult ResetPassword()
         {
-            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPassword);
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPassword, "https");
         }
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult SendCode()
         {
-            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.SendCode);
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.SendCode, "https");
         }
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult VerifyCode()
         {
-            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.VerifyCode);
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.VerifyCode, "https");
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -216,7 +216,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> Login(string returnUrl)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Login);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Login, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             LoginOverride(callInfo, returnUrl);
             return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
@@ -227,7 +227,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> Login(R4MvcHostApp.Models.AccountViewModels.LoginViewModel model, string returnUrl)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Login);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Login, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             LoginOverride(callInfo, model, returnUrl);
@@ -239,7 +239,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override Microsoft.AspNetCore.Mvc.IActionResult Register(string returnUrl)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Register);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Register, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             RegisterOverride(callInfo, returnUrl);
             return callInfo;
@@ -250,7 +250,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> Register(R4MvcHostApp.Models.AccountViewModels.RegisterViewModel model, string returnUrl)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Register);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Register, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             RegisterOverride(callInfo, model, returnUrl);
@@ -262,7 +262,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> Logout()
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Logout);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Logout, "https");
             LogoutOverride(callInfo);
             return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
         }
@@ -272,7 +272,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override Microsoft.AspNetCore.Mvc.IActionResult ExternalLogin(string provider, string returnUrl)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLogin);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLogin, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "provider", provider);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             ExternalLoginOverride(callInfo, provider, returnUrl);
@@ -284,7 +284,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ExternalLoginCallback(string returnUrl, string remoteError)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginCallback);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginCallback, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "remoteError", remoteError);
             ExternalLoginCallbackOverride(callInfo, returnUrl, remoteError);
@@ -296,7 +296,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ExternalLoginConfirmation(R4MvcHostApp.Models.AccountViewModels.ExternalLoginConfirmationViewModel model, string returnUrl)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginConfirmation);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginConfirmation, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             ExternalLoginConfirmationOverride(callInfo, model, returnUrl);
@@ -308,7 +308,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ConfirmEmail(string userId, string code)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ConfirmEmail);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ConfirmEmail, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "userId", userId);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
             ConfirmEmailOverride(callInfo, userId, code);
@@ -320,7 +320,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override Microsoft.AspNetCore.Mvc.IActionResult ForgotPassword()
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ForgotPassword);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ForgotPassword, "https");
             ForgotPasswordOverride(callInfo);
             return callInfo;
         }
@@ -330,7 +330,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ForgotPassword(R4MvcHostApp.Models.AccountViewModels.ForgotPasswordViewModel model)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ForgotPassword);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ForgotPassword, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ForgotPasswordOverride(callInfo, model);
             return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
@@ -341,7 +341,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override Microsoft.AspNetCore.Mvc.IActionResult ForgotPasswordConfirmation()
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ForgotPasswordConfirmation);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ForgotPasswordConfirmation, "https");
             ForgotPasswordConfirmationOverride(callInfo);
             return callInfo;
         }
@@ -351,7 +351,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override Microsoft.AspNetCore.Mvc.IActionResult ResetPassword(string code)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPassword);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPassword, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
             ResetPasswordOverride(callInfo, code);
             return callInfo;
@@ -362,7 +362,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> ResetPassword(R4MvcHostApp.Models.AccountViewModels.ResetPasswordViewModel model)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPassword);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPassword, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ResetPasswordOverride(callInfo, model);
             return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
@@ -373,7 +373,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override Microsoft.AspNetCore.Mvc.IActionResult ResetPasswordConfirmation()
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPasswordConfirmation);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ResetPasswordConfirmation, "https");
             ResetPasswordConfirmationOverride(callInfo);
             return callInfo;
         }
@@ -383,7 +383,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.ActionResult> SendCode(string returnUrl, bool rememberMe)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.SendCode);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.SendCode, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "rememberMe", rememberMe);
             SendCodeOverride(callInfo, returnUrl, rememberMe);
@@ -395,7 +395,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> SendCode(R4MvcHostApp.Models.AccountViewModels.SendCodeViewModel model)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.SendCode);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.SendCode, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             SendCodeOverride(callInfo, model);
             return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
@@ -406,7 +406,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> VerifyCode(string provider, bool rememberMe, string returnUrl)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.VerifyCode);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.VerifyCode, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "provider", provider);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "rememberMe", rememberMe);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
@@ -419,7 +419,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.IActionResult> VerifyCode(R4MvcHostApp.Models.AccountViewModels.VerifyCodeViewModel model)
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.VerifyCode);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.VerifyCode, "https");
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             VerifyCodeOverride(callInfo, model);
             return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
@@ -430,7 +430,7 @@ namespace R4MvcHostApp.Controllers
         [NonAction]
         public override Microsoft.AspNetCore.Mvc.IActionResult AccessDenied()
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.AccessDenied);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.AccessDenied, "https");
             AccessDeniedOverride(callInfo);
             return callInfo;
         }

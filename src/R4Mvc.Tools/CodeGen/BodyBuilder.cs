@@ -89,7 +89,7 @@ namespace R4Mvc.Tools.CodeGen
                                 EqualsValueClause(value))));
         }
 
-        public BodyBuilder VariableFromMethodCall(string variableName, string entityName, string methodName, params string[] arguments)
+        public BodyBuilder VariableFromMethodCall(string variableName, string entityName, string methodName, params object[] arguments)
         {
             var methodCallExpression = MethodCallExpression(entityName, methodName, arguments);
             var variableExpression = NewVariableDeclaration(variableName, methodCallExpression);
@@ -97,7 +97,7 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
-        public BodyBuilder VariableFromNewObject(string variableName, string entityType, params string[] arguments)
+        public BodyBuilder VariableFromNewObject(string variableName, string entityType, params object[] arguments)
         {
             var newExpression = NewObjectExpression(entityType, arguments);
             var variableExpression = NewVariableDeclaration(variableName, newExpression);

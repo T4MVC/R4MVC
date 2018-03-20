@@ -9,6 +9,7 @@ namespace R4Mvc.Tools
         public string Namespace { get; set; }
         public string Name { get; set; }
         public string Area { get; set; }
+        public bool IsSecure { get; set; }
         public INamedTypeSymbol Symbol { get; set; }
 
         public string AreaKey { get; set; }
