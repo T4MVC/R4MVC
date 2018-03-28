@@ -107,6 +107,8 @@ namespace R4MvcHostApp
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            R4MvcHelpers.ProcessVirtualPath = R4MvcExtensions.AppendGuid;
         }
     }
 }

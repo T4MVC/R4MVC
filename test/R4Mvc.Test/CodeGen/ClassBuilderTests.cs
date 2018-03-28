@@ -102,6 +102,20 @@ namespace R4Mvc.Test.CodeGen
         }
 
         [Theory]
+        [InlineData("Name", "object", "Name", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)]
+        [InlineData("Name", "object", "Name", SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)]
+        [InlineData("_id", "Entity", "StaticType.Name", SyntaxKind.PrivateKeyword)]
+        [InlineData("_id", "Entity", "StaticType.Name")]
+        public void Class_WithValueField(string name, string type, string value, params SyntaxKind[] modifiers)
+        {
+            var result = new ClassBuilder("ClassName")
+                .WithValueField(name, type, value, modifiers)
+                .Build();
+
+            Assert.Equal($"classClassName{{{modifiers.ToStringModifiers()}{type}{name}={value};}}", result.ToString());
+        }
+
+        [Theory]
         [InlineData("Name", "name1", true, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)]
         [InlineData("Email", "email", false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)]
         [InlineData("_id", "Entity", false)]

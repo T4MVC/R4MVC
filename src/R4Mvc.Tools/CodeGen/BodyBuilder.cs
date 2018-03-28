@@ -11,7 +11,7 @@ namespace R4Mvc.Tools.CodeGen
     {
         private IList<StatementSyntax> _expressions = new List<StatementSyntax>();
 
-        private ArgumentListSyntax GetArguments(ICollection<object> arguments)
+        private static ArgumentListSyntax GetArguments(ICollection<object> arguments)
         {
             var result = arguments.Select(a =>
             {
@@ -30,7 +30,7 @@ namespace R4Mvc.Tools.CodeGen
             return ArgumentList(SeparatedList(result));
         }
 
-        private ExpressionSyntax MethodCallExpression(string entityName, string methodName, ICollection<object> arguments)
+        public static ExpressionSyntax MethodCallExpression(string entityName, string methodName, ICollection<object> arguments)
         {
             var methodCallExpression = entityName != null
                 ? InvocationExpression(SyntaxNodeHelpers.MemberAccess(entityName, methodName))

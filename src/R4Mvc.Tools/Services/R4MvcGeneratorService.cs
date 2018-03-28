@@ -109,6 +109,7 @@ namespace R4Mvc.Tools.Services
                         mvcStaticClass.Build(),
                         r4Namespace,
                         staticFileNode,
+                        R4MvcHelpersClass(),
                         ActionResultClass(),
                         JsonResultClass(),
                         ContentResultClass(),
@@ -178,6 +179,17 @@ namespace R4Mvc.Tools.Services
 
             return result.Build();
         }
+
+        public ClassDeclarationSyntax R4MvcHelpersClass()
+            => new ClassBuilder(Constants.R4MvcHelpersClass)
+                .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.StaticKeyword)
+                .WithGeneratedNonUserCodeAttributes()
+                .WithMethod(Constants.R4MvcHelpers_ProcessVirtualPath + "Default", "string", m => m
+                    .WithModifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword)
+                    .WithParameter("virtualPath", "string")
+                    .WithExpresisonBody(IdentifierName("virtualPath")))
+                .WithValueField(Constants.R4MvcHelpers_ProcessVirtualPath, "Func<string, string>", Constants.R4MvcHelpers_ProcessVirtualPath + "Default", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
+                .Build();
 
         public ClassDeclarationSyntax ActionResultClass()
             => IActionResultDerivedClass(Constants.ActionResultClass, "ActionResult");

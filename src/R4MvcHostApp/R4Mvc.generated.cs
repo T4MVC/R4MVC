@@ -6,6 +6,7 @@
 // Make sure the compiler doesn't complain about missing Xml comments and CLS compliance
 // 0108: suppress "Foo hides inherited member Foo.Use the new keyword if hiding was intended." when a controller and its abstract parent are both processed
 #pragma warning disable 1591, 3008, 3009, 0108
+using System;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -135,144 +136,217 @@ namespace R4Mvc
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 public static partial class Links
 {
+    public const string UrlPath = "~";
+    public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+    public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
     public static partial class css
     {
+        public const string UrlPath = "~/css";
+        public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+        public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
         public static partial class library_css
         {
-            public static string library_css_ = "~/css/library.css/library.css";
+            public const string UrlPath = "~/css/library.css";
+            public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+            public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+            public static readonly string library_css_ = Url("library.css");
         }
 
-        public static string _site_css = "~/css/.site.css";
-        public static string site_css = "~/css/site.css";
-        public static string site_min_css = "~/css/site.min.css";
+        public static readonly string _site_css = Url(".site.css");
+        public static readonly string site_css = Url("site.css");
+        public static readonly string site_min_css = Url("site.min.css");
     }
 
     public static partial class images
     {
-        public static string banner1_svg = "~/images/banner1.svg";
-        public static string banner2_svg = "~/images/banner2.svg";
-        public static string banner3_svg = "~/images/banner3.svg";
-        public static string banner4_svg = "~/images/banner4.svg";
+        public const string UrlPath = "~/images";
+        public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+        public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+        public static readonly string banner1_svg = Url("banner1.svg");
+        public static readonly string banner2_svg = Url("banner2.svg");
+        public static readonly string banner3_svg = Url("banner3.svg");
+        public static readonly string banner4_svg = Url("banner4.svg");
     }
 
     public static partial class js
     {
+        public const string UrlPath = "~/js";
+        public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+        public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
         public static partial class library_js
         {
-            public static string library_js_ = "~/js/library.js/library.js";
+            public const string UrlPath = "~/js/library.js";
+            public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+            public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+            public static readonly string library_js_ = Url("library.js");
         }
 
-        public static string site_js = "~/js/site.js";
-        public static string site_min_js = "~/js/site.min.js";
+        public static readonly string site_js = Url("site.js");
+        public static readonly string site_min_js = Url("site.min.js");
     }
 
     public static partial class lib
     {
+        public const string UrlPath = "~/lib";
+        public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+        public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
         public static partial class bootstrap
         {
+            public const string UrlPath = "~/lib/bootstrap";
+            public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+            public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
             public static partial class dist
             {
+                public const string UrlPath = "~/lib/bootstrap/dist";
+                public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
                 public static partial class css
                 {
-                    public static string bootstrap_theme_css = "~/lib/bootstrap/dist/css/bootstrap-theme.css";
-                    public static string bootstrap_theme_css_map = "~/lib/bootstrap/dist/css/bootstrap-theme.css.map";
-                    public static string bootstrap_theme_min_css = "~/lib/bootstrap/dist/css/bootstrap-theme.min.css";
-                    public static string bootstrap_theme_min_css_map = "~/lib/bootstrap/dist/css/bootstrap-theme.min.css.map";
-                    public static string bootstrap_css = "~/lib/bootstrap/dist/css/bootstrap.css";
-                    public static string bootstrap_css_map = "~/lib/bootstrap/dist/css/bootstrap.css.map";
-                    public static string bootstrap_min_css = "~/lib/bootstrap/dist/css/bootstrap.min.css";
-                    public static string bootstrap_min_css_map = "~/lib/bootstrap/dist/css/bootstrap.min.css.map";
+                    public const string UrlPath = "~/lib/bootstrap/dist/css";
+                    public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                    public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+                    public static readonly string bootstrap_theme_css = Url("bootstrap-theme.css");
+                    public static readonly string bootstrap_theme_css_map = Url("bootstrap-theme.css.map");
+                    public static readonly string bootstrap_theme_min_css = Url("bootstrap-theme.min.css");
+                    public static readonly string bootstrap_theme_min_css_map = Url("bootstrap-theme.min.css.map");
+                    public static readonly string bootstrap_css = Url("bootstrap.css");
+                    public static readonly string bootstrap_css_map = Url("bootstrap.css.map");
+                    public static readonly string bootstrap_min_css = Url("bootstrap.min.css");
+                    public static readonly string bootstrap_min_css_map = Url("bootstrap.min.css.map");
                 }
 
                 public static partial class fonts
                 {
-                    public static string glyphicons_halflings_regular_eot = "~/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.eot";
-                    public static string glyphicons_halflings_regular_svg = "~/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.svg";
-                    public static string glyphicons_halflings_regular_ttf = "~/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf";
-                    public static string glyphicons_halflings_regular_woff = "~/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.woff";
-                    public static string glyphicons_halflings_regular_woff2 = "~/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2";
+                    public const string UrlPath = "~/lib/bootstrap/dist/fonts";
+                    public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                    public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+                    public static readonly string glyphicons_halflings_regular_eot = Url("glyphicons-halflings-regular.eot");
+                    public static readonly string glyphicons_halflings_regular_svg = Url("glyphicons-halflings-regular.svg");
+                    public static readonly string glyphicons_halflings_regular_ttf = Url("glyphicons-halflings-regular.ttf");
+                    public static readonly string glyphicons_halflings_regular_woff = Url("glyphicons-halflings-regular.woff");
+                    public static readonly string glyphicons_halflings_regular_woff2 = Url("glyphicons-halflings-regular.woff2");
                 }
 
                 public static partial class js
                 {
-                    public static string bootstrap_js = "~/lib/bootstrap/dist/js/bootstrap.js";
-                    public static string bootstrap_min_js = "~/lib/bootstrap/dist/js/bootstrap.min.js";
-                    public static string npm_js = "~/lib/bootstrap/dist/js/npm.js";
+                    public const string UrlPath = "~/lib/bootstrap/dist/js";
+                    public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                    public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+                    public static readonly string bootstrap_js = Url("bootstrap.js");
+                    public static readonly string bootstrap_min_js = Url("bootstrap.min.js");
+                    public static readonly string npm_js = Url("npm.js");
                 }
             }
 
-            public static string _bower_json = "~/lib/bootstrap/.bower.json";
-            public static string LICENSE = "~/lib/bootstrap/LICENSE";
+            public static readonly string _bower_json = Url(".bower.json");
+            public static readonly string LICENSE = Url("LICENSE");
         }
 
         public static partial class jquery
         {
+            public const string UrlPath = "~/lib/jquery";
+            public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+            public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
             public static partial class dist
             {
-                public static string jquery_js = "~/lib/jquery/dist/jquery.js";
-                public static string jquery_min_js = "~/lib/jquery/dist/jquery.min.js";
-                public static string jquery_min_map = "~/lib/jquery/dist/jquery.min.map";
+                public const string UrlPath = "~/lib/jquery/dist";
+                public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+                public static readonly string jquery_js = Url("jquery.js");
+                public static readonly string jquery_min_js = Url("jquery.min.js");
+                public static readonly string jquery_min_map = Url("jquery.min.map");
             }
 
             public static partial class validation
             {
+                public const string UrlPath = "~/lib/jquery-validation";
+                public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
                 public static partial class dist
                 {
-                    public static string additional_methods_js = "~/lib/jquery-validation/dist/additional-methods.js";
-                    public static string additional_methods_min_js = "~/lib/jquery-validation/dist/additional-methods.min.js";
-                    public static string jquery_validate_js = "~/lib/jquery-validation/dist/jquery.validate.js";
-                    public static string jquery_validate_min_js = "~/lib/jquery-validation/dist/jquery.validate.min.js";
+                    public const string UrlPath = "~/lib/jquery-validation/dist";
+                    public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                    public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+                    public static readonly string additional_methods_js = Url("additional-methods.js");
+                    public static readonly string additional_methods_min_js = Url("additional-methods.min.js");
+                    public static readonly string jquery_validate_js = Url("jquery.validate.js");
+                    public static readonly string jquery_validate_min_js = Url("jquery.validate.min.js");
                 }
 
                 public static partial class unobtrusive
                 {
-                    public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
-                    public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
-                    public static string jquery_validate_unobtrusive_min_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js";
+                    public const string UrlPath = "~/lib/jquery-validation-unobtrusive";
+                    public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                    public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+                    public static readonly string _bower_json = Url(".bower.json");
+                    public static readonly string jquery_validate_unobtrusive_js = Url("jquery.validate.unobtrusive.js");
+                    public static readonly string jquery_validate_unobtrusive_min_js = Url("jquery.validate.unobtrusive.min.js");
                 }
 
-                public static string _bower_json = "~/lib/jquery-validation/.bower.json";
+                public static readonly string _bower_json = Url(".bower.json");
             }
 
             public static partial class validation_unobtrusive
             {
-                public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
-                public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
-                public static string jquery_validate_unobtrusive_min_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js";
+                public const string UrlPath = "~/lib/jquery-validation-unobtrusive";
+                public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+                public static readonly string _bower_json = Url(".bower.json");
+                public static readonly string jquery_validate_unobtrusive_js = Url("jquery.validate.unobtrusive.js");
+                public static readonly string jquery_validate_unobtrusive_min_js = Url("jquery.validate.unobtrusive.min.js");
             }
 
-            public static string _bower_json = "~/lib/jquery/.bower.json";
+            public static readonly string _bower_json = Url(".bower.json");
         }
 
         public static partial class jquery_validation
         {
+            public const string UrlPath = "~/lib/jquery-validation";
+            public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+            public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
             public static partial class dist
             {
-                public static string additional_methods_js = "~/lib/jquery-validation/dist/additional-methods.js";
-                public static string additional_methods_min_js = "~/lib/jquery-validation/dist/additional-methods.min.js";
-                public static string jquery_validate_js = "~/lib/jquery-validation/dist/jquery.validate.js";
-                public static string jquery_validate_min_js = "~/lib/jquery-validation/dist/jquery.validate.min.js";
+                public const string UrlPath = "~/lib/jquery-validation/dist";
+                public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+                public static readonly string additional_methods_js = Url("additional-methods.js");
+                public static readonly string additional_methods_min_js = Url("additional-methods.min.js");
+                public static readonly string jquery_validate_js = Url("jquery.validate.js");
+                public static readonly string jquery_validate_min_js = Url("jquery.validate.min.js");
             }
 
             public static partial class unobtrusive
             {
-                public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
-                public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
-                public static string jquery_validate_unobtrusive_min_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js";
+                public const string UrlPath = "~/lib/jquery-validation-unobtrusive";
+                public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+                public static readonly string _bower_json = Url(".bower.json");
+                public static readonly string jquery_validate_unobtrusive_js = Url("jquery.validate.unobtrusive.js");
+                public static readonly string jquery_validate_unobtrusive_min_js = Url("jquery.validate.unobtrusive.min.js");
             }
 
-            public static string _bower_json = "~/lib/jquery-validation/.bower.json";
+            public static readonly string _bower_json = Url(".bower.json");
         }
 
         public static partial class jquery_validation_unobtrusive
         {
-            public static string _bower_json = "~/lib/jquery-validation-unobtrusive/.bower.json";
-            public static string jquery_validate_unobtrusive_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js";
-            public static string jquery_validate_unobtrusive_min_js = "~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js";
+            public const string UrlPath = "~/lib/jquery-validation-unobtrusive";
+            public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+            public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+            public static readonly string _bower_json = Url(".bower.json");
+            public static readonly string jquery_validate_unobtrusive_js = Url("jquery.validate.unobtrusive.js");
+            public static readonly string jquery_validate_unobtrusive_min_js = Url("jquery.validate.unobtrusive.min.js");
         }
     }
 
-    public static string favicon_ico = "~/favicon.ico";
+    public static readonly string favicon_ico = Url("favicon.ico");
+}
+
+[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+internal static class R4MvcHelpers
+{
+    private static string ProcessVirtualPathDefault(string virtualPath) => virtualPath;
+    public static Func<string, string> ProcessVirtualPath = ProcessVirtualPathDefault;
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]

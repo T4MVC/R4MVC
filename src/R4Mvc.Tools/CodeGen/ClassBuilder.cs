@@ -130,20 +130,28 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
-        private FieldDeclarationSyntax CreateFieldInitialised(string name, string type, string valueType, params SyntaxKind[] modifiers)
+        private FieldDeclarationSyntax CreateFieldInitialised(string name, string type, ExpressionSyntax value, params SyntaxKind[] modifiers)
             => FieldDeclaration(
                 VariableDeclaration(IdentifierName(type))
                     .WithVariables(
                         SingletonSeparatedList(
                             VariableDeclarator(Identifier(name))
                                 .WithInitializer(
-                                    EqualsValueClause(ObjectCreationExpression(IdentifierName(valueType))
-                                        .WithArgumentList(ArgumentList()))))))
+                                    EqualsValueClause(value)))))
                 .WithModifiers(modifiers);
 
         public ClassBuilder WithField(string name, string type, string valueType, params SyntaxKind[] modifiers)
         {
-            var field = CreateFieldInitialised(name, type, valueType, modifiers);
+            var value = ObjectCreationExpression(IdentifierName(valueType))
+                .WithArgumentList(ArgumentList());
+            var field = CreateFieldInitialised(name, type, value, modifiers);
+            _class = _class.AddMembers(field);
+            return this;
+        }
+
+        public ClassBuilder WithValueField(string name, string type, string value, params SyntaxKind[] modifiers)
+        {
+            var field = CreateFieldInitialised(name, type, IdentifierName(value), modifiers);
             _class = _class.AddMembers(field);
             return this;
         }
@@ -151,7 +159,9 @@ namespace R4Mvc.Tools.CodeGen
         public ClassBuilder WithStaticFieldBackedProperty(string name, string type, bool useGeneratedAttribute, params SyntaxKind[] modifiers)
         {
             var fieldName = "s_" + name;
-            var field = CreateFieldInitialised(fieldName, type, type, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
+            var fieldValue = ObjectCreationExpression(IdentifierName(type))
+                .WithArgumentList(ArgumentList());
+            var field = CreateFieldInitialised(fieldName, type, fieldValue, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
             var property = PropertyDeclaration(IdentifierName(type), Identifier(name))
                 .WithExpressionBody(ArrowExpressionClause(IdentifierName(fieldName)))
                 .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))

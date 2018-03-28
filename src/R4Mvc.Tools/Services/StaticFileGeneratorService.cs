@@ -28,14 +28,28 @@ namespace R4Mvc.Tools.Services
             var linksClass = new ClassBuilder(_settings.LinksNamespace)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes();
-            AddStaticFiles(linksClass, string.Empty, staticfiles);
+            AddUrlFields(linksClass, string.Empty);
+            AddStaticFiles(projectRoot, linksClass, string.Empty, staticfiles);
             return linksClass.Build();
         }
 
         // This will eventually read the Startup class, to identify the location(s) of the static roots
         public string GetStaticFilesPath(string projectRoot) => Path.Combine(projectRoot, _settings.StaticFilesPath);
 
-        public void AddStaticFiles(ClassBuilder parentClass, string path, IEnumerable<StaticFile> files)
+        private void AddUrlFields(ClassBuilder builder, string path)
+        {
+            builder
+                .WithStringField("UrlPath", "~" + path, false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
+                .WithMethod("Url", "string", m => m
+                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
+                    .WithExpresisonBody(BodyBuilder.MethodCallExpression(Constants.R4MvcHelpersClass, Constants.R4MvcHelpers_ProcessVirtualPath, new[] { "UrlPath" })))
+                .WithMethod("Url", "string", m => m
+                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
+                    .WithParameter("fileName", "string")
+                    .WithExpresisonBody(BodyBuilder.MethodCallExpression(Constants.R4MvcHelpersClass, Constants.R4MvcHelpers_ProcessVirtualPath, new[] { "UrlPath + \"/\" + fileName" })));
+        }
+
+        public void AddStaticFiles(string projectRoot, ClassBuilder parentClass, string path, IEnumerable<StaticFile> files)
         {
             var paths = files
                 .Select(f => f.Container)
@@ -57,7 +71,8 @@ namespace R4Mvc.Tools.Services
                 var className = childPath.Substring(path.Length > 0 ? path.Length + 1 : 0).SanitiseFieldName();
                 var containerClass = new ClassBuilder(className)
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword);
-                AddStaticFiles(containerClass, childPath, childFiles);
+                AddUrlFields(containerClass, Path.Combine(projectRoot, childPath).GetRelativePath(projectRoot).Replace('\\', '/'));
+                AddStaticFiles(projectRoot, containerClass, childPath, childFiles);
                 parentClass.WithMember(containerClass.Build());
             }
 
@@ -67,7 +82,7 @@ namespace R4Mvc.Tools.Services
                 var fieldName = file.FileName.SanitiseFieldName();
                 if (fieldName == parentClass.Name)
                     fieldName += "_";
-                parentClass.WithStringField(fieldName, "~/" + file.RelativePath.ToString(), false, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+                parentClass.WithValueField(fieldName, "string", $"Url(\"{file.FileName}\")", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
             }
         }
     }

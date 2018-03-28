@@ -95,5 +95,15 @@ namespace R4Mvc.Test.CodeGen
 
             Assert.Equal("voidMethodName(){returnresult;}", result.ToString());
         }
+
+        [Fact]
+        public void Method_WithExpressionBody()
+        {
+            var result = new MethodBuilder("MethodName")
+                .WithExpresisonBody(BodyBuilder.MethodCallExpression("entity", "Method", new object[0]))
+                .Build();
+
+            Assert.Equal("voidMethodName()=>entity.Method();", result.ToString());
+        }
     }
 }
