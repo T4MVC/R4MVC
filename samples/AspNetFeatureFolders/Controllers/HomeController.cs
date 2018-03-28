@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -8,28 +8,28 @@ using AspNetFeatureFolders.Models;
 
 namespace AspNetFeatureFolders.Controllers
 {
-    public class HomeController : Controller
+    public partial class HomeController : Controller
     {
-        public IActionResult Index()
+        public virtual IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult About()
+        public virtual IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
 
             return View();
         }
 
-        public IActionResult Contact()
+        public virtual IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
 
             return View();
         }
 
-        public IActionResult Error()
+        public virtual IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }

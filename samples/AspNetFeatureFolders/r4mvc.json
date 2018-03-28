@@ -1,0 +1,14 @@
+{
+  "HelpersPrefix": "MVC",
+  "R4MvcNamespace": "R4Mvc",
+  "LinksNamespace": "Links",
+  "SplitIntoMultipleFiles": true,
+  "StaticFilesPath": "wwwroot",
+  "ExcludedStaticFileExtensions": null,
+  "FeatureFolders": {
+    "Enabled": false,
+    "FeaturesPath": "Features",
+    "StaticFileAccess": false,
+    "FeatureOnlyAreas": null
+  }
+}
