@@ -11,7 +11,7 @@ namespace R4Mvc.Tools.CodeGen
     {
         private IList<StatementSyntax> _expressions = new List<StatementSyntax>();
 
-        private ArgumentListSyntax GetArguments(ICollection<object> arguments)
+        private static ArgumentListSyntax GetArguments(ICollection<object> arguments)
         {
             var result = arguments.Select(a =>
             {
@@ -30,7 +30,7 @@ namespace R4Mvc.Tools.CodeGen
             return ArgumentList(SeparatedList(result));
         }
 
-        private ExpressionSyntax MethodCallExpression(string entityName, string methodName, ICollection<object> arguments)
+        public static ExpressionSyntax MethodCallExpression(string entityName, string methodName, ICollection<object> arguments)
         {
             var methodCallExpression = entityName != null
                 ? InvocationExpression(SyntaxNodeHelpers.MemberAccess(entityName, methodName))
@@ -89,7 +89,7 @@ namespace R4Mvc.Tools.CodeGen
                                 EqualsValueClause(value))));
         }
 
-        public BodyBuilder VariableFromMethodCall(string variableName, string entityName, string methodName, params string[] arguments)
+        public BodyBuilder VariableFromMethodCall(string variableName, string entityName, string methodName, params object[] arguments)
         {
             var methodCallExpression = MethodCallExpression(entityName, methodName, arguments);
             var variableExpression = NewVariableDeclaration(variableName, methodCallExpression);
@@ -97,7 +97,7 @@ namespace R4Mvc.Tools.CodeGen
             return this;
         }
 
-        public BodyBuilder VariableFromNewObject(string variableName, string entityType, params string[] arguments)
+        public BodyBuilder VariableFromNewObject(string variableName, string entityType, params object[] arguments)
         {
             var newExpression = NewObjectExpression(entityType, arguments);
             var variableExpression = NewVariableDeclaration(variableName, newExpression);

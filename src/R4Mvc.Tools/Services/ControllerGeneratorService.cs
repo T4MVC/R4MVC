@@ -87,7 +87,7 @@ namespace R4Mvc.Tools.Services
                 .WithParameter("d", Constants.DummyClass));
 
             AddRedirectMethods(genControllerClass);
-            AddParameterlessMethods(genControllerClass, controller.Symbol);
+            AddParameterlessMethods(genControllerClass, controller.Symbol, controller.IsSecure);
 
             var actionsExpression = controller.AreaKey != null
                 ? _settings.HelpersPrefix + "." + controller.AreaKey + "." + controller.Name
@@ -144,7 +144,7 @@ namespace R4Mvc.Tools.Services
                 .WithConstructor(c => c
                     .WithBaseConstructorCall(IdentifierName(Constants.DummyClass + "." + Constants.DummyClassInstance))
                     .WithModifiers(SyntaxKind.PublicKeyword));
-            AddMethodOverrides(r4ControllerClass, controller.Symbol);
+            AddMethodOverrides(r4ControllerClass, controller.Symbol, controller.IsSecure);
             return r4ControllerClass.Build();
         }
 
@@ -208,7 +208,7 @@ namespace R4Mvc.Tools.Services
                         .ReturnMethodCall(null, "RedirectToActionPermanent", "taskResult.Result")));
         }
 
-        private void AddParameterlessMethods(ClassBuilder genControllerClass, ITypeSymbol mvcSymbol)
+        private void AddParameterlessMethods(ClassBuilder genControllerClass, ITypeSymbol mvcSymbol, bool isControllerSecure)
         {
             var methods = mvcSymbol.GetPublicNonGeneratedMethods()
                 .GroupBy(m => m.Name)
@@ -226,10 +226,14 @@ namespace R4Mvc.Tools.Services
                         .WithNonActionAttribute()
                         .WithGeneratedNonUserCodeAttributes()
                         .WithBody(b => b
-                            .ReturnNewObject(Constants.ActionResultClass, "Area", "Name", "ActionNames." + method.Key)));
+                            .ReturnNewObject(Constants.ActionResultClass,
+                                isControllerSecure || method.Any(mg => mg.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<RequireHttpsAttribute>()))
+                                    ? new object[] { "Area", "Name", "ActionNames." + method.Key, SimpleLiteral.String("https") }
+                                    : new object[] { "Area", "Name", "ActionNames." + method.Key }
+                            )));
         }
 
-        private void AddMethodOverrides(ClassBuilder classBuilder, ITypeSymbol mvcSymbol)
+        private void AddMethodOverrides(ClassBuilder classBuilder, ITypeSymbol mvcSymbol, bool isControllerSecure)
         {
             const string overrideMethodSuffix = "Override";
             foreach (var method in mvcSymbol.GetPublicNonGeneratedMethods())
@@ -292,7 +296,11 @@ namespace R4Mvc.Tools.Services
                         .ForEach(method.Parameters, (m2, p) => m2
                             .WithParameter(p.Name, p.Type.ToString()))
                         .WithBody(b => b
-                            .VariableFromNewObject("callInfo", callInfoType, "Area", "Name", "ActionNames." + method.Name)
+                            .VariableFromNewObject("callInfo", callInfoType,
+                                isControllerSecure || method.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<RequireHttpsAttribute>())
+                                    ? new object[] { "Area", "Name", "ActionNames." + method.Name, SimpleLiteral.String("https") }
+                                    : new object[] { "Area", "Name", "ActionNames." + method.Name }
+                            )
                             .ForEach(method.Parameters, (cb, p) => cb
                                 .MethodCall("ModelUnbinderHelpers", "AddRouteValues", "callInfo.RouteValueDictionary", SimpleLiteral.String(p.Name), p.Name))
                             .MethodCall(null, method.Name + overrideMethodSuffix, new[] { "callInfo" }.Concat(method.Parameters.Select(p => p.Name)).ToArray())

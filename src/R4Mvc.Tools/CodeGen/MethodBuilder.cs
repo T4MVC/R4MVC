@@ -14,6 +14,7 @@ namespace R4Mvc.Tools.CodeGen
         private SyntaxKind[] _modifiers = null;
         private IList<ParameterSyntax> _parameters = new List<ParameterSyntax>();
         private BlockSyntax _bodyBlock;
+        private ExpressionSyntax _expressionBodySyntax;
         private bool _useGeneratedAttributes = false, _useNonActionAttribute = false, _noBody = false;
 
         protected MethodBuilder() { }
@@ -49,6 +50,12 @@ namespace R4Mvc.Tools.CodeGen
             if (defaultsToNull)
                 parameter = parameter.WithDefault(EqualsValueClause(LiteralExpression(SyntaxKind.NullLiteralExpression)));
             _parameters.Add(parameter);
+            return this;
+        }
+
+        public MethodBuilder WithExpresisonBody(ExpressionSyntax bodyExpression)
+        {
+            _expressionBodySyntax = bodyExpression;
             return this;
         }
 
@@ -88,10 +95,16 @@ namespace R4Mvc.Tools.CodeGen
                     if (_useGeneratedAttributes)
                         method = method.AddAttributeLists(SyntaxNodeHelpers.GeneratedNonUserCodeAttributeList());
 
-                    if (_bodyBlock != null || !_noBody)
-                        method = method.WithBody(_bodyBlock ?? Block());
-                    else
+                    if (_noBody)
                         method = method.WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+                    else if (_bodyBlock != null)
+                        method = method.WithBody(_bodyBlock ?? Block());
+                    else if (_expressionBodySyntax != null)
+                        method = method
+                            .WithExpressionBody(ArrowExpressionClause(_expressionBodySyntax))
+                            .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+                    else
+                        method = method.WithBody(Block());
                     return method;
 
                 case ConstructorDeclarationSyntax constructor:

@@ -6,6 +6,7 @@
 // Make sure the compiler doesn't complain about missing Xml comments and CLS compliance
 // 0108: suppress "Foo hides inherited member Foo.Use the new keyword if hiding was intended." when a controller and its abstract parent are both processed
 #pragma warning disable 1591, 3008, 3009, 0108
+using System;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -51,6 +52,13 @@ namespace R4MvcHostApp.Controllers
         protected RedirectToRouteResult RedirectToActionPermanent(Task<IActionResult> taskResult)
         {
             return RedirectToActionPermanent(taskResult.Result);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult Secure()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Secure, "https");
         }
 
         [NonAction]
@@ -113,6 +121,7 @@ namespace R4MvcHostApp.Controllers
             public readonly string Index = "Index";
             public readonly string About = "About";
             public readonly string Contact = "Contact";
+            public readonly string Secure = "Secure";
             public readonly string Error = "Error";
             public readonly string TaskActionResult = "TaskActionResult";
             public readonly string TaskResult = "TaskResult";
@@ -134,6 +143,7 @@ namespace R4MvcHostApp.Controllers
             public const string Index = "Index";
             public const string About = "About";
             public const string Contact = "Contact";
+            public const string Secure = "Secure";
             public const string Error = "Error";
             public const string TaskActionResult = "TaskActionResult";
             public const string TaskResult = "TaskResult";
@@ -233,6 +243,17 @@ namespace R4MvcHostApp.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Contact);
             ContactOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void SecureOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, string param);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult Secure(string param)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Secure, "https");
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "param", param);
+            SecureOverride(callInfo, param);
             return callInfo;
         }
 

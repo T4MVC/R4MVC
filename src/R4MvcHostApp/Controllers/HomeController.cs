@@ -28,6 +28,12 @@ namespace R4MvcHostApp.Controllers
             return View();
         }
 
+        [RequireHttps]
+        public virtual IActionResult Secure(string param = null)
+        {
+            return View();
+        }
+
         public virtual IActionResult Error()
         {
             return View();

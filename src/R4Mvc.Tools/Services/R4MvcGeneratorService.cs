@@ -52,7 +52,7 @@ namespace R4Mvc.Tools.Services
                     {
                         var generatedFilePath = controller.GetFilePath().TrimEnd(".cs") + ".generated.cs";
                         Console.WriteLine("Generating " + generatedFilePath.GetRelativePath(projectRoot));
-                        var controllerFile = new CodeFileBuilder(_settings)
+                        var controllerFile = new CodeFileBuilder(_settings, true)
                             .WithNamespace(namespaceNode);
                         _filePersistService.WriteFile(controllerFile.Build(), generatedFilePath);
                         namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
@@ -104,11 +104,12 @@ namespace R4Mvc.Tools.Services
             // Generate a list of all static files from the wwwroot path
             var staticFileNode = _staticFileGenerator.GenerateStaticFiles(projectRoot);
 
-            var r4MvcFile = new CodeFileBuilder(_settings)
+            var r4MvcFile = new CodeFileBuilder(_settings, true)
                     .WithMembers(
                         mvcStaticClass.Build(),
                         r4Namespace,
                         staticFileNode,
+                        R4MvcHelpersClass(),
                         ActionResultClass(),
                         JsonResultClass(),
                         ContentResultClass(),
@@ -117,8 +118,8 @@ namespace R4Mvc.Tools.Services
                         RedirectToActionResultClass(),
                         RedirectToRouteResultClass())
                     .WithNamespaces(generatedControllers);
-            Console.WriteLine("Generating " + Path.DirectorySeparatorChar + Constants.R4MvcFileName);
-            _filePersistService.WriteFile(r4MvcFile.Build(), Path.Combine(projectRoot, Constants.R4MvcFileName));
+            Console.WriteLine("Generating " + Path.DirectorySeparatorChar + Constants.R4MvcGeneratedFileName);
+            _filePersistService.WriteFile(r4MvcFile.Build(), Path.Combine(projectRoot, Constants.R4MvcGeneratedFileName));
         }
 
         public IEnumerable<ClassDeclarationSyntax> CreateViewOnlyControllerClasses(IList<ControllerDefinition> controllers)
@@ -178,6 +179,17 @@ namespace R4Mvc.Tools.Services
 
             return result.Build();
         }
+
+        public ClassDeclarationSyntax R4MvcHelpersClass()
+            => new ClassBuilder(Constants.R4MvcHelpersClass)
+                .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.StaticKeyword)
+                .WithGeneratedNonUserCodeAttributes()
+                .WithMethod(Constants.R4MvcHelpers_ProcessVirtualPath + "Default", "string", m => m
+                    .WithModifiers(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword)
+                    .WithParameter("virtualPath", "string")
+                    .WithExpresisonBody(IdentifierName("virtualPath")))
+                .WithValueField(Constants.R4MvcHelpers_ProcessVirtualPath, "Func<string, string>", Constants.R4MvcHelpers_ProcessVirtualPath + "Default", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
+                .Build();
 
         public ClassDeclarationSyntax ActionResultClass()
             => IActionResultDerivedClass(Constants.ActionResultClass, "ActionResult");

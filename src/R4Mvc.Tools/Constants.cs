@@ -5,10 +5,15 @@
         internal const string ProjectName = "R4Mvc";
         internal const string Version = "1.0";
 
-        internal const string R4MvcFileName = "R4Mvc.generated.cs";
+        internal const string R4MvcFileName = "R4Mvc.cs";
+        internal const string R4MvcGeneratedFileName = "R4Mvc.generated.cs";
+        internal const string R4MvcSettingsFileName = "r4mvc.json";
 
         internal const string DummyClass = "Dummy";
         internal const string DummyClassInstance = "Instance";
+
+        internal const string R4MvcHelpersClass = "R4MvcHelpers";
+        internal const string R4MvcHelpers_ProcessVirtualPath = "ProcessVirtualPath";
 
         private const string ActionResultNamespace = "_Microsoft_AspNetCore_Mvc_";
         internal const string ActionResultClass = ProjectName + ActionResultNamespace + "ActionResult";

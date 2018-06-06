@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -52,6 +53,7 @@ namespace R4Mvc.Tools.Services
                         controllers[cFullName].FilePaths.Add(tree.FilePath);
                         continue;
                     }
+                    var isSecure = cSymbol.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<RequireHttpsAttribute>());
 
                     var cAreaName = _controllerGenerator.GetControllerArea(cSymbol);
                     controllers[cFullName] = new ControllerDefinition
@@ -59,6 +61,7 @@ namespace R4Mvc.Tools.Services
                         Namespace = cNamespace,
                         Name = cSymbol.Name.TrimEnd("Controller"),
                         Area = cAreaName,
+                        IsSecure = isSecure,
                         Symbol = cSymbol,
                         FilePaths = new List<string> { tree.FilePath },
                     };
