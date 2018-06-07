@@ -102,7 +102,7 @@ namespace R4MvcHostApp.Areas.Admin.Features.TaxCalculator
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_TaxCalculatorController : R4MvcHostApp.Areas.Admin.Features.TaxCalculator.TaxCalculatorController
     {
-        public R4MVC_TaxCalculatorController(): base (Dummy.Instance)
+        public R4MVC_TaxCalculatorController(): base(Dummy.Instance)
         {
         }
 

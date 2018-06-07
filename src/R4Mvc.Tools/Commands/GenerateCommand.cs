@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.Extensions.Configuration;
@@ -46,6 +47,8 @@ project-path:
             if (configuration["debugmsbuild"] != null)
                 _debugMsBuild = true;
             var projectRoot = Path.GetDirectoryName(projectPath);
+
+            InitialiseMSBuild(configuration);
 
             // Load the project and check for compilation errors
             var workspace = MSBuildWorkspace.Create();
@@ -125,6 +128,40 @@ project-path:
                     }
                 }
             }
+        }
+
+        private void InitialiseMSBuild(IConfiguration configuration)
+        {
+            var instances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
+            if (!instances.Any())
+                Console.WriteLine("No Visual Studio instances found.");
+
+            Console.WriteLine("Available Visual Studio intances:");
+            for (int i = 0; i < instances.Length; i++)
+            {
+                Console.WriteLine($"  - {i}: {instances[i].Name} - {instances[i].Version}");
+                Console.WriteLine($"       {instances[i].MSBuildPath}");
+                Console.WriteLine();
+            }
+
+            if (!int.TryParse(configuration["vsinstance"], out var vsInstanceIndex))
+            {
+                Console.WriteLine("You can manually select an instance by setting the 'vsinstance' parameter");
+                vsInstanceIndex = 0;
+            }
+            if (vsInstanceIndex < 0 || vsInstanceIndex>=instances.Length)
+            {
+                Console.WriteLine("Invalid VS instance. Falling back to the first one available");
+                vsInstanceIndex = 0;
+            }
+
+            // We register the first instance that we found. This will cause MSBuildWorkspace to use the MSBuild installed in that instance.
+            // Note: This has to be registered *before* creating MSBuildWorkspace. Otherwise, the MEF composition used by MSBuildWorkspace will fail to compose.
+            var registeredInstance = instances[vsInstanceIndex];
+            MSBuildLocator.RegisterInstance(registeredInstance);
+
+            Console.WriteLine($"Registered: {registeredInstance.Name} - {registeredInstance.Version}");
+            Console.WriteLine();
         }
 
         private void DumpMsBuildAssemblies(string stage)

@@ -100,7 +100,7 @@ namespace R4MvcHostApp.Areas.Members.Awards
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_AwardsController : R4MvcHostApp.Areas.Members.Awards.AwardsController
     {
-        public R4MVC_AwardsController(): base (Dummy.Instance)
+        public R4MVC_AwardsController(): base(Dummy.Instance)
         {
         }
 
