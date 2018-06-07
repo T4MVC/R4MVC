@@ -97,7 +97,7 @@ namespace R4MvcHostApp.Areas.Admin.MisplacedFeature
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_MisplacedFeatureController : R4MvcHostApp.Areas.Admin.MisplacedFeature.MisplacedFeatureController
     {
-        public R4MVC_MisplacedFeatureController(): base (Dummy.Instance)
+        public R4MVC_MisplacedFeatureController(): base(Dummy.Instance)
         {
         }
 

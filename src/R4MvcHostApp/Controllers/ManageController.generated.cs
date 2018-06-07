@@ -162,7 +162,7 @@ namespace R4MvcHostApp.Controllers
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_ManageController : R4MvcHostApp.Controllers.ManageController
     {
-        public R4MVC_ManageController(): base (Dummy.Instance)
+        public R4MVC_ManageController(): base(Dummy.Instance)
         {
         }
 

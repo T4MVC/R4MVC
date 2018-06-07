@@ -97,7 +97,7 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_PagesController : R4MvcHostApp.Areas.Admin.Controllers.PagesController
     {
-        public R4MVC_PagesController(): base (Dummy.Instance)
+        public R4MVC_PagesController(): base(Dummy.Instance)
         {
         }
 
