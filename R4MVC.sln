@@ -23,10 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4Mvc.Test", "test\R4Mvc.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4Mvc.Tools", "src\R4Mvc.Tools\R4Mvc.Tools.csproj", "{1673B75E-E97D-4770-A1E3-86CF3C50A5E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R4Mvc.Tools.Cli", "src\R4Mvc.Tools.Cli\R4Mvc.Tools.Cli.csproj", "{5AB61036-8938-4F03-84BD-BB5D2D8F4CDA}"
-	ProjectSection(ProjectDependencies) = postProject
-		{1673B75E-E97D-4770-A1E3-86CF3C50A5E8} = {1673B75E-E97D-4770-A1E3-86CF3C50A5E8}
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4Mvc.Tools.Cli", "src\R4Mvc.Tools.Cli\R4Mvc.Tools.Cli.csproj", "{5AB61036-8938-4F03-84BD-BB5D2D8F4CDA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
