@@ -111,7 +111,7 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_UsersController : R4MvcHostApp.Areas.Admin.Controllers.UsersController
     {
-        public R4MVC_UsersController(): base (Dummy.Instance)
+        public R4MVC_UsersController(): base(Dummy.Instance)
         {
         }
 

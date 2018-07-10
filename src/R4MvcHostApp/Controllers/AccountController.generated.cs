@@ -208,7 +208,7 @@ namespace R4MvcHostApp.Controllers
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_AccountController : R4MvcHostApp.Controllers.AccountController
     {
-        public R4MVC_AccountController(): base (Dummy.Instance)
+        public R4MVC_AccountController(): base(Dummy.Instance)
         {
         }
 
