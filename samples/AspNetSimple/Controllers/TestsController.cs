@@ -29,5 +29,8 @@ namespace AspNetSimple.Controllers
 
         public virtual IActionResult Parameters(int id, string name) => throw new NotImplementedException();
         public virtual IActionResult ParametersWithDefault(int id = 5, string name = "test") => throw new NotImplementedException();
+
+        public virtual object ApiCall() => throw new NotImplementedException();
+        public virtual object ApiCallWithParams(int id) => throw new NotImplementedException();
     }
 }

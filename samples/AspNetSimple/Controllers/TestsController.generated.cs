@@ -68,6 +68,13 @@ namespace AspNetSimple.Controllers
             return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ParametersWithDefault);
         }
 
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult ApiCallWithParams()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallWithParams);
+        }
+
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public TestsController Actions => MVC.Tests;
         [GeneratedCode("R4Mvc", "1.0")]
@@ -100,6 +107,8 @@ namespace AspNetSimple.Controllers
             public readonly string RequiresHttps = "RequiresHttps";
             public readonly string Parameters = "Parameters";
             public readonly string ParametersWithDefault = "ParametersWithDefault";
+            public readonly string ApiCall = "ApiCall";
+            public readonly string ApiCallWithParams = "ApiCallWithParams";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -122,6 +131,8 @@ namespace AspNetSimple.Controllers
             public const string RequiresHttps = "RequiresHttps";
             public const string Parameters = "Parameters";
             public const string ParametersWithDefault = "ParametersWithDefault";
+            public const string ApiCall = "ApiCall";
+            public const string ApiCallWithParams = "ApiCallWithParams";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -143,7 +154,7 @@ namespace AspNetSimple.Controllers
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_TestsController : AspNetSimple.Controllers.TestsController
     {
-        public R4MVC_TestsController(): base (Dummy.Instance)
+        public R4MVC_TestsController(): base(Dummy.Instance)
         {
         }
 
