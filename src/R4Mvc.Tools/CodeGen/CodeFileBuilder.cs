@@ -36,6 +36,15 @@ namespace R4Mvc.Tools.CodeGen
                 "Microsoft.AspNetCore.Routing",
                 settings.R4MvcNamespace,
             };
+            // jeromep01 ==> Adding a new property in the .json configuration file, to add extra namespaces in head of the generated file.
+            if(settings.AdditionalNamespaces != null && settings.AdditionalNamespaces.Any())
+            {
+                foreach (var ns in settings.AdditionalNamespaces)
+                {
+                    Array.Resize(ref usings, usings.Length + 1);
+                    usings[usings.Length - 1] = ns;
+                }
+            }
             _compilationUnit = CompilationUnit()
                 .WithUsings(List(usings.Select(u => UsingDirective(ParseName(u)))));
 
