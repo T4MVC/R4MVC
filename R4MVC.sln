@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4Mvc.Test", "test\R4Mvc.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4Mvc.Tools", "src\R4Mvc.Tools\R4Mvc.Tools.csproj", "{1673B75E-E97D-4770-A1E3-86CF3C50A5E8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R4Mvc.Tools.Cli", "src\R4Mvc.Tools.Cli\R4Mvc.Tools.Cli.csproj", "{5AB61036-8938-4F03-84BD-BB5D2D8F4CDA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{1673B75E-E97D-4770-A1E3-86CF3C50A5E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1673B75E-E97D-4770-A1E3-86CF3C50A5E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1673B75E-E97D-4770-A1E3-86CF3C50A5E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AB61036-8938-4F03-84BD-BB5D2D8F4CDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AB61036-8938-4F03-84BD-BB5D2D8F4CDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AB61036-8938-4F03-84BD-BB5D2D8F4CDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AB61036-8938-4F03-84BD-BB5D2D8F4CDA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,5 +60,9 @@ Global
 		{60691734-BD6C-4BED-8FAE-77E324C76574} = {E11DD8FA-FBC7-490C-88B7-15DB073FD903}
 		{CFE51159-0850-415A-BAD0-FBFF607E772F} = {30626644-0E8A-4610-A0A9-274E91F1A037}
 		{1673B75E-E97D-4770-A1E3-86CF3C50A5E8} = {E11DD8FA-FBC7-490C-88B7-15DB073FD903}
+		{5AB61036-8938-4F03-84BD-BB5D2D8F4CDA} = {E11DD8FA-FBC7-490C-88B7-15DB073FD903}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B90C19F2-2B5E-42AD-AE1D-27AD17E4DDB4}
 	EndGlobalSection
 EndGlobal
