@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetSimple.Controllers
 {
-    public partial class TestsController : Controller
+    public partial class TestsController : DebugControllerBase
     {
         public virtual IActionResult Index() => throw new NotImplementedException();
         public virtual ActionResult ActionResult() => throw new NotImplementedException();
@@ -26,6 +26,12 @@ namespace AspNetSimple.Controllers
         public virtual IActionResult RequiresHttps() => throw new NotImplementedException();
         [NonAction]
         public IActionResult NonAction() => throw new NotImplementedException();
+        [NonAction]
+        public IActionResult NonActionWithParams(int id) => throw new NotImplementedException();
+        [R4MvcExclude]
+        public IActionResult R4MvcExcluded() => throw new NotImplementedException();
+        [R4MvcExclude]
+        public IActionResult R4MvcExcludedWithParams(int id) => throw new NotImplementedException();
 
         public virtual IActionResult Parameters(int id, string name) => throw new NotImplementedException();
         public virtual IActionResult ParametersWithDefault(int id = 5, string name = "test") => throw new NotImplementedException();

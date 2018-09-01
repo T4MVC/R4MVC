@@ -18,6 +18,7 @@ using R4Mvc;
 public static partial class MVC
 {
     public static readonly AspNetSimple.Controllers.HomeController Home = new AspNetSimple.Controllers.R4MVC_HomeController();
+    public static readonly AspNetSimple.Controllers.SecureController Secure = new AspNetSimple.Controllers.R4MVC_SecureController();
     public static readonly AspNetSimple.Controllers.TestsController Tests = new AspNetSimple.Controllers.R4MVC_TestsController();
     public static readonly R4Mvc.SharedController Shared = new R4Mvc.SharedController();
 }
