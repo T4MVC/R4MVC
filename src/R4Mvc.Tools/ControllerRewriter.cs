@@ -59,7 +59,7 @@ namespace R4Mvc.Tools
             if (node.Modifiers.Any(SyntaxKind.PublicKeyword) && !node.Modifiers.Any(SyntaxKind.VirtualKeyword))
             {
                 var symbol = _compiler.GetSemanticModel(node.SyntaxTree).GetDeclaredSymbol(node);
-                if (ControllerShouldBeProcessed(symbol.ContainingType) && symbol.IsMvcAction())
+                if (ControllerShouldBeProcessed(symbol.ContainingType) && symbol.IsMvcAction() && symbol.IsNotR4MvcExcluded())
                 {
                     Debug.WriteLine(
                         "R4MVC - Marking controller method {0} as virtual from {1}",

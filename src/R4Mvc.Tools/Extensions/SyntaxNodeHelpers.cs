@@ -47,6 +47,11 @@ namespace R4Mvc.Tools.Extensions
             return !method.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<GeneratedCodeAttribute>());
         }
 
+        public static bool IsNotR4MvcExcluded(this ISymbol method)
+        {
+            return !method.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<R4MvcExcludeAttribute>() || a.AttributeClass.Name == "R4MvcExclude");
+        }
+
         private static string[] _controllerClassMethodNames = null;
         public static void PopulateControllerClassMethodNames(CSharpCompilation compilation)
         {
@@ -80,6 +85,7 @@ namespace R4Mvc.Tools.Extensions
                 .OfType<IMethodSymbol>()
                 .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
                 .Where(IsNotR4MVCGenerated)
+                .Where(IsNotR4MvcExcluded)
                 .Where(IsMvcAction);
         }
 

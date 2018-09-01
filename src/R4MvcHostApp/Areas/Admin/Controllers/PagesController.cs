@@ -16,6 +16,12 @@ namespace R4MvcHostApp.Areas.Admin.Controllers
             return View();
         }
 
+        [R4MvcExclude]
+        public IActionResult R4MvcExcluded()
+        {
+            return View();
+        }
+
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             base.OnActionExecuted(context);
