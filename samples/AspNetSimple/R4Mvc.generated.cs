@@ -17,6 +17,8 @@ using R4Mvc;
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 public static partial class MVC
 {
+    static readonly R4Mvc.MembersAreaClass s_Members = new R4Mvc.MembersAreaClass();
+    public static R4Mvc.MembersAreaClass Members => s_Members;
     public static readonly AspNetSimple.Controllers.HomeController Home = new AspNetSimple.Controllers.R4MVC_HomeController();
     public static readonly AspNetSimple.Controllers.SecureController Secure = new AspNetSimple.Controllers.R4MVC_SecureController();
     public static readonly AspNetSimple.Controllers.TestsController Tests = new AspNetSimple.Controllers.R4MVC_TestsController();
@@ -56,6 +58,15 @@ namespace R4Mvc
 
         static readonly ViewsClass s_Views = new ViewsClass();
         public ViewsClass Views => s_Views;
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class MembersAreaClass
+    {
+        public readonly string Name = "Members";
+        public readonly AspNetSimple.Areas.Members.Controllers.ManualAreaController ManualArea = new AspNetSimple.Areas.Members.Controllers.R4MVC_ManualAreaController();
+        public readonly AspNetSimple.Areas.Members.Controllers.SecureController Secure = new AspNetSimple.Areas.Members.Controllers.R4MVC_SecureController();
+        public readonly AspNetSimple.Areas.Members.Controllers.TestsController Tests = new AspNetSimple.Areas.Members.Controllers.R4MVC_TestsController();
     }
 }
 
