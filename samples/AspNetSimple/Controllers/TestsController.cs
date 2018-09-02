@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using AspNetSimple.Models;
 using Microsoft.AspNetCore.Mvc;
+using SampleModels;
 
 namespace AspNetSimple.Controllers
 {
@@ -38,5 +40,8 @@ namespace AspNetSimple.Controllers
 
         public virtual object ApiCall() => throw new NotImplementedException();
         public virtual object ApiCallWithParams(int id) => throw new NotImplementedException();
+
+        public virtual IActionResult LocalViewModel(ErrorViewModel model) => throw new NotImplementedException();
+        public virtual IActionResult ExternalViewModel(TestViewModel model) => throw new NotImplementedException();
     }
 }

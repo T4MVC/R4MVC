@@ -75,6 +75,20 @@ namespace AspNetSimple.Controllers
             return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallWithParams);
         }
 
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult LocalViewModel()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.LocalViewModel);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult ExternalViewModel()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalViewModel);
+        }
+
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public TestsController Actions => MVC.Tests;
         [GeneratedCode("R4Mvc", "1.0")]
@@ -109,6 +123,8 @@ namespace AspNetSimple.Controllers
             public readonly string ParametersWithDefault = "ParametersWithDefault";
             public readonly string ApiCall = "ApiCall";
             public readonly string ApiCallWithParams = "ApiCallWithParams";
+            public readonly string LocalViewModel = "LocalViewModel";
+            public readonly string ExternalViewModel = "ExternalViewModel";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -133,6 +149,8 @@ namespace AspNetSimple.Controllers
             public const string ParametersWithDefault = "ParametersWithDefault";
             public const string ApiCall = "ApiCall";
             public const string ApiCallWithParams = "ApiCallWithParams";
+            public const string LocalViewModel = "LocalViewModel";
+            public const string ExternalViewModel = "ExternalViewModel";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -329,6 +347,28 @@ namespace AspNetSimple.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "name", name);
             ParametersWithDefaultOverride(callInfo, id, name);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void LocalViewModelOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, AspNetSimple.Models.ErrorViewModel model);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult LocalViewModel(AspNetSimple.Models.ErrorViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.LocalViewModel);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
+            LocalViewModelOverride(callInfo, model);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ExternalViewModelOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, SampleModels.TestViewModel model);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult ExternalViewModel(SampleModels.TestViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalViewModel);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
+            ExternalViewModelOverride(callInfo, model);
             return callInfo;
         }
     }
