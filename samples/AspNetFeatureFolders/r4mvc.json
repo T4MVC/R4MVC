@@ -8,9 +8,11 @@
   "StaticFilesPath": "wwwroot",
   "ExcludedStaticFileExtensions": null,
   "FeatureFolders": {
-    "Enabled": false,
+    "Enabled": true,
     "FeaturesPath": "Features",
     "StaticFileAccess": false,
-    "FeatureOnlyAreas": null
+    "FeatureOnlyAreas": [
+      "Products"
+    ]
   }
 }

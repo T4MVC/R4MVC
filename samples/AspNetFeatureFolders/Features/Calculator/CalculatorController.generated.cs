@@ -14,17 +14,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using R4Mvc;
 
-namespace AspNetFeatureFolders.Controllers
+namespace AspNetFeatureFolders.Features.Calculator
 {
-    public partial class HomeController
+    public partial class CalculatorController
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public HomeController()
+        public CalculatorController()
         {
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        protected HomeController(Dummy d)
+        protected CalculatorController(Dummy d)
         {
         }
 
@@ -55,13 +55,13 @@ namespace AspNetFeatureFolders.Controllers
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public HomeController Actions => MVC.Home;
+        public CalculatorController Actions => MVC.Calculator;
         [GeneratedCode("R4Mvc", "1.0")]
         public readonly string Area = "";
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Name = "Home";
+        public readonly string Name = "Calculator";
         [GeneratedCode("R4Mvc", "1.0")]
-        public const string NameConst = "Home";
+        public const string NameConst = "Calculator";
         [GeneratedCode("R4Mvc", "1.0")]
         static readonly ActionNamesClass s_ActionNames = new ActionNamesClass();
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -70,18 +70,12 @@ namespace AspNetFeatureFolders.Controllers
         public class ActionNamesClass
         {
             public readonly string Index = "Index";
-            public readonly string About = "About";
-            public readonly string Contact = "Contact";
-            public readonly string Error = "Error";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
             public const string Index = "Index";
-            public const string About = "About";
-            public const string Contact = "Contact";
-            public const string Error = "Error";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -91,14 +85,10 @@ namespace AspNetFeatureFolders.Controllers
             public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
-                public readonly string About = "About";
-                public readonly string Contact = "Contact";
                 public readonly string Index = "Index";
             }
 
-            public readonly string About = "~/Views/Home/About.cshtml";
-            public readonly string Contact = "~/Views/Home/Contact.cshtml";
-            public readonly string Index = "~/Views/Home/Index.cshtml";
+            public readonly string Index = "~/Features/Calculator/Index.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
@@ -108,9 +98,9 @@ namespace AspNetFeatureFolders.Controllers
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public partial class R4MVC_HomeController : AspNetFeatureFolders.Controllers.HomeController
+    public partial class R4MVC_CalculatorController : AspNetFeatureFolders.Features.Calculator.CalculatorController
     {
-        public R4MVC_HomeController(): base(Dummy.Instance)
+        public R4MVC_CalculatorController(): base(Dummy.Instance)
         {
         }
 
@@ -121,36 +111,6 @@ namespace AspNetFeatureFolders.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Index);
             IndexOverride(callInfo);
-            return callInfo;
-        }
-
-        [NonAction]
-        partial void AboutOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
-        [NonAction]
-        public override Microsoft.AspNetCore.Mvc.IActionResult About()
-        {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.About);
-            AboutOverride(callInfo);
-            return callInfo;
-        }
-
-        [NonAction]
-        partial void ContactOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
-        [NonAction]
-        public override Microsoft.AspNetCore.Mvc.IActionResult Contact()
-        {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Contact);
-            ContactOverride(callInfo);
-            return callInfo;
-        }
-
-        [NonAction]
-        partial void ErrorOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
-        [NonAction]
-        public override Microsoft.AspNetCore.Mvc.IActionResult Error()
-        {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Error);
-            ErrorOverride(callInfo);
             return callInfo;
         }
     }

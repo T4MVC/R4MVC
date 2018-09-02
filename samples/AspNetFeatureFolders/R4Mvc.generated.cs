@@ -17,7 +17,11 @@ using R4Mvc;
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 public static partial class MVC
 {
-    public static readonly AspNetFeatureFolders.Controllers.HomeController Home = new AspNetFeatureFolders.Controllers.R4MVC_HomeController();
+    static readonly R4Mvc.MembersAreaClass s_Members = new R4Mvc.MembersAreaClass();
+    public static R4Mvc.MembersAreaClass Members => s_Members;
+    static readonly R4Mvc.ProductsAreaClass s_Products = new R4Mvc.ProductsAreaClass();
+    public static R4Mvc.ProductsAreaClass Products => s_Products;
+    public static readonly AspNetFeatureFolders.Features.Calculator.CalculatorController Calculator = new AspNetFeatureFolders.Features.Calculator.R4MVC_CalculatorController();
     public static readonly R4Mvc.SharedController Shared = new R4Mvc.SharedController();
 }
 
@@ -47,13 +51,27 @@ namespace R4Mvc
                 public readonly string _ValidationScriptsPartial = "_ValidationScriptsPartial";
             }
 
-            public readonly string Error = "~/Views/Shared/Error.cshtml";
-            public readonly string _Layout = "~/Views/Shared/_Layout.cshtml";
-            public readonly string _ValidationScriptsPartial = "~/Views/Shared/_ValidationScriptsPartial.cshtml";
+            public readonly string Error = "~/Features/Shared/Error.cshtml";
+            public readonly string _Layout = "~/Features/Shared/_Layout.cshtml";
+            public readonly string _ValidationScriptsPartial = "~/Features/Shared/_ValidationScriptsPartial.cshtml";
         }
 
         static readonly ViewsClass s_Views = new ViewsClass();
         public ViewsClass Views => s_Views;
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class MembersAreaClass
+    {
+        public readonly string Name = "Members";
+        public readonly AspNetFeatureFolders.Areas.Members.Features.Manage.ManageController Manage = new AspNetFeatureFolders.Areas.Members.Features.Manage.R4MVC_ManageController();
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class ProductsAreaClass
+    {
+        public readonly string Name = "Products";
+        public readonly AspNetFeatureFolders.Areas.Products.Search.SearchController Search = new AspNetFeatureFolders.Areas.Products.Search.R4MVC_SearchController();
     }
 }
 
