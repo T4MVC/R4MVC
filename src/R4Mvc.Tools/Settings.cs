@@ -11,6 +11,7 @@
         public bool SplitIntoMultipleFiles { get; set; } = true;
         public string StaticFilesPath { get; set; } = "wwwroot";
         public string[] ExcludedStaticFileExtensions { get; set; }
+        public string[] ReferencedNamespaces { get; set; }
 
         public FeatureFoldersClass FeatureFolders { get; set; } = new FeatureFoldersClass();
         public class FeatureFoldersClass

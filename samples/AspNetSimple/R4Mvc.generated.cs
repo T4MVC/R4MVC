@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using R4Mvc;
+using AspNetSimple;
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 public static partial class MVC
