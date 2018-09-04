@@ -91,8 +91,9 @@ namespace R4Mvc.Tools
             services.Configure<Settings>(configuration);
             services.AddTransient(sc => sc.GetService<IOptions<Settings>>().Value);
 
-            services.AddTransient<GenerateCommand, GenerateCommand>();
-            services.AddTransient<RemoveCommand, RemoveCommand>();
+            services.AddTransient<VSInstancesCommand>();
+            services.AddTransient<GenerateCommand>();
+            services.AddTransient<RemoveCommand>();
 
             services.AddTransient<IViewLocator, FeatureFolderRazorViewLocator>();
             services.AddTransient<IViewLocator, DefaultRazorViewLocator>();
@@ -103,7 +104,7 @@ namespace R4Mvc.Tools
             services.AddTransient<IControllerRewriterService, ControllerRewriterService>();
             services.AddTransient<IControllerGeneratorService, ControllerGeneratorService>();
             services.AddTransient<IFilePersistService, FilePersistService>();
-            services.AddTransient<R4MvcGeneratorService, R4MvcGeneratorService>();
+            services.AddTransient<R4MvcGeneratorService>();
         }
     }
 }

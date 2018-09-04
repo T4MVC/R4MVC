@@ -13,6 +13,10 @@ namespace R4Mvc.Tools.Commands
 
             switch (args[0].ToLowerInvariant())
             {
+                case "vsinstances":
+                    args = args.Skip(1).ToArray();
+                    return typeof(VSInstancesCommand);
+
                 case "generate":
                     args = args.Skip(1).ToArray();
                     return typeof(GenerateCommand);
@@ -30,8 +34,9 @@ namespace R4Mvc.Tools.Commands
         {
             Console.WriteLine("Usage: dotnet r4mvc {command} [arguments]");
             Console.WriteLine("Available commands:");
-            Console.WriteLine("  generate   " + GenerateCommand.Summary);
-            Console.WriteLine("  remove     " + RemoveCommand.Summary);
+            Console.WriteLine("  generate     " + GenerateCommand.Summary);
+            Console.WriteLine("  remove       " + RemoveCommand.Summary);
+            Console.WriteLine("  vsinstances  " + VSInstancesCommand.Summary);
         }
 
         public static void DisplayHelp(Type commandType)

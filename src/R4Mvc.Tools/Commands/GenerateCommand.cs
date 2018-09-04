@@ -31,7 +31,6 @@ project-path:
         private readonly Settings _settings;
         private readonly IGeneratedFileTesterService _generatedFileTesterService;
         private readonly IFilePersistService _filePersistService;
-        private bool _debugMsBuild = false;
         public GenerateCommand(IControllerRewriterService controllerRewriter, IEnumerable<IViewLocator> viewLocators, R4MvcGeneratorService generatorService, Settings settings, IGeneratedFileTesterService generatedFileTesterService, IFilePersistService filePersistService)
         {
             _controllerRewriter = controllerRewriter;
@@ -44,18 +43,13 @@ project-path:
 
         public async Task Run(string projectPath, IConfiguration configuration)
         {
-            if (configuration["debugmsbuild"] != null)
-                _debugMsBuild = true;
-            var projectRoot = Path.GetDirectoryName(projectPath);
-
             InitialiseMSBuild(configuration);
 
             // Load the project and check for compilation errors
             var workspace = MSBuildWorkspace.Create();
-            DumpMsBuildAssemblies("clean workspace");
 
+            var projectRoot = Path.GetDirectoryName(projectPath);
             var project = await workspace.OpenProjectAsync(projectPath);
-            DumpMsBuildAssemblies("project loaded");
             if (workspace.Diagnostics.Count > 0)
             {
                 var foundErrors = false;
@@ -134,48 +128,26 @@ project-path:
         private void InitialiseMSBuild(IConfiguration configuration)
         {
             var instances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
-            if (!instances.Any())
-                Console.WriteLine("No Visual Studio instances found.");
+            if (instances.Length == 0)
+                Console.WriteLine("No Visual Studio instances found. The code generation might fail");
 
-            Console.WriteLine("Available Visual Studio intances:");
-            for (int i = 0; i < instances.Length; i++)
+            var vsInstanceIndex = configuration.GetValue<int?>("vsinstance") ?? 0;
+            if (vsInstanceIndex < 0 || vsInstanceIndex > instances.Length)
             {
-                Console.WriteLine($"  - {i}: {instances[i].Name} - {instances[i].Version}");
-                Console.WriteLine($"       {instances[i].MSBuildPath}");
-                Console.WriteLine();
-            }
-
-            if (!int.TryParse(configuration["vsinstance"], out var vsInstanceIndex))
-            {
-                Console.WriteLine("You can manually select an instance by setting the 'vsinstance' parameter");
-                vsInstanceIndex = 0;
-            }
-            if (vsInstanceIndex < 0 || vsInstanceIndex>=instances.Length)
-            {
-                Console.WriteLine("Invalid VS instance. Falling back to the first one available");
+                Console.WriteLine("Invalid VS instance. Falling back to the latest one");
                 vsInstanceIndex = 0;
             }
 
-            // We register the first instance that we found. This will cause MSBuildWorkspace to use the MSBuild installed in that instance.
+            var instance = vsInstanceIndex == 0
+                ? instances.OrderByDescending(i => i.Version).FirstOrDefault()
+                : instances[vsInstanceIndex - 1];
+
+            // Register the selected. This will cause MSBuildWorkspace to use the MSBuild installed in that instance.
             // Note: This has to be registered *before* creating MSBuildWorkspace. Otherwise, the MEF composition used by MSBuildWorkspace will fail to compose.
-            var registeredInstance = instances[vsInstanceIndex];
-            MSBuildLocator.RegisterInstance(registeredInstance);
+            MSBuildLocator.RegisterInstance(instance);
 
-            Console.WriteLine($"Registered: {registeredInstance.Name} - {registeredInstance.Version}");
+            Console.WriteLine($"Using: {instance.Name} - {instance.Version}");
             Console.WriteLine();
-        }
-
-        private void DumpMsBuildAssemblies(string stage)
-        {
-            if (!_debugMsBuild)
-                return;
-
-            var domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-            var msBuildAssemblies = domainAssemblies.Where(a => a.GetName().Name.StartsWith("Microsoft.Build") || a.GetName().Name.StartsWith("Microsoft.CodeAnalysis")).ToList();
-            Console.WriteLine();
-            Console.WriteLine($"MSBuild loaded assemblies (stage: {stage}): ");
-            foreach (var assembly in msBuildAssemblies)
-                Console.WriteLine($"  {assembly.GetName().Name}: {assembly?.GetName().Version} from {assembly?.Location}");
         }
 
         public IDictionary<string, string> GenerateAreaMap(IEnumerable<ControllerDefinition> controllers)
