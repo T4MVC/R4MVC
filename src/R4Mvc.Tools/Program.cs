@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using R4Mvc.Tools.Commands;
+using R4Mvc.Tools.Commands.Core;
 using R4Mvc.Tools.Locators;
 using R4Mvc.Tools.Services;
 
@@ -16,22 +16,23 @@ namespace R4Mvc.Tools
     {
         static async Task Main(string[] args)
         {
-            var commandType = CommandResolver.GetCommand(ref args);
-            if (commandType == null)
+            var commands = CommandResolver.GetCommands();
+            ICommand command = null;
+            if (args.Length > 0)
             {
-                CommandResolver.DisplayHelp();
-                return;
+                command = commands.FirstOrDefault(c => c.Key.Equals(args[0], StringComparison.OrdinalIgnoreCase));
+                if (command != null)
+                    args = args.Skip(1).ToArray();
+            }
+            if (command == null)
+                command = commands.OfType<HelpCommand>().First();
+
+            string projectPath = null;
+            if (!command.IsGlobal)
+            {
+                projectPath = GetProjectPath(ref args);
             }
 
-            if (args.Length > 0 && args[0].Equals("--help", StringComparison.OrdinalIgnoreCase))
-            {
-                CommandResolver.DisplayHelp(commandType);
-                return;
-            }
-
-            var projectPath = GetProjectPath(ref args);
-            if (projectPath == null)
-                return;
             var configuration = LoadConfiguration(args, projectPath);
 
             var services = new ServiceCollection();
@@ -39,8 +40,8 @@ namespace R4Mvc.Tools
 
             var serviceProvider = services.BuildServiceProvider();
 
-            var command = serviceProvider.GetService(commandType) as ICommand;
-            await command.Run(projectPath, configuration);
+            var commandRunner = serviceProvider.GetService(command.GetCommandType()) as ICommandRunner;
+            await commandRunner.Run(projectPath, configuration, args);
         }
 
         static string GetProjectPath(ref string[] args)
@@ -79,8 +80,11 @@ namespace R4Mvc.Tools
 
         static IConfigurationRoot LoadConfiguration(string[] args, string projectPath)
         {
-            return new ConfigurationBuilder()
-                .AddJsonFile(Path.Combine(Path.GetDirectoryName(projectPath), Constants.R4MvcSettingsFileName), optional: true)
+            IConfigurationBuilder builder = new ConfigurationBuilder();
+            if (projectPath != null)
+                builder = builder
+                .AddJsonFile(Path.Combine(Path.GetDirectoryName(projectPath), Constants.R4MvcSettingsFileName), optional: true);
+            return builder
                 .AddCommandLine(args)
                 .Build();
         }
@@ -90,10 +94,6 @@ namespace R4Mvc.Tools
             services.AddOptions();
             services.Configure<Settings>(configuration);
             services.AddTransient(sc => sc.GetService<IOptions<Settings>>().Value);
-
-            services.AddTransient<VSInstancesCommand>();
-            services.AddTransient<GenerateCommand>();
-            services.AddTransient<RemoveCommand>();
 
             services.AddTransient<IViewLocator, FeatureFolderRazorViewLocator>();
             services.AddTransient<IViewLocator, DefaultRazorViewLocator>();
@@ -105,6 +105,9 @@ namespace R4Mvc.Tools
             services.AddTransient<IControllerGeneratorService, ControllerGeneratorService>();
             services.AddTransient<IFilePersistService, FilePersistService>();
             services.AddTransient<R4MvcGeneratorService>();
+
+            foreach (var runnerType in CommandResolver.GetCommandRunnerTypes())
+                services.AddTransient(runnerType);
         }
     }
 }

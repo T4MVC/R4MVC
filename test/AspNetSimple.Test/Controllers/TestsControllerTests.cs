@@ -16,11 +16,15 @@ namespace AspNetSimple.Test.Controllers
         {
             var controllers = typeof(TestsController).Assembly.GetTypes()
                 .Where(t => t.IsPublic)
+                .Where(t => !t.IsAbstract)
                 .Where(t => typeof(Controller).IsAssignableFrom(t))
-                .Where(t => t.GetCustomAttribute<GeneratedCodeAttribute>() == null);
+                .Where(t => t.GetCustomAttribute<GeneratedCodeAttribute>() == null)
+                .Where(t => t.GetCustomAttribute<R4MvcExcludeAttribute>() == null);
 
             var controllerMethods = typeof(Controller).GetMethods(BindingFlags.Public | BindingFlags.Instance);
-            var methods = controllers.SelectMany(c => c.GetMethods(BindingFlags.Public | BindingFlags.Instance));
+            var methods = controllers.SelectMany(c => c.GetMethods(BindingFlags.Public | BindingFlags.Instance))
+                .Where(cm => cm.GetCustomAttribute<NonActionAttribute>() == null)
+                .Where(cm => cm.GetCustomAttribute<R4MvcExcludeAttribute>() == null);
 
             return methods
                 .Where(m => !controllerMethods.Any(cm => cm.Name == m.Name));
@@ -43,8 +47,9 @@ namespace AspNetSimple.Test.Controllers
         [MemberData(nameof(HasDefaultMethodsCreatedData))]
         public void HasDefaultMethodsCreated(string className, string methodName, Type controllerClass)
         {
-            var methods = GetControllerMethods()
-                .Where(m => m.DeclaringType == controllerClass && m.Name == methodName)
+            var methods = controllerClass
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .Where(m => m.Name == methodName)
                 .Where(m => m.GetParameters().Length == 0);
 
             Assert.Single(methods);

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,164 +9,172 @@ using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using R4Mvc.Tools.CodeGen;
+using R4Mvc.Tools.Commands.Core;
 using R4Mvc.Tools.Extensions;
 using R4Mvc.Tools.Locators;
 using R4Mvc.Tools.Services;
 
 namespace R4Mvc.Tools.Commands
 {
-    [Description(Description)]
     public class GenerateCommand : ICommand
     {
-        public const string Summary = "Run the R4Mvc generator against the selected project";
-        private const string Description = Summary + @"
+        public bool IsGlobal => false;
+        public byte Order => 1;
+        public string Key => "generate";
+        public string Summary => "Run the R4Mvc generator against the selected project";
+        public string Description => Summary + @"
 Usage: generate [project-path] [options]
 project-path:
     Path to the project's .cshtml file";
 
-        private readonly IControllerRewriterService _controllerRewriter;
-        private readonly IEnumerable<IViewLocator> _viewLocators;
-        private readonly R4MvcGeneratorService _generatorService;
-        private readonly Settings _settings;
-        private readonly IGeneratedFileTesterService _generatedFileTesterService;
-        private readonly IFilePersistService _filePersistService;
-        public GenerateCommand(IControllerRewriterService controllerRewriter, IEnumerable<IViewLocator> viewLocators, R4MvcGeneratorService generatorService, Settings settings, IGeneratedFileTesterService generatedFileTesterService, IFilePersistService filePersistService)
+        public Type GetCommandType() => typeof(Runner);
+
+        public class Runner : ICommandRunner
         {
-            _controllerRewriter = controllerRewriter;
-            _viewLocators = viewLocators;
-            _generatorService = generatorService;
-            _settings = settings;
-            _generatedFileTesterService = generatedFileTesterService;
-            _filePersistService = filePersistService;
-        }
-
-        public async Task Run(string projectPath, IConfiguration configuration)
-        {
-            InitialiseMSBuild(configuration);
-
-            // Load the project and check for compilation errors
-            var workspace = MSBuildWorkspace.Create();
-
-            var projectRoot = Path.GetDirectoryName(projectPath);
-            var project = await workspace.OpenProjectAsync(projectPath);
-            if (workspace.Diagnostics.Count > 0)
+            private readonly IControllerRewriterService _controllerRewriter;
+            private readonly IEnumerable<IViewLocator> _viewLocators;
+            private readonly R4MvcGeneratorService _generatorService;
+            private readonly Settings _settings;
+            private readonly IGeneratedFileTesterService _generatedFileTesterService;
+            private readonly IFilePersistService _filePersistService;
+            public Runner(IControllerRewriterService controllerRewriter, IEnumerable<IViewLocator> viewLocators, R4MvcGeneratorService generatorService, Settings settings, IGeneratedFileTesterService generatedFileTesterService, IFilePersistService filePersistService)
             {
-                var foundErrors = false;
-                foreach (var diag in workspace.Diagnostics)
+                _controllerRewriter = controllerRewriter;
+                _viewLocators = viewLocators;
+                _generatorService = generatorService;
+                _settings = settings;
+                _generatedFileTesterService = generatedFileTesterService;
+                _filePersistService = filePersistService;
+            }
+
+            public async Task Run(string projectPath, IConfiguration configuration, string[] args)
+            {
+                InitialiseMSBuild(configuration);
+
+                // Load the project and check for compilation errors
+                var workspace = MSBuildWorkspace.Create();
+
+                var projectRoot = Path.GetDirectoryName(projectPath);
+                var project = await workspace.OpenProjectAsync(projectPath);
+                if (workspace.Diagnostics.Count > 0)
                 {
-                    Console.Error.WriteLine($"  {diag.Kind}: {diag.Message}");
-                    if (diag.Kind == Microsoft.CodeAnalysis.WorkspaceDiagnosticKind.Failure)
-                        foundErrors = true;
+                    var foundErrors = false;
+                    foreach (var diag in workspace.Diagnostics)
+                    {
+                        Console.Error.WriteLine($"  {diag.Kind}: {diag.Message}");
+                        if (diag.Kind == Microsoft.CodeAnalysis.WorkspaceDiagnosticKind.Failure)
+                            foundErrors = true;
+                    }
+                    if (foundErrors)
+                        return;
                 }
-                if (foundErrors)
-                    return;
-            }
 
-            // Prep the project Compilation object, and process the Controller public methods list
-            var compilation = await project.GetCompilationAsync() as CSharpCompilation;
-            SyntaxNodeHelpers.PopulateControllerClassMethodNames(compilation);
+                // Prep the project Compilation object, and process the Controller public methods list
+                var compilation = await project.GetCompilationAsync() as CSharpCompilation;
+                SyntaxNodeHelpers.PopulateControllerClassMethodNames(compilation);
 
-            // Analyse the controllers in the project (updating them to be partial), as well as locate all the view files
-            var controllers = _controllerRewriter.RewriteControllers(compilation);
-            var allViewFiles = _viewLocators.SelectMany(x => x.Find(projectRoot));
+                // Analyse the controllers in the project (updating them to be partial), as well as locate all the view files
+                var controllers = _controllerRewriter.RewriteControllers(compilation);
+                var allViewFiles = _viewLocators.SelectMany(x => x.Find(projectRoot));
 
-            // Assign view files to controllers
-            foreach (var views in allViewFiles.GroupBy(v => new { v.AreaName, v.ControllerName }))
-            {
-                var controller = controllers
-                    .Where(c => string.Equals(c.Name, views.Key.ControllerName, StringComparison.OrdinalIgnoreCase))
-                    .Where(c => string.Equals(c.Area, views.Key.AreaName, StringComparison.OrdinalIgnoreCase))
-                    .FirstOrDefault();
-                if (controller == null)
-                    controllers.Add(controller = new ControllerDefinition
-                    {
-                        Area = views.Key.AreaName,
-                        Name = views.Key.ControllerName,
-                    });
-                foreach (var view in views)
-                    controller.Views.Add(view);
-            }
-
-            // Generate mappings for area names, to avoid clashes with controller names
-            var areaMap = GenerateAreaMap(controllers);
-            foreach (var controller in controllers.Where(a => !string.IsNullOrEmpty(a.Area)))
-                controller.AreaKey = areaMap[controller.Area];
-
-            // Generate the R4Mvc.generated.cs file
-            _generatorService.Generate(projectRoot, controllers);
-
-            // updating the r4mvc.json settings file
-            _settings._generatedByVersion = typeof(GenerateCommand).Assembly.GetName().Version.ToString();
-            var r4MvcJsonFile = Path.Combine(projectRoot, Constants.R4MvcSettingsFileName);
-            File.WriteAllText(r4MvcJsonFile, JsonConvert.SerializeObject(_settings, Formatting.Indented));
-
-            // Ensuring a user customisable r4mvc.cs code file exists
-            var r4MvcFile = Path.Combine(projectRoot, Constants.R4MvcFileName);
-            if (!File.Exists(r4MvcFile))
-                CreateR4MvcUserFile(r4MvcFile);
-
-            // Cleanup old generated files
-            var generatedFiles = Directory.GetFiles(projectRoot, "*.generated.cs", SearchOption.AllDirectories);
-            foreach (var file in generatedFiles)
-            {
-                if (File.Exists(file.Replace(".generated.cs", ".cs")) ||
-                    string.Equals(Constants.R4MvcGeneratedFileName, Path.GetFileName(file)))
-                    continue;
-
-                using (var fileStream = File.OpenRead(file))
+                // Assign view files to controllers
+                foreach (var views in allViewFiles.GroupBy(v => new { v.AreaName, v.ControllerName }))
                 {
-                    if (await _generatedFileTesterService.IsGenerated(fileStream))
+                    var controller = controllers
+                        .Where(c => string.Equals(c.Name, views.Key.ControllerName, StringComparison.OrdinalIgnoreCase))
+                        .Where(c => string.Equals(c.Area, views.Key.AreaName, StringComparison.OrdinalIgnoreCase))
+                        .FirstOrDefault();
+                    if (controller == null)
+                        controllers.Add(controller = new ControllerDefinition
+                        {
+                            Area = views.Key.AreaName,
+                            Name = views.Key.ControllerName,
+                        });
+                    foreach (var view in views)
+                        controller.Views.Add(view);
+                }
+
+                // Generate mappings for area names, to avoid clashes with controller names
+                var areaMap = GenerateAreaMap(controllers);
+                foreach (var controller in controllers.Where(a => !string.IsNullOrEmpty(a.Area)))
+                    controller.AreaKey = areaMap[controller.Area];
+
+                // Generate the R4Mvc.generated.cs file
+                _generatorService.Generate(projectRoot, controllers);
+
+                // updating the r4mvc.json settings file
+                _settings._generatedByVersion = typeof(GenerateCommand).Assembly.GetName().Version.ToString();
+                var r4MvcJsonFile = Path.Combine(projectRoot, Constants.R4MvcSettingsFileName);
+                File.WriteAllText(r4MvcJsonFile, JsonConvert.SerializeObject(_settings, Formatting.Indented));
+
+                // Ensuring a user customisable r4mvc.cs code file exists
+                var r4MvcFile = Path.Combine(projectRoot, Constants.R4MvcFileName);
+                if (!File.Exists(r4MvcFile))
+                    CreateR4MvcUserFile(r4MvcFile);
+
+                // Cleanup old generated files
+                var generatedFiles = Directory.GetFiles(projectRoot, "*.generated.cs", SearchOption.AllDirectories);
+                foreach (var file in generatedFiles)
+                {
+                    if (File.Exists(file.Replace(".generated.cs", ".cs")) ||
+                        string.Equals(Constants.R4MvcGeneratedFileName, Path.GetFileName(file)))
+                        continue;
+
+                    using (var fileStream = File.OpenRead(file))
                     {
-                        Console.WriteLine("Deleting " + file.GetRelativePath(projectRoot));
-                        File.Delete(file);
+                        if (await _generatedFileTesterService.IsGenerated(fileStream))
+                        {
+                            Console.WriteLine("Deleting " + file.GetRelativePath(projectRoot));
+                            File.Delete(file);
+                        }
                     }
                 }
             }
-        }
 
-        private void InitialiseMSBuild(IConfiguration configuration)
-        {
-            var instances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
-            if (instances.Length == 0)
-                Console.WriteLine("No Visual Studio instances found. The code generation might fail");
-
-            var vsInstanceIndex = configuration.GetValue<int?>("vsinstance") ?? 0;
-            if (vsInstanceIndex < 0 || vsInstanceIndex > instances.Length)
+            private void InitialiseMSBuild(IConfiguration configuration)
             {
-                Console.WriteLine("Invalid VS instance. Falling back to the latest one");
-                vsInstanceIndex = 0;
+                var instances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
+                if (instances.Length == 0)
+                    Console.WriteLine("No Visual Studio instances found. The code generation might fail");
+
+                var vsInstanceIndex = configuration.GetValue<int?>("vsinstance") ?? 0;
+                if (vsInstanceIndex < 0 || vsInstanceIndex > instances.Length)
+                {
+                    Console.WriteLine("Invalid VS instance. Falling back to the latest one");
+                    vsInstanceIndex = 0;
+                }
+
+                var instance = vsInstanceIndex == 0
+                    ? instances.OrderByDescending(i => i.Version).FirstOrDefault()
+                    : instances[vsInstanceIndex - 1];
+
+                // Register the selected. This will cause MSBuildWorkspace to use the MSBuild installed in that instance.
+                // Note: This has to be registered *before* creating MSBuildWorkspace. Otherwise, the MEF composition used by MSBuildWorkspace will fail to compose.
+                MSBuildLocator.RegisterInstance(instance);
+
+                Console.WriteLine($"Using: {instance.Name} - {instance.Version}");
+                Console.WriteLine();
             }
 
-            var instance = vsInstanceIndex == 0
-                ? instances.OrderByDescending(i => i.Version).FirstOrDefault()
-                : instances[vsInstanceIndex - 1];
+            public IDictionary<string, string> GenerateAreaMap(IEnumerable<ControllerDefinition> controllers)
+            {
+                var areaMap = controllers.Select(c => c.Area).Where(a => !string.IsNullOrEmpty(a)).Distinct(StringComparer.OrdinalIgnoreCase).ToDictionary(a => a);
+                foreach (var area in areaMap.Keys.ToArray())
+                    if (controllers.Any(c => c.Area == string.Empty && c.Name == area))
+                        areaMap[area] = area + "Area";
+                return areaMap;
+            }
 
-            // Register the selected. This will cause MSBuildWorkspace to use the MSBuild installed in that instance.
-            // Note: This has to be registered *before* creating MSBuildWorkspace. Otherwise, the MEF composition used by MSBuildWorkspace will fail to compose.
-            MSBuildLocator.RegisterInstance(instance);
-
-            Console.WriteLine($"Using: {instance.Name} - {instance.Version}");
-            Console.WriteLine();
-        }
-
-        public IDictionary<string, string> GenerateAreaMap(IEnumerable<ControllerDefinition> controllers)
-        {
-            var areaMap = controllers.Select(c => c.Area).Where(a => !string.IsNullOrEmpty(a)).Distinct(StringComparer.OrdinalIgnoreCase).ToDictionary(a => a);
-            foreach (var area in areaMap.Keys.ToArray())
-                if (controllers.Any(c => c.Area == string.Empty && c.Name == area))
-                    areaMap[area] = area + "Area";
-            return areaMap;
-        }
-
-        public void CreateR4MvcUserFile(string filePath)
-        {
-            var result = new CodeFileBuilder(_settings, false)
-                .WithMembers(new ClassBuilder("R4MvcExtensions")
-                    .WithModifiers(SyntaxKind.InternalKeyword)
-                    .WithComment("// Use this file to add custom extensions and helper methods to R4Mvc in your project")
-                    .Build())
-                .Build();
-            _filePersistService.WriteFile(result, filePath);
+            public void CreateR4MvcUserFile(string filePath)
+            {
+                var result = new CodeFileBuilder(_settings, false)
+                    .WithMembers(new ClassBuilder("R4MvcExtensions")
+                        .WithModifiers(SyntaxKind.InternalKeyword)
+                        .WithComment("// Use this file to add custom extensions and helper methods to R4Mvc in your project")
+                        .Build())
+                    .Build();
+                _filePersistService.WriteFile(result, filePath);
+            }
         }
     }
 }
