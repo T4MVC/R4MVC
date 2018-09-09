@@ -46,12 +46,10 @@ namespace R4Mvc
             public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
-                public readonly string Error = "Error";
                 public readonly string _Layout = "_Layout";
                 public readonly string _ValidationScriptsPartial = "_ValidationScriptsPartial";
             }
 
-            public readonly string Error = "~/Features/Shared/Error.cshtml";
             public readonly string _Layout = "~/Features/Shared/_Layout.cshtml";
             public readonly string _ValidationScriptsPartial = "~/Features/Shared/_ValidationScriptsPartial.cshtml";
         }
