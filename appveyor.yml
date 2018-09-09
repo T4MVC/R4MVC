@@ -18,6 +18,9 @@ build_script:
 - ps: dotnet build -c $Env:CONFIGURATION $Env:VersionSuffixParam $Env:VersionSuffixValue /p:BuildNumber=$Env:APPVEYOR_BUILD_NUMBER
 - ps: dotnet build src\R4Mvc.Tools.Cli -c $Env:CONFIGURATION $Env:VersionSuffixParam $Env:VersionSuffixValue /p:BuildNumber=$Env:APPVEYOR_BUILD_NUMBER
 
+before_test:
+- ps: .\RunGenerate.bat
+
 artifacts:
 - path: '**\*.nupkg'
 
