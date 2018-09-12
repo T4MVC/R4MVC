@@ -52,7 +52,7 @@ project-path:
                 InitialiseMSBuild(configuration);
 
                 // Load the project and check for compilation errors
-                var workspace = MSBuildWorkspace.Create();
+                var workspace = MSBuildWorkspace.Create(new Dictionary<string, string> { ["IsR4MvcBuild"] = "true" });
 
                 var projectRoot = Path.GetDirectoryName(projectPath);
                 var project = await workspace.OpenProjectAsync(projectPath);
