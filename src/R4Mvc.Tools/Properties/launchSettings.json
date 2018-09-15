@@ -2,7 +2,9 @@
   "profiles": {
     "R4Mvc.Tools": {
       "commandName": "Project",
-      "commandLineArgs": "generate \"..\\..\\..\\..\\..\\samples\\AspNetSimple\\AspNetSimple.csproj\""
+      "commandLineArgs": "",
+      "commandLineArgs_aspNetSimple": "generate \"..\\..\\..\\..\\..\\samples\\AspNetSimple\\AspNetSimple.csproj\"",
+      "commandLineArgs_aspNetFeatureFolders": "generate \"..\\..\\..\\..\\..\\samples\\AspNetFeatureFolders\\AspNetFeatureFolders.csproj\""
     }
   }
 }

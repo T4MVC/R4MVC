@@ -140,17 +140,23 @@ project-path:
                 var vsInstanceIndex = configuration.GetValue<int?>("vsinstance") ?? 0;
                 if (vsInstanceIndex < 0 || vsInstanceIndex > instances.Length)
                 {
-                    Console.WriteLine("Invalid VS instance. Falling back to the latest one");
+                    Console.WriteLine("Invalid VS instance. Falling back to the default one");
                     vsInstanceIndex = 0;
                 }
 
-                var instance = vsInstanceIndex == 0
-                    ? instances.OrderByDescending(i => i.Version).FirstOrDefault()
-                    : instances[vsInstanceIndex - 1];
-
-                // Register the selected. This will cause MSBuildWorkspace to use the MSBuild installed in that instance.
-                // Note: This has to be registered *before* creating MSBuildWorkspace. Otherwise, the MEF composition used by MSBuildWorkspace will fail to compose.
-                MSBuildLocator.RegisterInstance(instance);
+                VisualStudioInstance instance;
+                if (vsInstanceIndex > 0)
+                {
+                    // Register the selected vs instance. This will cause MSBuildWorkspace to use the MSBuild installed in that instance.
+                    // Note: This has to be registered *before* creating MSBuildWorkspace. Otherwise, the MEF composition used by MSBuildWorkspace will fail to compose.
+                    instance = instances[vsInstanceIndex - 1];
+                    MSBuildLocator.RegisterInstance(instance);
+                }
+                else
+                {
+                    // Use hhe default vs instance and it's MSBuild
+                    instance = MSBuildLocator.RegisterDefaults();
+                }
 
                 Console.WriteLine($"Using: {instance.Name} - {instance.Version}");
                 Console.WriteLine();

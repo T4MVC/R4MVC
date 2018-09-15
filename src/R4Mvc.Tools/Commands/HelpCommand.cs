@@ -36,7 +36,7 @@ namespace R4Mvc.Tools.Commands
 
             public void DisplayHelp(ICommand[] commands)
             {
-                Console.WriteLine("Usage: r4mvc {command} [arguments]");
+                Console.WriteLine("Usage: r4mvc [command] [arguments]");
                 Console.WriteLine();
                 Console.WriteLine("Commands:");
                 var maxLength = commands.Max(c => c.Key.Length);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +17,13 @@ namespace R4Mvc.Tools
     {
         static async Task Main(string[] args)
         {
+            var assembly = typeof(Program).Assembly;
+            var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+            if (version == null)
+                version = assembly.GetName().Version.ToString();
+            Console.WriteLine($"  R4Mvc Generator Tool v{version}");
+            Console.WriteLine();
+
             var commands = CommandResolver.GetCommands();
             ICommand command = null;
             if (args.Length > 0)
