@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net462</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <AssemblyName>dotnet-r4mvc</AssemblyName>
+    <AssemblyName>r4mvc</AssemblyName>
     <ContentTargetFolders>tools</ContentTargetFolders>
     <DevelopmentDependency>True</DevelopmentDependency>
     <IncludeBuildOutput>False</IncludeBuildOutput>
