@@ -15,7 +15,7 @@ namespace R4Mvc.Tools.Commands
         public string Key => "remove";
         public string Summary => "Remove R4Mvc generated files from the selected project";
         public string Description => Summary + @"
-Usage: remove [project-path]
+Usage: remove [-p project-path]
 project-path:
     Path to the project's .cshtml file";
 

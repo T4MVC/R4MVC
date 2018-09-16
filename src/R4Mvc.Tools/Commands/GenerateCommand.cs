@@ -23,7 +23,7 @@ namespace R4Mvc.Tools.Commands
         public string Key => "generate";
         public string Summary => "Run the R4Mvc generator against the selected project";
         public string Description => Summary + @"
-Usage: generate [project-path] [options]
+Usage: generate [options] [-p project-path]
 project-path:
     Path to the project's .cshtml file";
 
@@ -49,7 +49,10 @@ project-path:
 
             public async Task Run(string projectPath, IConfiguration configuration, string[] args)
             {
-                InitialiseMSBuild(configuration);
+                var vsInstance = InitialiseMSBuild(configuration);
+                Console.WriteLine($"Using: {vsInstance.Name} - {vsInstance.Version}");
+                Console.WriteLine("Project: " + projectPath);
+                Console.WriteLine();
 
                 // Load the project and check for compilation errors
                 var workspace = MSBuildWorkspace.Create(new Dictionary<string, string> { ["IsR4MvcBuild"] = "true" });
@@ -131,7 +134,7 @@ project-path:
                 }
             }
 
-            private void InitialiseMSBuild(IConfiguration configuration)
+            private VisualStudioInstance InitialiseMSBuild(IConfiguration configuration)
             {
                 var instances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
                 if (instances.Length == 0)
@@ -158,8 +161,7 @@ project-path:
                     instance = MSBuildLocator.RegisterDefaults();
                 }
 
-                Console.WriteLine($"Using: {instance.Name} - {instance.Version}");
-                Console.WriteLine();
+                return instance;
             }
 
             public IDictionary<string, string> GenerateAreaMap(IEnumerable<ControllerDefinition> controllers)

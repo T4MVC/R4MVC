@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -24,13 +25,15 @@ namespace R4Mvc.Tools
             Console.WriteLine($"  R4Mvc Generator Tool v{version}");
             Console.WriteLine();
 
+            var commandLineConfig = BuildCommandLineConfig(ref args);
+
             var commands = CommandResolver.GetCommands();
             ICommand command = null;
             if (args.Length > 0)
             {
                 command = commands.FirstOrDefault(c => c.Key.Equals(args[0], StringComparison.OrdinalIgnoreCase));
                 if (command != null)
-                    args = args.Skip(1).ToArray();
+                    RemoveItem(ref args, 0);
             }
             if (command == null)
                 command = commands.OfType<HelpCommand>().First();
@@ -38,10 +41,11 @@ namespace R4Mvc.Tools
             string projectPath = null;
             if (!command.IsGlobal)
             {
-                projectPath = GetProjectPath(ref args);
+                projectPath = GetProjectPath(commandLineConfig);
+                if (projectPath == null)
+                    return;
             }
-
-            var configuration = LoadConfiguration(args, projectPath);
+            var configuration = LoadConfiguration(projectPath, commandLineConfig);
 
             var services = new ServiceCollection();
             ConfigureServices(services, configuration);
@@ -52,49 +56,97 @@ namespace R4Mvc.Tools
             await commandRunner.Run(projectPath, configuration, args);
         }
 
-        static string GetProjectPath(ref string[] args)
+        static IConfigurationSource BuildCommandLineConfig(ref string[] args)
         {
-            string projectPath = null;
-            if (args.Length > 0 && !args[0].StartsWith("-"))
-            {
-                projectPath = args[0];
-                args = args.Skip(1).ToArray();
-            }
-            if (!string.IsNullOrWhiteSpace(projectPath))
-            {
-                projectPath = Path.IsPathRooted(projectPath) ? projectPath : Path.Combine(Environment.CurrentDirectory, projectPath);
-                if (File.Exists(projectPath) && projectPath.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase))
-                    return projectPath;
+            if (args.Length == 0)
+                return null;
 
-                Console.WriteLine("Invalid project path.");
+            var triggers = new[] { "-", "--", "/" };
+            var commandArgs = new List<string>();
+            int i = 0;
+            bool usingSpace = !args.Any(a => triggers.Any(s => a.StartsWith(s)) && a.Contains("="));
+            while (i < args.Length)
+            {
+                var arg = args[i];
+                var trigger = triggers.FirstOrDefault(s => arg.StartsWith(s));
+                if (trigger == null)
+                {
+                    i++;
+                    continue;
+                }
+
+                commandArgs.Add(args[i]);
+                RemoveItem(ref args, i);
+
+                if (usingSpace)
+                {
+                    commandArgs.Add(args[i]);
+                    RemoveItem(ref args, i);
+                }
             }
 
-            Console.WriteLine("Project path not passed. Searching current path...");
-            var projFiles = Directory.GetFiles(Environment.CurrentDirectory, "*.csproj");
+            return new ConfigurationBuilder()
+                .AddCommandLine(commandArgs.ToArray(), new Dictionary<string, string>
+                {
+                    ["-p"] = "ProjectPath",
+                    ["-vsi"] = "vsinstance",
+                })
+                .Sources[0];
+        }
+
+        static void RemoveItem(ref string[] args, int index)
+        {
+            for (int i = index; i + 1 < args.Length; i++)
+                args[i] = args[i + 1];
+            Array.Resize(ref args, args.Length - 1);
+        }
+
+        static string GetProjectPath(IConfigurationSource configuration)
+        {
+            var config = new ConfigurationBuilder().Add(configuration).Build();
+            var projectPath = config["ProjectPath"];
+            if (string.IsNullOrWhiteSpace(projectPath))
+                projectPath = Environment.CurrentDirectory;
+            projectPath = Path.GetFullPath(projectPath);
+
+            if (projectPath.EndsWith(".csproj") && File.Exists(projectPath))
+                return projectPath;
+
+            // Not pointing to a project file
+            if (File.Exists(projectPath))
+                projectPath = Path.GetDirectoryName(projectPath);
+
+            if (!Directory.Exists(projectPath))
+            {
+                Console.Error.WriteLine("Project path doesn't exist");
+                return null;
+            }
+
+            var projFiles = Directory.GetFiles(projectPath, "*.csproj");
             switch (projFiles.Length)
             {
                 case 1:
                     return projFiles[0];
 
                 case 0:
-                    Console.WriteLine("Project path not found. Pass one as a parameter or run this within the project directory.");
-                    break;
+                    Console.Error.WriteLine("Project path not found. Pass one as a parameter or run this within the project directory.");
+                    return null;
+
                 default:
-                    Console.WriteLine("More than one project file found. Aborting, just to be safe!");
-                    break;
+                    Console.Error.WriteLine("More than one project file found. Aborting, just to be safe!");
+                    return null;
             }
-            return null;
         }
 
-        static IConfigurationRoot LoadConfiguration(string[] args, string projectPath)
+        static IConfigurationRoot LoadConfiguration(string projectPath, IConfigurationSource commandLineConfig)
         {
             IConfigurationBuilder builder = new ConfigurationBuilder();
             if (projectPath != null)
-                builder = builder
-                .AddJsonFile(Path.Combine(Path.GetDirectoryName(projectPath), Constants.R4MvcSettingsFileName), optional: true);
-            return builder
-                .AddCommandLine(args)
-                .Build();
+                builder = builder.AddJsonFile(Path.Combine(Path.GetDirectoryName(projectPath), Constants.R4MvcSettingsFileName), optional: true);
+            if (commandLineConfig != null)
+                builder = builder.Add(commandLineConfig);
+
+            return builder.Build();
         }
 
         static void ConfigureServices(IServiceCollection services, IConfigurationRoot configuration)
