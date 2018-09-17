@@ -22,6 +22,8 @@
     <AssemblyVersion Condition="$(BuildNumber) != ''">$(VersionPrefix).$(BuildNumber)</AssemblyVersion>
     <PackageReleaseNotes>
 + First version of the dotnet cli wrapper around R4Mvc.Tools
++ New and improved command line parser
++ Improved VS Instance selector for better build reliability
     </PackageReleaseNotes>
   </PropertyGroup>
 

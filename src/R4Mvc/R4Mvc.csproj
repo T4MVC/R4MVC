@@ -20,7 +20,7 @@
     Only the major version will ever be updated -->
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <PackageReleaseNotes>
-* Supporting more action result types (JsonResult, RedirectResult, etc)
++ R4MvcExclude attribute now supports actions
     </PackageReleaseNotes>
   </PropertyGroup>
 

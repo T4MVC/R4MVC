@@ -22,7 +22,9 @@
     <VersionPrefix>1.0.0</VersionPrefix>
     <AssemblyVersion Condition="$(BuildNumber) != ''">$(VersionPrefix).$(BuildNumber)</AssemblyVersion>
     <PackageReleaseNotes>
-! Instead of bundling a copy of MSBuild with the tool, we'll switch to using a version of MSBuild already installed on the local system
++ Adding the option to add extra namespaces to generated files
+! Now working with multi-targeted projects (#66)
++ Now available as a dotnet cli tool (see R4Mvc.Tools.Cli package)
     </PackageReleaseNotes>
   </PropertyGroup>
 
