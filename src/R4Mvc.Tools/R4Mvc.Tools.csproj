@@ -37,10 +37,10 @@
     <Content Include="bin\$(Configuration)\$(TargetFramework)\*.dll">
       <PackagePath>tools</PackagePath>
     </Content>
-    <Content Include="bin\$(Configuration)\$(TargetFramework)\dotnet-r4mvc.exe">
+    <Content Include="bin\$(Configuration)\$(TargetFramework)\R4Mvc.Tools.exe">
       <PackagePath>tools</PackagePath>
     </Content>
-    <Content Include="bin\$(Configuration)\$(TargetFramework)\dotnet-r4mvc.exe.config">
+    <Content Include="bin\$(Configuration)\$(TargetFramework)\R4Mvc.Tools.exe.config">
       <PackagePath>tools</PackagePath>
     </Content>
   </ItemGroup>
