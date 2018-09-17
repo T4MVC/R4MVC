@@ -16,13 +16,24 @@ before_build:
 
 build_script:
 - ps: dotnet build -c $Env:CONFIGURATION $Env:VersionSuffixParam $Env:VersionSuffixValue /p:BuildNumber=$Env:APPVEYOR_BUILD_NUMBER
-- ps: dotnet build src\R4Mvc.Tools.Cli -c $Env:CONFIGURATION $Env:VersionSuffixParam $Env:VersionSuffixValue /p:BuildNumber=$Env:APPVEYOR_BUILD_NUMBER
-
-before_test:
 - ps: .\RunGenerate.bat
+- ps: dotnet build -c $Env:CONFIGURATION $Env:VersionSuffixParam $Env:VersionSuffixValue /p:BuildNumber=$Env:APPVEYOR_BUILD_NUMBER
+- ps: dotnet build src\R4Mvc.Tools.Cli -c $Env:CONFIGURATION $Env:VersionSuffixParam $Env:VersionSuffixValue /p:BuildNumber=$Env:APPVEYOR_BUILD_NUMBER
 
 artifacts:
 - path: '**\*.nupkg'
+
+before_deploy:
+- ps: |
+    foreach ($artifactName in $artifacts.keys) {
+        $artifact = $artifacts[$artifactName]
+        if ($artifact.name -like '*tools*') {
+            $artifactSize = (Get-Item $artifact.path).length
+            if ($artifactSize -lt 5mb) {
+                throw [System.Exception] "$artifact.name is too small: $artifactSize"
+            }
+        }
+    }
 
 for:
 - branches:
