@@ -16,7 +16,7 @@ namespace R4Mvc.Tools.Cli
                 return;
             }
             var currentPath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
-            var toolPath = Path.Combine(currentPath, "..", "..", "r4mvc.exe");
+            var toolPath = Path.Combine(currentPath, "..", "..", "R4Mvc.Tools.exe");
 
             var startInfo = new ProcessStartInfo
             {

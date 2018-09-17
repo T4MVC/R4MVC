@@ -106,7 +106,7 @@ project-path:
                 _generatorService.Generate(projectRoot, controllers);
 
                 // updating the r4mvc.json settings file
-                _settings._generatedByVersion = typeof(GenerateCommand).Assembly.GetName().Version.ToString();
+                _settings._generatedByVersion = Program.GetVersion();
                 var r4MvcJsonFile = Path.Combine(projectRoot, Constants.R4MvcSettingsFileName);
                 File.WriteAllText(r4MvcJsonFile, JsonConvert.SerializeObject(_settings, Formatting.Indented));
 

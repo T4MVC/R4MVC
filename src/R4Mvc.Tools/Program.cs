@@ -18,11 +18,7 @@ namespace R4Mvc.Tools
     {
         static async Task Main(string[] args)
         {
-            var assembly = typeof(Program).Assembly;
-            var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-            if (version == null)
-                version = assembly.GetName().Version.ToString();
-            Console.WriteLine($"  R4Mvc Generator Tool v{version}");
+            Console.WriteLine($"  R4Mvc Generator Tool v{GetVersion()}");
             Console.WriteLine();
 
             var commandLineConfig = BuildCommandLineConfig(ref args);
@@ -54,6 +50,15 @@ namespace R4Mvc.Tools
 
             var commandRunner = serviceProvider.GetService(command.GetCommandType()) as ICommandRunner;
             await commandRunner.Run(projectPath, configuration, args);
+        }
+
+        internal static string GetVersion()
+        {
+            var assembly = typeof(Program).Assembly;
+            var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+            if (version == null)
+                version = assembly.GetName().Version.ToString();
+            return version;
         }
 
         static IConfigurationSource BuildCommandLineConfig(ref string[] args)
