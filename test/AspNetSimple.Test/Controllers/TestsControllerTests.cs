@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using AspNetSimple.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Xunit;
 
 namespace AspNetSimple.Test.Controllers
@@ -33,13 +34,15 @@ namespace AspNetSimple.Test.Controllers
         public static IEnumerable<object[]> HasDefaultMethodsCreatedData
             => GetControllerMethods()
                 .Where(m =>
-                    typeof(IActionResult).IsAssignableFrom(m.ReturnType) ||
-                    (
-                        typeof(Task).IsAssignableFrom(m.ReturnType) &&
-                        m.ReturnType.IsGenericType &&
-                        typeof(IActionResult).IsAssignableFrom(m.ReturnType.GetGenericArguments()[0])
-                    )
-                )
+                {
+                    var returnType = m.ReturnType;
+                    if (typeof(Task).IsAssignableFrom(returnType) && returnType.IsGenericType)
+                        returnType = returnType.GetGenericArguments()[0];
+
+                    return
+                        typeof(IActionResult).IsAssignableFrom(returnType) ||
+                        typeof(IConvertToActionResult).IsAssignableFrom(returnType);
+                })
                 .GroupBy(m => new { m.DeclaringType, m.Name })
                 .Select(m => new object[] { m.Key.DeclaringType.Name, m.Key.Name, m.Key.DeclaringType });
 

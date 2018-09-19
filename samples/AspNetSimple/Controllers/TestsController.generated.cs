@@ -78,6 +78,13 @@ namespace AspNetSimple.Controllers
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult ApiCallTypedWithParams()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallTypedWithParams);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult LocalViewModel()
         {
             return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.LocalViewModel);
@@ -124,6 +131,8 @@ namespace AspNetSimple.Controllers
             public readonly string ParametersWithDefault = "ParametersWithDefault";
             public readonly string ApiCall = "ApiCall";
             public readonly string ApiCallWithParams = "ApiCallWithParams";
+            public readonly string ApiCallTyped = "ApiCallTyped";
+            public readonly string ApiCallTypedWithParams = "ApiCallTypedWithParams";
             public readonly string LocalViewModel = "LocalViewModel";
             public readonly string ExternalViewModel = "ExternalViewModel";
         }
@@ -150,6 +159,8 @@ namespace AspNetSimple.Controllers
             public const string ParametersWithDefault = "ParametersWithDefault";
             public const string ApiCall = "ApiCall";
             public const string ApiCallWithParams = "ApiCallWithParams";
+            public const string ApiCallTyped = "ApiCallTyped";
+            public const string ApiCallTypedWithParams = "ApiCallTypedWithParams";
             public const string LocalViewModel = "LocalViewModel";
             public const string ExternalViewModel = "ExternalViewModel";
         }
@@ -348,6 +359,27 @@ namespace AspNetSimple.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "name", name);
             ParametersWithDefaultOverride(callInfo, id, name);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ApiCallTypedOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.ActionResult<AspNetSimple.Models.Product> ApiCallTyped()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallTyped);
+            ApiCallTypedOverride(callInfo);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ApiCallTypedWithParamsOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, int id);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.ActionResult<AspNetSimple.Models.Product> ApiCallTypedWithParams(int id)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallTypedWithParams);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
+            ApiCallTypedWithParamsOverride(callInfo, id);
             return callInfo;
         }
 

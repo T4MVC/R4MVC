@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -264,6 +265,8 @@ namespace R4Mvc.Tools.Services
                     callInfoType = Constants.RedirectToActionResultClass;
                 else if (methodReturnType.InheritsFrom<RedirectToRouteResult>())
                     callInfoType = Constants.RedirectToRouteResultClass;
+                else if (methodReturnType.InheritsFrom<IConvertToActionResult>())
+                    callInfoType = Constants.ActionResultClass;
                 else if (!isTaskResult && !methodReturnType.InheritsFrom<IActionResult>())
                 {
                     // Not a return type we support right now. Returning
