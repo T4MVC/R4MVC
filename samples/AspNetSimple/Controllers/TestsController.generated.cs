@@ -126,6 +126,7 @@ namespace AspNetSimple.Controllers
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
+            public readonly string ExtendedPage = "ExtendedPage";
             public readonly string Index = "Index";
             public readonly string ActionResult = "ActionResult";
             public readonly string JsonResult = "JsonResult";
@@ -158,6 +159,7 @@ namespace AspNetSimple.Controllers
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
+            public const string ExtendedPage = "ExtendedPage";
             public const string Index = "Index";
             public const string ActionResult = "ActionResult";
             public const string JsonResult = "JsonResult";
@@ -208,6 +210,16 @@ namespace AspNetSimple.Controllers
     {
         public R4MVC_TestsController(): base(Dummy.Instance)
         {
+        }
+
+        [NonAction]
+        partial void ExtendedPageOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult ExtendedPage()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExtendedPage);
+            ExtendedPageOverride(callInfo);
+            return callInfo;
         }
 
         [NonAction]
