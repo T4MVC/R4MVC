@@ -267,7 +267,7 @@ namespace R4Mvc.Tools.Services
                     callInfoType = Constants.RedirectToRouteResultClass;
                 else if (methodReturnType.InheritsFrom<IConvertToActionResult>())
                     callInfoType = Constants.ActionResultClass;
-                else if (!isTaskResult && !methodReturnType.InheritsFrom<IActionResult>())
+                else if ((!isTaskResult || isGenericTaskResult) && !methodReturnType.InheritsFrom<IActionResult>())
                 {
                     // Not a return type we support right now. Returning
                     continue;
@@ -308,7 +308,7 @@ namespace R4Mvc.Tools.Services
                                 .MethodCall("ModelUnbinderHelpers", "AddRouteValues", "callInfo.RouteValueDictionary", SimpleLiteral.String(p.Name), p.Name))
                             .MethodCall(null, method.Name + overrideMethodSuffix, new[] { "callInfo" }.Concat(method.Parameters.Select(p => p.Name)).ToArray())
                             .Statement(rb => isTaskResult
-                                ? rb.ReturnMethodCall(typeof(Task).FullName, "FromResult", "callInfo" + (isGenericTaskResult ? " as " + methodReturnType : null))
+                                ? rb.ReturnMethodCall(typeof(Task).FullName, "FromResult" + (isGenericTaskResult ? "<" + methodReturnType + ">" : null), "callInfo")
                                 : rb.ReturnVariable("callInfo"))
                         ));
             }

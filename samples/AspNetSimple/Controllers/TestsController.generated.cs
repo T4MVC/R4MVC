@@ -78,9 +78,23 @@ namespace AspNetSimple.Controllers
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult TaskApiCallWithParams()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskApiCallWithParams);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult ApiCallTypedWithParams()
         {
             return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallTypedWithParams);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult TaskApiCallTypedWithParams()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskApiCallTypedWithParams);
         }
 
         [NonAction]
@@ -131,8 +145,12 @@ namespace AspNetSimple.Controllers
             public readonly string ParametersWithDefault = "ParametersWithDefault";
             public readonly string ApiCall = "ApiCall";
             public readonly string ApiCallWithParams = "ApiCallWithParams";
+            public readonly string TaskApiCall = "TaskApiCall";
+            public readonly string TaskApiCallWithParams = "TaskApiCallWithParams";
             public readonly string ApiCallTyped = "ApiCallTyped";
             public readonly string ApiCallTypedWithParams = "ApiCallTypedWithParams";
+            public readonly string TaskApiCallTyped = "TaskApiCallTyped";
+            public readonly string TaskApiCallTypedWithParams = "TaskApiCallTypedWithParams";
             public readonly string LocalViewModel = "LocalViewModel";
             public readonly string ExternalViewModel = "ExternalViewModel";
         }
@@ -159,8 +177,12 @@ namespace AspNetSimple.Controllers
             public const string ParametersWithDefault = "ParametersWithDefault";
             public const string ApiCall = "ApiCall";
             public const string ApiCallWithParams = "ApiCallWithParams";
+            public const string TaskApiCall = "TaskApiCall";
+            public const string TaskApiCallWithParams = "TaskApiCallWithParams";
             public const string ApiCallTyped = "ApiCallTyped";
             public const string ApiCallTypedWithParams = "ApiCallTypedWithParams";
+            public const string TaskApiCallTyped = "TaskApiCallTyped";
+            public const string TaskApiCallTypedWithParams = "TaskApiCallTypedWithParams";
             public const string LocalViewModel = "LocalViewModel";
             public const string ExternalViewModel = "ExternalViewModel";
         }
@@ -265,7 +287,7 @@ namespace AspNetSimple.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskIndex);
             TaskIndexOverride(callInfo);
-            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.IActionResult);
+            return System.Threading.Tasks.Task.FromResult<Microsoft.AspNetCore.Mvc.IActionResult>(callInfo);
         }
 
         [NonAction]
@@ -275,7 +297,7 @@ namespace AspNetSimple.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskActionResult);
             TaskActionResultOverride(callInfo);
-            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.ActionResult);
+            return System.Threading.Tasks.Task.FromResult<Microsoft.AspNetCore.Mvc.ActionResult>(callInfo);
         }
 
         [NonAction]
@@ -285,7 +307,7 @@ namespace AspNetSimple.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult(Area, Name, ActionNames.TaskJsonResult);
             TaskJsonResultOverride(callInfo);
-            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.JsonResult);
+            return System.Threading.Tasks.Task.FromResult<Microsoft.AspNetCore.Mvc.JsonResult>(callInfo);
         }
 
         [NonAction]
@@ -295,7 +317,7 @@ namespace AspNetSimple.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_FileResult(Area, Name, ActionNames.TaskFileResult);
             TaskFileResultOverride(callInfo);
-            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.FileResult);
+            return System.Threading.Tasks.Task.FromResult<Microsoft.AspNetCore.Mvc.FileResult>(callInfo);
         }
 
         [NonAction]
@@ -305,7 +327,7 @@ namespace AspNetSimple.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RedirectResult(Area, Name, ActionNames.TaskRedirectResult);
             TaskRedirectResultOverride(callInfo);
-            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.RedirectResult);
+            return System.Threading.Tasks.Task.FromResult<Microsoft.AspNetCore.Mvc.RedirectResult>(callInfo);
         }
 
         [NonAction]
@@ -315,7 +337,7 @@ namespace AspNetSimple.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToActionResult(Area, Name, ActionNames.TaskRedirectToActionResult);
             TaskRedirectToActionResultOverride(callInfo);
-            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.RedirectToActionResult);
+            return System.Threading.Tasks.Task.FromResult<Microsoft.AspNetCore.Mvc.RedirectToActionResult>(callInfo);
         }
 
         [NonAction]
@@ -325,7 +347,7 @@ namespace AspNetSimple.Controllers
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToRouteResult(Area, Name, ActionNames.TaskRedirectToRouteResult);
             TaskRedirectToRouteResultOverride(callInfo);
-            return System.Threading.Tasks.Task.FromResult(callInfo as Microsoft.AspNetCore.Mvc.RedirectToRouteResult);
+            return System.Threading.Tasks.Task.FromResult<Microsoft.AspNetCore.Mvc.RedirectToRouteResult>(callInfo);
         }
 
         [NonAction]
@@ -381,6 +403,27 @@ namespace AspNetSimple.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
             ApiCallTypedWithParamsOverride(callInfo, id);
             return callInfo;
+        }
+
+        [NonAction]
+        partial void TaskApiCallTypedOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.ActionResult<AspNetSimple.Models.Product>> TaskApiCallTyped()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskApiCallTyped);
+            TaskApiCallTypedOverride(callInfo);
+            return System.Threading.Tasks.Task.FromResult<Microsoft.AspNetCore.Mvc.ActionResult<AspNetSimple.Models.Product>>(callInfo);
+        }
+
+        [NonAction]
+        partial void TaskApiCallTypedWithParamsOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, int id);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.ActionResult<AspNetSimple.Models.Product>> TaskApiCallTypedWithParams(int id)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskApiCallTypedWithParams);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
+            TaskApiCallTypedWithParamsOverride(callInfo, id);
+            return System.Threading.Tasks.Task.FromResult<Microsoft.AspNetCore.Mvc.ActionResult<AspNetSimple.Models.Product>>(callInfo);
         }
 
         [NonAction]
