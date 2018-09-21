@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using R4Mvc.Tools.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -33,6 +34,8 @@ namespace R4Mvc.Tools
             var newNode = (ClassDeclarationSyntax)base.VisitClassDeclaration(node);
             if (PageShouldBeProcessed(symbol))
             {
+                Console.WriteLine($"Processing page {symbol.ContainingNamespace}.{symbol.Name}");
+
                 // hold a list of all controller classes to use later for the generator
                 _mvcPageClassNodes.Add(node);
 

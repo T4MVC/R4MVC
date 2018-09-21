@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,14 +56,18 @@ project-path:
 
             public async Task Run(string projectPath, IConfiguration configuration, string[] args)
             {
+                var sw = Stopwatch.StartNew();
+
                 var vsInstance = InitialiseMSBuild(configuration);
                 Console.WriteLine($"Using: {vsInstance.Name} - {vsInstance.Version}");
                 Console.WriteLine("Project: " + projectPath);
                 Console.WriteLine();
 
                 // Load the project and check for compilation errors
+                Console.WriteLine("Creating Workspace ...");
                 var workspace = MSBuildWorkspace.Create(new Dictionary<string, string> { ["IsR4MvcBuild"] = "true" });
 
+                Console.WriteLine("Loading project ...");
                 var projectRoot = Path.GetDirectoryName(projectPath);
                 var project = await workspace.OpenProjectAsync(projectPath);
                 if (workspace.Diagnostics.Count > 0)
@@ -79,8 +84,10 @@ project-path:
                 }
 
                 // Prep the project Compilation object, and process the Controller public methods list
+                Console.WriteLine("Compiling project ...");
                 var compilation = await project.GetCompilationAsync() as CSharpCompilation;
                 SyntaxNodeHelpers.PopulateControllerClassMethodNames(compilation);
+                Console.WriteLine();
 
                 // Analyse the controllers in the project (updating them to be partial), as well as locate all the view files
                 var controllers = _controllerRewriter.RewriteControllers(compilation);
@@ -123,6 +130,7 @@ project-path:
                         });
                     page.Views.Add(view);
                 }
+                Console.WriteLine();
 
                 // Generate the R4Mvc.generated.cs file
                 _generatorService.Generate(projectRoot, controllers, pages);
@@ -154,6 +162,10 @@ project-path:
                         }
                     }
                 }
+
+                sw.Stop();
+                Console.WriteLine();
+                Console.WriteLine($"Operation completed in {sw.Elapsed}");
             }
 
             private VisualStudioInstance InitialiseMSBuild(IConfiguration configuration)
