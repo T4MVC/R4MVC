@@ -88,6 +88,14 @@ namespace Microsoft.AspNetCore.Mvc
             };
         }
 
+        public static void InitMVCT4Result(this IR4MvcPageActionResult result, string pageName, string pageHandler, string protocol = null)
+        {
+            result.PageName = pageName;
+            result.PageHandler = pageHandler;
+            result.Protocol = protocol;
+            result.RouteValueDictionary = new RouteValueDictionary();
+        }
+
         public static IActionResult AddRouteValues(this IActionResult result, object routeValues)
         {
             return result.AddRouteValues(new RouteValueDictionary(routeValues));

@@ -96,10 +96,12 @@ namespace R4Mvc.Tools.Extensions
                 return false;
             if (_pageClassMethodNames.Contains(method.Name))
                 return false;
+            if (!method.Name.StartsWith("On"))
+                return false;
             return true;
         }
 
-        public static IEnumerable<IMethodSymbol> GetPublicNonGeneratedMethods(this ITypeSymbol controller)
+        public static IEnumerable<IMethodSymbol> GetPublicNonGeneratedControllerMethods(this ITypeSymbol controller)
         {
             return controller.GetMembers()
                 .OfType<IMethodSymbol>()
@@ -107,6 +109,16 @@ namespace R4Mvc.Tools.Extensions
                 .Where(IsNotR4MVCGenerated)
                 .Where(IsNotR4MvcExcluded)
                 .Where(IsMvcAction);
+        }
+
+        public static IEnumerable<IMethodSymbol> GetPublicNonGeneratedPageMethods(this ITypeSymbol controller)
+        {
+            return controller.GetMembers()
+                .OfType<IMethodSymbol>()
+                .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
+                .Where(IsNotR4MVCGenerated)
+                .Where(IsNotR4MvcExcluded)
+                .Where(IsRazorPageAction);
         }
 
         private static AttributeSyntax CreateGeneratedCodeAttribute()

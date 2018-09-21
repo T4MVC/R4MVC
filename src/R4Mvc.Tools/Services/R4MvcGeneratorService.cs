@@ -147,7 +147,14 @@ namespace R4Mvc.Tools.Services
                         FileResultClass(),
                         RedirectResultClass(),
                         RedirectToActionResultClass(),
-                        RedirectToRouteResultClass())
+                        RedirectToRouteResultClass(),
+                        PageActionResultClass(),
+                        PageJsonResultClass(),
+                        PageContentResultClass(),
+                        PageFileResultClass(),
+                        PageRedirectResultClass(),
+                        PageRedirectToActionResultClass(),
+                        PageRedirectToRouteResultClass())
                     .WithNamespaces(generatedControllers)
                     .WithNamespaces(generatedPages);
             Console.WriteLine("Generating " + Path.DirectorySeparatorChar + Constants.R4MvcGeneratedFileName);
@@ -182,11 +189,11 @@ namespace R4Mvc.Tools.Services
                 var className = string.Join("_", view.Segments) + "Model";
                 page.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
 
-                var controllerClass = new ClassBuilder(className)
+                var pageClass = new ClassBuilder(className)
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                     .WithGeneratedNonUserCodeAttributes();
-                _controllerGenerator.WithViewsClass(controllerClass, page.Views);
-                yield return controllerClass.Build();
+                _pageGenerator.WithViewsClass(pageClass, page.Views);
+                yield return pageClass.Build();
             }
         }
 
@@ -231,6 +238,28 @@ namespace R4Mvc.Tools.Services
             return result.Build();
         }
 
+        private ClassDeclarationSyntax IActionResultDerivedPageClass(string className, string baseClassName, Action<ConstructorMethodBuilder> constructorParts = null)
+        {
+            var result = new ClassBuilder(className)                                    // internal partial class {className}
+                .WithGeneratedNonUserCodeAttributes()
+                .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
+                .WithBaseTypes(baseClassName, "IR4MvcPageActionResult")                     // : {baseClassName}, IR4MvcActionResult
+                .WithConstructor(c => c
+                    .WithOther(constructorParts)
+                    .WithModifiers(SyntaxKind.PublicKeyword)                        // public ctor(
+                    .WithParameter("pageName", "string")                            //  string pageName,
+                    .WithParameter("pageHandler", "string")                         //  string pageHandler,
+                    .WithParameter("protocol", "string", defaultsToNull: true)      //  string protocol = null)
+                    .WithBody(b => b                                                    // this.InitMVCT4Result(pageName, pageHandler, protocol);
+                        .MethodCall("this", "InitMVCT4Result", "pageName", "pageHandler", "protocol")))
+                .WithProperty("PageName", "string")                                     // public string PageName { get; set; }
+                .WithProperty("PageHandler", "string")                                  // public string PageHandler { get; set; }
+                .WithProperty("Protocol", "string")                                     // public string Protocol { get; set; }
+                .WithProperty("RouteValueDictionary", "RouteValueDictionary");          // public RouteValueDictionary RouteValueDictionary { get; set; }
+
+            return result.Build();
+        }
+
         public ClassDeclarationSyntax R4MvcHelpersClass()
             => new ClassBuilder(Constants.R4MvcHelpersClass)
                 .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.StaticKeyword)
@@ -266,6 +295,32 @@ namespace R4Mvc.Tools.Services
 
         public ClassDeclarationSyntax RedirectToRouteResultClass()
             => IActionResultDerivedClass(Constants.RedirectToRouteResultClass, "RedirectToRouteResult",
+                c => c.WithBaseConstructorCall(SimpleLiteral.Null));                           // ctor : base(null)
+
+        public ClassDeclarationSyntax PageActionResultClass()
+            => IActionResultDerivedPageClass(Constants.PageActionResultClass, "ActionResult");
+
+        public ClassDeclarationSyntax PageJsonResultClass()
+            => IActionResultDerivedPageClass(Constants.PageJsonResultClass, "JsonResult",
+                c => c.WithBaseConstructorCall(SimpleLiteral.Null));                           // ctor : base(null)
+
+        public ClassDeclarationSyntax PageContentResultClass()
+            => IActionResultDerivedClass(Constants.PageContentResultClass, "ContentResult");
+
+        public ClassDeclarationSyntax PageFileResultClass()
+            => IActionResultDerivedPageClass(Constants.PageFileResultClass, "FileResult",
+                c => c.WithBaseConstructorCall(SimpleLiteral.Null));                           // ctor : base(null)
+
+        public ClassDeclarationSyntax PageRedirectResultClass()
+            => IActionResultDerivedPageClass(Constants.PageRedirectResultClass, "RedirectResult",
+                c => c.WithBaseConstructorCall(SimpleLiteral.Space));                          // ctor : base(" ")
+
+        public ClassDeclarationSyntax PageRedirectToActionResultClass()
+            => IActionResultDerivedPageClass(Constants.PageRedirectToActionResultClass, "RedirectToActionResult",
+                c => c.WithBaseConstructorCall(SimpleLiteral.Space, SimpleLiteral.Space, SimpleLiteral.Space));  // ctor : base(" ", " ", " ")
+
+        public ClassDeclarationSyntax PageRedirectToRouteResultClass()
+            => IActionResultDerivedPageClass(Constants.PageRedirectToRouteResultClass, "RedirectToRouteResult",
                 c => c.WithBaseConstructorCall(SimpleLiteral.Null));                           // ctor : base(null)
     }
 }

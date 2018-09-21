@@ -48,8 +48,7 @@ namespace R4Mvc.Tools.Locators
                 }
             }
 
-            var relativePath = new Uri("~" + filePath.GetRelativePath(projectRoot).Replace("\\", "/"), UriKind.Relative);
-            return new PageView(Path.GetFileNameWithoutExtension(filePath), filePath, relativePath, isPage);
+            return new PageView(Path.GetFileNameWithoutExtension(filePath), filePath, filePath.GetRelativePath(projectRoot).Replace("\\", "/"), isPage);
         }
     }
 }

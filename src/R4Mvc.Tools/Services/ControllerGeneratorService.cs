@@ -93,7 +93,7 @@ namespace R4Mvc.Tools.Services
             var actionsExpression = controller.AreaKey != null
                 ? _settings.HelpersPrefix + "." + controller.AreaKey + "." + controller.Name
                 : _settings.HelpersPrefix + "." + controller.Name;
-            var controllerMethodNames = SyntaxNodeHelpers.GetPublicNonGeneratedMethods(controller.Symbol).Select(m => m.Name).Distinct().ToArray();
+            var controllerMethodNames = SyntaxNodeHelpers.GetPublicNonGeneratedControllerMethods(controller.Symbol).Select(m => m.Name).Distinct().ToArray();
             genControllerClass
                 .WithExpressionProperty("Actions", controller.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
                 .WithStringField("Area", controller.Area, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
@@ -211,7 +211,7 @@ namespace R4Mvc.Tools.Services
 
         private void AddParameterlessMethods(ClassBuilder genControllerClass, ITypeSymbol mvcSymbol, bool isControllerSecure)
         {
-            var methods = mvcSymbol.GetPublicNonGeneratedMethods()
+            var methods = mvcSymbol.GetPublicNonGeneratedControllerMethods()
                 .GroupBy(m => m.Name)
                 .Where(g => !g.Any(m => m.Parameters.Length == 0));
             foreach (var method in methods)
@@ -237,7 +237,7 @@ namespace R4Mvc.Tools.Services
         private void AddMethodOverrides(ClassBuilder classBuilder, ITypeSymbol mvcSymbol, bool isControllerSecure)
         {
             const string overrideMethodSuffix = "Override";
-            foreach (var method in mvcSymbol.GetPublicNonGeneratedMethods())
+            foreach (var method in mvcSymbol.GetPublicNonGeneratedControllerMethods())
             {
                 var methodReturnType = method.ReturnType;
                 bool isTaskResult = false, isGenericTaskResult = false;
@@ -319,7 +319,7 @@ namespace R4Mvc.Tools.Services
             return string.Format("R4MVC_{0}", controllerClass.Name);
         }
 
-        public ClassBuilder WithViewsClass(ClassBuilder classBuilder, IEnumerable<IView> viewFiles)
+        public ClassBuilder WithViewsClass(ClassBuilder classBuilder, IEnumerable<View> viewFiles)
         {
             var viewEditorTemplates = viewFiles.Where(c => c.TemplateKind == "EditorTemplates" || c.TemplateKind == "DisplayTemplates");
             var subpathViews = viewFiles.Where(c => c.TemplateKind != null && c.TemplateKind != "EditorTemplates" && c.TemplateKind != "DisplayTemplates")

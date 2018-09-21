@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AspNetSimple.Pages
@@ -11,6 +7,19 @@ namespace AspNetSimple.Pages
     {
         public virtual void OnGet()
         {
+        }
+
+        public virtual void OnPost(int id)
+        {
+        }
+
+        public virtual void OnPostTest(int id)
+        {
+        }
+
+        public virtual Task OnPostDeleteAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }

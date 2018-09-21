@@ -29,7 +29,7 @@ namespace R4Mvc.Tools.Services
             // build controller partial class node
             var genControllerClass = new ClassBuilder(page.Symbol.Name)               // public partial {controllerClass}
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                .WithTypeParameters(page.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()); // optional <T1, T2, …>
+                .WithTypeParameters(page.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()); // optional <T1, T2, ï¿½>
 
             // add a default constructor if there are some but none are zero length
             var gotCustomConstructors = page.Symbol.Constructors
@@ -56,37 +56,58 @@ namespace R4Mvc.Tools.Services
             AddParameterlessMethods(genControllerClass, page.Symbol, page.IsSecure);
 
             //var actionsExpression = _settings.HelpersPrefix + "." + page.Name;
-            //var controllerMethodNames = SyntaxNodeHelpers.GetPublicNonGeneratedMethods(page.Symbol).Select(m => m.Name).Distinct().ToArray();
+            var handlerNames = SyntaxNodeHelpers.GetPublicNonGeneratedPageMethods(page.Symbol).Select(m => m.Name)
+                .Select(GetHandler)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .Distinct().ToArray();
             genControllerClass
                 //.WithExpressionProperty("Actions", page.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
                 .WithStringField("Name", page.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
-                .WithStringField("NameConst", page.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword);
-                //.WithStaticFieldBackedProperty("ActionNames", "ActionNamesClass", true, SyntaxKind.PublicKeyword)
-                ///* [GeneratedCode, DebuggerNonUserCode]
-                // * public class ActionNamesClass
-                // * {
-                // *  public readonly string {action} = "{action}";
-                // * }
-                // */
-                //.WithChildClass("ActionNamesClass", ac => ac
-                //    .WithModifiers(SyntaxKind.PublicKeyword)
-                //    .WithGeneratedNonUserCodeAttributes()
-                //    .ForEach(controllerMethodNames, (c, m) => c
-                //        .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
-                ///* [GeneratedCode, DebuggerNonUserCode]
-                // * public class ActionNameConstants
-                // * {
-                // *  public const string {action} = "{action}";
-                // * }
-                // */
-                //.WithChildClass("ActionNameConstants", ac => ac
-                //    .WithModifiers(SyntaxKind.PublicKeyword)
-                //    .WithGeneratedNonUserCodeAttributes()
-                //    .ForEach(controllerMethodNames, (c, m) => c
-                //        .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)));
+                .WithStringField("NameConst", page.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
+                .WithStaticFieldBackedProperty("HandlerNames", "HandlerNamesClass", true, SyntaxKind.PublicKeyword)
+                /* [GeneratedCode, DebuggerNonUserCode]
+                 * public class ActionNamesClass
+                 * {
+                 *  public readonly string {action} = "{action}";
+                 * }
+                 */
+                .WithChildClass("HandlerNamesClass", ac => ac
+                    .WithModifiers(SyntaxKind.PublicKeyword)
+                    .WithGeneratedNonUserCodeAttributes()
+                    .ForEach(handlerNames, (c, m) => c
+                        .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
+                /* [GeneratedCode, DebuggerNonUserCode]
+                 * public class ActionNameConstants
+                 * {
+                 *  public const string {action} = "{action}";
+                 * }
+                 */
+                .WithChildClass("HandlerNameConstants", ac => ac
+                    .WithModifiers(SyntaxKind.PublicKeyword)
+                    .WithGeneratedNonUserCodeAttributes()
+                    .ForEach(handlerNames, (c, m) => c
+                        .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)));
             WithViewsClass(genControllerClass, page.Views);
 
             return genControllerClass.Build();
+        }
+
+        private static string GetHandler(string action)
+        {
+            var name = action.Substring(2); // trimming "On"
+            if (name.EndsWith("Async"))
+                name = name.Substring(0, name.Length - "Async".Length);
+            if (name.StartsWith("Get"))
+                name = name.Substring(3);
+            else if (name.StartsWith("Post"))
+                name = name.Substring(4);
+            else if (name.StartsWith("Delete"))
+                name = name.Substring(6);
+            else if (name.StartsWith("Put"))
+                name = name.Substring(3);
+            if (name.Length == 0)
+                return null;
+            return name;
         }
 
         public ClassDeclarationSyntax GenerateR4Page(PageDefinition page)
@@ -173,15 +194,21 @@ namespace R4Mvc.Tools.Services
 
         private void AddParameterlessMethods(ClassBuilder genControllerClass, ITypeSymbol mvcSymbol, bool isControllerSecure)
         {
-            var methods = mvcSymbol.GetPublicNonGeneratedMethods()
+            var methods = mvcSymbol.GetPublicNonGeneratedControllerMethods()
                 .GroupBy(m => m.Name)
                 .Where(g => !g.Any(m => m.Parameters.Length == 0));
             foreach (var method in methods)
+            {
+                var handlerKey = GetHandler(method.Key);
+                if (handlerKey != null)
+                    handlerKey = "HandlerNames." + handlerKey;
+                else
+                    handlerKey = "null";
                 genControllerClass
                     /* [GeneratedCode, DebuggerNonUserCode]
                      * public virtual IActionResult {method.Key}()
                      * {
-                     *  return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
+                     *  return new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, HandlerNames.{Handler});
                      * }
                      */
                     .WithMethod(method.Key, "IActionResult", m => m
@@ -189,17 +216,18 @@ namespace R4Mvc.Tools.Services
                         .WithNonActionAttribute()
                         .WithGeneratedNonUserCodeAttributes()
                         .WithBody(b => b
-                            .ReturnNewObject(Constants.ActionResultClass,
+                            .ReturnNewObject(Constants.PageActionResultClass,
                                 isControllerSecure || method.Any(mg => mg.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<RequireHttpsAttribute>()))
-                                    ? new object[] { "Area", "Name", "ActionNames." + method.Key, SimpleLiteral.String("https") }
-                                    : new object[] { "Area", "Name", "ActionNames." + method.Key }
+                                    ? new object[] { "Name", handlerKey, SimpleLiteral.String("https") }
+                                    : new object[] { "Name", handlerKey }
                             )));
+            }
         }
 
         private void AddMethodOverrides(ClassBuilder classBuilder, ITypeSymbol mvcSymbol, bool isControllerSecure)
         {
             const string overrideMethodSuffix = "Override";
-            foreach (var method in mvcSymbol.GetPublicNonGeneratedMethods())
+            foreach (var method in mvcSymbol.GetPublicNonGeneratedControllerMethods())
             {
                 var methodReturnType = method.ReturnType;
                 bool isTaskResult = false, isGenericTaskResult = false;
@@ -214,30 +242,36 @@ namespace R4Mvc.Tools.Services
                     }
                 }
 
-                var callInfoType = Constants.ActionResultClass;
+                var callInfoType = Constants.PageActionResultClass;
                 if (methodReturnType.InheritsFrom<JsonResult>())
-                    callInfoType = Constants.JsonResultClass;
+                    callInfoType = Constants.PageJsonResultClass;
                 else if (methodReturnType.InheritsFrom<ContentResult>())
-                    callInfoType = Constants.ContentResultClass;
+                    callInfoType = Constants.PageContentResultClass;
                 else if (methodReturnType.InheritsFrom<FileResult>())
-                    callInfoType = Constants.FileResultClass;
+                    callInfoType = Constants.PageFileResultClass;
                 else if (methodReturnType.InheritsFrom<RedirectResult>())
-                    callInfoType = Constants.RedirectResultClass;
+                    callInfoType = Constants.PageRedirectResultClass;
                 else if (methodReturnType.InheritsFrom<RedirectToActionResult>())
-                    callInfoType = Constants.RedirectToActionResultClass;
+                    callInfoType = Constants.PageRedirectToActionResultClass;
                 else if (methodReturnType.InheritsFrom<RedirectToRouteResult>())
-                    callInfoType = Constants.RedirectToRouteResultClass;
+                    callInfoType = Constants.PageRedirectToRouteResultClass;
                 else if (methodReturnType.InheritsFrom<IConvertToActionResult>())
-                    callInfoType = Constants.ActionResultClass;
+                    callInfoType = Constants.PageActionResultClass;
                 else if ((!isTaskResult || isGenericTaskResult) && !methodReturnType.InheritsFrom<IActionResult>())
                 {
                     // Not a return type we support right now. Returning
                     continue;
                 }
 
+                var handlerKey = GetHandler(method.Name);
+                if (handlerKey != null)
+                    handlerKey = "HandlerNames." + handlerKey;
+                else
+                    handlerKey = "null";
+
                 classBuilder
                     /* [NonAction]
-                     * partial void {action}Override({ActionResultType} callInfo, [… params]);
+                     * partial void {action}Override({ActionResultType} callInfo, [ï¿½ params]);
                      */
                     .WithMethod(method.Name + overrideMethodSuffix, null, m => m
                         .WithModifiers(SyntaxKind.PartialKeyword)
@@ -247,9 +281,9 @@ namespace R4Mvc.Tools.Services
                             .WithParameter(p.Name, p.Type.ToString()))
                         .WithNoBody())
                     /* [NonAction]
-                     * public overrive {ActionResultType} {action}([… params])
+                     * public overrive {ActionResultType} {action}([ï¿½ params])
                      * {
-                     *  var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
+                     *  var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, HandlerNames.{Handler});
                      *  ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "paramName", paramName);
                      *  {Action}Override(callInfo, {parameters});
                      *  return callInfo;
@@ -263,8 +297,8 @@ namespace R4Mvc.Tools.Services
                         .WithBody(b => b
                             .VariableFromNewObject("callInfo", callInfoType,
                                 isControllerSecure || method.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<RequireHttpsAttribute>())
-                                    ? new object[] { "Area", "Name", "ActionNames." + method.Name, SimpleLiteral.String("https") }
-                                    : new object[] { "Area", "Name", "ActionNames." + method.Name }
+                                    ? new object[] { "Name", handlerKey, SimpleLiteral.String("https") }
+                                    : new object[] { "Name", handlerKey }
                             )
                             .ForEach(method.Parameters, (cb, p) => cb
                                 .MethodCall("ModelUnbinderHelpers", "AddRouteValues", "callInfo.RouteValueDictionary", SimpleLiteral.String(p.Name), p.Name))
@@ -281,7 +315,7 @@ namespace R4Mvc.Tools.Services
             return string.Format("R4MVC_{0}", controllerClass.Name);
         }
 
-        public ClassBuilder WithViewsClass(ClassBuilder classBuilder, IEnumerable<IView> viewFiles)
+        public ClassBuilder WithViewsClass(ClassBuilder classBuilder, IEnumerable<PageView> viewFiles)
         {
             var viewEditorTemplates = viewFiles.Where(c => c.TemplateKind == "EditorTemplates" || c.TemplateKind == "DisplayTemplates");
             var subpathViews = viewFiles.Where(c => c.TemplateKind != null && c.TemplateKind != "EditorTemplates" && c.TemplateKind != "DisplayTemplates")

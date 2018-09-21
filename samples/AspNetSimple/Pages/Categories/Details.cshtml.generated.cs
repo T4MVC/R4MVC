@@ -15,17 +15,17 @@ using Microsoft.AspNetCore.Routing;
 using R4Mvc;
 using AspNetSimple;
 
-namespace AspNetSimple.Pages
+namespace AspNetSimple.Pages.Categories
 {
-    public partial class IndexModel
+    public partial class DetailsModel
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public IndexModel()
+        public DetailsModel()
         {
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        protected IndexModel(Dummy d)
+        protected DetailsModel(Dummy d)
         {
         }
 
@@ -57,22 +57,15 @@ namespace AspNetSimple.Pages
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public virtual IActionResult OnPost()
+        public virtual IActionResult OnGet()
         {
             return new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, null);
         }
 
-        [NonAction]
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public virtual IActionResult OnPostTest()
-        {
-            return new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, HandlerNames.Test);
-        }
-
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Name = "Index";
+        public readonly string Name = "Details";
         [GeneratedCode("R4Mvc", "1.0")]
-        public const string NameConst = "Index";
+        public const string NameConst = "Details";
         [GeneratedCode("R4Mvc", "1.0")]
         static readonly HandlerNamesClass s_HandlerNames = new HandlerNamesClass();
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -80,15 +73,11 @@ namespace AspNetSimple.Pages
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class HandlerNamesClass
         {
-            public readonly string Test = "Test";
-            public readonly string Delete = "Delete";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class HandlerNameConstants
         {
-            public const string Test = "Test";
-            public const string Delete = "Delete";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -98,10 +87,10 @@ namespace AspNetSimple.Pages
             public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
-                public readonly string Index = "Index";
+                public readonly string Details = "Details";
             }
 
-            public readonly string Index = "~/Pages/Index.cshtml";
+            public readonly string Details = "~/Pages/Categories/Details.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
@@ -111,20 +100,10 @@ namespace AspNetSimple.Pages
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public partial class R4MVC_IndexModel : AspNetSimple.Pages.IndexModel
+    public partial class R4MVC_DetailsModel : AspNetSimple.Pages.Categories.DetailsModel
     {
-        public R4MVC_IndexModel(): base(Dummy.Instance)
+        public R4MVC_DetailsModel(): base(Dummy.Instance)
         {
-        }
-
-        [NonAction]
-        partial void OnPostDeleteAsyncOverride(R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult callInfo);
-        [NonAction]
-        public override System.Threading.Tasks.Task OnPostDeleteAsync()
-        {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, HandlerNames.Delete);
-            OnPostDeleteAsyncOverride(callInfo);
-            return System.Threading.Tasks.Task.FromResult(callInfo);
         }
     }
 }
