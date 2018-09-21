@@ -56,6 +56,32 @@ namespace AspNetSimple.Controllers
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToPageResult RedirectToPage(IActionResult result)
+        {
+            var callInfo = result.GetR4MvcPageResult();
+            return RedirectToPage(callInfo.PageName, callInfo.PageHandler, callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToPageResult RedirectToPage(Task<IActionResult> taskResult)
+        {
+            return RedirectToPage(taskResult.Result);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToPageResult RedirectToPagePermanent(IActionResult result)
+        {
+            var callInfo = result.GetR4MvcPageResult();
+            return RedirectToPagePermanent(callInfo.PageName, callInfo.PageHandler, callInfo.RouteValueDictionary, null);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToPageResult RedirectToPagePermanent(Task<IActionResult> taskResult)
+        {
+            return RedirectToPagePermanent(taskResult.Result);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public SecureController Actions => MVC.Secure;
         [GeneratedCode("R4Mvc", "1.0")]
         public readonly string Area = "";

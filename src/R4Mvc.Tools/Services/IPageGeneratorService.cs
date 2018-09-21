@@ -7,7 +7,7 @@ namespace R4Mvc.Tools.Services
 {
     public interface IPageGeneratorService
     {
-        ClassDeclarationSyntax GeneratePartialPage(PageDefinition page);
+        ClassDeclarationSyntax GeneratePartialPage(PageDefinition page, bool supportsPages);
         ClassDeclarationSyntax GenerateR4Page(PageDefinition page);
         ClassBuilder WithViewsClass(ClassBuilder classBuilder, IEnumerable<PageView> viewFiles);
     }

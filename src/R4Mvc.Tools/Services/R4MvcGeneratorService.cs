@@ -47,7 +47,7 @@ namespace R4Mvc.Tools.Services
                 foreach (var controller in namespaceGroup.OrderBy(c => c.Name))
                 {
                     namespaceNode = namespaceNode.AddMembers(
-                        _controllerGenerator.GeneratePartialController(controller),
+                        _controllerGenerator.GeneratePartialController(controller, pages != null),
                         _controllerGenerator.GenerateR4Controller(controller));
 
                     // If SplitIntoMultipleFiles is set, store the generated classes alongside the controller files.
@@ -76,7 +76,7 @@ namespace R4Mvc.Tools.Services
                     foreach (var page in namespaceGroup.OrderBy(p => p.Name))
                     {
                         namespaceNode = namespaceNode.AddMembers(
-                            _pageGenerator.GeneratePartialPage(page),
+                            _pageGenerator.GeneratePartialPage(page, pages != null),
                             _pageGenerator.GenerateR4Page(page));
 
                         // If SplitIntoMultipleFiles is set, store the generated classes alongside the controller files.

@@ -9,8 +9,7 @@ namespace Microsoft.AspNetCore.Mvc
     {
         public static IR4MvcActionResult GetR4MvcResult(this IActionResult result)
         {
-            var actionResult = result as IR4MvcActionResult;
-            if (actionResult == null)
+            if (!(result is IR4MvcActionResult actionResult))
                 throw new InvalidOperationException("R4MVC was called incorrectly. You may need to force it to regenerate by running `dotnet r4mvc`");
             return actionResult;
         }
@@ -21,10 +20,27 @@ namespace Microsoft.AspNetCore.Mvc
             return GetR4MvcResult(taskResult.Result);
         }
 
-        public static IR4MvcActionResult GetR4MvcResult<TActionResult>(this Task taskResult)
-            where TActionResult : IActionResult
+        public static IR4MvcActionResult GetR4MvcResult(this Task taskResult)
         {
             return GetR4MvcResult(GetActionResult(taskResult));
+        }
+
+        public static IR4MvcPageActionResult GetR4MvcPageResult(this IActionResult result)
+        {
+            if (!(result is IR4MvcPageActionResult actionResult))
+                throw new InvalidOperationException("R4MVC was called incorrectly. You may need to force it to regenerate by running `dotnet r4mvc`");
+            return actionResult;
+        }
+
+        public static IR4MvcPageActionResult GetR4MvcPageResult<TActionResult>(this Task<TActionResult> taskResult)
+            where TActionResult : IActionResult
+        {
+            return GetR4MvcPageResult(taskResult.Result);
+        }
+
+        public static IR4MvcPageActionResult GetR4MvcPageResult(this Task taskResult)
+        {
+            return GetR4MvcPageResult(GetActionResult(taskResult));
         }
 
         internal static IActionResult GetActionResult(this Task task)
