@@ -87,6 +87,12 @@ project-path:
                 Console.WriteLine("Compiling project ...");
                 var compilation = await project.GetCompilationAsync() as CSharpCompilation;
                 SyntaxNodeHelpers.PopulateControllerClassMethodNames(compilation);
+
+                // Get MVC version
+                var mvcAssembly = compilation.ReferencedAssemblyNames
+                    .Where(a => a.Name == "Microsoft.AspNetCore.Mvc")
+                    .FirstOrDefault();
+                Console.WriteLine($"Detected MVC version: {mvcAssembly.Version}");
                 Console.WriteLine();
 
                 // Analyse the controllers in the project (updating them to be partial), as well as locate all the view files
@@ -116,19 +122,23 @@ project-path:
                     controller.AreaKey = areaMap[controller.Area];
 
                 // Analyse the razor pages in the project (updating them to be partial), as well as locate all the view files
-                var pages = _pageRewriter.RewritePages(compilation);
-                var allPageFiles = _pageViewLocators.SelectMany(x => x.Find(projectRoot));
-
-                // Assign page view files to razor pages
-                foreach (var view in allPageFiles)
+                IList<PageDefinition> pages = null;
+                if (mvcAssembly.Version >= new Version(2, 0, 0, 0))
                 {
-                    var page = pages.FirstOrDefault(p => p.GetFilePath() == (view.FilePath + ".cs"));
-                    if (page == null)
-                        pages.Add(page = new PageDefinition
-                        {
-                            Name = view.ViewName,
-                        });
-                    page.Views.Add(view);
+                    pages = _pageRewriter.RewritePages(compilation);
+                    var allPageFiles = _pageViewLocators.SelectMany(x => x.Find(projectRoot));
+
+                    // Assign page view files to razor pages
+                    foreach (var view in allPageFiles)
+                    {
+                        var page = pages.FirstOrDefault(p => p.GetFilePath() == (view.FilePath + ".cs"));
+                        if (page == null)
+                            pages.Add(page = new PageDefinition
+                            {
+                                Name = view.ViewName,
+                            });
+                        page.Views.Add(view);
+                    }
                 }
                 Console.WriteLine();
 

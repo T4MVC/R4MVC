@@ -68,30 +68,33 @@ namespace R4Mvc.Tools.Services
             }
 
             var generatedPages = new List<NamespaceDeclarationSyntax>();
-            foreach (var namespaceGroup in pages.Where(p => p.Namespace != null).GroupBy(p => p.Namespace).OrderBy(p => p.Key))
+            if (pages != null)
             {
-                var namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
-                foreach (var page in namespaceGroup.OrderBy(p => p.Name))
+                foreach (var namespaceGroup in pages.Where(p => p.Namespace != null).GroupBy(p => p.Namespace).OrderBy(p => p.Key))
                 {
-                    namespaceNode = namespaceNode.AddMembers(
-                        _pageGenerator.GeneratePartialPage(page),
-                        _pageGenerator.GenerateR4Page(page));
-
-                    // If SplitIntoMultipleFiles is set, store the generated classes alongside the controller files.
-                    if (_settings.SplitIntoMultipleFiles)
+                    var namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
+                    foreach (var page in namespaceGroup.OrderBy(p => p.Name))
                     {
-                        var generatedFilePath = page.GetFilePath().TrimEnd(".cs") + ".generated.cs";
-                        Console.WriteLine("Generating " + generatedFilePath.GetRelativePath(projectRoot));
-                        var pageFile = new CodeFileBuilder(_settings, true)
-                            .WithNamespace(namespaceNode);
-                        _filePersistService.WriteFile(pageFile.Build(), generatedFilePath);
-                        namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
-                    }
-                }
+                        namespaceNode = namespaceNode.AddMembers(
+                            _pageGenerator.GeneratePartialPage(page),
+                            _pageGenerator.GenerateR4Page(page));
 
-                // If SplitIntoMultipleFiles is NOT set, bundle them all in R4Mvc
-                if (!_settings.SplitIntoMultipleFiles)
-                    generatedPages.Add(namespaceNode);
+                        // If SplitIntoMultipleFiles is set, store the generated classes alongside the controller files.
+                        if (_settings.SplitIntoMultipleFiles)
+                        {
+                            var generatedFilePath = page.GetFilePath().TrimEnd(".cs") + ".generated.cs";
+                            Console.WriteLine("Generating " + generatedFilePath.GetRelativePath(projectRoot));
+                            var pageFile = new CodeFileBuilder(_settings, true)
+                                .WithNamespace(namespaceNode);
+                            _filePersistService.WriteFile(pageFile.Build(), generatedFilePath);
+                            namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
+                        }
+                    }
+
+                    // If SplitIntoMultipleFiles is NOT set, bundle them all in R4Mvc
+                    if (!_settings.SplitIntoMultipleFiles)
+                        generatedPages.Add(namespaceNode);
+                }
             }
 
             // R4MVC namespace used for the areas and Dummy class
@@ -147,7 +150,8 @@ namespace R4Mvc.Tools.Services
                         FileResultClass(),
                         RedirectResultClass(),
                         RedirectToActionResultClass(),
-                        RedirectToRouteResultClass(),
+                        RedirectToRouteResultClass())
+                    .WithMembers(pages != null,
                         PageActionResultClass(),
                         PageJsonResultClass(),
                         PageContentResultClass(),
@@ -180,20 +184,23 @@ namespace R4Mvc.Tools.Services
 
         public IEnumerable<ClassDeclarationSyntax> CreateViewOnlyPageClasses(IList<PageDefinition> pages)
         {
-            foreach (var page in pages.Where(c => c.Namespace == null).OrderBy(c => c.GetFilePath()))
+            if (pages != null)
             {
-                var view = page.Views.FirstOrDefault();
-                if (view == null)
-                    continue;
+                foreach (var page in pages.Where(c => c.Namespace == null).OrderBy(c => c.GetFilePath()))
+                {
+                    var view = page.Views.FirstOrDefault();
+                    if (view == null)
+                        continue;
 
-                var className = string.Join("_", view.Segments) + "Model";
-                page.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
+                    var className = string.Join("_", view.Segments) + "Model";
+                    page.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
 
-                var pageClass = new ClassBuilder(className)
-                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                    .WithGeneratedNonUserCodeAttributes();
-                _pageGenerator.WithViewsClass(pageClass, page.Views);
-                yield return pageClass.Build();
+                    var pageClass = new ClassBuilder(className)
+                        .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                        .WithGeneratedNonUserCodeAttributes();
+                    _pageGenerator.WithViewsClass(pageClass, page.Views);
+                    yield return pageClass.Build();
+                }
             }
         }
 
