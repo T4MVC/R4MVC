@@ -14,6 +14,7 @@ namespace R4Mvc.Tools.Services
     {
         private readonly IControllerRewriterService _controllerRewriter;
         private readonly IControllerGeneratorService _controllerGenerator;
+        private readonly IPageGeneratorService _pageGenerator;
         private readonly IStaticFileGeneratorService _staticFileGenerator;
         private readonly IFilePersistService _filePersistService;
         private readonly Settings _settings;
@@ -21,18 +22,20 @@ namespace R4Mvc.Tools.Services
         public R4MvcGeneratorService(
             IControllerRewriterService controllerRewriter,
             IControllerGeneratorService controllerGenerator,
+            IPageGeneratorService pageGenerator,
             IStaticFileGeneratorService staticFileGenerator,
             IFilePersistService filePersistService,
             Settings settings)
         {
             _controllerRewriter = controllerRewriter;
             _controllerGenerator = controllerGenerator;
+            _pageGenerator = pageGenerator;
             _staticFileGenerator = staticFileGenerator;
             _filePersistService = filePersistService;
             _settings = settings;
         }
 
-        public void Generate(string projectRoot, IList<ControllerDefinition> controllers)
+        public void Generate(string projectRoot, IList<ControllerDefinition> controllers, IList<PageDefinition> pages)
         {
             var areaControllers = controllers.ToLookup(c => c.Area);
 
@@ -64,6 +67,33 @@ namespace R4Mvc.Tools.Services
                     generatedControllers.Add(namespaceNode);
             }
 
+            var generatedPages = new List<NamespaceDeclarationSyntax>();
+            foreach (var namespaceGroup in pages.Where(p => p.Namespace != null).GroupBy(p => p.Namespace).OrderBy(p => p.Key))
+            {
+                var namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
+                foreach (var page in namespaceGroup.OrderBy(p => p.Name))
+                {
+                    namespaceNode = namespaceNode.AddMembers(
+                        _pageGenerator.GeneratePartialPage(page),
+                        _pageGenerator.GenerateR4Page(page));
+
+                    // If SplitIntoMultipleFiles is set, store the generated classes alongside the controller files.
+                    if (_settings.SplitIntoMultipleFiles)
+                    {
+                        var generatedFilePath = page.GetFilePath().TrimEnd(".cs") + ".generated.cs";
+                        Console.WriteLine("Generating " + generatedFilePath.GetRelativePath(projectRoot));
+                        var pageFile = new CodeFileBuilder(_settings, true)
+                            .WithNamespace(namespaceNode);
+                        _filePersistService.WriteFile(pageFile.Build(), generatedFilePath);
+                        namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
+                    }
+                }
+
+                // If SplitIntoMultipleFiles is NOT set, bundle them all in R4Mvc
+                if (!_settings.SplitIntoMultipleFiles)
+                    generatedPages.Add(namespaceNode);
+            }
+
             // R4MVC namespace used for the areas and Dummy class
             var r4Namespace = NamespaceDeclaration(ParseName(_settings.R4MvcNamespace))
                 // add the dummy class uses in the derived controller partial class
@@ -82,6 +112,7 @@ namespace R4Mvc.Tools.Services
                     .WithField(Constants.DummyClassInstance, Constants.DummyClass, Constants.DummyClass, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
                     .Build())
                 .AddMembers(CreateViewOnlyControllerClasses(controllers).ToArray<MemberDeclarationSyntax>())
+                .AddMembers(CreateViewOnlyPageClasses(pages).ToArray<MemberDeclarationSyntax>())
                 .AddMembers(CreateAreaClasses(areaControllers).ToArray<MemberDeclarationSyntax>());
 
             // create static MVC class and add the area and controller fields
@@ -117,7 +148,8 @@ namespace R4Mvc.Tools.Services
                         RedirectResultClass(),
                         RedirectToActionResultClass(),
                         RedirectToRouteResultClass())
-                    .WithNamespaces(generatedControllers);
+                    .WithNamespaces(generatedControllers)
+                    .WithNamespaces(generatedPages);
             Console.WriteLine("Generating " + Path.DirectorySeparatorChar + Constants.R4MvcGeneratedFileName);
             _filePersistService.WriteFile(r4MvcFile.Build(), Path.Combine(projectRoot, Constants.R4MvcGeneratedFileName));
         }
@@ -135,6 +167,25 @@ namespace R4Mvc.Tools.Services
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                     .WithGeneratedNonUserCodeAttributes();
                 _controllerGenerator.WithViewsClass(controllerClass, controller.Views);
+                yield return controllerClass.Build();
+            }
+        }
+
+        public IEnumerable<ClassDeclarationSyntax> CreateViewOnlyPageClasses(IList<PageDefinition> pages)
+        {
+            foreach (var page in pages.Where(c => c.Namespace == null).OrderBy(c => c.GetFilePath()))
+            {
+                var view = page.Views.FirstOrDefault();
+                if (view == null)
+                    continue;
+
+                var className = string.Join("_", view.Segments) + "Model";
+                page.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
+
+                var controllerClass = new ClassBuilder(className)
+                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                    .WithGeneratedNonUserCodeAttributes();
+                _controllerGenerator.WithViewsClass(controllerClass, page.Views);
                 yield return controllerClass.Build();
             }
         }

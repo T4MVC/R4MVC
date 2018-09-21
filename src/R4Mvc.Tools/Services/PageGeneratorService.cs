@@ -13,61 +13,26 @@ using static R4Mvc.Tools.Extensions.SyntaxNodeHelpers;
 
 namespace R4Mvc.Tools.Services
 {
-    public class ControllerGeneratorService : IControllerGeneratorService
+    public class PageGeneratorService : IPageGeneratorService
     {
         private const string ViewNamesClassName = "_ViewNamesClass";
 
         private readonly Settings _settings;
 
-        public ControllerGeneratorService(Settings settings)
+        public PageGeneratorService(Settings settings)
         {
             _settings = settings;
         }
 
-        public string GetControllerArea(INamedTypeSymbol controllerSymbol)
-        {
-            AttributeData areaAttribute = null;
-            var typeSymbol = controllerSymbol;
-            while (typeSymbol != null && areaAttribute == null)
-            {
-                areaAttribute = typeSymbol.GetAttributes().FirstOrDefault(a => a.AttributeClass.InheritsFrom<AreaAttribute>());
-                typeSymbol = typeSymbol.BaseType;
-            }
-            if (areaAttribute == null)
-                return string.Empty;
-
-            if (areaAttribute.AttributeClass.ToDisplayString() == typeof(AreaAttribute).FullName)
-                return areaAttribute.ConstructorArguments[0].Value?.ToString();
-
-            // parse the constructor to get the area name from derived types
-            if (areaAttribute.AttributeClass.BaseType.ToDisplayString() == typeof(AreaAttribute).FullName)
-            {
-                // direct descendant. Reading the area name from the constructor
-                var constructorInit = areaAttribute.AttributeConstructor.DeclaringSyntaxReferences
-                    .SelectMany(s => s.SyntaxTree.GetRoot().DescendantNodesAndSelf().OfType<ClassDeclarationSyntax>().Where(c => c.Identifier.Text == areaAttribute.AttributeClass.Name))
-                    .SelectMany(s => s.DescendantNodesAndSelf().OfType<ConstructorInitializerSyntax>())
-                    .First();
-                if (constructorInit.ArgumentList.Arguments.Count > 0)
-                {
-                    var arg = constructorInit.ArgumentList.Arguments[0];
-                    if (arg.Expression is LiteralExpressionSyntax litExp)
-                    {
-                        return litExp.Token.ValueText;
-                    }
-                }
-            }
-            return string.Empty;
-        }
-
-        public ClassDeclarationSyntax GeneratePartialController(ControllerDefinition controller)
+        public ClassDeclarationSyntax GeneratePartialPage(PageDefinition page)
         {
             // build controller partial class node
-            var genControllerClass = new ClassBuilder(controller.Symbol.Name)               // public partial {controllerClass}
+            var genControllerClass = new ClassBuilder(page.Symbol.Name)               // public partial {controllerClass}
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                .WithTypeParameters(controller.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()); // optional <T1, T2, …>
+                .WithTypeParameters(page.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()); // optional <T1, T2, …>
 
             // add a default constructor if there are some but none are zero length
-            var gotCustomConstructors = controller.Symbol.Constructors
+            var gotCustomConstructors = page.Symbol.Constructors
                 .Where(c => c.DeclaredAccessibility == Accessibility.Public)
                 .Where(SyntaxNodeHelpers.IsNotR4MVCGenerated)
                 .Where(c => !c.IsImplicitlyDeclared)
@@ -88,49 +53,46 @@ namespace R4Mvc.Tools.Services
                 .WithParameter("d", Constants.DummyClass));
 
             AddRedirectMethods(genControllerClass);
-            AddParameterlessMethods(genControllerClass, controller.Symbol, controller.IsSecure);
+            AddParameterlessMethods(genControllerClass, page.Symbol, page.IsSecure);
 
-            var actionsExpression = controller.AreaKey != null
-                ? _settings.HelpersPrefix + "." + controller.AreaKey + "." + controller.Name
-                : _settings.HelpersPrefix + "." + controller.Name;
-            var controllerMethodNames = SyntaxNodeHelpers.GetPublicNonGeneratedMethods(controller.Symbol).Select(m => m.Name).Distinct().ToArray();
+            //var actionsExpression = _settings.HelpersPrefix + "." + page.Name;
+            //var controllerMethodNames = SyntaxNodeHelpers.GetPublicNonGeneratedMethods(page.Symbol).Select(m => m.Name).Distinct().ToArray();
             genControllerClass
-                .WithExpressionProperty("Actions", controller.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
-                .WithStringField("Area", controller.Area, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
-                .WithStringField("Name", controller.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
-                .WithStringField("NameConst", controller.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
-                .WithStaticFieldBackedProperty("ActionNames", "ActionNamesClass", true, SyntaxKind.PublicKeyword)
-                /* [GeneratedCode, DebuggerNonUserCode]
-                 * public class ActionNamesClass
-                 * {
-                 *  public readonly string {action} = "{action}";
-                 * }
-                 */
-                .WithChildClass("ActionNamesClass", ac => ac
-                    .WithModifiers(SyntaxKind.PublicKeyword)
-                    .WithGeneratedNonUserCodeAttributes()
-                    .ForEach(controllerMethodNames, (c, m) => c
-                        .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
-                /* [GeneratedCode, DebuggerNonUserCode]
-                 * public class ActionNameConstants
-                 * {
-                 *  public const string {action} = "{action}";
-                 * }
-                 */
-                .WithChildClass("ActionNameConstants", ac => ac
-                    .WithModifiers(SyntaxKind.PublicKeyword)
-                    .WithGeneratedNonUserCodeAttributes()
-                    .ForEach(controllerMethodNames, (c, m) => c
-                        .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)));
-            WithViewsClass(genControllerClass, controller.Views);
+                //.WithExpressionProperty("Actions", page.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
+                .WithStringField("Name", page.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
+                .WithStringField("NameConst", page.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword);
+                //.WithStaticFieldBackedProperty("ActionNames", "ActionNamesClass", true, SyntaxKind.PublicKeyword)
+                ///* [GeneratedCode, DebuggerNonUserCode]
+                // * public class ActionNamesClass
+                // * {
+                // *  public readonly string {action} = "{action}";
+                // * }
+                // */
+                //.WithChildClass("ActionNamesClass", ac => ac
+                //    .WithModifiers(SyntaxKind.PublicKeyword)
+                //    .WithGeneratedNonUserCodeAttributes()
+                //    .ForEach(controllerMethodNames, (c, m) => c
+                //        .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
+                ///* [GeneratedCode, DebuggerNonUserCode]
+                // * public class ActionNameConstants
+                // * {
+                // *  public const string {action} = "{action}";
+                // * }
+                // */
+                //.WithChildClass("ActionNameConstants", ac => ac
+                //    .WithModifiers(SyntaxKind.PublicKeyword)
+                //    .WithGeneratedNonUserCodeAttributes()
+                //    .ForEach(controllerMethodNames, (c, m) => c
+                //        .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)));
+            WithViewsClass(genControllerClass, page.Views);
 
             return genControllerClass.Build();
         }
 
-        public ClassDeclarationSyntax GenerateR4Controller(ControllerDefinition controller)
+        public ClassDeclarationSyntax GenerateR4Page(PageDefinition page)
         {
-            var className = GetR4MVCControllerClassName(controller.Symbol);
-            controller.FullyQualifiedR4ClassName = $"{controller.Namespace}.{className}";
+            var className = GetR4MVCControllerClassName(page.Symbol);
+            page.FullyQualifiedR4ClassName = $"{page.Namespace}.{className}";
 
             /* [GeneratedCode, DebuggerNonUserCode]
              * public partial class R4MVC_{Controller} : {Controller}
@@ -141,11 +103,11 @@ namespace R4Mvc.Tools.Services
             var r4ControllerClass = new ClassBuilder(className)
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                 .WithGeneratedNonUserCodeAttributes()
-                .WithBaseTypes(controller.Symbol.ContainingNamespace + "." + controller.Symbol.Name)
+                .WithBaseTypes(page.Symbol.ContainingNamespace + "." + page.Symbol.Name)
                 .WithConstructor(c => c
                     .WithBaseConstructorCall(IdentifierName(Constants.DummyClass + "." + Constants.DummyClassInstance))
                     .WithModifiers(SyntaxKind.PublicKeyword));
-            AddMethodOverrides(r4ControllerClass, controller.Symbol, controller.IsSecure);
+            AddMethodOverrides(r4ControllerClass, page.Symbol, page.IsSecure);
             return r4ControllerClass.Build();
         }
 

@@ -5,6 +5,6 @@ namespace R4Mvc.Tools.Services
 {
     public interface IPageRewriterService
     {
-        IList<ControllerDefinition> RewritePages(CSharpCompilation compiler);
+        IList<PageDefinition> RewritePages(CSharpCompilation compiler);
     }
 }

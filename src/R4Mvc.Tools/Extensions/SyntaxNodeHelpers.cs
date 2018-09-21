@@ -53,11 +53,11 @@ namespace R4Mvc.Tools.Extensions
         }
 
         private static string[] _controllerClassMethodNames = null;
+        private static string[] _pageClassMethodNames = null;
         public static void PopulateControllerClassMethodNames(CSharpCompilation compilation)
         {
-            var typeSymbol = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.Controller");
-
             var result = new List<string>();
+            var typeSymbol = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.Controller");
             while (typeSymbol != null)
             {
                 var methodNames = typeSymbol.GetMembers()
@@ -66,8 +66,19 @@ namespace R4Mvc.Tools.Extensions
                 result.AddRange(methodNames);
                 typeSymbol = typeSymbol.BaseType;
             }
-
             _controllerClassMethodNames = result.Distinct().ToArray();
+
+            result = new List<string>();
+            typeSymbol = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.RazorPages.PageModel");
+            while (typeSymbol != null)
+            {
+                var methodNames = typeSymbol.GetMembers()
+                    .Where(r => r.Kind == SymbolKind.Method && r.DeclaredAccessibility == Accessibility.Public && r.IsVirtual)
+                    .Select(s => s.Name);
+                result.AddRange(methodNames);
+                typeSymbol = typeSymbol.BaseType;
+            }
+            _pageClassMethodNames = result.Distinct().ToArray();
         }
 
         public static bool IsMvcAction(this IMethodSymbol method)
@@ -75,6 +86,15 @@ namespace R4Mvc.Tools.Extensions
             if (method.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<NonActionAttribute>()))
                 return false;
             if (_controllerClassMethodNames.Contains(method.Name))
+                return false;
+            return true;
+        }
+
+        public static bool IsRazorPageAction(this IMethodSymbol method)
+        {
+            if (method.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<NonActionAttribute>()))
+                return false;
+            if (_pageClassMethodNames.Contains(method.Name))
                 return false;
             return true;
         }

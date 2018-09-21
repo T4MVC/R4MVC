@@ -170,6 +170,7 @@ namespace R4Mvc.Tools
             services.AddTransient<IControllerRewriterService, ControllerRewriterService>();
             services.AddTransient<IControllerGeneratorService, ControllerGeneratorService>();
             services.AddTransient<IPageRewriterService, PageRewriterService>();
+            services.AddTransient<IPageGeneratorService, PageGeneratorService>();
             services.AddTransient<IFilePersistService, FilePersistService>();
             services.AddTransient<R4MvcGeneratorService>();
 

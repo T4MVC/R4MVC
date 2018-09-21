@@ -20,7 +20,7 @@ namespace R4Mvc.Tools.Locators
 
         public IEnumerable<PageView> Find(string projectRoot)
         {
-            foreach (var filePath in _fileLocator.GetFiles(projectRoot, "*.cshtml", recurse: true))
+            foreach (var filePath in _fileLocator.GetFiles(Path.Combine(projectRoot, PagesFolder), "*.cshtml", recurse: true))
             {
                 yield return GetView(projectRoot, filePath);
             }
@@ -49,7 +49,7 @@ namespace R4Mvc.Tools.Locators
             }
 
             var relativePath = new Uri("~" + filePath.GetRelativePath(projectRoot).Replace("\\", "/"), UriKind.Relative);
-            return new PageView(Path.GetFileNameWithoutExtension(filePath), relativePath, isPage);
+            return new PageView(Path.GetFileNameWithoutExtension(filePath), filePath, relativePath, isPage);
         }
     }
 }

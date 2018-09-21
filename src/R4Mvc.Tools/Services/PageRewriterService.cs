@@ -18,9 +18,9 @@ namespace R4Mvc.Tools.Services
             _settings = settings;
         }
 
-        public IList<ControllerDefinition> RewritePages(CSharpCompilation compiler)
+        public IList<PageDefinition> RewritePages(CSharpCompilation compiler)
         {
-            var pages = new Dictionary<string, ControllerDefinition>();
+            var pages = new Dictionary<string, PageDefinition>();
 
             foreach (var tree in compiler.SyntaxTrees.Where(x => !x.FilePath.EndsWith(".generated.cs")))
             {
@@ -53,7 +53,7 @@ namespace R4Mvc.Tools.Services
                     }
                     var isSecure = cSymbol.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<RequireHttpsAttribute>());
 
-                    pages[cFullName] = new ControllerDefinition
+                    pages[cFullName] = new PageDefinition
                     {
                         Namespace = cNamespace,
                         Name = cSymbol.Name.TrimEnd("Model"),

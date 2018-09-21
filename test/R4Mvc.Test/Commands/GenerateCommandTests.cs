@@ -14,7 +14,7 @@ namespace R4Mvc.Test.Commands
                 new ControllerDefinition { Name = "Home", Area = "" },
                 new ControllerDefinition { Name = "User", Area = "" },
             };
-            var command = new GenerateCommand.Runner(null, null, null, new Settings(), null, null);
+            var command = new GenerateCommand.Runner(null, null, null, null, null, new Settings(), null, null);
 
             var areaMap = command.GenerateAreaMap(controllers);
             Assert.Equal(0, areaMap.Count);
@@ -29,7 +29,7 @@ namespace R4Mvc.Test.Commands
                 new ControllerDefinition { Name = "Home", Area = "" },
                 new ControllerDefinition { Name = "User", Area = "" },
             };
-            var command = new GenerateCommand.Runner(null, null, null, new Settings(), null, null);
+            var command = new GenerateCommand.Runner(null, null, null, null, null, new Settings(), null, null);
 
             var areaMap = command.GenerateAreaMap(controllers);
             Assert.Collection(areaMap,
@@ -46,7 +46,7 @@ namespace R4Mvc.Test.Commands
                 new ControllerDefinition { Name = "Home", Area = "" },
                 new ControllerDefinition { Name = "User", Area = "" },
             };
-            var command = new GenerateCommand.Runner(null, null, null, new Settings(), null, null);
+            var command = new GenerateCommand.Runner(null, null, null, null, null, new Settings(), null, null);
 
             var areaMap = command.GenerateAreaMap(controllers);
             Assert.Collection(areaMap,
@@ -67,7 +67,7 @@ namespace R4Mvc.Test.Commands
                 new ControllerDefinition { Name = "User", Area = "" },
                 new ControllerDefinition { Name = "UserArea", Area = "" },
             };
-            var command = new GenerateCommand.Runner(null, null, null, new Settings(), null, null);
+            var command = new GenerateCommand.Runner(null, null, null, null, null, new Settings(), null, null);
 
             var areaMap = command.GenerateAreaMap(controllers);
             Assert.Collection(areaMap,
@@ -88,7 +88,7 @@ namespace R4Mvc.Test.Commands
                 new ControllerDefinition { Name = "User", Area = "" },
                 new ControllerDefinition { Name = "User", Area = "UserArea" },
             };
-            var command = new GenerateCommand.Runner(null, null, null, new Settings(), null, null);
+            var command = new GenerateCommand.Runner(null, null, null, null, null, new Settings(), null, null);
 
             var areaMap = command.GenerateAreaMap(controllers);
             Assert.Collection(areaMap,

@@ -32,15 +32,21 @@ project-path:
         public class Runner : ICommandRunner
         {
             private readonly IControllerRewriterService _controllerRewriter;
+            private readonly IPageRewriterService _pageRewriter;
             private readonly IEnumerable<IViewLocator> _viewLocators;
+            private readonly IEnumerable<IPageViewLocator> _pageViewLocators;
             private readonly R4MvcGeneratorService _generatorService;
             private readonly Settings _settings;
             private readonly IGeneratedFileTesterService _generatedFileTesterService;
             private readonly IFilePersistService _filePersistService;
-            public Runner(IControllerRewriterService controllerRewriter, IEnumerable<IViewLocator> viewLocators, R4MvcGeneratorService generatorService, Settings settings, IGeneratedFileTesterService generatedFileTesterService, IFilePersistService filePersistService)
+            public Runner(IControllerRewriterService controllerRewriter, IPageRewriterService pageRewriter, IEnumerable<IViewLocator> viewLocators,
+                IEnumerable<IPageViewLocator> pageViewLocators, R4MvcGeneratorService generatorService, Settings settings,
+                IGeneratedFileTesterService generatedFileTesterService, IFilePersistService filePersistService)
             {
                 _controllerRewriter = controllerRewriter;
+                _pageRewriter = pageRewriter;
                 _viewLocators = viewLocators;
+                _pageViewLocators = pageViewLocators;
                 _generatorService = generatorService;
                 _settings = settings;
                 _generatedFileTesterService = generatedFileTesterService;
@@ -102,8 +108,24 @@ project-path:
                 foreach (var controller in controllers.Where(a => !string.IsNullOrEmpty(a.Area)))
                     controller.AreaKey = areaMap[controller.Area];
 
+                // Analyse the razor pages in the project (updating them to be partial), as well as locate all the view files
+                var pages = _pageRewriter.RewritePages(compilation);
+                var allPageFiles = _pageViewLocators.SelectMany(x => x.Find(projectRoot));
+
+                // Assign page view files to razor pages
+                foreach (var view in allPageFiles)
+                {
+                    var page = pages.FirstOrDefault(p => p.GetFilePath() == (view.FilePath + ".cs"));
+                    if (page == null)
+                        pages.Add(page = new PageDefinition
+                        {
+                            Name = view.ViewName,
+                        });
+                    page.Views.Add(view);
+                }
+
                 // Generate the R4Mvc.generated.cs file
-                _generatorService.Generate(projectRoot, controllers);
+                _generatorService.Generate(projectRoot, controllers, pages);
 
                 // updating the r4mvc.json settings file
                 _settings._generatedByVersion = Program.GetVersion();

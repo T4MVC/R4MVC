@@ -14,6 +14,7 @@ namespace R4Mvc.Test.Services
         private R4MvcGeneratorService GetGeneratorService(
             IControllerRewriterService controllerRewriter = null,
             IControllerGeneratorService controllerGenerator = null,
+            IPageGeneratorService pageGenerator = null,
             IStaticFileGeneratorService staticFileGenerator = null,
             IFilePersistService filePersistService = null,
             Settings settings = null)
@@ -22,7 +23,7 @@ namespace R4Mvc.Test.Services
                 settings = new Settings();
             if (controllerGenerator == null)
                 controllerGenerator = new ControllerGeneratorService(settings);
-            return new R4MvcGeneratorService(controllerRewriter, controllerGenerator, staticFileGenerator, filePersistService ?? DummyPersistService, settings);
+            return new R4MvcGeneratorService(controllerRewriter, controllerGenerator, pageGenerator, staticFileGenerator, filePersistService ?? DummyPersistService, settings);
         }
 
         [Fact]

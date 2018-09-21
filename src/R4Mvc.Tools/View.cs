@@ -2,7 +2,7 @@ using System;
 
 namespace R4Mvc.Tools
 {
-    public class View
+    public class View : IView
     {
         public View(string areaName, string controllerName, string viewName, Uri relativePath, string templateKind)
         {
