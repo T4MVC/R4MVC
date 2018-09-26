@@ -505,7 +505,7 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToRouteResult : Re
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult : ActionResult, IR4MvcPageActionResult
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult : ActionResult, IR4PageActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(string pageName, string pageHandler, string protocol = null)
     {
@@ -538,7 +538,7 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult : 
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_JsonResult : JsonResult, IR4MvcPageActionResult
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_JsonResult : JsonResult, IR4PageActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_JsonResult(string pageName, string pageHandler, string protocol = null): base(null)
     {
@@ -604,7 +604,7 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ContentResult :
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_FileResult : FileResult, IR4MvcPageActionResult
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_FileResult : FileResult, IR4PageActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_FileResult(string pageName, string pageHandler, string protocol = null): base(null)
     {
@@ -637,7 +637,7 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_FileResult : Fi
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectResult : RedirectResult, IR4MvcPageActionResult
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectResult : RedirectResult, IR4PageActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectResult(string pageName, string pageHandler, string protocol = null): base(" ")
     {
@@ -670,7 +670,7 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectResult 
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectToActionResult : RedirectToActionResult, IR4MvcPageActionResult
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectToActionResult : RedirectToActionResult, IR4PageActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectToActionResult(string pageName, string pageHandler, string protocol = null): base(" ", " ", " ")
     {
@@ -703,7 +703,7 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectToActio
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectToRouteResult : RedirectToRouteResult, IR4MvcPageActionResult
+internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectToRouteResult : RedirectToRouteResult, IR4PageActionResult
 {
     public R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectToRouteResult(string pageName, string pageHandler, string protocol = null): base(null)
     {

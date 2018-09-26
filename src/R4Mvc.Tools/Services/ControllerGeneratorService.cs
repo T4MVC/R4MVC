@@ -155,7 +155,7 @@ namespace R4Mvc.Tools.Services
                 /* [GeneratedCode, DebuggerNonUserCode]
                  * protected RedirectToRouteResult RedirectToAction(IActionResult result)
                  * {
-                 *  var callInfo = result.GetR4MvcResult();
+                 *  var callInfo = result.GetR4ActionResult();
                  *  return RedirectToRoute(callInfo.RouteValueDictionary);
                  * }
                  */
@@ -164,7 +164,7 @@ namespace R4Mvc.Tools.Services
                     .WithGeneratedNonUserCodeAttributes()
                     .WithParameter("result", "IActionResult")
                     .WithBody(b => b
-                        .VariableFromMethodCall("callInfo", "result", "GetR4MvcResult")
+                        .VariableFromMethodCall("callInfo", "result", "GetR4ActionResult")
                         .ReturnMethodCall(null, "RedirectToRoute", "callInfo.RouteValueDictionary")))
 
                 /* [GeneratedCode, DebuggerNonUserCode]
@@ -183,7 +183,7 @@ namespace R4Mvc.Tools.Services
                 /* [GeneratedCode, DebuggerNonUserCode]
                  * protected RedirectToRouteResult RedirectToActionPermanent(IActionResult result)
                  * {
-                 *  var callInfo = result.GetR4MvcResult();
+                 *  var callInfo = result.GetR4ActionResult();
                  *  return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
                  * }
                  */
@@ -192,7 +192,7 @@ namespace R4Mvc.Tools.Services
                     .WithGeneratedNonUserCodeAttributes()
                     .WithParameter("result", "IActionResult")
                     .WithBody(b => b
-                        .VariableFromMethodCall("callInfo", "result", "GetR4MvcResult")
+                        .VariableFromMethodCall("callInfo", "result", "GetR4ActionResult")
                         .ReturnMethodCall(null, "RedirectToRoutePermanent", "callInfo.RouteValueDictionary")))
 
                 /* [GeneratedCode, DebuggerNonUserCode]
@@ -210,27 +210,27 @@ namespace R4Mvc.Tools.Services
 
             if (supportsPages) genControllerClass
                 /* [GeneratedCode, DebuggerNonUserCode]
-                 * protected RedirectToPageResult RedirectToPage(IActionResult result)
+                 * protected RedirectToRouteResult RedirectToPage(IActionResult result)
                  * {
-                 *  var callInfo = result.GetR4MvcPageResult();
-                 *  return RedirectToPage(callInfo.PageName, callInfo.PageHandler, callInfo.RouteValueDictionary);
+                 *  var callInfo = result.GetR4ActionResult();
+                 *  return RedirectToRoute(callInfo.RouteValueDictionary);
                  * }
                  */
-                .WithMethod("RedirectToPage", "RedirectToPageResult", m => m
+                .WithMethod("RedirectToPage", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
                     .WithParameter("result", "IActionResult")
                     .WithBody(b => b
-                        .VariableFromMethodCall("callInfo", "result", "GetR4MvcPageResult")
-                        .ReturnMethodCall(null, "RedirectToPage", "callInfo.PageName", "callInfo.PageHandler", "callInfo.RouteValueDictionary")))
+                        .VariableFromMethodCall("callInfo", "result", "GetR4ActionResult")
+                        .ReturnMethodCall(null, "RedirectToRoute", "callInfo.RouteValueDictionary")))
 
                 /* [GeneratedCode, DebuggerNonUserCode]
-                 * protected RedirectToPageResult RedirectToPage(Task<IActionResult> taskResult)
+                 * protected RedirectToRouteResult RedirectToPage(Task<IActionResult> taskResult)
                  * {
                  *  return RedirectToPage(taskResult.Result);
                  * }
                 */
-                .WithMethod("RedirectToPage", "RedirectToPageResult", m => m
+                .WithMethod("RedirectToPage", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
                     .WithParameter("taskResult", "Task<IActionResult>")
@@ -238,27 +238,27 @@ namespace R4Mvc.Tools.Services
                         .ReturnMethodCall(null, "RedirectToPage", "taskResult.Result")))
 
                 /* [GeneratedCode, DebuggerNonUserCode]
-                 * protected RedirectToPageResult RedirectToPagePermanent(IActionResult result)
+                 * protected RedirectToRouteResult RedirectToPagePermanent(IActionResult result)
                  * {
-                 *  var callInfo = result.GetR4MvcPageResult();
+                 *  var callInfo = result.GetR4ActionResult();
                  *  return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
                  * }
                  */
-                .WithMethod("RedirectToPagePermanent", "RedirectToPageResult", m => m
+                .WithMethod("RedirectToPagePermanent", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
                     .WithParameter("result", "IActionResult")
                     .WithBody(b => b
-                        .VariableFromMethodCall("callInfo", "result", "GetR4MvcPageResult")
-                        .ReturnMethodCall(null, "RedirectToPagePermanent", "callInfo.PageName", "callInfo.PageHandler", "callInfo.RouteValueDictionary", "null")))
+                        .VariableFromMethodCall("callInfo", "result", "GetR4ActionResult")
+                        .ReturnMethodCall(null, "RedirectToRoutePermanent", "callInfo.RouteValueDictionary")))
 
                 /* [GeneratedCode, DebuggerNonUserCode]
-                 * protected RedirectToPageResult RedirectToPagePermanent(Task<IActionResult> taskResult)
+                 * protected RedirectToRouteResult RedirectToPagePermanent(Task<IActionResult> taskResult)
                  * {
                  *  return RedirectToPagePermanent(taskResult.Result);
                  * }
                 */
-                .WithMethod("RedirectToPagePermanent", "RedirectToPageResult", m => m
+                .WithMethod("RedirectToPagePermanent", "RedirectToRouteResult", m => m
                     .WithModifiers(SyntaxKind.ProtectedKeyword)
                     .WithGeneratedNonUserCodeAttributes()
                     .WithParameter("taskResult", "Task<IActionResult>")

@@ -250,7 +250,7 @@ namespace R4Mvc.Tools.Services
             var result = new ClassBuilder(className)                                    // internal partial class {className}
                 .WithGeneratedNonUserCodeAttributes()
                 .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
-                .WithBaseTypes(baseClassName, "IR4MvcPageActionResult")                     // : {baseClassName}, IR4MvcActionResult
+                .WithBaseTypes(baseClassName, "IR4PageActionResult")                    // : {baseClassName}, IR4ActionResult
                 .WithConstructor(c => c
                     .WithOther(constructorParts)
                     .WithModifiers(SyntaxKind.PublicKeyword)                        // public ctor(

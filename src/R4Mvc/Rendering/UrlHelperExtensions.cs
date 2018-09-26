@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
     {
         public static string Action(this IUrlHelper urlHelper, IActionResult result, string protocol = null, string hostName = null, string fragment = null)
         {
-            return urlHelper.RouteUrl(null, result.GetRouteValueDictionary(), protocol ?? result.GetR4MvcResult().Protocol, hostName, fragment);
+            return urlHelper.RouteUrl(null, result, protocol, hostName, fragment);
         }
 
         public static string Action<TAction>(this IUrlHelper urlHelper, Task<TAction> taskResult, string protocol = null, string hostName = null, string fragment = null)
@@ -61,7 +61,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
 
         public static string RouteUrl(this IUrlHelper urlHelper, string routeName, IActionResult result, string protocol = null, string hostName = null, string fragment = null)
         {
-            return urlHelper.RouteUrl(routeName, result.GetRouteValueDictionary(), protocol ?? result.GetR4MvcResult().Protocol, hostName, fragment);
+            return urlHelper.RouteUrl(routeName, result.GetRouteValueDictionary(), protocol ?? result.GetR4ActionResult().Protocol, hostName, fragment);
         }
 
         public static string RouteUrl<TAction>(this IUrlHelper urlHelper, Task<TAction> taskResult)

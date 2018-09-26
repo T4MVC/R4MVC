@@ -32,7 +32,7 @@ namespace AspNetSimple.Areas.Members.Controllers
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         protected RedirectToRouteResult RedirectToAction(IActionResult result)
         {
-            var callInfo = result.GetR4MvcResult();
+            var callInfo = result.GetR4ActionResult();
             return RedirectToRoute(callInfo.RouteValueDictionary);
         }
 
@@ -45,7 +45,7 @@ namespace AspNetSimple.Areas.Members.Controllers
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         protected RedirectToRouteResult RedirectToActionPermanent(IActionResult result)
         {
-            var callInfo = result.GetR4MvcResult();
+            var callInfo = result.GetR4ActionResult();
             return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
         }
 
@@ -56,27 +56,27 @@ namespace AspNetSimple.Areas.Members.Controllers
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        protected RedirectToPageResult RedirectToPage(IActionResult result)
+        protected RedirectToRouteResult RedirectToPage(IActionResult result)
         {
-            var callInfo = result.GetR4MvcPageResult();
-            return RedirectToPage(callInfo.PageName, callInfo.PageHandler, callInfo.RouteValueDictionary);
+            var callInfo = result.GetR4ActionResult();
+            return RedirectToRoute(callInfo.RouteValueDictionary);
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        protected RedirectToPageResult RedirectToPage(Task<IActionResult> taskResult)
+        protected RedirectToRouteResult RedirectToPage(Task<IActionResult> taskResult)
         {
             return RedirectToPage(taskResult.Result);
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        protected RedirectToPageResult RedirectToPagePermanent(IActionResult result)
+        protected RedirectToRouteResult RedirectToPagePermanent(IActionResult result)
         {
-            var callInfo = result.GetR4MvcPageResult();
-            return RedirectToPagePermanent(callInfo.PageName, callInfo.PageHandler, callInfo.RouteValueDictionary, null);
+            var callInfo = result.GetR4ActionResult();
+            return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        protected RedirectToPageResult RedirectToPagePermanent(Task<IActionResult> taskResult)
+        protected RedirectToRouteResult RedirectToPagePermanent(Task<IActionResult> taskResult)
         {
             return RedirectToPagePermanent(taskResult.Result);
         }

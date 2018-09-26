@@ -2,10 +2,8 @@
 
 namespace Microsoft.AspNetCore.Mvc
 {
-    public interface IR4MvcPageActionResult
+    public interface IR4ActionResult
     {
-        string PageName { get; set; }
-        string PageHandler { get; set; }
         string Protocol { get; set; }
         RouteValueDictionary RouteValueDictionary { get; set; }
     }

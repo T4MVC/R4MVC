@@ -20,10 +20,12 @@ namespace R4Mvc.Tools.Locators
 
         public IEnumerable<PageView> Find(string projectRoot)
         {
-            foreach (var filePath in _fileLocator.GetFiles(Path.Combine(projectRoot, PagesFolder), "*.cshtml", recurse: true))
-            {
-                yield return GetView(projectRoot, filePath);
-            }
+            var pagesRoot = Path.Combine(projectRoot, PagesFolder);
+            if (Directory.Exists(pagesRoot))
+                foreach (var filePath in _fileLocator.GetFiles(pagesRoot, "*.cshtml", recurse: true))
+                {
+                    yield return GetView(projectRoot, filePath);
+                }
         }
 
         private PageView GetView(string projectRoot, string filePath)

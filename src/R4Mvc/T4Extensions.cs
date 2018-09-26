@@ -7,6 +7,25 @@ namespace Microsoft.AspNetCore.Mvc
 {
     public static class T4Extensions
     {
+        public static IR4ActionResult GetR4ActionResult(this IActionResult result)
+        {
+            if (!(result is IR4ActionResult actionResult))
+                throw new InvalidOperationException("R4MVC was called incorrectly. You may need to force it to regenerate by running `dotnet r4mvc`");
+            return actionResult;
+        }
+
+        public static IR4ActionResult GetR4ActionResult<TActionResult>(this Task<TActionResult> taskResult)
+            where TActionResult : IActionResult
+        {
+            return GetR4ActionResult(taskResult.Result);
+        }
+
+        public static IR4ActionResult GetR4ActionResult(this Task taskResult)
+        {
+            return GetR4ActionResult(GetActionResult(taskResult));
+        }
+
+        [Obsolete("Please use GetR4ActionResult instead")]
         public static IR4MvcActionResult GetR4MvcResult(this IActionResult result)
         {
             if (!(result is IR4MvcActionResult actionResult))
@@ -14,33 +33,17 @@ namespace Microsoft.AspNetCore.Mvc
             return actionResult;
         }
 
+        [Obsolete("Please use GetR4ActionResult instead")]
         public static IR4MvcActionResult GetR4MvcResult<TActionResult>(this Task<TActionResult> taskResult)
             where TActionResult : IActionResult
         {
             return GetR4MvcResult(taskResult.Result);
         }
 
+        [Obsolete("Please use GetR4ActionResult instead")]
         public static IR4MvcActionResult GetR4MvcResult(this Task taskResult)
         {
             return GetR4MvcResult(GetActionResult(taskResult));
-        }
-
-        public static IR4MvcPageActionResult GetR4MvcPageResult(this IActionResult result)
-        {
-            if (!(result is IR4MvcPageActionResult actionResult))
-                throw new InvalidOperationException("R4MVC was called incorrectly. You may need to force it to regenerate by running `dotnet r4mvc`");
-            return actionResult;
-        }
-
-        public static IR4MvcPageActionResult GetR4MvcPageResult<TActionResult>(this Task<TActionResult> taskResult)
-            where TActionResult : IActionResult
-        {
-            return GetR4MvcPageResult(taskResult.Result);
-        }
-
-        public static IR4MvcPageActionResult GetR4MvcPageResult(this Task taskResult)
-        {
-            return GetR4MvcPageResult(GetActionResult(taskResult));
         }
 
         internal static IActionResult GetActionResult(this Task task)
@@ -88,7 +91,7 @@ namespace Microsoft.AspNetCore.Mvc
 
         public static RouteValueDictionary GetRouteValueDictionary(this IActionResult result)
         {
-            return result.GetR4MvcResult().RouteValueDictionary;
+            return result.GetR4ActionResult().RouteValueDictionary;
         }
 
         public static void InitMVCT4Result(this IR4MvcActionResult result, string area, string controller, string action, string protocol = null)
@@ -96,7 +99,7 @@ namespace Microsoft.AspNetCore.Mvc
             result.Controller = controller;
             result.Action = action;
             result.Protocol = protocol;
-            result.RouteValueDictionary = new RouteValueDictionary()
+            result.RouteValueDictionary = new RouteValueDictionary
             {
                 { "Area", area ?? string.Empty },
                 { "Controller", controller },
@@ -104,12 +107,16 @@ namespace Microsoft.AspNetCore.Mvc
             };
         }
 
-        public static void InitMVCT4Result(this IR4MvcPageActionResult result, string pageName, string pageHandler, string protocol = null)
+        public static void InitMVCT4Result(this IR4PageActionResult result, string pageName, string pageHandler, string protocol = null)
         {
             result.PageName = pageName;
             result.PageHandler = pageHandler;
             result.Protocol = protocol;
-            result.RouteValueDictionary = new RouteValueDictionary();
+            result.RouteValueDictionary = new RouteValueDictionary
+            {
+                { "Page", pageName },
+                { "Handler", pageHandler },
+            };
         }
 
         public static IActionResult AddRouteValues(this IActionResult result, object routeValues)
