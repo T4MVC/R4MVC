@@ -2,6 +2,23 @@
     ViewData["Title"] = "Home Page";
 }
 
+<div>
+    <table>
+        <tr>
+            <td>@Html.ActionLink("Tests Index", MVC.Tests.Index())</td>
+            <td>@Url.Action(MVC.Tests.Index())</td>
+        </tr>
+        <tr>
+            <td>@Html.ActionLink("Page Index Test", MVCPages.Default.OnGet())</td>
+            <td>@Url.Action(MVCPages.Default.OnGet())</td>
+        </tr>
+        <tr>
+            <td>@Html.ActionLink("Page Categories Test", MVCPages.Details.OnGet())</td>
+            <td>@Url.Action(MVCPages.Details.OnGet())</td>
+        </tr>
+    </table>
+</div>
+
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
     <ol class="carousel-indicators">
         <li data-target="#myCarousel" data-slide-to="0" class="active"></li>

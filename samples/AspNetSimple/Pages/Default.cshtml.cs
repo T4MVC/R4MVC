@@ -1,12 +1,14 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AspNetSimple.Pages
 {
-    public partial class IndexModel : PageModel
+    public partial class DefaultModel : PageModel
     {
-        public virtual void OnGet()
+        public virtual IActionResult OnGet()
         {
+            return Page();
         }
 
         public virtual void OnPost(int id)

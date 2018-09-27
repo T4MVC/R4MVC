@@ -26,6 +26,13 @@ public static partial class MVC
     public static readonly R4Mvc.SharedController Shared = new R4Mvc.SharedController();
 }
 
+[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+public static partial class MVCPages
+{
+    public static readonly AspNetSimple.Pages.Categories.DetailsModel Details = new AspNetSimple.Pages.Categories.R4MVC_DetailsModel();
+    public static readonly AspNetSimple.Pages.DefaultModel Default = new AspNetSimple.Pages.R4MVC_DefaultModel();
+}
+
 namespace R4Mvc
 {
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]

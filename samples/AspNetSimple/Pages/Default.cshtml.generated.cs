@@ -17,15 +17,15 @@ using AspNetSimple;
 
 namespace AspNetSimple.Pages
 {
-    public partial class IndexModel
+    public partial class DefaultModel
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public IndexModel()
+        public DefaultModel()
         {
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        protected IndexModel(Dummy d)
+        protected DefaultModel(Dummy d)
         {
         }
 
@@ -96,9 +96,9 @@ namespace AspNetSimple.Pages
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Name = "Index";
+        public readonly string Name = "/Default";
         [GeneratedCode("R4Mvc", "1.0")]
-        public const string NameConst = "Index";
+        public const string NameConst = "/Default";
         [GeneratedCode("R4Mvc", "1.0")]
         static readonly HandlerNamesClass s_HandlerNames = new HandlerNamesClass();
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -124,10 +124,10 @@ namespace AspNetSimple.Pages
             public _ViewNamesClass ViewNames => s_ViewNames;
             public class _ViewNamesClass
             {
-                public readonly string Index = "Index";
+                public readonly string Default = "Default";
             }
 
-            public readonly string Index = "~/Pages/Index.cshtml";
+            public readonly string Default = "~/Pages/Default.cshtml";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
@@ -137,10 +137,20 @@ namespace AspNetSimple.Pages
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public partial class R4MVC_IndexModel : AspNetSimple.Pages.IndexModel
+    public partial class R4MVC_DefaultModel : AspNetSimple.Pages.DefaultModel
     {
-        public R4MVC_IndexModel(): base(Dummy.Instance)
+        public R4MVC_DefaultModel(): base(Dummy.Instance)
         {
+        }
+
+        [NonAction]
+        partial void OnGetOverride(R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult OnGet()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, null);
+            OnGetOverride(callInfo);
+            return callInfo;
         }
 
         [NonAction]

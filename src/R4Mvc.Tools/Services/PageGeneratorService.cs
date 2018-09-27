@@ -62,8 +62,8 @@ namespace R4Mvc.Tools.Services
                 .Distinct().ToArray();
             genControllerClass
                 //.WithExpressionProperty("Actions", page.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
-                .WithStringField("Name", page.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
-                .WithStringField("NameConst", page.Name, true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
+                .WithStringField("Name", page.GetPagePath(), true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
+                .WithStringField("NameConst", page.GetPagePath(), true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
                 .WithStaticFieldBackedProperty("HandlerNames", "HandlerNamesClass", true, SyntaxKind.PublicKeyword)
                 /* [GeneratedCode, DebuggerNonUserCode]
                  * public class ActionNamesClass

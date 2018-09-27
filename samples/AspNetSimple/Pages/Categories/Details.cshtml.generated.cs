@@ -89,9 +89,9 @@ namespace AspNetSimple.Pages.Categories
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Name = "Details";
+        public readonly string Name = "/Categories/Details";
         [GeneratedCode("R4Mvc", "1.0")]
-        public const string NameConst = "Details";
+        public const string NameConst = "/Categories/Details";
         [GeneratedCode("R4Mvc", "1.0")]
         static readonly HandlerNamesClass s_HandlerNames = new HandlerNamesClass();
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]

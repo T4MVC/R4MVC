@@ -24,11 +24,11 @@ namespace R4Mvc.Tools.Locators
             if (Directory.Exists(pagesRoot))
                 foreach (var filePath in _fileLocator.GetFiles(pagesRoot, "*.cshtml", recurse: true))
                 {
-                    yield return GetView(projectRoot, filePath);
+                    yield return GetView(projectRoot, pagesRoot, filePath);
                 }
         }
 
-        private PageView GetView(string projectRoot, string filePath)
+        private PageView GetView(string projectRoot, string pagesRoot, string filePath)
         {
             bool isPage = false;
             using (var file = File.OpenRead(filePath))
@@ -50,7 +50,9 @@ namespace R4Mvc.Tools.Locators
                 }
             }
 
-            return new PageView(Path.GetFileNameWithoutExtension(filePath), filePath, filePath.GetRelativePath(projectRoot).Replace("\\", "/"), isPage);
+            var relativePath = filePath.GetRelativePath(projectRoot).Replace("\\", "/");
+            var pagePath = filePath.GetRelativePath(pagesRoot).Replace("\\", "/").TrimEnd(".cshtml");
+            return new PageView(Path.GetFileNameWithoutExtension(filePath), filePath, relativePath, pagePath, isPage);
         }
     }
 }

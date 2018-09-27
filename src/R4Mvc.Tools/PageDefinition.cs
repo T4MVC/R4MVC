@@ -34,5 +34,7 @@ namespace R4Mvc.Tools
                 .ThenBy(f => f)
                 .FirstOrDefault();
         }
+
+        public string GetPagePath() => Views.FirstOrDefault()?.PagePath;
     }
 }

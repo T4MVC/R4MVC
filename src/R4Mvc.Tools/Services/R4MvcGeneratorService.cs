@@ -135,12 +135,26 @@ namespace R4Mvc.Tools.Services
                     SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
             }
 
+            var mvcPagesStaticClass = new ClassBuilder(_settings.PageHelpersPrefix)
+                .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
+                .WithGeneratedNonUserCodeAttributes();
+            if (pages != null)
+                foreach (var page in pages)
+                {
+                    mvcPagesStaticClass.WithField(
+                        page.Name,
+                        page.FullyQualifiedGeneratedName,
+                        page.FullyQualifiedR4ClassName ?? page.FullyQualifiedGeneratedName,
+                        SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
+                }
+
             // Generate a list of all static files from the wwwroot path
             var staticFileNode = _staticFileGenerator.GenerateStaticFiles(projectRoot);
 
             var r4MvcFile = new CodeFileBuilder(_settings, true)
                     .WithMembers(
                         mvcStaticClass.Build(),
+                        mvcPagesStaticClass.Build(),
                         r4Namespace,
                         staticFileNode,
                         R4MvcHelpersClass(),
