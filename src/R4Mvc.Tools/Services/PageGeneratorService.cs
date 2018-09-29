@@ -24,8 +24,10 @@ namespace R4Mvc.Tools.Services
             _settings = settings;
         }
 
-        public ClassDeclarationSyntax GeneratePartialPage(PageDefinition page, bool supportsPages)
+        public ClassDeclarationSyntax GeneratePartialPage(PageView pageView)
         {
+            var page = pageView.Definition;
+
             // build controller partial class node
             var genControllerClass = new ClassBuilder(page.Symbol.Name)               // public partial {controllerClass}
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
@@ -52,7 +54,7 @@ namespace R4Mvc.Tools.Services
                 .WithGeneratedNonUserCodeAttributes()
                 .WithParameter("d", Constants.DummyClass));
 
-            AddRedirectMethods(genControllerClass, supportsPages);
+            AddRedirectMethods(genControllerClass);
             AddParameterlessMethods(genControllerClass, page.Symbol, page.IsSecure);
 
             //var actionsExpression = _settings.HelpersPrefix + "." + page.Name;
@@ -62,8 +64,8 @@ namespace R4Mvc.Tools.Services
                 .Distinct().ToArray();
             genControllerClass
                 //.WithExpressionProperty("Actions", page.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
-                .WithStringField("Name", page.GetPagePath(), true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
-                .WithStringField("NameConst", page.GetPagePath(), true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
+                .WithStringField("Name", pageView.PagePath, true, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
+                .WithStringField("NameConst", pageView.PagePath, true, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
                 .WithStaticFieldBackedProperty("HandlerNames", "HandlerNamesClass", true, SyntaxKind.PublicKeyword)
                 /* [GeneratedCode, DebuggerNonUserCode]
                  * public class ActionNamesClass
@@ -87,7 +89,7 @@ namespace R4Mvc.Tools.Services
                     .WithGeneratedNonUserCodeAttributes()
                     .ForEach(handlerNames, (c, m) => c
                         .WithStringField(m, m, false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)));
-            WithViewsClass(genControllerClass, page.Views);
+            WithViewsClass(genControllerClass, new[] { pageView });
 
             return genControllerClass.Build();
         }
@@ -132,7 +134,7 @@ namespace R4Mvc.Tools.Services
             return r4ControllerClass.Build();
         }
 
-        private void AddRedirectMethods(ClassBuilder genControllerClass, bool supportsPages)
+        private void AddRedirectMethods(ClassBuilder genControllerClass)
         {
             genControllerClass
                 /* [GeneratedCode, DebuggerNonUserCode]
@@ -189,9 +191,8 @@ namespace R4Mvc.Tools.Services
                     .WithGeneratedNonUserCodeAttributes()
                     .WithParameter("taskResult", "Task<IActionResult>")
                     .WithBody(b => b
-                        .ReturnMethodCall(null, "RedirectToActionPermanent", "taskResult.Result")));
+                        .ReturnMethodCall(null, "RedirectToActionPermanent", "taskResult.Result")))
 
-            if (supportsPages) genControllerClass
                 /* [GeneratedCode, DebuggerNonUserCode]
                  * protected RedirectToRouteResult RedirectToPage(IActionResult result)
                  * {
@@ -393,10 +394,10 @@ namespace R4Mvc.Tools.Services
                 .WithChildClass(ViewNamesClassName, vnc => vnc
                     .WithModifiers(SyntaxKind.PublicKeyword)
                     .ForEach(viewFiles.Where(c => c.TemplateKind == null), (vc, v) => vc
-                        .WithStringField(v.ViewName.SanitiseFieldName(), v.ViewName, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
+                        .WithStringField(v.Name.SanitiseFieldName(), v.Name, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
                 .ForEach(viewFiles.Where(c => c.TemplateKind == null), (c, v) => c
                     // public readonly string {view} = "~/Views/{controller}/{view}.cshtml";
-                    .WithStringField(v.ViewName.SanitiseFieldName(), v.RelativePath.ToString(), false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
+                    .WithStringField(v.Name.SanitiseFieldName(), v.RelativePath.ToString(), false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
                 .ForEach(viewEditorTemplates.GroupBy(v => v.TemplateKind), (c, g) => c
                     // static readonly _DisplayTemplatesClass s_DisplayTemplates = new _DisplayTemplatesClass();
                     // public _DisplayTemplatesClass DisplayTemplates => s_DisplayTemplates;
@@ -409,7 +410,7 @@ namespace R4Mvc.Tools.Services
                     .WithChildClass($"_{g.Key}Class", tc => tc
                         .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                         .ForEach(g, (tcc, v) => tcc
-                            .WithStringField(v.ViewName.SanitiseFieldName(), v.ViewName, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))))
+                            .WithStringField(v.Name.SanitiseFieldName(), v.Name, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))))
                 .ForEach(subpathViews.GroupBy(v => v.TemplateKind), (c, g) => c
                     // static readonly _{viewFolder}Class s_{viewFolder} = new _{viewFolder}Class();
                     // public _{viewFolder}Class {viewFolder} => s_{viewFolder};
@@ -430,10 +431,10 @@ namespace R4Mvc.Tools.Services
                         .WithChildClass(ViewNamesClassName, vnc => vnc
                             .WithModifiers(SyntaxKind.PublicKeyword)
                             .ForEach(g, (vc, v) => vc
-                                .WithStringField(v.ViewName.SanitiseFieldName(), v.ViewName, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
+                                .WithStringField(v.Name.SanitiseFieldName(), v.Name, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
                         .ForEach(g, (vc, v) => vc
                             // public string {view} = "~/Views/{controller}/{viewFolder}/{view}.cshtml";
-                            .WithStringField(v.ViewName.SanitiseFieldName(), v.RelativePath.ToString(), false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))));
+                            .WithStringField(v.Name.SanitiseFieldName(), v.RelativePath.ToString(), false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))));
 
             if (!classBuilder.IsGenerated)
                 viewsClass.WithGeneratedNonUserCodeAttributes();

@@ -35,7 +35,7 @@ namespace R4Mvc.Tools.Services
             _settings = settings;
         }
 
-        public void Generate(string projectRoot, IList<ControllerDefinition> controllers, IList<PageDefinition> pages)
+        public void Generate(string projectRoot, IList<ControllerDefinition> controllers, IList<PageView> pages)
         {
             var areaControllers = controllers.ToLookup(c => c.Area);
 
@@ -70,19 +70,19 @@ namespace R4Mvc.Tools.Services
             var generatedPages = new List<NamespaceDeclarationSyntax>();
             if (pages != null)
             {
-                foreach (var namespaceGroup in pages.Where(p => p.Namespace != null).GroupBy(p => p.Namespace).OrderBy(p => p.Key))
+                foreach (var namespaceGroup in pages.Where(p => p.Definition != null).GroupBy(p => p.Definition.Namespace).OrderBy(p => p.Key))
                 {
                     var namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
                     foreach (var page in namespaceGroup.OrderBy(p => p.Name))
                     {
                         namespaceNode = namespaceNode.AddMembers(
-                            _pageGenerator.GeneratePartialPage(page, pages != null),
-                            _pageGenerator.GenerateR4Page(page));
+                            _pageGenerator.GeneratePartialPage(page),
+                            _pageGenerator.GenerateR4Page(page.Definition));
 
                         // If SplitIntoMultipleFiles is set, store the generated classes alongside the controller files.
                         if (_settings.SplitIntoMultipleFiles)
                         {
-                            var generatedFilePath = page.GetFilePath().TrimEnd(".cs") + ".generated.cs";
+                            var generatedFilePath = page.Definition.GetFilePath().TrimEnd(".cs") + ".generated.cs";
                             Console.WriteLine("Generating " + generatedFilePath.GetRelativePath(projectRoot));
                             var pageFile = new CodeFileBuilder(_settings, true)
                                 .WithNamespace(namespaceNode);
@@ -143,8 +143,8 @@ namespace R4Mvc.Tools.Services
                 {
                     mvcPagesStaticClass.WithField(
                         page.Name,
-                        page.FullyQualifiedGeneratedName,
-                        page.FullyQualifiedR4ClassName ?? page.FullyQualifiedGeneratedName,
+                        page.Definition.FullyQualifiedGeneratedName,
+                        page.Definition.FullyQualifiedR4ClassName ?? page.Definition.FullyQualifiedGeneratedName,
                         SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
                 }
 
@@ -196,23 +196,20 @@ namespace R4Mvc.Tools.Services
             }
         }
 
-        public IEnumerable<ClassDeclarationSyntax> CreateViewOnlyPageClasses(IList<PageDefinition> pages)
+        public IEnumerable<ClassDeclarationSyntax> CreateViewOnlyPageClasses(IList<PageView> pages)
         {
             if (pages != null)
             {
-                foreach (var page in pages.Where(c => c.Namespace == null).OrderBy(c => c.GetFilePath()))
+                foreach (var page in pages.Where(c => c.Definition == null).OrderBy(c => c.FilePath))
                 {
-                    var view = page.Views.FirstOrDefault();
-                    if (view == null)
-                        continue;
-
-                    var className = string.Join("_", view.Segments) + "Model";
-                    page.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
+                    var className = string.Join("_", page.Segments) + page.Name + "Model";
+                    page.Definition = new PageDefinition(_settings.R4MvcNamespace, page.Name, false, null, new System.Collections.Generic.List<string>());
+                    page.Definition.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
 
                     var pageClass = new ClassBuilder(className)
                         .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                         .WithGeneratedNonUserCodeAttributes();
-                    _pageGenerator.WithViewsClass(pageClass, page.Views);
+                    _pageGenerator.WithViewsClass(pageClass, new[] { page });
                     yield return pageClass.Build();
                 }
             }

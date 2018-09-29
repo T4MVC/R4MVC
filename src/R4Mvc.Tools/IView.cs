@@ -6,6 +6,6 @@ namespace R4Mvc.Tools
     {
         Uri RelativePath { get; }
         string TemplateKind { get; }
-        string ViewName { get; }
+        string Name { get; }
     }
 }

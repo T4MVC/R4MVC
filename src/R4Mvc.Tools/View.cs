@@ -8,14 +8,14 @@ namespace R4Mvc.Tools
         {
             AreaName = areaName;
             ControllerName = controllerName;
-            ViewName = viewName;
+            Name = viewName;
             RelativePath = relativePath;
             TemplateKind = templateKind;
         }
 
         public string AreaName { get; }
         public string ControllerName { get; }
-        public string ViewName { get; }
+        public string Name { get; }
         public Uri RelativePath { get; }
         public string TemplateKind { get; set; }
     }

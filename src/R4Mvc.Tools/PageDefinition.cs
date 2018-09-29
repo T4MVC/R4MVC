@@ -10,13 +10,21 @@ namespace R4Mvc.Tools
 {
     public class PageDefinition
     {
-        public string Namespace { get; set; }
-        public string Name { get; set; }
-        public bool IsSecure { get; set; }
-        public INamedTypeSymbol Symbol { get; set; }
+        public PageDefinition(string cNamespace, string name, bool isSecure, INamedTypeSymbol symbol, List<string> filePaths)
+        {
+            Namespace = cNamespace;
+            Name = name;
+            IsSecure = isSecure;
+            Symbol = symbol;
+            FilePaths = filePaths;
+        }
+
+        public string Namespace { get; }
+        public string Name { get; }
+        public bool IsSecure { get; }
+        public INamedTypeSymbol Symbol { get; }
 
         public IList<string> FilePaths = new List<string>();
-        public IList<PageView> Views { get; set; } = new List<PageView>();
 
         private string _fullyQualifiedGeneratedName = null;
         public string FullyQualifiedGeneratedName
@@ -34,7 +42,5 @@ namespace R4Mvc.Tools
                 .ThenBy(f => f)
                 .FirstOrDefault();
         }
-
-        public string GetPagePath() => Views.FirstOrDefault()?.PagePath;
     }
 }

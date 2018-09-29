@@ -4,9 +4,9 @@ namespace R4Mvc.Tools
 {
     public class PageView : IView
     {
-        public PageView(string viewName, string filePath, string relativePath, string pagePath, bool isPage)
+        public PageView(string name, string filePath, string relativePath, string pagePath, bool isPage)
         {
-            ViewName = viewName;
+            Name = name;
             FilePath = filePath;
             RelativePath = new Uri("~" + relativePath, UriKind.Relative);
             PagePath = pagePath;
@@ -17,12 +17,14 @@ namespace R4Mvc.Tools
             Segments = segments;
         }
 
-        public string ViewName { get; }
+        public string Name { get; }
         public string FilePath { get; }
         public Uri RelativePath { get; }
         public string PagePath { get; }
         public bool IsPage { get; }
         public string[] Segments { get; }
+
+        public PageDefinition Definition { get; set; }
 
         public string TemplateKind => null;
     }

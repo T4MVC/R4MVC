@@ -29,8 +29,9 @@ public static partial class MVC
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
 public static partial class MVCPages
 {
-    public static readonly AspNetSimple.Pages.Categories.DetailsModel Details = new AspNetSimple.Pages.Categories.R4MVC_DetailsModel();
     public static readonly AspNetSimple.Pages.DefaultModel Default = new AspNetSimple.Pages.R4MVC_DefaultModel();
+    public static readonly R4Mvc.NoModelModel NoModel = new R4Mvc.NoModelModel();
+    public static readonly AspNetSimple.Pages.Categories.DetailsModel Details = new AspNetSimple.Pages.Categories.R4MVC_DetailsModel();
 }
 
 namespace R4Mvc
@@ -62,6 +63,25 @@ namespace R4Mvc
             public readonly string Error = "~/Views/Shared/Error.cshtml";
             public readonly string _Layout = "~/Views/Shared/_Layout.cshtml";
             public readonly string _ValidationScriptsPartial = "~/Views/Shared/_ValidationScriptsPartial.cshtml";
+        }
+
+        static readonly ViewsClass s_Views = new ViewsClass();
+        public ViewsClass Views => s_Views;
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class NoModelModel
+    {
+        public class ViewsClass
+        {
+            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+            public _ViewNamesClass ViewNames => s_ViewNames;
+            public class _ViewNamesClass
+            {
+                public readonly string NoModel = "NoModel";
+            }
+
+            public readonly string NoModel = "~/Pages/NoModel.cshtml";
         }
 
         static readonly ViewsClass s_Views = new ViewsClass();

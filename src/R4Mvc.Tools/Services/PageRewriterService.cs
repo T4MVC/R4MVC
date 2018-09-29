@@ -53,14 +53,12 @@ namespace R4Mvc.Tools.Services
                     }
                     var isSecure = cSymbol.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<RequireHttpsAttribute>());
 
-                    pages[cFullName] = new PageDefinition
-                    {
-                        Namespace = cNamespace,
-                        Name = cSymbol.Name.TrimEnd("Model"),
-                        IsSecure = isSecure,
-                        Symbol = cSymbol,
-                        FilePaths = new List<string> { tree.FilePath },
-                    };
+                    pages[cFullName] = new PageDefinition(
+                        cNamespace,
+                        cSymbol.Name.TrimEnd("Model"),
+                        isSecure,
+                        cSymbol,
+                        new List<string> { tree.FilePath });
                 }
 
                 if (!newNode.IsEquivalentTo(tree.GetRoot()))

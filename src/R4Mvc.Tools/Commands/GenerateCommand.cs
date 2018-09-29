@@ -122,22 +122,15 @@ project-path:
                     controller.AreaKey = areaMap[controller.Area];
 
                 // Analyse the razor pages in the project (updating them to be partial), as well as locate all the view files
-                IList<PageDefinition> pages = null;
+                IList<PageView> pages = null;
                 if (mvcAssembly.Version >= new Version(2, 0, 0, 0))
                 {
-                    pages = _pageRewriter.RewritePages(compilation);
-                    var allPageFiles = _pageViewLocators.SelectMany(x => x.Find(projectRoot));
+                    var definitions = _pageRewriter.RewritePages(compilation);
+                    pages = _pageViewLocators.SelectMany(x => x.Find(projectRoot)).ToList();
 
-                    // Assign page view files to razor pages
-                    foreach (var view in allPageFiles)
+                    foreach (var page in pages)
                     {
-                        var page = pages.FirstOrDefault(p => p.GetFilePath() == (view.FilePath + ".cs"));
-                        if (page == null)
-                            pages.Add(page = new PageDefinition
-                            {
-                                Name = view.ViewName,
-                            });
-                        page.Views.Add(view);
+                        page.Definition = definitions.FirstOrDefault(d => d.GetFilePath() == (page.FilePath + ".cs"));
                     }
                 }
                 Console.WriteLine();
