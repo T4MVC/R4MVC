@@ -17,7 +17,7 @@ using AspNetSimple;
 
 namespace AspNetSimple.Pages.Categories
 {
-    public partial class DetailsModel
+    public partial class DetailsModel : IR4ActionResult
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public DetailsModel()
@@ -81,6 +81,12 @@ namespace AspNetSimple.Pages.Categories
             return RedirectToPagePermanent(taskResult.Result);
         }
 
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        string IR4ActionResult.Protocol => null;
+        [GeneratedCode("R4Mvc", "1.0")]
+        RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/Categories/Details"}};
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult OnGet()

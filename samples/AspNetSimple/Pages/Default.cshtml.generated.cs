@@ -17,7 +17,7 @@ using AspNetSimple;
 
 namespace AspNetSimple.Pages
 {
-    public partial class DefaultModel
+    public partial class DefaultModel : IR4ActionResult
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public DefaultModel()
@@ -81,6 +81,12 @@ namespace AspNetSimple.Pages
             return RedirectToPagePermanent(taskResult.Result);
         }
 
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        string IR4ActionResult.Protocol => null;
+        [GeneratedCode("R4Mvc", "1.0")]
+        RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/Default"}};
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult OnPost()

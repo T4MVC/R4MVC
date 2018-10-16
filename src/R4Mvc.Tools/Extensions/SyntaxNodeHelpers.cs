@@ -171,6 +171,8 @@ namespace R4Mvc.Tools.Extensions
 
         public static PropertyDeclarationSyntax WithModifiers(this PropertyDeclarationSyntax node, params SyntaxKind[] modifiers)
         {
+            if (modifiers.Length == 0)
+                return node;
             return node.AddModifiers(CreateModifiers(modifiers));
         }
 

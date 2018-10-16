@@ -14,12 +14,12 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         #region ActionLink
         public static IHtmlContent ActionLink(this IHtmlHelper htmlHelper, string linkText, IActionResult result, object htmlAttributes = null, string protocol = null, string hostName = null, string fragment = null)
         {
-            return htmlHelper.RouteLink(linkText, null, result, htmlAttributes, protocol, hostName, fragment);
+            return htmlHelper.ActionLink(linkText, result.GetR4ActionResult(), htmlAttributes, protocol, hostName, fragment);
         }
 
         public static IHtmlContent ActionLink(this IHtmlHelper htmlHelper, string linkText, IActionResult result, IDictionary<string, object> htmlAttributes, string protocol = null, string hostName = null, string fragment = null)
         {
-            return htmlHelper.RouteLink(linkText, null, result, htmlAttributes, protocol, hostName, fragment);
+            return htmlHelper.ActionLink(linkText, result.GetR4ActionResult(), htmlAttributes, protocol, hostName, fragment);
         }
 
         public static IHtmlContent ActionLink<TAction>(this IHtmlHelper htmlHelper, string linkText, Task<TAction> result, object htmlAttributes = null, string protocol = null, string hostName = null, string fragment = null)
@@ -44,6 +44,16 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return htmlHelper.ActionLink(linkText, result.GetActionResult(), htmlAttributes, protocol, hostName, fragment);
         }
 
+        public static IHtmlContent ActionLink(this IHtmlHelper htmlHelper, string linkText, IR4ActionResult result, object htmlAttributes = null, string protocol = null, string hostName = null, string fragment = null)
+        {
+            return htmlHelper.RouteLink(linkText, null, result, htmlAttributes, protocol, hostName, fragment);
+        }
+
+        public static IHtmlContent ActionLink(this IHtmlHelper htmlHelper, string linkText, IR4ActionResult result, IDictionary<string, object> htmlAttributes, string protocol = null, string hostName = null, string fragment = null)
+        {
+            return htmlHelper.RouteLink(linkText, null, result, htmlAttributes, protocol, hostName, fragment);
+        }
+
 #if CORE2
         public static IHtmlContent ActionLink(this IHtmlHelper htmlHelper, string linkText, IConvertToActionResult result, object htmlAttributes = null, string protocol = null, string hostName = null, string fragment = null)
         {
@@ -65,7 +75,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
 
         public static IHtmlContent RouteLink(this IHtmlHelper htmlHelper, string linkText, string routeName, IActionResult result, object htmlAttributes, string protocol = null, string hostName = null, string fragment = null)
         {
-            return htmlHelper.RouteLink(linkText, routeName, result, HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes), protocol, hostName, fragment);
+            return htmlHelper.RouteLink(linkText, routeName, result.GetR4ActionResult(), htmlAttributes, protocol, hostName, fragment);
         }
 
         public static IHtmlContent RouteLink(this IHtmlHelper htmlHelper, string linkText, IActionResult result, IDictionary<string, object> htmlAttributes)
@@ -75,7 +85,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
 
         public static IHtmlContent RouteLink(this IHtmlHelper htmlHelper, string linkText, string routeName, IActionResult result, IDictionary<string, object> htmlAttributes, string protocol = null, string hostName = null, string fragment = null)
         {
-            return htmlHelper.RouteLink(linkText, routeName, protocol ?? result.GetR4ActionResult().Protocol, hostName, fragment, result.GetRouteValueDictionary(), htmlAttributes);
+            return htmlHelper.RouteLink(linkText, routeName, result.GetR4ActionResult(), htmlAttributes, protocol, hostName, fragment);
         }
 
         public static IHtmlContent RouteLink<TAction>(this IHtmlHelper htmlHelper, string linkText, Task<TAction> result, object htmlAttributes)
@@ -120,6 +130,16 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         public static IHtmlContent RouteLink(this IHtmlHelper htmlHelper, string linkText, string routeName, Task result, IDictionary<string, object> htmlAttributes, string protocol = null, string hostName = null, string fragment = null)
         {
             return htmlHelper.RouteLink(linkText, routeName, result.GetActionResult(), htmlAttributes, protocol, hostName, fragment);
+        }
+
+        public static IHtmlContent RouteLink(this IHtmlHelper htmlHelper, string linkText, string routeName, IR4ActionResult result, object htmlAttributes, string protocol = null, string hostName = null, string fragment = null)
+        {
+            return htmlHelper.RouteLink(linkText, routeName, result, HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes), protocol, hostName, fragment);
+        }
+
+        public static IHtmlContent RouteLink(this IHtmlHelper htmlHelper, string linkText, string routeName, IR4ActionResult result, IDictionary<string, object> htmlAttributes, string protocol = null, string hostName = null, string fragment = null)
+        {
+            return htmlHelper.RouteLink(linkText, routeName, protocol ?? result.Protocol, hostName, fragment, result.RouteValueDictionary, htmlAttributes);
         }
 
 #if CORE2
@@ -200,8 +220,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
 
         public static MvcForm BeginForm(this IHtmlHelper htmlHelper, IActionResult result, FormMethod formMethod = FormMethod.Post, IDictionary<string, object> htmlAttributes = null)
         {
-            var callInfo = result.GetR4ActionResult();
-            return htmlHelper.BeginRouteForm(null, result, formMethod, htmlAttributes);
+            return BeginForm(htmlHelper, result.GetR4ActionResult(), formMethod, htmlAttributes);
         }
 
         public static MvcForm BeginForm<TAction>(this IHtmlHelper htmlHelper, Task<TAction> result, FormMethod formMethod, object htmlAttributes)
@@ -224,6 +243,11 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         public static MvcForm BeginForm(this IHtmlHelper htmlHelper, Task result, FormMethod formMethod = FormMethod.Post, IDictionary<string, object> htmlAttributes = null)
         {
             return BeginForm(htmlHelper, result.GetActionResult(), formMethod, htmlAttributes);
+        }
+
+        public static MvcForm BeginForm(this IHtmlHelper htmlHelper, IR4ActionResult result, FormMethod formMethod = FormMethod.Post, IDictionary<string, object> htmlAttributes = null)
+        {
+            return htmlHelper.BeginRouteForm(null, result, formMethod, htmlAttributes);
         }
 
 #if CORE2
@@ -252,7 +276,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
 
         public static MvcForm BeginRouteForm(this IHtmlHelper htmlHelper, string routeName, IActionResult result, FormMethod formMethod = FormMethod.Post, IDictionary<string, object> htmlAttributes = null)
         {
-            return htmlHelper.BeginRouteForm(routeName, result.GetRouteValueDictionary(), formMethod, null, htmlAttributes);
+            return htmlHelper.BeginRouteForm(routeName, result.GetR4ActionResult(), formMethod, htmlAttributes);
         }
 
         public static MvcForm BeginRouteForm<TAction>(this IHtmlHelper htmlHelper, Task<TAction> result)
@@ -286,6 +310,11 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         public static MvcForm BeginRouteForm(this IHtmlHelper htmlHelper, string routeName, Task result, FormMethod formMethod = FormMethod.Post, IDictionary<string, object> htmlAttributes = null)
         {
             return htmlHelper.BeginRouteForm(routeName, result.GetActionResult(), formMethod, htmlAttributes);
+        }
+
+        public static MvcForm BeginRouteForm(this IHtmlHelper htmlHelper, string routeName, IR4ActionResult result, FormMethod formMethod = FormMethod.Post, IDictionary<string, object> htmlAttributes = null)
+        {
+            return htmlHelper.BeginRouteForm(routeName, result.RouteValueDictionary, formMethod, null, htmlAttributes);
         }
 
 #if CORE2

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -29,9 +30,10 @@ namespace R4Mvc.Tools.Services
             var page = pageView.Definition;
 
             // build controller partial class node
-            var genControllerClass = new ClassBuilder(page.Symbol.Name)               // public partial {controllerClass}
+            var genControllerClass = new ClassBuilder(page.Symbol.Name)               // public partial {controllerClass} : IR4ActionResult
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                .WithTypeParameters(page.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()); // optional <T1, T2, �>
+                .WithTypeParameters(page.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()) // optional <T1, T2, �>
+                .WithBaseTypes("IR4ActionResult");
 
             // add a default constructor if there are some but none are zero length
             var gotCustomConstructors = page.Symbol.Constructors
@@ -55,6 +57,7 @@ namespace R4Mvc.Tools.Services
                 .WithParameter("d", Constants.DummyClass));
 
             AddRedirectMethods(genControllerClass);
+            AddR4ActionMethods(genControllerClass, pageView.PagePath);
             AddParameterlessMethods(genControllerClass, page.Symbol, page.IsSecure);
 
             //var actionsExpression = _settings.HelpersPrefix + "." + page.Name;
@@ -248,6 +251,20 @@ namespace R4Mvc.Tools.Services
                     .WithParameter("taskResult", "Task<IActionResult>")
                     .WithBody(b => b
                         .ReturnMethodCall(null, "RedirectToPagePermanent", "taskResult.Result")));
+        }
+
+        private void AddR4ActionMethods(ClassBuilder genControllerClass, string pagePath)
+        {
+            var routeField = "m_RouteValueDictionary";
+            var routeValues = new RouteValueDictionary
+            {
+                ["Page"] = pagePath,
+            };
+
+            genControllerClass = genControllerClass
+                .WithExpressionProperty("IR4ActionResult.Protocol", "string", null)
+                .WithRouteValueField(routeField, routeValues)
+                .WithExpressionProperty("IR4ActionResult.RouteValueDictionary", "RouteValueDictionary", routeField);
         }
 
         private void AddParameterlessMethods(ClassBuilder genControllerClass, ITypeSymbol mvcSymbol, bool isControllerSecure)

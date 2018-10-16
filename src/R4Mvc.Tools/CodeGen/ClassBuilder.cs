@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -97,8 +98,9 @@ namespace R4Mvc.Tools.CodeGen
                             {
                                 AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
                                 AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
-                            })))
-                .WithModifiers(new[] { modifier });
+                            })));
+            if (modifier != 0)
+                prop = prop.WithModifiers(new[] { modifier });
             _class = _class.AddMembers(prop);
             return this;
         }
@@ -106,7 +108,9 @@ namespace R4Mvc.Tools.CodeGen
         public ClassBuilder WithExpressionProperty(string name, string type, string value, params SyntaxKind[] modifiers)
         {
             var property = PropertyDeclaration(IdentifierName(type), name)
-                .WithExpressionBody(ArrowExpressionClause(IdentifierName(value)))
+                .WithExpressionBody(ArrowExpressionClause(value != null
+                    ? IdentifierName(value) as ExpressionSyntax
+                    : LiteralExpression(SyntaxKind.NullLiteralExpression)))
                 .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
                 .WithModifiers(modifiers)
                 .WithGeneratedNonUserCodeAttribute();
@@ -154,6 +158,24 @@ namespace R4Mvc.Tools.CodeGen
             var field = CreateFieldInitialised(name, type, IdentifierName(value), modifiers);
             _class = _class.AddMembers(field);
             return this;
+        }
+
+        public ClassBuilder WithRouteValueField(string name, RouteValueDictionary routeValues, params SyntaxKind[] modifiers)
+        {
+            var value = ObjectCreationExpression(IdentifierName("RouteValueDictionary"))
+                .WithInitializer(
+                    InitializerExpression(SyntaxKind.CollectionInitializerExpression,
+                        SeparatedList(routeValues
+                            .Select(rv => (ExpressionSyntax)InitializerExpression(SyntaxKind.ComplexElementInitializerExpression,
+                                SeparatedList(new ExpressionSyntax[] {
+                                    LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(rv.Key)),
+                                    LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(rv.Value.ToString())) }))))));
+
+            var field = CreateFieldInitialised(name, "RouteValueDictionary", value, modifiers)
+                .WithGeneratedAttribute();
+            _class = _class.AddMembers(field);
+            return this;
+
         }
 
         public ClassBuilder WithStaticFieldBackedProperty(string name, string type, bool useGeneratedAttribute, params SyntaxKind[] modifiers)
