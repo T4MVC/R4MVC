@@ -52,5 +52,7 @@ namespace AspNetSimple.Controllers
 
         public virtual IActionResult LocalViewModel(ErrorViewModel model) => throw new NotImplementedException();
         public virtual IActionResult ExternalViewModel(TestViewModel model) => throw new NotImplementedException();
+
+        public override IActionResult OverrideMe() => throw new NotImplementedException();
     }
 }

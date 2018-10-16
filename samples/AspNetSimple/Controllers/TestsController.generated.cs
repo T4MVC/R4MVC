@@ -154,6 +154,7 @@ namespace AspNetSimple.Controllers
             public readonly string TaskApiCallTypedWithParams = "TaskApiCallTypedWithParams";
             public readonly string LocalViewModel = "LocalViewModel";
             public readonly string ExternalViewModel = "ExternalViewModel";
+            public readonly string OverrideMe = "OverrideMe";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -187,6 +188,7 @@ namespace AspNetSimple.Controllers
             public const string TaskApiCallTypedWithParams = "TaskApiCallTypedWithParams";
             public const string LocalViewModel = "LocalViewModel";
             public const string ExternalViewModel = "ExternalViewModel";
+            public const string OverrideMe = "OverrideMe";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -457,6 +459,16 @@ namespace AspNetSimple.Controllers
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalViewModel);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ExternalViewModelOverride(callInfo, model);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void OverrideMeOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult OverrideMe()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.OverrideMe);
+            OverrideMeOverride(callInfo);
             return callInfo;
         }
     }
