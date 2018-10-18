@@ -75,7 +75,10 @@ namespace R4Mvc.Tools.CodeGen
 
         public ClassBuilder WithChildClass(string className, Action<ClassBuilder> classOptions)
         {
-            var classBuilder = new ClassBuilder(className);
+            var classBuilder = new ClassBuilder(className)
+            {
+                IsGenerated = IsGenerated,
+            };
             classOptions(classBuilder);
             _class = _class.AddMembers(classBuilder.Build());
             return this;
@@ -83,8 +86,11 @@ namespace R4Mvc.Tools.CodeGen
 
         public ClassBuilder WithGeneratedNonUserCodeAttributes()
         {
-            IsGenerated = true;
-            _class = _class.AddAttributeLists(SyntaxNodeHelpers.GeneratedNonUserCodeAttributeList());
+            if (!IsGenerated)
+            {
+                IsGenerated = true;
+                _class = _class.AddAttributeLists(SyntaxNodeHelpers.GeneratedNonUserCodeAttributeList());
+            }
             return this;
         }
 
@@ -112,13 +118,14 @@ namespace R4Mvc.Tools.CodeGen
                     ? IdentifierName(value) as ExpressionSyntax
                     : LiteralExpression(SyntaxKind.NullLiteralExpression)))
                 .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
-                .WithModifiers(modifiers)
-                .WithGeneratedNonUserCodeAttribute();
+                .WithModifiers(modifiers);
+            if (!IsGenerated)
+                property = property.WithGeneratedNonUserCodeAttribute();
             _class = _class.AddMembers(property);
             return this;
         }
 
-        public ClassBuilder WithStringField(string name, string value, bool includeGeneratedAttribute = true, params SyntaxKind[] modifiers)
+        public ClassBuilder WithStringField(string name, string value, params SyntaxKind[] modifiers)
         {
             var fieldDeclaration = FieldDeclaration(
                 VariableDeclaration(PredefinedType(Token(SyntaxKind.StringKeyword)))
@@ -128,7 +135,7 @@ namespace R4Mvc.Tools.CodeGen
                                 .WithInitializer(
                                     EqualsValueClause(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(value)))))))
                 .WithModifiers(modifiers);
-            if (includeGeneratedAttribute)
+            if (!IsGenerated)
                 fieldDeclaration = fieldDeclaration.WithGeneratedAttribute();
             _class = _class.AddMembers(fieldDeclaration);
             return this;
@@ -171,14 +178,15 @@ namespace R4Mvc.Tools.CodeGen
                                     LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(rv.Key)),
                                     LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(rv.Value.ToString())) }))))));
 
-            var field = CreateFieldInitialised(name, "RouteValueDictionary", value, modifiers)
-                .WithGeneratedAttribute();
+            var field = CreateFieldInitialised(name, "RouteValueDictionary", value, modifiers);
+            if (!IsGenerated)
+                field = field.WithGeneratedAttribute();
             _class = _class.AddMembers(field);
             return this;
 
         }
 
-        public ClassBuilder WithStaticFieldBackedProperty(string name, string type, bool useGeneratedAttribute, params SyntaxKind[] modifiers)
+        public ClassBuilder WithStaticFieldBackedProperty(string name, string type, params SyntaxKind[] modifiers)
         {
             var fieldName = "s_" + name;
             var fieldValue = ObjectCreationExpression(IdentifierName(type))
@@ -188,7 +196,7 @@ namespace R4Mvc.Tools.CodeGen
                 .WithExpressionBody(ArrowExpressionClause(IdentifierName(fieldName)))
                 .WithSemicolonToken(Token(SyntaxKind.SemicolonToken))
                 .WithModifiers(modifiers);
-            if (useGeneratedAttribute)
+            if (!IsGenerated)
             {
                 field = field.WithGeneratedAttribute();
                 property = property.WithGeneratedNonUserCodeAttribute();

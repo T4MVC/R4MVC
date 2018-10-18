@@ -125,7 +125,7 @@ namespace R4Mvc.Tools.Services
                 .WithGeneratedNonUserCodeAttributes();
             foreach (var area in areaControllers.Where(a => !string.IsNullOrEmpty(a.Key)).OrderBy(a => a.Key))
             {
-                mvcStaticClass.WithStaticFieldBackedProperty(area.First().AreaKey, $"{_settings.R4MvcNamespace}.{area.Key}AreaClass", false, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+                mvcStaticClass.WithStaticFieldBackedProperty(area.First().AreaKey, $"{_settings.R4MvcNamespace}.{area.Key}AreaClass", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
             }
             foreach (var controller in areaControllers[string.Empty].OrderBy(c => c.Namespace == null).ThenBy(c => c.Name))
             {
@@ -143,7 +143,7 @@ namespace R4Mvc.Tools.Services
             {
                 foreach (var set in topLevelPagePaths)
                 {
-                    mvcPagesStaticClass.WithStaticFieldBackedProperty(set.Key, set.Value, false, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+                    mvcPagesStaticClass.WithStaticFieldBackedProperty(set.Key, set.Value, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
                 }
                 foreach (var page in pages.Where(p => p.Segments.Length == 0))
                 {
@@ -231,7 +231,7 @@ namespace R4Mvc.Tools.Services
                 var areaClass = new ClassBuilder(area.Key + "AreaClass")
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                     .WithGeneratedNonUserCodeAttributes()
-                    .WithStringField("Name", area.Key, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
+                    .WithStringField("Name", area.Key, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
                     .ForEach(area.OrderBy(c => c.Namespace == null).ThenBy(c => c.Name), (cb, c) => cb
                         .WithField(
                             c.Name,
@@ -273,7 +273,7 @@ namespace R4Mvc.Tools.Services
                 {
                     var parentKey = key.Substring(0, key.LastIndexOf(splitter));
                     pathClasses[parentKey]
-                        .WithStaticFieldBackedProperty(key.Substring(parentKey.Length + splitter.Length), $"{_settings.R4MvcNamespace}.{key}PathClass", false, SyntaxKind.PublicKeyword);
+                        .WithStaticFieldBackedProperty(key.Substring(parentKey.Length + splitter.Length), $"{_settings.R4MvcNamespace}.{key}PathClass", SyntaxKind.PublicKeyword);
                 }
 
                 topLevelPagePaths = pageGroups.Select(g => g.Key).Where(k => k.Length > 0 && k.IndexOf(splitter) == -1)
