@@ -253,7 +253,7 @@ namespace R4Mvc.Tools.Services
                         .ReturnMethodCall(null, "RedirectToPagePermanent", "taskResult.Result")));
         }
 
-        private void AddR4ActionMethods(ClassBuilder genControllerClass, string pagePath)
+        public void AddR4ActionMethods(ClassBuilder genControllerClass, string pagePath)
         {
             var routeField = "m_RouteValueDictionary";
             var routeValues = new RouteValueDictionary

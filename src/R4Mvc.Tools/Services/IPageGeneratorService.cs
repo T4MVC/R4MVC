@@ -9,5 +9,6 @@ namespace R4Mvc.Tools.Services
         ClassDeclarationSyntax GeneratePartialPage(PageView pageView);
         ClassDeclarationSyntax GenerateR4Page(PageDefinition page);
         ClassBuilder WithViewsClass(ClassBuilder classBuilder, IEnumerable<PageView> viewFiles);
+        void AddR4ActionMethods(ClassBuilder genControllerClass, string pagePath);
     }
 }
