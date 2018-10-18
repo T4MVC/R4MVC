@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
     {
         public static string Action(this IUrlHelper urlHelper, IActionResult result, string protocol = null, string hostName = null, string fragment = null)
         {
-            return urlHelper.RouteUrl(null, result.GetRouteValueDictionary(), protocol ?? result.GetR4MvcResult().Protocol, hostName, fragment);
+            return urlHelper.Action(result.GetR4ActionResult(), protocol, hostName, fragment);
         }
 
         public static string Action<TAction>(this IUrlHelper urlHelper, Task<TAction> taskResult, string protocol = null, string hostName = null, string fragment = null)
@@ -23,6 +23,11 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return urlHelper.Action(taskResult.GetActionResult(), protocol, hostName, fragment);
         }
 
+        public static string Action(this IUrlHelper urlHelper, IR4ActionResult result, string protocol = null, string hostName = null, string fragment = null)
+        {
+            return urlHelper.RouteUrl(null, result, protocol, hostName, fragment);
+        }
+
 #if CORE2
         public static string Action(this IUrlHelper urlHelper, IConvertToActionResult result, string protocol = null, string hostName = null, string fragment = null)
         {
@@ -32,8 +37,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
 
         public static string ActionAbsolute(this IUrlHelper urlHelper, IActionResult result)
         {
-            var request = urlHelper.ActionContext.HttpContext.Request;
-            return $"{request.Scheme}://{request.Host}{urlHelper.RouteUrl(result.GetRouteValueDictionary())}";
+            return urlHelper.ActionAbsolute(result.GetR4ActionResult());
         }
 
         public static string ActionAbsolute<TAction>(this IUrlHelper urlHelper, Task<TAction> taskResult)
@@ -45,6 +49,12 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         public static string ActionAbsolute(this IUrlHelper urlHelper, Task taskResult)
         {
             return urlHelper.ActionAbsolute(taskResult.GetActionResult());
+        }
+
+        public static string ActionAbsolute(this IUrlHelper urlHelper, IR4ActionResult result)
+        {
+            var request = urlHelper.ActionContext.HttpContext.Request;
+            return $"{request.Scheme}://{request.Host}{urlHelper.RouteUrl(result.RouteValueDictionary)}";
         }
 
 #if CORE2
@@ -61,7 +71,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
 
         public static string RouteUrl(this IUrlHelper urlHelper, string routeName, IActionResult result, string protocol = null, string hostName = null, string fragment = null)
         {
-            return urlHelper.RouteUrl(routeName, result.GetRouteValueDictionary(), protocol ?? result.GetR4MvcResult().Protocol, hostName, fragment);
+            return urlHelper.RouteUrl(routeName, result.GetR4ActionResult(), protocol, hostName, fragment);
         }
 
         public static string RouteUrl<TAction>(this IUrlHelper urlHelper, Task<TAction> taskResult)
@@ -84,6 +94,11 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
         public static string RouteUrl<TAction>(this IUrlHelper urlHelper, string routeName, Task taskResult, string protocol = null, string hostName = null, string fragment = null)
         {
             return urlHelper.RouteUrl(routeName, taskResult.GetActionResult(), protocol, hostName, fragment);
+        }
+
+        public static string RouteUrl(this IUrlHelper urlHelper, string routeName, IR4ActionResult result, string protocol = null, string hostName = null, string fragment = null)
+        {
+            return urlHelper.RouteUrl(routeName, result.RouteValueDictionary, protocol ?? result.Protocol, hostName, fragment);
         }
 
 #if CORE2

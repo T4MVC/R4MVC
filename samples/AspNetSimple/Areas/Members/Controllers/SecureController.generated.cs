@@ -32,7 +32,7 @@ namespace AspNetSimple.Areas.Members.Controllers
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         protected RedirectToRouteResult RedirectToAction(IActionResult result)
         {
-            var callInfo = result.GetR4MvcResult();
+            var callInfo = result.GetR4ActionResult();
             return RedirectToRoute(callInfo.RouteValueDictionary);
         }
 
@@ -45,7 +45,7 @@ namespace AspNetSimple.Areas.Members.Controllers
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         protected RedirectToRouteResult RedirectToActionPermanent(IActionResult result)
         {
-            var callInfo = result.GetR4MvcResult();
+            var callInfo = result.GetR4ActionResult();
             return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
         }
 
@@ -53,6 +53,32 @@ namespace AspNetSimple.Areas.Members.Controllers
         protected RedirectToRouteResult RedirectToActionPermanent(Task<IActionResult> taskResult)
         {
             return RedirectToActionPermanent(taskResult.Result);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToPage(IActionResult result)
+        {
+            var callInfo = result.GetR4ActionResult();
+            return RedirectToRoute(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToPage(Task<IActionResult> taskResult)
+        {
+            return RedirectToPage(taskResult.Result);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToPagePermanent(IActionResult result)
+        {
+            var callInfo = result.GetR4ActionResult();
+            return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToPagePermanent(Task<IActionResult> taskResult)
+        {
+            return RedirectToPagePermanent(taskResult.Result);
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]

@@ -39,7 +39,7 @@ namespace R4Mvc.Tools.Services
         private void AddUrlFields(ClassBuilder builder, string path)
         {
             builder
-                .WithStringField("UrlPath", "~" + path, false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
+                .WithStringField("UrlPath", "~" + path, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)
                 .WithMethod("Url", "string", m => m
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
                     .WithExpresisonBody(BodyBuilder.MethodCallExpression(Constants.R4MvcHelpersClass, Constants.R4MvcHelpers_ProcessVirtualPath, new[] { "UrlPath" })))
@@ -69,11 +69,12 @@ namespace R4Mvc.Tools.Services
             {
                 var childFiles = files.Where(f => f.Container.StartsWith(childPath));
                 var className = childPath.Substring(path.Length > 0 ? path.Length + 1 : 0).SanitiseFieldName();
-                var containerClass = new ClassBuilder(className)
-                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword);
-                AddUrlFields(containerClass, Path.Combine(projectRoot, childPath).GetRelativePath(projectRoot).Replace('\\', '/'));
-                AddStaticFiles(projectRoot, containerClass, childPath, childFiles);
-                parentClass.WithMember(containerClass.Build());
+                parentClass.WithChildClass(className, containerClass =>
+                {
+                    containerClass.WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword);
+                    AddUrlFields(containerClass, Path.Combine(projectRoot, childPath).GetRelativePath(projectRoot).Replace('\\', '/'));
+                    AddStaticFiles(projectRoot, containerClass, childPath, childFiles);
+                });
             }
 
             var localFiles = files.Where(f => f.Container == path);

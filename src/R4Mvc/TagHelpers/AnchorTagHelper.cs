@@ -50,12 +50,12 @@ namespace R4Mvc.TagHelpers
             RouteValueDictionary routeValues = null;
             switch (ObjectAction)
             {
-                case IR4MvcActionResult t4mvcActionResult:
-                    routeValues = t4mvcActionResult.RouteValueDictionary;
+                case IR4ActionResult t4ActionResult:
+                    routeValues = t4ActionResult.RouteValueDictionary;
                     break;
                 case Task task:
                     var result = task.GetActionResult();
-                    if (result is IR4MvcActionResult taskActionResult)
+                    if (result is IR4ActionResult taskActionResult)
                         routeValues = taskActionResult.RouteValueDictionary;
                     break;
             }

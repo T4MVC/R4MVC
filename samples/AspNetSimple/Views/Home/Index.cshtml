@@ -2,6 +2,35 @@
     ViewData["Title"] = "Home Page";
 }
 
+<div>
+    <table>
+        <tr>
+            <td>@Html.ActionLink("Tests Index", MVC.Tests.Index())</td>
+            <td>@Url.Action(MVC.Tests.Index())</td>
+        </tr>
+        <tr>
+            <td>@Html.ActionLink("Page Index Test", MVCPages.Default)</td>
+            <td>@Url.Action(MVCPages.Default)</td>
+        </tr>
+        <tr>
+            <td>@Html.ActionLink("Page Categories Test", MVCPages.Categories.Details)</td>
+            <td>@Url.Action(MVCPages.Categories.Details)</td>
+        </tr>
+        <tr>
+            <td>@Html.ActionLink("Page NoModel Test", MVCPages.NoModel)</td>
+            <td>@Url.Action(MVCPages.NoModel)</td>
+        </tr>
+        <tr>
+            <td>@Html.ActionLink("Page Categories NoModel Test", MVCPages.Categories.NoModel)</td>
+            <td>@Url.Action(MVCPages.Categories.NoModel)</td>
+        </tr>
+        <tr>
+            <td>@Html.ActionLink("Page Categories Inner NoModel Test", MVCPages.Categories.Inner.NoModel)</td>
+            <td>@Url.Action(MVCPages.Categories.Inner.NoModel)</td>
+        </tr>
+    </table>
+</div>
+
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
     <ol class="carousel-indicators">
         <li data-target="#myCarousel" data-slide-to="0" class="active"></li>

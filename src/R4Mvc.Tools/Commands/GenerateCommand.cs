@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,15 +33,21 @@ project-path:
         public class Runner : ICommandRunner
         {
             private readonly IControllerRewriterService _controllerRewriter;
+            private readonly IPageRewriterService _pageRewriter;
             private readonly IEnumerable<IViewLocator> _viewLocators;
+            private readonly IEnumerable<IPageViewLocator> _pageViewLocators;
             private readonly R4MvcGeneratorService _generatorService;
             private readonly Settings _settings;
             private readonly IGeneratedFileTesterService _generatedFileTesterService;
             private readonly IFilePersistService _filePersistService;
-            public Runner(IControllerRewriterService controllerRewriter, IEnumerable<IViewLocator> viewLocators, R4MvcGeneratorService generatorService, Settings settings, IGeneratedFileTesterService generatedFileTesterService, IFilePersistService filePersistService)
+            public Runner(IControllerRewriterService controllerRewriter, IPageRewriterService pageRewriter, IEnumerable<IViewLocator> viewLocators,
+                IEnumerable<IPageViewLocator> pageViewLocators, R4MvcGeneratorService generatorService, Settings settings,
+                IGeneratedFileTesterService generatedFileTesterService, IFilePersistService filePersistService)
             {
                 _controllerRewriter = controllerRewriter;
+                _pageRewriter = pageRewriter;
                 _viewLocators = viewLocators;
+                _pageViewLocators = pageViewLocators;
                 _generatorService = generatorService;
                 _settings = settings;
                 _generatedFileTesterService = generatedFileTesterService;
@@ -49,14 +56,18 @@ project-path:
 
             public async Task Run(string projectPath, IConfiguration configuration, string[] args)
             {
+                var sw = Stopwatch.StartNew();
+
                 var vsInstance = InitialiseMSBuild(configuration);
                 Console.WriteLine($"Using: {vsInstance.Name} - {vsInstance.Version}");
                 Console.WriteLine("Project: " + projectPath);
                 Console.WriteLine();
 
                 // Load the project and check for compilation errors
+                Console.WriteLine("Creating Workspace ...");
                 var workspace = MSBuildWorkspace.Create(new Dictionary<string, string> { ["IsR4MvcBuild"] = "true" });
 
+                Console.WriteLine("Loading project ...");
                 var projectRoot = Path.GetDirectoryName(projectPath);
                 var project = await workspace.OpenProjectAsync(projectPath);
                 if (workspace.Diagnostics.Count > 0)
@@ -73,8 +84,16 @@ project-path:
                 }
 
                 // Prep the project Compilation object, and process the Controller public methods list
+                Console.WriteLine("Compiling project ...");
                 var compilation = await project.GetCompilationAsync() as CSharpCompilation;
                 SyntaxNodeHelpers.PopulateControllerClassMethodNames(compilation);
+
+                // Get MVC version
+                var mvcAssembly = compilation.ReferencedAssemblyNames
+                    .Where(a => a.Name == "Microsoft.AspNetCore.Mvc")
+                    .FirstOrDefault();
+                Console.WriteLine($"Detected MVC version: {mvcAssembly.Version}");
+                Console.WriteLine();
 
                 // Analyse the controllers in the project (updating them to be partial), as well as locate all the view files
                 var controllers = _controllerRewriter.RewriteControllers(compilation);
@@ -102,8 +121,22 @@ project-path:
                 foreach (var controller in controllers.Where(a => !string.IsNullOrEmpty(a.Area)))
                     controller.AreaKey = areaMap[controller.Area];
 
+                // Analyse the razor pages in the project (updating them to be partial), as well as locate all the view files
+                IList<PageView> pages = null;
+                if (mvcAssembly.Version >= new Version(2, 0, 0, 0))
+                {
+                    var definitions = _pageRewriter.RewritePages(compilation);
+                    pages = _pageViewLocators.SelectMany(x => x.Find(projectRoot)).ToList();
+
+                    foreach (var page in pages)
+                    {
+                        page.Definition = definitions.FirstOrDefault(d => d.GetFilePath() == (page.FilePath + ".cs"));
+                    }
+                }
+                Console.WriteLine();
+
                 // Generate the R4Mvc.generated.cs file
-                _generatorService.Generate(projectRoot, controllers);
+                _generatorService.Generate(projectRoot, controllers, pages);
 
                 // updating the r4mvc.json settings file
                 _settings._generatedByVersion = Program.GetVersion();
@@ -132,6 +165,10 @@ project-path:
                         }
                     }
                 }
+
+                sw.Stop();
+                Console.WriteLine();
+                Console.WriteLine($"Operation completed in {sw.Elapsed}");
             }
 
             private VisualStudioInstance InitialiseMSBuild(IConfiguration configuration)

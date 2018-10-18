@@ -14,6 +14,7 @@ namespace R4Mvc.Tools.Services
     {
         private readonly IControllerRewriterService _controllerRewriter;
         private readonly IControllerGeneratorService _controllerGenerator;
+        private readonly IPageGeneratorService _pageGenerator;
         private readonly IStaticFileGeneratorService _staticFileGenerator;
         private readonly IFilePersistService _filePersistService;
         private readonly Settings _settings;
@@ -21,18 +22,20 @@ namespace R4Mvc.Tools.Services
         public R4MvcGeneratorService(
             IControllerRewriterService controllerRewriter,
             IControllerGeneratorService controllerGenerator,
+            IPageGeneratorService pageGenerator,
             IStaticFileGeneratorService staticFileGenerator,
             IFilePersistService filePersistService,
             Settings settings)
         {
             _controllerRewriter = controllerRewriter;
             _controllerGenerator = controllerGenerator;
+            _pageGenerator = pageGenerator;
             _staticFileGenerator = staticFileGenerator;
             _filePersistService = filePersistService;
             _settings = settings;
         }
 
-        public void Generate(string projectRoot, IList<ControllerDefinition> controllers)
+        public void Generate(string projectRoot, IList<ControllerDefinition> controllers, IList<PageView> pages)
         {
             var areaControllers = controllers.ToLookup(c => c.Area);
 
@@ -44,7 +47,7 @@ namespace R4Mvc.Tools.Services
                 foreach (var controller in namespaceGroup.OrderBy(c => c.Name))
                 {
                     namespaceNode = namespaceNode.AddMembers(
-                        _controllerGenerator.GeneratePartialController(controller),
+                        _controllerGenerator.GeneratePartialController(controller, pages != null),
                         _controllerGenerator.GenerateR4Controller(controller));
 
                     // If SplitIntoMultipleFiles is set, store the generated classes alongside the controller files.
@@ -62,6 +65,36 @@ namespace R4Mvc.Tools.Services
                 // If SplitIntoMultipleFiles is NOT set, bundle them all in R4Mvc
                 if (!_settings.SplitIntoMultipleFiles)
                     generatedControllers.Add(namespaceNode);
+            }
+
+            var generatedPages = new List<NamespaceDeclarationSyntax>();
+            if (pages != null)
+            {
+                foreach (var namespaceGroup in pages.Where(p => p.Definition != null).GroupBy(p => p.Definition.Namespace).OrderBy(p => p.Key))
+                {
+                    var namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
+                    foreach (var page in namespaceGroup.OrderBy(p => p.Name))
+                    {
+                        namespaceNode = namespaceNode.AddMembers(
+                            _pageGenerator.GeneratePartialPage(page),
+                            _pageGenerator.GenerateR4Page(page.Definition));
+
+                        // If SplitIntoMultipleFiles is set, store the generated classes alongside the controller files.
+                        if (_settings.SplitIntoMultipleFiles)
+                        {
+                            var generatedFilePath = page.Definition.GetFilePath().TrimEnd(".cs") + ".generated.cs";
+                            Console.WriteLine("Generating " + generatedFilePath.GetRelativePath(projectRoot));
+                            var pageFile = new CodeFileBuilder(_settings, true)
+                                .WithNamespace(namespaceNode);
+                            _filePersistService.WriteFile(pageFile.Build(), generatedFilePath);
+                            namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
+                        }
+                    }
+
+                    // If SplitIntoMultipleFiles is NOT set, bundle them all in R4Mvc
+                    if (!_settings.SplitIntoMultipleFiles)
+                        generatedPages.Add(namespaceNode);
+                }
             }
 
             // R4MVC namespace used for the areas and Dummy class
@@ -82,7 +115,9 @@ namespace R4Mvc.Tools.Services
                     .WithField(Constants.DummyClassInstance, Constants.DummyClass, Constants.DummyClass, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
                     .Build())
                 .AddMembers(CreateViewOnlyControllerClasses(controllers).ToArray<MemberDeclarationSyntax>())
-                .AddMembers(CreateAreaClasses(areaControllers).ToArray<MemberDeclarationSyntax>());
+                .AddMembers(CreateViewOnlyPageClasses(pages).ToArray<MemberDeclarationSyntax>())
+                .AddMembers(CreateAreaClasses(areaControllers).ToArray<MemberDeclarationSyntax>())
+                .AddMembers(CreatePagePathClasses(pages, out var topLevelPagePaths).ToArray<MemberDeclarationSyntax>());
 
             // create static MVC class and add the area and controller fields
             var mvcStaticClass = new ClassBuilder(_settings.HelpersPrefix)
@@ -90,7 +125,7 @@ namespace R4Mvc.Tools.Services
                 .WithGeneratedNonUserCodeAttributes();
             foreach (var area in areaControllers.Where(a => !string.IsNullOrEmpty(a.Key)).OrderBy(a => a.Key))
             {
-                mvcStaticClass.WithStaticFieldBackedProperty(area.First().AreaKey, $"{_settings.R4MvcNamespace}.{area.Key}AreaClass", false, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+                mvcStaticClass.WithStaticFieldBackedProperty(area.First().AreaKey, $"{_settings.R4MvcNamespace}.{area.Key}AreaClass", SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
             }
             foreach (var controller in areaControllers[string.Empty].OrderBy(c => c.Namespace == null).ThenBy(c => c.Name))
             {
@@ -101,12 +136,32 @@ namespace R4Mvc.Tools.Services
                     SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
             }
 
+            var mvcPagesStaticClass = new ClassBuilder(_settings.PageHelpersPrefix)
+                .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.PartialKeyword)
+                .WithGeneratedNonUserCodeAttributes();
+            if (pages != null)
+            {
+                foreach (var set in topLevelPagePaths)
+                {
+                    mvcPagesStaticClass.WithStaticFieldBackedProperty(set.Key, set.Value, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword);
+                }
+                foreach (var page in pages.Where(p => p.Segments.Length == 0))
+                {
+                    mvcPagesStaticClass.WithField(
+                        page.Name,
+                        page.Definition.FullyQualifiedGeneratedName,
+                        page.Definition.FullyQualifiedR4ClassName ?? page.Definition.FullyQualifiedGeneratedName,
+                        SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword, SyntaxKind.ReadOnlyKeyword);
+                }
+            }
+
             // Generate a list of all static files from the wwwroot path
             var staticFileNode = _staticFileGenerator.GenerateStaticFiles(projectRoot);
 
             var r4MvcFile = new CodeFileBuilder(_settings, true)
                     .WithMembers(
                         mvcStaticClass.Build(),
+                        mvcPagesStaticClass.Build(),
                         r4Namespace,
                         staticFileNode,
                         R4MvcHelpersClass(),
@@ -117,7 +172,16 @@ namespace R4Mvc.Tools.Services
                         RedirectResultClass(),
                         RedirectToActionResultClass(),
                         RedirectToRouteResultClass())
-                    .WithNamespaces(generatedControllers);
+                    .WithMembers(pages != null,
+                        PageActionResultClass(),
+                        PageJsonResultClass(),
+                        PageContentResultClass(),
+                        PageFileResultClass(),
+                        PageRedirectResultClass(),
+                        PageRedirectToActionResultClass(),
+                        PageRedirectToRouteResultClass())
+                    .WithNamespaces(generatedControllers)
+                    .WithNamespaces(generatedPages);
             Console.WriteLine("Generating " + Path.DirectorySeparatorChar + Constants.R4MvcGeneratedFileName);
             _filePersistService.WriteFile(r4MvcFile.Build(), Path.Combine(projectRoot, Constants.R4MvcGeneratedFileName));
         }
@@ -139,6 +203,27 @@ namespace R4Mvc.Tools.Services
             }
         }
 
+        public IEnumerable<ClassDeclarationSyntax> CreateViewOnlyPageClasses(IList<PageView> pages)
+        {
+            if (pages != null)
+            {
+                foreach (var page in pages.Where(c => c.Definition == null).OrderBy(c => c.FilePath))
+                {
+                    var className = string.Join("_", page.Segments.Concat(new[] { page.Name })) + "Model";
+                    page.Definition = new PageDefinition(_settings.R4MvcNamespace, page.Name, false, null, new System.Collections.Generic.List<string>());
+                    page.Definition.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
+
+                    var pageClass = new ClassBuilder(className)
+                        .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                        .WithBaseTypes("IR4ActionResult")
+                        .WithGeneratedNonUserCodeAttributes();
+                    _pageGenerator.AddR4ActionMethods(pageClass, page.PagePath);
+                    _pageGenerator.WithViewsClass(pageClass, new[] { page });
+                    yield return pageClass.Build();
+                }
+            }
+        }
+
         public IEnumerable<ClassDeclarationSyntax> CreateAreaClasses(ILookup<string, ControllerDefinition> areaControllers)
         {
             foreach (var area in areaControllers.Where(a => !string.IsNullOrEmpty(a.Key)).OrderBy(a => a.Key))
@@ -146,7 +231,7 @@ namespace R4Mvc.Tools.Services
                 var areaClass = new ClassBuilder(area.Key + "AreaClass")
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
                     .WithGeneratedNonUserCodeAttributes()
-                    .WithStringField("Name", area.Key, false, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
+                    .WithStringField("Name", area.Key, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
                     .ForEach(area.OrderBy(c => c.Namespace == null).ThenBy(c => c.Name), (cb, c) => cb
                         .WithField(
                             c.Name,
@@ -155,6 +240,49 @@ namespace R4Mvc.Tools.Services
                             SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword));
                 yield return areaClass.Build();
             }
+        }
+
+        public IEnumerable<ClassDeclarationSyntax> CreatePagePathClasses(IList<PageView> pages, out IDictionary<string, string> topLevelPagePaths)
+        {
+            if (pages != null)
+            {
+                var splitter = "_";
+                while (pages.Any(p => p.Segments.Any(s => s.Contains(splitter))))
+                    splitter += "_";
+
+                var pageGroups = pages
+                    .ToLookup(p => string.Join(splitter, p.Segments));
+
+                var pathClasses = new Dictionary<string, ClassBuilder>();
+
+                foreach (var key in pageGroups.Select(g => g.Key).Where(k => k.Length > 0).OrderBy(k => k))
+                {
+                    var pathClass = new ClassBuilder(key + "PathClass")
+                        .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                        .WithGeneratedNonUserCodeAttributes()
+                        .ForEach(pageGroups[key].OrderBy(p => p.Name), (cb, p) => cb
+                            .WithField(
+                                p.Name,
+                                p.Definition.FullyQualifiedGeneratedName,
+                                p.Definition.FullyQualifiedR4ClassName ?? p.Definition.FullyQualifiedGeneratedName,
+                                SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword));
+                    pathClasses.Add(key, pathClass);
+                }
+
+                foreach (var key in pageGroups.Select(g => g.Key).Where(k => k.Length > 0 && k.IndexOf(splitter) > 0))
+                {
+                    var parentKey = key.Substring(0, key.LastIndexOf(splitter));
+                    pathClasses[parentKey]
+                        .WithStaticFieldBackedProperty(key.Substring(parentKey.Length + splitter.Length), $"{_settings.R4MvcNamespace}.{key}PathClass", SyntaxKind.PublicKeyword);
+                }
+
+                topLevelPagePaths = pageGroups.Select(g => g.Key).Where(k => k.Length > 0 && k.IndexOf(splitter) == -1)
+                    .ToDictionary(k => k, k => $"{_settings.R4MvcNamespace}.{k}PathClass");
+
+                return pathClasses.Values.Select(c => c.Build());
+            }
+            topLevelPagePaths = null;
+            return new ClassDeclarationSyntax[0];
         }
 
         private ClassDeclarationSyntax IActionResultDerivedClass(string className, string baseClassName, Action<ConstructorMethodBuilder> constructorParts = null)
@@ -174,6 +302,28 @@ namespace R4Mvc.Tools.Services
                         .MethodCall("this", "InitMVCT4Result", "area", "controller", "action", "protocol")))
                 .WithProperty("Controller", "string")                                   // public string Controller { get; set; }
                 .WithProperty("Action", "string")                                       // public string Action { get; set; }
+                .WithProperty("Protocol", "string")                                     // public string Protocol { get; set; }
+                .WithProperty("RouteValueDictionary", "RouteValueDictionary");          // public RouteValueDictionary RouteValueDictionary { get; set; }
+
+            return result.Build();
+        }
+
+        private ClassDeclarationSyntax IActionResultDerivedPageClass(string className, string baseClassName, Action<ConstructorMethodBuilder> constructorParts = null)
+        {
+            var result = new ClassBuilder(className)                                    // internal partial class {className}
+                .WithGeneratedNonUserCodeAttributes()
+                .WithModifiers(SyntaxKind.InternalKeyword, SyntaxKind.PartialKeyword)
+                .WithBaseTypes(baseClassName, "IR4PageActionResult")                    // : {baseClassName}, IR4ActionResult
+                .WithConstructor(c => c
+                    .WithOther(constructorParts)
+                    .WithModifiers(SyntaxKind.PublicKeyword)                        // public ctor(
+                    .WithParameter("pageName", "string")                            //  string pageName,
+                    .WithParameter("pageHandler", "string")                         //  string pageHandler,
+                    .WithParameter("protocol", "string", defaultsToNull: true)      //  string protocol = null)
+                    .WithBody(b => b                                                    // this.InitMVCT4Result(pageName, pageHandler, protocol);
+                        .MethodCall("this", "InitMVCT4Result", "pageName", "pageHandler", "protocol")))
+                .WithProperty("PageName", "string")                                     // public string PageName { get; set; }
+                .WithProperty("PageHandler", "string")                                  // public string PageHandler { get; set; }
                 .WithProperty("Protocol", "string")                                     // public string Protocol { get; set; }
                 .WithProperty("RouteValueDictionary", "RouteValueDictionary");          // public RouteValueDictionary RouteValueDictionary { get; set; }
 
@@ -215,6 +365,32 @@ namespace R4Mvc.Tools.Services
 
         public ClassDeclarationSyntax RedirectToRouteResultClass()
             => IActionResultDerivedClass(Constants.RedirectToRouteResultClass, "RedirectToRouteResult",
+                c => c.WithBaseConstructorCall(SimpleLiteral.Null));                           // ctor : base(null)
+
+        public ClassDeclarationSyntax PageActionResultClass()
+            => IActionResultDerivedPageClass(Constants.PageActionResultClass, "ActionResult");
+
+        public ClassDeclarationSyntax PageJsonResultClass()
+            => IActionResultDerivedPageClass(Constants.PageJsonResultClass, "JsonResult",
+                c => c.WithBaseConstructorCall(SimpleLiteral.Null));                           // ctor : base(null)
+
+        public ClassDeclarationSyntax PageContentResultClass()
+            => IActionResultDerivedClass(Constants.PageContentResultClass, "ContentResult");
+
+        public ClassDeclarationSyntax PageFileResultClass()
+            => IActionResultDerivedPageClass(Constants.PageFileResultClass, "FileResult",
+                c => c.WithBaseConstructorCall(SimpleLiteral.Null));                           // ctor : base(null)
+
+        public ClassDeclarationSyntax PageRedirectResultClass()
+            => IActionResultDerivedPageClass(Constants.PageRedirectResultClass, "RedirectResult",
+                c => c.WithBaseConstructorCall(SimpleLiteral.Space));                          // ctor : base(" ")
+
+        public ClassDeclarationSyntax PageRedirectToActionResultClass()
+            => IActionResultDerivedPageClass(Constants.PageRedirectToActionResultClass, "RedirectToActionResult",
+                c => c.WithBaseConstructorCall(SimpleLiteral.Space, SimpleLiteral.Space, SimpleLiteral.Space));  // ctor : base(" ", " ", " ")
+
+        public ClassDeclarationSyntax PageRedirectToRouteResultClass()
+            => IActionResultDerivedPageClass(Constants.PageRedirectToRouteResultClass, "RedirectToRouteResult",
                 c => c.WithBaseConstructorCall(SimpleLiteral.Null));                           // ctor : base(null)
     }
 }
