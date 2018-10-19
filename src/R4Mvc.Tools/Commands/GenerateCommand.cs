@@ -122,8 +122,9 @@ project-path:
                     controller.AreaKey = areaMap[controller.Area];
 
                 // Analyse the razor pages in the project (updating them to be partial), as well as locate all the view files
-                IList<PageView> pages = null;
-                if (mvcAssembly.Version >= new Version(2, 0, 0, 0))
+                var hasPagesSupport = mvcAssembly.Version >= new Version(2, 0, 0, 0);
+                IList<PageView> pages;
+                if (hasPagesSupport)
                 {
                     var definitions = _pageRewriter.RewritePages(compilation);
                     pages = _pageViewLocators.SelectMany(x => x.Find(projectRoot)).ToList();
@@ -133,10 +134,14 @@ project-path:
                         page.Definition = definitions.FirstOrDefault(d => d.GetFilePath() == (page.FilePath + ".cs"));
                     }
                 }
+                else
+                {
+                    pages = new List<PageView>();
+                }
                 Console.WriteLine();
 
                 // Generate the R4Mvc.generated.cs file
-                _generatorService.Generate(projectRoot, controllers, pages);
+                _generatorService.Generate(projectRoot, controllers, pages, hasPagesSupport);
 
                 // updating the r4mvc.json settings file
                 _settings._generatedByVersion = Program.GetVersion();

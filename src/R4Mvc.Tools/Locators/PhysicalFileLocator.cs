@@ -11,6 +11,10 @@ namespace R4Mvc.Tools.Locators
             => Directory.GetDirectories(parentPath);
 
         public string[] GetFiles(string parentPath, string filter, bool recurse = false)
-            => Directory.GetFiles(parentPath, filter, recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+        {
+            if (!DirectoryExists(parentPath))
+                return new string[0];
+            return Directory.GetFiles(parentPath, filter, recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+        }
     }
 }
