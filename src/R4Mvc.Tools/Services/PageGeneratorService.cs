@@ -92,7 +92,9 @@ namespace R4Mvc.Tools.Services
                     .WithGeneratedNonUserCodeAttributes()
                     .ForEach(handlerNames, (c, m) => c
                         .WithStringField(m, m, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)));
-            WithViewsClass(genControllerClass, new[] { pageView });
+
+            if (_settings.GeneratePageViewsClass)
+                WithViewsClass(genControllerClass, new[] { pageView });
 
             return genControllerClass.Build();
         }

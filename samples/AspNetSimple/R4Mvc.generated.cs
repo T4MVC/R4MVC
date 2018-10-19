@@ -76,20 +76,6 @@ namespace R4Mvc
         string IR4ActionResult.Protocol => null;
         RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/Categories/Inner/NoModel"}};
         RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
-        public class ViewsClass
-        {
-            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            public _ViewNamesClass ViewNames => s_ViewNames;
-            public class _ViewNamesClass
-            {
-                public readonly string NoModel = "NoModel";
-            }
-
-            public readonly string NoModel = "~/Pages/Categories/Inner/NoModel.cshtml";
-        }
-
-        static readonly ViewsClass s_Views = new ViewsClass();
-        public ViewsClass Views => s_Views;
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -98,20 +84,6 @@ namespace R4Mvc
         string IR4ActionResult.Protocol => null;
         RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/Categories/NoModel"}};
         RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
-        public class ViewsClass
-        {
-            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            public _ViewNamesClass ViewNames => s_ViewNames;
-            public class _ViewNamesClass
-            {
-                public readonly string NoModel = "NoModel";
-            }
-
-            public readonly string NoModel = "~/Pages/Categories/NoModel.cshtml";
-        }
-
-        static readonly ViewsClass s_Views = new ViewsClass();
-        public ViewsClass Views => s_Views;
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -120,20 +92,6 @@ namespace R4Mvc
         string IR4ActionResult.Protocol => null;
         RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/NoModel"}};
         RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
-        public class ViewsClass
-        {
-            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            public _ViewNamesClass ViewNames => s_ViewNames;
-            public class _ViewNamesClass
-            {
-                public readonly string NoModel = "NoModel";
-            }
-
-            public readonly string NoModel = "~/Pages/NoModel.cshtml";
-        }
-
-        static readonly ViewsClass s_Views = new ViewsClass();
-        public ViewsClass Views => s_Views;
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]

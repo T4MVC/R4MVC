@@ -211,7 +211,8 @@ namespace R4Mvc.Tools.Services
                     .WithBaseTypes("IR4ActionResult")
                     .WithGeneratedNonUserCodeAttributes();
                 _pageGenerator.AddR4ActionMethods(pageClass, page.PagePath);
-                _pageGenerator.WithViewsClass(pageClass, new[] { page });
+                if (_settings.GeneratePageViewsClass)
+                    _pageGenerator.WithViewsClass(pageClass, new[] { page });
                 yield return pageClass.Build();
             }
         }

@@ -111,24 +111,6 @@ namespace AspNetSimple.Pages.Categories
         public class HandlerNameConstants
         {
         }
-
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public class ViewsClass
-        {
-            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            public _ViewNamesClass ViewNames => s_ViewNames;
-            public class _ViewNamesClass
-            {
-                public readonly string Details = "Details";
-            }
-
-            public readonly string Details = "~/Pages/Categories/Details.cshtml";
-        }
-
-        [GeneratedCode("R4Mvc", "1.0")]
-        static readonly ViewsClass s_Views = new ViewsClass();
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public ViewsClass Views => s_Views;
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]

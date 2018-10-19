@@ -14,6 +14,11 @@
         public string[] ExcludedStaticFileExtensions { get; set; }
         public string[] ReferencedNamespaces { get; set; }
 
+        // Don't include the page ViewsClass by default, and hide the option unless it's enabled
+        // Not sure if we'd even need that, but leaving it in for the time being
+        public bool GeneratePageViewsClass { get; set; } = false;
+        public bool ShouldSerializeGeneratePageViewsClass() => GeneratePageViewsClass;
+
         public FeatureFoldersClass FeatureFolders { get; set; } = new FeatureFoldersClass();
         public class FeatureFoldersClass
         {
