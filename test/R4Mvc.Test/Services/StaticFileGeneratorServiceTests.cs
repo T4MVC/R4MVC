@@ -27,7 +27,8 @@ namespace R4Mvc.Test.Services
             var staticFiles = staticFileLocator.Find(VirtualFileLocator.ProjectRoot_wwwroot);
             var staticFileGeneratorService = new StaticFileGeneratorService(new[] { staticFileLocator }, new Tools.Settings());
 
-            var c = new ClassBuilder("Test");
+            var c = new ClassBuilder("Test")
+                .WithGeneratedNonUserCodeAttributes();
             staticFileGeneratorService.AddStaticFiles(VirtualFileLocator.ProjectRoot_wwwroot, c, string.Empty, staticFiles);
 
             Assert.Collection(c.Build().Members,
