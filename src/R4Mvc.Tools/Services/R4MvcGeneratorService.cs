@@ -63,23 +63,46 @@ namespace R4Mvc.Tools.Services
                 }
 
                 // If SplitIntoMultipleFiles is NOT set, bundle them all in R4Mvc
-                if (!_settings.SplitIntoMultipleFiles)
+                if (namespaceNode.Members.Count > 0)
                     generatedControllers.Add(namespaceNode);
             }
 
             var generatedPages = new List<NamespaceDeclarationSyntax>();
-            foreach (var namespaceGroup in pages.Where(p => p.Definition != null).GroupBy(p => p.Definition.Namespace).OrderBy(p => p.Key))
+            foreach (var namespaceGroup in pages.GroupBy(p => p.Definition?.Namespace ?? _settings.R4MvcNamespace).OrderBy(p => p.Key))
             {
                 var namespaceNode = NamespaceDeclaration(ParseName(namespaceGroup.Key));
                 foreach (var page in namespaceGroup.OrderBy(p => p.Name))
                 {
-                    namespaceNode = namespaceNode.AddMembers(
-                        _pageGenerator.GeneratePartialPage(page),
-                        _pageGenerator.GenerateR4Page(page.Definition));
+                    var viewOnlyPageFile = page.Definition == null;
+                    if (!viewOnlyPageFile)
+                    {
+                        namespaceNode = namespaceNode.AddMembers(
+                            _pageGenerator.GeneratePartialPage(page),
+                            _pageGenerator.GenerateR4Page(page.Definition));
+                    }
+                    else
+                    {
+                        namespaceNode = namespaceNode.AddMembers(
+                            CreateViewOnlyPageClass(page));
+                    }
 
                     // If SplitIntoMultipleFiles is set, store the generated classes alongside the controller files.
-                    if (_settings.SplitIntoMultipleFiles)
+                    if (_settings.SplitIntoMultipleFiles && (_settings.SplitViewOnlyPagesIntoMultipleFiles || !viewOnlyPageFile))
                     {
+                        var userPageFile = page.Definition.GetFilePath();
+                        if (!File.Exists(userPageFile))
+                        {
+                            Console.WriteLine("Generating " + userPageFile.GetRelativePath(projectRoot));
+                            var result = new CodeFileBuilder(_settings, false)
+                                .WithNamespace(NamespaceDeclaration(ParseName(page.Definition.Namespace))
+                                    .AddMembers(new ClassBuilder(page.Definition.Name)
+                                        .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                                        .WithComment("// Use this file to add custom extensions and helper methods to this page")
+                                        .Build()))
+                                .Build();
+                            _filePersistService.WriteFile(result, userPageFile);
+                        }
+
                         var generatedFilePath = page.Definition.GetFilePath().TrimEnd(".cs") + ".generated.cs";
                         Console.WriteLine("Generating " + generatedFilePath.GetRelativePath(projectRoot));
                         var pageFile = new CodeFileBuilder(_settings, true)
@@ -90,7 +113,7 @@ namespace R4Mvc.Tools.Services
                 }
 
                 // If SplitIntoMultipleFiles is NOT set, bundle them all in R4Mvc
-                if (!_settings.SplitIntoMultipleFiles)
+                if (namespaceNode.Members.Count > 0)
                     generatedPages.Add(namespaceNode);
             }
 
@@ -112,7 +135,6 @@ namespace R4Mvc.Tools.Services
                     .WithField(Constants.DummyClassInstance, Constants.DummyClass, Constants.DummyClass, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)
                     .Build())
                 .AddMembers(CreateViewOnlyControllerClasses(controllers).ToArray<MemberDeclarationSyntax>())
-                .AddMembers(CreateViewOnlyPageClasses(pages).ToArray<MemberDeclarationSyntax>())
                 .AddMembers(CreateAreaClasses(areaControllers).ToArray<MemberDeclarationSyntax>())
                 .AddMembers(CreatePagePathClasses(pages, out var topLevelPagePaths).ToArray<MemberDeclarationSyntax>());
 
@@ -198,23 +220,20 @@ namespace R4Mvc.Tools.Services
             }
         }
 
-        public IEnumerable<ClassDeclarationSyntax> CreateViewOnlyPageClasses(IList<PageView> pages)
+        public ClassDeclarationSyntax CreateViewOnlyPageClass(PageView page)
         {
-            foreach (var page in pages.Where(c => c.Definition == null).OrderBy(c => c.FilePath))
-            {
-                var className = string.Join("_", page.Segments.Concat(new[] { page.Name })) + "Model";
-                page.Definition = new PageDefinition(_settings.R4MvcNamespace, page.Name, false, null, new System.Collections.Generic.List<string>());
-                page.Definition.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
+            var generatedPath = page.FilePath + ".cs";
+            var className = string.Join("_", page.Segments.Concat(new[] { page.Name })) + "Model";
+            page.Definition = new PageDefinition(_settings.R4MvcNamespace, className, false, null, new List<string> { generatedPath });
+            page.Definition.FullyQualifiedGeneratedName = $"{_settings.R4MvcNamespace}.{className}";
 
-                var pageClass = new ClassBuilder(className)
-                    .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                    .WithBaseTypes("IR4ActionResult")
-                    .WithGeneratedNonUserCodeAttributes();
-                _pageGenerator.AddR4ActionMethods(pageClass, page.PagePath);
-                if (_settings.GeneratePageViewsClass)
-                    _pageGenerator.WithViewsClass(pageClass, new[] { page });
-                yield return pageClass.Build();
-            }
+            var pageClass = new ClassBuilder(className)
+                .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                .WithBaseTypes("IR4ActionResult");
+            _pageGenerator.AddR4ActionMethods(pageClass, page.PagePath);
+            if (_settings.GeneratePageViewsClass)
+                _pageGenerator.WithViewsClass(pageClass, new[] { page });
+            return pageClass.Build();
         }
 
         public IEnumerable<ClassDeclarationSyntax> CreateAreaClasses(ILookup<string, ControllerDefinition> areaControllers)

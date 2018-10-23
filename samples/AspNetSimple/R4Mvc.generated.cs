@@ -71,30 +71,6 @@ namespace R4Mvc
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public partial class Categories_Inner_NoModelModel : IR4ActionResult
-    {
-        string IR4ActionResult.Protocol => null;
-        RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/Categories/Inner/NoModel"}};
-        RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
-    }
-
-    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public partial class Categories_NoModelModel : IR4ActionResult
-    {
-        string IR4ActionResult.Protocol => null;
-        RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/Categories/NoModel"}};
-        RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
-    }
-
-    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public partial class NoModelModel : IR4ActionResult
-    {
-        string IR4ActionResult.Protocol => null;
-        RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/NoModel"}};
-        RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
-    }
-
-    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class MembersAreaClass
     {
         public readonly string Name = "Members";

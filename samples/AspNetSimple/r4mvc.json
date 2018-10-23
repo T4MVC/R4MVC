@@ -6,6 +6,7 @@
   "R4MvcNamespace": "R4Mvc",
   "LinksNamespace": "Links",
   "SplitIntoMultipleFiles": true,
+  "SplitViewOnlyPagesIntoMultipleFiles": true,
   "StaticFilesPath": "wwwroot",
   "ExcludedStaticFileExtensions": null,
   "ReferencedNamespaces": [
