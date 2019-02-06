@@ -25,6 +25,11 @@ public static partial class MVC
     public static readonly R4Mvc.SharedController Shared = new R4Mvc.SharedController();
 }
 
+[GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+public static partial class MVCPages
+{
+}
+
 namespace R4Mvc
 {
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]

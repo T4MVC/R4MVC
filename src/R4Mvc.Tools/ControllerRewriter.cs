@@ -51,7 +51,7 @@ namespace R4Mvc.Tools
         internal static bool ControllerShouldBeProcessed(INamedTypeSymbol symbol)
             => symbol.DeclaredAccessibility == Accessibility.Public &&
                 !symbol.IsAbstract &&
-                symbol.InheritsFrom<Controller>() &&
+                symbol.InheritsFrom<ControllerBase>() &&
                 !symbol.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<R4MvcExcludeAttribute>());
 
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
