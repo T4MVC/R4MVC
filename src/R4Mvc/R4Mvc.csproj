@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;netstandard2.0;net461</TargetFrameworks>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\R4Mvc.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
