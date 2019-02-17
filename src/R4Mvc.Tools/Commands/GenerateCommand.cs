@@ -127,7 +127,7 @@ project-path:
                 if (hasPagesSupport)
                 {
                     var definitions = _pageRewriter.RewritePages(compilation);
-                    pages = _pageViewLocators.SelectMany(x => x.Find(projectRoot)).ToList();
+                    pages = _pageViewLocators.SelectMany(x => x.Find(projectRoot)).Where(p => p.IsPage).ToList();
 
                     foreach (var page in pages)
                     {
