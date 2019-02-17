@@ -32,6 +32,8 @@ public static partial class MVCPages
 {
     static readonly R4Mvc.CategoriesPathClass s_Categories = new R4Mvc.CategoriesPathClass();
     public static R4Mvc.CategoriesPathClass Categories => s_Categories;
+    static readonly R4Mvc.NoDirectChildPagesPathClass s_NoDirectChildPages = new R4Mvc.NoDirectChildPagesPathClass();
+    public static R4Mvc.NoDirectChildPagesPathClass NoDirectChildPages => s_NoDirectChildPages;
     public static readonly AspNetSimple.Pages.DefaultModel Default = new AspNetSimple.Pages.R4MVC_DefaultModel();
     public static readonly R4Mvc.NoModelModel NoModel = new R4Mvc.NoModelModel();
 }
@@ -93,6 +95,26 @@ namespace R4Mvc
     public partial class Categories_InnerPathClass
     {
         public readonly R4Mvc.Categories_Inner_NoModelModel NoModel = new R4Mvc.Categories_Inner_NoModelModel();
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class NoDirectChildPagesPathClass
+    {
+        static readonly R4Mvc.NoDirectChildPages_AnotherEmptyLayerPathClass s_AnotherEmptyLayer = new R4Mvc.NoDirectChildPages_AnotherEmptyLayerPathClass();
+        public R4Mvc.NoDirectChildPages_AnotherEmptyLayerPathClass AnotherEmptyLayer => s_AnotherEmptyLayer;
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class NoDirectChildPages_AnotherEmptyLayerPathClass
+    {
+        static readonly R4Mvc.NoDirectChildPages_AnotherEmptyLayer_NestedPagesPathClass s_NestedPages = new R4Mvc.NoDirectChildPages_AnotherEmptyLayer_NestedPagesPathClass();
+        public R4Mvc.NoDirectChildPages_AnotherEmptyLayer_NestedPagesPathClass NestedPages => s_NestedPages;
+    }
+
+    [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+    public partial class NoDirectChildPages_AnotherEmptyLayer_NestedPagesPathClass
+    {
+        public readonly R4Mvc.NoDirectChildPages_AnotherEmptyLayer_NestedPages_IndexModel Index = new R4Mvc.NoDirectChildPages_AnotherEmptyLayer_NestedPages_IndexModel();
     }
 }
 

@@ -266,12 +266,19 @@ namespace R4Mvc.Tools.Services
             while (pages.Any(p => p.Segments.Any(s => s.Contains(splitter))))
                 splitter += "_";
 
+            var pagePaths = pages
+                .Where(p => p.Segments.Length > 0)
+                .SelectMany(p => Enumerable.Range(1, p.Segments.Length)
+                    .Select(i => string.Join(splitter, p.Segments.Take(i))))
+                .Distinct()
+                .OrderBy(k => k)
+                .ToList();
             var pageGroups = pages
                 .ToLookup(p => string.Join(splitter, p.Segments));
 
             var pathClasses = new Dictionary<string, ClassBuilder>();
 
-            foreach (var key in pageGroups.Select(g => g.Key).Where(k => k.Length > 0).OrderBy(k => k))
+            foreach (var key in pagePaths)
             {
                 var pathClass = new ClassBuilder(key + "PathClass")
                     .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
@@ -285,14 +292,14 @@ namespace R4Mvc.Tools.Services
                 pathClasses.Add(key, pathClass);
             }
 
-            foreach (var key in pageGroups.Select(g => g.Key).Where(k => k.Length > 0 && k.IndexOf(splitter) > 0))
+            foreach (var key in pagePaths.Where(k => k.IndexOf(splitter) > 0))
             {
                 var parentKey = key.Substring(0, key.LastIndexOf(splitter));
                 pathClasses[parentKey]
                     .WithStaticFieldBackedProperty(key.Substring(parentKey.Length + splitter.Length), $"{_settings.R4MvcNamespace}.{key}PathClass", SyntaxKind.PublicKeyword);
             }
 
-            topLevelPagePaths = pageGroups.Select(g => g.Key).Where(k => k.Length > 0 && k.IndexOf(splitter) == -1)
+            topLevelPagePaths = pagePaths.Where(k => k.IndexOf(splitter) == -1)
                 .ToDictionary(k => k, k => $"{_settings.R4MvcNamespace}.{k}PathClass");
 
             return pathClasses.Values.Select(c => c.Build());
