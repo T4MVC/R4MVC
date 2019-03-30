@@ -50,7 +50,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Build.Locator" Version="1.0.31" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.9.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="2.9.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.1.1" PrivateAssets="All" />
