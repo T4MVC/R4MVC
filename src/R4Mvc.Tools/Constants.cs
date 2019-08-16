@@ -24,6 +24,15 @@
         internal const string RedirectToActionResultClass = ProjectName + ActionResultNamespace + "RedirectToActionResult";
         internal const string RedirectToRouteResultClass = ProjectName + ActionResultNamespace + "RedirectToRouteResult";
 
+        private const string PageActionResultNamespace = "_Microsoft_AspNetCore_Mvc_RazorPages_";
+        internal const string PageActionResultClass = ProjectName + PageActionResultNamespace + "ActionResult";
+        internal const string PageJsonResultClass = ProjectName + PageActionResultNamespace + "JsonResult";
+        internal const string PageContentResultClass = ProjectName + PageActionResultNamespace + "ContentResult";
+        internal const string PageFileResultClass = ProjectName + PageActionResultNamespace + "FileResult";
+        internal const string PageRedirectResultClass = ProjectName + PageActionResultNamespace + "RedirectResult";
+        internal const string PageRedirectToActionResultClass = ProjectName + PageActionResultNamespace + "RedirectToActionResult";
+        internal const string PageRedirectToRouteResultClass = ProjectName + PageActionResultNamespace + "RedirectToRouteResult";
+
         internal static class ConfigKeys
         {
             internal const string HelpersPrefix = "helpersPrefix";

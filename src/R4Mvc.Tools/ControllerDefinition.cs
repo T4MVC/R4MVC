@@ -27,7 +27,8 @@ namespace R4Mvc.Tools
         public string GetFilePath()
         {
             return FilePaths
-                .OrderByDescending(f => f.Contains("/Controllers/"))
+                .OrderByDescending(f => Area == null || f.Contains($"/Areas/{Area}/Controllers/") || f.Contains($"\\Areas\\{Area}\\Controllers\\"))
+                .ThenByDescending(f => f.Contains("/Controllers/") || f.Contains("\\Controllers\\"))
                 .ThenByDescending(f => !f.Contains(".generated.cs"))
                 .ThenBy(f => f)
                 .First();

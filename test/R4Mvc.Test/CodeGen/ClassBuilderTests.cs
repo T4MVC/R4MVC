@@ -119,13 +119,17 @@ namespace R4Mvc.Test.CodeGen
         [InlineData("Name", "name1", true, SyntaxKind.PublicKeyword, SyntaxKind.StaticKeyword)]
         [InlineData("Email", "email", false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)]
         [InlineData("_id", "Entity", false)]
-        public void Class_WithStringField(string name, string value, bool includeGenerated, params SyntaxKind[] modifiers)
+        public void Class_WithStringField(string name, string value, bool classGenerated, params SyntaxKind[] modifiers)
         {
-            var result = new ClassBuilder("ClassName")
-                .WithStringField(name, value, includeGenerated, modifiers)
+            var classBuilder = new ClassBuilder("ClassName");
+            if (classGenerated)
+                classBuilder.WithGeneratedNonUserCodeAttributes();
+
+            var result = classBuilder
+                .WithStringField(name, value, modifiers)
                 .Build();
 
-            Assert.Equal($"classClassName{{{(includeGenerated ? GeneratedAttribute : null)}{modifiers.ToStringModifiers()}string{name}=\"{value}\";}}", result.ToString());
+            Assert.Equal($"{(classGenerated ? GeneratedNonUserCodeAttribute : null)}classClassName{{{(!classGenerated ? GeneratedAttribute : null)}{modifiers.ToStringModifiers()}string{name}=\"{value}\";}}", result.ToString());
         }
 
         [Theory]
@@ -145,13 +149,17 @@ namespace R4Mvc.Test.CodeGen
         [InlineData("Name", "object", false, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)]
         [InlineData("_id", "Entity", true, SyntaxKind.PrivateKeyword)]
         [InlineData("_id", "Entity", false)]
-        public void Class_WithFieldBackedProperty(string name, string type, bool useGeneratedAttribute, params SyntaxKind[] modifiers)
+        public void Class_WithFieldBackedProperty(string name, string type, bool classGenerated, params SyntaxKind[] modifiers)
         {
-            var result = new ClassBuilder("ClassName")
-                .WithStaticFieldBackedProperty(name, type, useGeneratedAttribute, modifiers)
+            var classBuilder = new ClassBuilder("ClassName");
+            if (classGenerated)
+                classBuilder.WithGeneratedNonUserCodeAttributes();
+
+            var result = classBuilder
+                .WithStaticFieldBackedProperty(name, type, modifiers)
                 .Build();
 
-            Assert.Equal($"classClassName{{{(useGeneratedAttribute ? GeneratedAttribute : null)}static readonly {type}s_{name}=new{type}();{(useGeneratedAttribute ? GeneratedNonUserCodeAttribute : null)}{modifiers.ToStringModifiers()}{type}{name}=>s_{name};}}", result.ToString());
+            Assert.Equal($"{(classGenerated ? GeneratedNonUserCodeAttribute : null)}classClassName{{{(!classGenerated ? GeneratedAttribute : null)}static readonly {type}s_{name}=new{type}();{(!classGenerated ? GeneratedNonUserCodeAttribute : null)}{modifiers.ToStringModifiers()}{type}{name}=>s_{name};}}", result.ToString());
         }
 
         [Theory]

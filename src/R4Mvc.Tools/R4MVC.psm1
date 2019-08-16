@@ -25,9 +25,9 @@ function Generate-R4MVC
         [string] $Project)
 
     $dteProject = GetProject $Project
-    $r4mvcPath = Join-Path (Split-Path $PSCommandPath) "dotnet-r4mvc.exe"
+    $r4mvcPath = Join-Path (Split-Path $PSCommandPath) "R4Mvc.Tools.exe"
 
-    & $r4mvcPath generate $dteProject.FullName
+    & $r4mvcPath generate -p $dteProject.FullName
 }
 
 <#
@@ -47,9 +47,9 @@ function Remove-R4MVC
         [string] $Project)
 
     $dteProject = GetProject $Project
-    $r4mvcPath = Join-Path (Split-Path $PSCommandPath) "dotnet-r4mvc.exe"
+    $r4mvcPath = Join-Path (Split-Path $PSCommandPath) "R4Mvc.Tools.exe"
 
-    & $r4mvcPath remove $dteProject.FullName
+    & $r4mvcPath remove -p $dteProject.FullName
 }
 
 
@@ -70,8 +70,8 @@ function GetProject($projectName)
 # SIG # Begin signature block
 # MIIe8AYJKoZIhvcNAQcCoIIe4TCCHt0CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUvi9dUHff55An1juBlfMuwVdd
-# BiWgghkcMIIF2DCCA8CgAwIBAgIQbDvSft08lJ6Vjiips8dXoDANBgkqhkiG9w0B
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU3WgN0Yf54bdoQF0RGyReS5xV
+# 9rGgghkcMIIF2DCCA8CgAwIBAgIQbDvSft08lJ6Vjiips8dXoDANBgkqhkiG9w0B
 # AQsFADB9MQswCQYDVQQGEwJJTDEWMBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkG
 # A1UECxMiU2VjdXJlIERpZ2l0YWwgQ2VydGlmaWNhdGUgU2lnbmluZzEpMCcGA1UE
 # AxMgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMTUxMjE2MDEw
@@ -210,28 +210,28 @@ function GetProject($projectName)
 # dHkxIzAhBgNVBAMTGlN0YXJ0Q29tIENsYXNzIDIgT2JqZWN0IENBAhBAPVEUYJRI
 # bRTqOS7gDAEkMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAA
 # MBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgor
-# BgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBRYyJnXzlVtPF1/LHXUfwzeY6TBTzAN
-# BgkqhkiG9w0BAQEFAASCAgAZ/th8g+Cy9KyPtKX/LmrOzc6iSMIZkQbG347hDGEK
-# SWRP77CgmOqM4bGXBcGqrIyPXTj9ZOIdavrXl6bY3XyBRSaUtsrEJnuvk1N8l+f2
-# H+7HwMcMUByLTDV1pKp0mxsIdjSYbZgwfCo155BFFWsJjfkwPiV31mBG8M/VgKb6
-# 2i5+7y/sXCP3WPEYpNdu1ZBF6lDwFtmaqjZ/hLJ0yW0HCbPKk5TfJNft7D94R6b+
-# dBeFgXvHPwM57UsgCdsjO9CUyb+0GOebme6LbjVvFIlWKuwkKAm7qnTTzAtKnw64
-# vjKs+YFeMIcIn7HFMYkf7iTlVgwWorCaMKy9egcoQ2LM+Q7F3cGXbzkXiS+9IwOq
-# 04yfPycmtPXm9/lo05x07FMDx8IPcedAohOGHxIB7joE67zScAfLuhSMilBS+kMd
-# cCgeiwRj/6YCHN6/ojvz7+8Ey4VusFw2BIcGvdDnCqczPIhm3+IHPKkPLIbiE4pX
-# sSpLIDByDpgHjDqh9tGt/xccWyHygT4RgwmCxf3pKkHW6aqZVKdd2rqtjoja1rEd
-# 6rxHmPoJIMlvwdBTX2tXTbzteP4KWJfFBP2fN756cTYIr6UBdfOdLt1/9KxQU2z/
-# +8pu+jH4UHtpiu/XWD6+ydyymi5bPMqEkon4aqo7UoTOKFp4WcjCOm/nE7jaM1pq
-# iKGCAg8wggILBgkqhkiG9w0BCQYxggH8MIIB+AIBATB2MGIxCzAJBgNVBAYTAlVT
+# BgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBQyATTRFFEWx+A/5NiWDJQZOWclbTAN
+# BgkqhkiG9w0BAQEFAASCAgBqgLfn+5ZTTO3AtBSP8uHOSl/enRqiCE0sqn9hVPKy
+# 6mEbQC0ZjoQFKogqNC0+A5oYKSKAjfOlKTq7Vo/y9vFVUkqEwe3XST7k71XKf5hW
+# M2kIt894y0gSSn7sE8E1TYKUjEERUiRmENaUkoY0JIJcVtrucIfHAnOTtbm/F5w7
+# 3NmhDOi+D6cBKxnoKVgxGjzFAZwPPkG9RD607x7ZU9iV4ErbE4Kw0UuX9FCIE/kT
+# J/3dBenfgNGjek/Mg7DPdLInGGzlQ2WcOnmx8zkibwoxDmlK1mQ0rB9y4rdB53xE
+# BCpPiZLXDcaLJyG31xwEMuUqUp/7eVKYCfoU7n7TntDxViNvSfFWgNEPiHueLvyl
+# v1OJNTmH3XQ1/clmAjyxrU8HceRuMRVF/EOAbiA7yVI0EW/3PVpaKX0e3WSTRDCz
+# YtypS9qGGNNFGT5AS5FsoHFx//kZwmPUKODJIgPtN6NDsgW/UkosZwNN26kI3/q1
+# tGIJF1kARh0xk2QpUgHz6HRkTTbUPg0Z0fjQd2ScpSd+Sx8XVebap0jXzEPRmwvG
+# BG3NUpSGRxHxHGLhkbJjOoRbQIo8PuKhltX+gAzL0yLLo2b072iaSsuiaBUdwQjY
+# RBNRiZTsRdqn3B3Fy3TYT2ZBnxu3Lwhm/CvvbJ69fyefK0r6FOoWZhHSHJm7P5b3
+# 16GCAg8wggILBgkqhkiG9w0BCQYxggH8MIIB+AIBATB2MGIxCzAJBgNVBAYTAlVT
 # MRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5j
 # b20xITAfBgNVBAMTGERpZ2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMQIQAwGaAjr/WLFr
 # 1tXq5hfwZjAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAc
-# BgkqhkiG9w0BCQUxDxcNMTgwMjI4MDAxNDI5WjAjBgkqhkiG9w0BCQQxFgQUgdkO
-# WQg81Mw7cVh25mKmac1mjB8wDQYJKoZIhvcNAQEBBQAEggEAPZzw4i4U9gBVxhDs
-# /Rs/wHrWQxll0I+3B/qLsuDW5OJtlMHWC+qANs9RKT63JMxbC92ARzeoT53xv3nm
-# RPFAROJ0JtwGd5NpmLoj5L6Vf5tfgmA0jI5NduzzIRGM2H+vC2Ws4EdsE2n7aAHu
-# CDOlnhp0hO/IukXSAgRysvIG/ux49LA3Oj3eg4182Cqjbf75LG2PgO0E9vGZlDrU
-# 4KGpWsbYn73DjLtIKbSDj+9Syc2PB2rqXNs0ymgEaA74mZwg6tDS9xlaU69MCKR5
-# DyUlPwuNEOCW+wMyIMaNYegW4D6QERH5w1oH+0S73Wcd+/Da7pEcnpyLeBfoZnfl
-# qOxbmg==
+# BgkqhkiG9w0BCQUxDxcNMTgwOTE3MDkxNDIzWjAjBgkqhkiG9w0BCQQxFgQUo9vd
+# oKaNpfawTBesFqoE4HDEAfQwDQYJKoZIhvcNAQEBBQAEggEAKWut4alZmZLh6IvK
+# jPvwa4rBr+6X+8bUgCvQXtZSYnPotIixt11ZMfLoqnDgTicyunP7IFFiinBCRguz
+# c/SktjKsFYkuXHdAosEG25QVPetN5yHLR7WAq2+YTH492srif0Y1hJhFyPhLcrde
+# I8IXffqcVqnCOuLbT/792fsp/cnr6ExiPp6JiubU+G0PXClbz4naDt2gtcdBw84G
+# N9t8NKgBwBI9zUyZmXDvIc56hf+m2lGIrXs+SCAAYxxDEkHLUf4GS/oWLUaC0h8J
+# ahV5PYlanacXBvQapEyVZDzVDc5AxGf6N/gSLfWtFHgqhoX11uhXJpBkd7vPJZYq
+# 4K85iQ==
 # SIG # End signature block

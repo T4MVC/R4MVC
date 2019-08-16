@@ -8,7 +8,7 @@ namespace R4Mvc.Tools.Services
     public interface IControllerGeneratorService
     {
         string GetControllerArea(INamedTypeSymbol controllerSymbol);
-        ClassDeclarationSyntax GeneratePartialController(ControllerDefinition controller);
+        ClassDeclarationSyntax GeneratePartialController(ControllerDefinition controller, bool supportsPages);
         ClassDeclarationSyntax GenerateR4Controller(ControllerDefinition controller);
         ClassBuilder WithViewsClass(ClassBuilder classBuilder, IEnumerable<View> viewFiles);
     }

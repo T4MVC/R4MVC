@@ -9,7 +9,7 @@ namespace R4Mvc.Test.Locators
         {
             Assert.Equal(areaName, view.AreaName);
             Assert.Equal(controllerName, view.ControllerName);
-            Assert.Equal(viewName, view.ViewName);
+            Assert.Equal(viewName, view.Name);
             Assert.Equal(viewPath, view.RelativePath.ToString());
             if (templateKind != null)
                 Assert.Equal(templateKind, view.TemplateKind);

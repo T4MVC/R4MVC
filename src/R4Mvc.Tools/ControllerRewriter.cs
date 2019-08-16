@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using R4Mvc.Tools.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -32,6 +33,8 @@ namespace R4Mvc.Tools
             var newNode = (ClassDeclarationSyntax)base.VisitClassDeclaration(node);
             if (ControllerShouldBeProcessed(symbol))
             {
+                Console.WriteLine($"Processing controller {symbol.ContainingNamespace}.{symbol.Name}");
+
                 // hold a list of all controller classes to use later for the generator
                 _mvcControllerClassNodes.Add(node);
 
@@ -48,7 +51,7 @@ namespace R4Mvc.Tools
         internal static bool ControllerShouldBeProcessed(INamedTypeSymbol symbol)
             => symbol.DeclaredAccessibility == Accessibility.Public &&
                 !symbol.IsAbstract &&
-                symbol.InheritsFrom<Controller>() &&
+                symbol.InheritsFrom<ControllerBase>() &&
                 !symbol.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<R4MvcExcludeAttribute>());
 
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
@@ -56,10 +59,10 @@ namespace R4Mvc.Tools
             node = (MethodDeclarationSyntax)base.VisitMethodDeclaration(node);
 
             // only public methods not marked as virtual
-            if (node.Modifiers.Any(SyntaxKind.PublicKeyword) && !node.Modifiers.Any(SyntaxKind.VirtualKeyword))
+            if (node.Modifiers.Any(SyntaxKind.PublicKeyword) && !node.Modifiers.Any(m => m.IsKind(SyntaxKind.VirtualKeyword) || m.IsKind(SyntaxKind.OverrideKeyword)))
             {
                 var symbol = _compiler.GetSemanticModel(node.SyntaxTree).GetDeclaredSymbol(node);
-                if (ControllerShouldBeProcessed(symbol.ContainingType) && symbol.IsMvcAction())
+                if (ControllerShouldBeProcessed(symbol.ContainingType) && symbol.IsMvcAction() && symbol.IsNotR4MvcExcluded())
                 {
                     Debug.WriteLine(
                         "R4MVC - Marking controller method {0} as virtual from {1}",

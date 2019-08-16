@@ -20,7 +20,7 @@ namespace R4Mvc.Test
             return baseControllerSymbol.Object;
         }
 
-        private INamedTypeSymbol GetMvcControllerClass() => GetClass("Microsoft.AspNetCore.Mvc.Controller");
+        private INamedTypeSymbol GetMvcControllerClass() => GetClass("Microsoft.AspNetCore.Mvc.Controller", GetClass("Microsoft.AspNetCore.Mvc.ControllerBase"));
 
         private INamedTypeSymbol GetExcludedAttribute() => GetClass("Microsoft.AspNetCore.Mvc.R4MvcExcludeAttribute");
 

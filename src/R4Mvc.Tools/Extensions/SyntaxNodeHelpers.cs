@@ -47,12 +47,17 @@ namespace R4Mvc.Tools.Extensions
             return !method.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<GeneratedCodeAttribute>());
         }
 
+        public static bool IsNotR4MvcExcluded(this ISymbol method)
+        {
+            return !method.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<R4MvcExcludeAttribute>() || a.AttributeClass.Name == "R4MvcExclude");
+        }
+
         private static string[] _controllerClassMethodNames = null;
+        private static string[] _pageClassMethodNames = null;
         public static void PopulateControllerClassMethodNames(CSharpCompilation compilation)
         {
-            var typeSymbol = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.Controller");
-
             var result = new List<string>();
+            var typeSymbol = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.Controller");
             while (typeSymbol != null)
             {
                 var methodNames = typeSymbol.GetMembers()
@@ -61,8 +66,19 @@ namespace R4Mvc.Tools.Extensions
                 result.AddRange(methodNames);
                 typeSymbol = typeSymbol.BaseType;
             }
-
             _controllerClassMethodNames = result.Distinct().ToArray();
+
+            result = new List<string>();
+            typeSymbol = compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Mvc.RazorPages.PageModel");
+            while (typeSymbol != null)
+            {
+                var methodNames = typeSymbol.GetMembers()
+                    .Where(r => r.Kind == SymbolKind.Method && r.DeclaredAccessibility == Accessibility.Public && r.IsVirtual)
+                    .Select(s => s.Name);
+                result.AddRange(methodNames);
+                typeSymbol = typeSymbol.BaseType;
+            }
+            _pageClassMethodNames = result.Distinct().ToArray();
         }
 
         public static bool IsMvcAction(this IMethodSymbol method)
@@ -74,13 +90,35 @@ namespace R4Mvc.Tools.Extensions
             return true;
         }
 
-        public static IEnumerable<IMethodSymbol> GetPublicNonGeneratedMethods(this ITypeSymbol controller)
+        public static bool IsRazorPageAction(this IMethodSymbol method)
+        {
+            if (method.GetAttributes().Any(a => a.AttributeClass.InheritsFrom<NonActionAttribute>()))
+                return false;
+            if (_pageClassMethodNames.Contains(method.Name))
+                return false;
+            if (!method.Name.StartsWith("On"))
+                return false;
+            return true;
+        }
+
+        public static IEnumerable<IMethodSymbol> GetPublicNonGeneratedControllerMethods(this ITypeSymbol controller)
         {
             return controller.GetMembers()
                 .OfType<IMethodSymbol>()
                 .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
                 .Where(IsNotR4MVCGenerated)
+                .Where(IsNotR4MvcExcluded)
                 .Where(IsMvcAction);
+        }
+
+        public static IEnumerable<IMethodSymbol> GetPublicNonGeneratedPageMethods(this ITypeSymbol controller)
+        {
+            return controller.GetMembers()
+                .OfType<IMethodSymbol>()
+                .Where(m => m.DeclaredAccessibility == Accessibility.Public && m.MethodKind == MethodKind.Ordinary)
+                .Where(IsNotR4MVCGenerated)
+                .Where(IsNotR4MvcExcluded)
+                .Where(IsRazorPageAction);
         }
 
         private static AttributeSyntax CreateGeneratedCodeAttribute()
@@ -133,6 +171,8 @@ namespace R4Mvc.Tools.Extensions
 
         public static PropertyDeclarationSyntax WithModifiers(this PropertyDeclarationSyntax node, params SyntaxKind[] modifiers)
         {
+            if (modifiers.Length == 0)
+                return node;
             return node.AddModifiers(CreateModifiers(modifiers));
         }
 

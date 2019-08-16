@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+#if CORE2
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+#endif
 
 namespace R4Mvc.TagHelpers
 {
@@ -40,15 +43,19 @@ namespace R4Mvc.TagHelpers
             output.Attributes.RemoveAll(ActionAttribute);
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
+#if CORE2
+            if (ObjectAction is IConvertToActionResult convertToActionResult)
+                ObjectAction = convertToActionResult.Convert();
+#endif
             RouteValueDictionary routeValues = null;
             switch (ObjectAction)
             {
-                case IR4MvcActionResult t4mvcActionResult:
-                    routeValues = t4mvcActionResult.RouteValueDictionary;
+                case IR4ActionResult t4ActionResult:
+                    routeValues = t4ActionResult.RouteValueDictionary;
                     break;
                 case Task task:
                     var result = task.GetActionResult();
-                    if (result is IR4MvcActionResult taskActionResult)
+                    if (result is IR4ActionResult taskActionResult)
                         routeValues = taskActionResult.RouteValueDictionary;
                     break;
             }
