@@ -162,6 +162,7 @@ namespace R4Mvc.Tools
 
             services.AddTransient<IViewLocator, FeatureFolderRazorViewLocator>();
             services.AddTransient<IViewLocator, DefaultRazorViewLocator>();
+            services.AddTransient<IViewLocator, LinkedRazorViewLocator>();
             services.AddTransient<IPageViewLocator, DefaultRazorPageViewLocator>();
             services.AddTransient<IStaticFileLocator, DefaultStaticFileLocator>();
             services.AddTransient<IFileLocator, PhysicalFileLocator>();

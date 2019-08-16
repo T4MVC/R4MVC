@@ -79,8 +79,8 @@ project-path:
                         if (diag.Kind == Microsoft.CodeAnalysis.WorkspaceDiagnosticKind.Failure)
                             foundErrors = true;
                     }
-                    if (foundErrors)
-                        return;
+                    //if (foundErrors)
+                    //    return;
                 }
 
                 // Prep the project Compilation object, and process the Controller public methods list
