@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
+using System.Xml.Linq;
 
 namespace R4Mvc.Tools.Locators
 {
@@ -17,21 +17,16 @@ namespace R4Mvc.Tools.Locators
 
             if (csProject != null)
             {
-                using (var reader = XmlReader.Create(new StringReader(System.IO.File.ReadAllText(csProject))))
+                var xdoc = XDocument.Load(csProject);
+                var xmlNode = xdoc.Descendants("Content").Where(x => x.HasAttributes && x.Attribute("LinkBase") != null && x.Attribute("LinkBase").Value == ViewsFolder).SingleOrDefault();
+                if (xmlNode != null)
                 {
-                    while (reader.ReadToDescendant("Content"))
-                    {
-                        if (reader.HasAttributes && reader.GetAttribute("LinkBase") == ViewsFolder)
-                        {
-                            // We have to remove Views, in order to force to get to the root (real) path
-                            var includeFolder = reader.GetAttribute("Include").Replace("*", "").Replace("\\Views\\", "");
-                            var newFolder = Path.GetFullPath(Path.Combine(projectRoot, includeFolder));
-                            return base.Find(newFolder);
-                        }
-                    }
+                    var includeFolder = xmlNode.Attribute("Include").Value.Replace("*", "").Replace("\\Views\\", "");
+                    var newFolder = Path.GetFullPath(Path.Combine(projectRoot, includeFolder));
+                    return base.Find(newFolder);
                 }
             }
-            return null;
+            return new List<View>();
         }
     }
 }
