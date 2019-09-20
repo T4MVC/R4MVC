@@ -180,11 +180,6 @@ project-path:
                 Console.WriteLine($"Operation completed in {sw.Elapsed}");
             }
 
-            private void Workspace_WorkspaceFailed(object sender, Microsoft.CodeAnalysis.WorkspaceDiagnosticEventArgs e)
-            {
-                throw new NotImplementedException();
-            }
-
             private VisualStudioInstance InitialiseMSBuild(IConfiguration configuration)
             {
                 var instances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
