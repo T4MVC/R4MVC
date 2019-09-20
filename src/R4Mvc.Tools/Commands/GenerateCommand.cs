@@ -84,7 +84,11 @@ project-path:
                 }
 
                 // Prep the project Compilation object, and process the Controller public methods list
-                Console.WriteLine("Compiling project ...");
+                Console.WriteLine("Compiling project using .NET Framework 4.7.2 only as a based reference ...");
+                if (project.SupportsCompilation)
+                {
+                    project.ProjectReferences.ToList().ForEach(x => project = project.RemoveProjectReference(x));
+                }
                 var compilation = await project.GetCompilationAsync() as CSharpCompilation;
                 SyntaxNodeHelpers.PopulateControllerClassMethodNames(compilation);
 
@@ -174,6 +178,11 @@ project-path:
                 sw.Stop();
                 Console.WriteLine();
                 Console.WriteLine($"Operation completed in {sw.Elapsed}");
+            }
+
+            private void Workspace_WorkspaceFailed(object sender, Microsoft.CodeAnalysis.WorkspaceDiagnosticEventArgs e)
+            {
+                throw new NotImplementedException();
             }
 
             private VisualStudioInstance InitialiseMSBuild(IConfiguration configuration)
