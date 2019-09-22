@@ -1,6 +1,6 @@
 version: 1.0.0.{build}
 
-image: Visual Studio 2017
+image: Visual Studio 2019 Preview
 
 configuration: Release
 skip_tags: true
@@ -8,6 +8,9 @@ skip_tags: true
 init:
 - ps: $Env:VersionSuffixParam = "--version-suffix"
 - ps: $Env:VersionSuffixValue = ("ci-" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0"))
+
+install:
+- ps: choco install dotnetcore-sdk --pre
 
 before_build:
 - ps: 'Write-Output ("Build version suffix: " + $Env:VersionSuffixValue)'
