@@ -1,0 +1,19 @@
+{
+  "_generatedByVersion": "1.0.0",
+  "UpdateGeneratedByVersion": true,
+  "HelpersPrefix": "MVC",
+  "PageHelpersPrefix": "MVCPages",
+  "R4MvcNamespace": "R4Mvc",
+  "LinksNamespace": "Links",
+  "SplitIntoMultipleFiles": true,
+  "SplitViewOnlyPagesIntoMultipleFiles": true,
+  "StaticFilesPath": "wwwroot",
+  "ExcludedStaticFileExtensions": null,
+  "ReferencedNamespaces": null,
+  "FeatureFolders": {
+    "Enabled": false,
+    "FeaturesPath": "Features",
+    "StaticFileAccess": false,
+    "FeatureOnlyAreas": null
+  }
+}

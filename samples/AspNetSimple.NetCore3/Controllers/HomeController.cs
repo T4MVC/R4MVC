@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,7 +9,7 @@ using AspNetSimple.NetCore3.Models;
 
 namespace AspNetSimple.NetCore3.Controllers
 {
-    public class HomeController : Controller
+    public partial class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
 
@@ -18,18 +18,18 @@ namespace AspNetSimple.NetCore3.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public virtual IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        public virtual IActionResult Privacy()
         {
             return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public virtual IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }

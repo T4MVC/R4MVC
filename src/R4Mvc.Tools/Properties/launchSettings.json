@@ -3,7 +3,8 @@
     "R4Mvc.Tools": {
       "commandName": "Project",
       "commandLineArgs_blank": "",
-      "commandLineArgs": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetSimple\\AspNetSimple.csproj\"",
+      "commandLineArgs": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetSimple.NetCore3\\AspNetSimple.NetCore3.csproj\"",
+      "commandLineArgs2": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetSimple\\AspNetSimple.csproj\"",
       "commandLineArgs_aspNetFeatureFolders": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetFeatureFolders\\AspNetFeatureFolders.csproj\""
     }
   }
