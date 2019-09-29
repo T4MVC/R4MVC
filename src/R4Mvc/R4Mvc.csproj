@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;netstandard2.0;net461</TargetFrameworks>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\R4Mvc.xml</DocumentationFile>
+    <TargetFrameworks>netstandard1.6;netstandard2.0;netcoreapp3.0;net461</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
@@ -10,7 +10,7 @@
     <PackageId>R4Mvc</PackageId>
     <Authors>Kevin Kuszyk, Scott Mackay, Artiom Chilaru</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageLicenseUrl>https://github.com/T4MVC/R4MVC/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/T4MVC/R4MVC</PackageProjectUrl>
     <RepositoryUrl>https://github.com/T4MVC/R4MVC</RepositoryUrl>
     <Title>R4Mvc</Title>
@@ -27,7 +27,8 @@
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <IsPackable>true</IsPackable>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'!='netstandard1.6'">
@@ -39,9 +40,17 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="1.1.3" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(DefineConstants.Contains('CORE2'))">
+  <ItemGroup Condition="$(DefineConstants.Contains('CORE2')) AND '$(TargetFramework)'!='netcoreapp3.0'">
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(DefineConstants.Contains('CORE2')) AND '$(TargetFramework)'=='netcoreapp3.0'">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19270-01" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

@@ -6,7 +6,7 @@ namespace Microsoft.AspNetCore.Mvc
     {
         string PageName { get; set; }
         string PageHandler { get; set; }
-        string Protocol { get; set; }
-        RouteValueDictionary RouteValueDictionary { get; set; }
+        new string Protocol { get; set; }
+        new RouteValueDictionary RouteValueDictionary { get; set; }
     }
 }
