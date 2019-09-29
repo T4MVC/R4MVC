@@ -12,7 +12,7 @@
     <PackageId>R4Mvc.Tools.Cli</PackageId>
     <Authors>Kevin Kuszyk, Scott Mackay, Artiom Chilaru</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageLicenseUrl>https://github.com/T4MVC/R4MVC/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/T4MVC/R4MVC</PackageProjectUrl>
     <RepositoryUrl>https://github.com/T4MVC/R4MVC</RepositoryUrl>
     <Title>R4Mvc Cli Tool</Title>
