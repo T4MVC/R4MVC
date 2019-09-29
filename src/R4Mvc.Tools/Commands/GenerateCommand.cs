@@ -79,16 +79,12 @@ project-path:
                         if (diag.Kind == Microsoft.CodeAnalysis.WorkspaceDiagnosticKind.Failure)
                             foundErrors = true;
                     }
-                    //if (foundErrors)
-                    //    return;
+                    if (foundErrors)
+                        return;
                 }
 
                 // Prep the project Compilation object, and process the Controller public methods list
-                Console.WriteLine("Compiling project using .NET Framework 4.7.2 only as a based reference ...");
-                if (project.SupportsCompilation)
-                {
-                    project.ProjectReferences.ToList().ForEach(x => project = project.RemoveProjectReference(x));
-                }
+                Console.WriteLine("Compiling project ...");
                 var compilation = await project.GetCompilationAsync() as CSharpCompilation;
                 SyntaxNodeHelpers.PopulateControllerClassMethodNames(compilation);
 
