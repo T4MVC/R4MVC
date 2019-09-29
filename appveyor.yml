@@ -78,7 +78,7 @@ for:
   deploy:
   - provider: NuGet
     api_key:
-      secure: MMtq67sqxqRtBvisUQUOqAr4RaRf4aU/COdZxsvPpDpUiOS/cgAGVlLazA+qP+ue
+      secure: /0fA0RjUbNqcNCVM23B1QvsFpvvGJby39xb+4Huf++CvtoiAmXxLkfvH2mMbkW/D
     artifact: /.*\.nupkg/
 
 - branches:
@@ -92,7 +92,7 @@ for:
   deploy:
   - provider: NuGet
     api_key:
-      secure: MMtq67sqxqRtBvisUQUOqAr4RaRf4aU/COdZxsvPpDpUiOS/cgAGVlLazA+qP+ue
+      secure: /0fA0RjUbNqcNCVM23B1QvsFpvvGJby39xb+4Huf++CvtoiAmXxLkfvH2mMbkW/D
     artifact: /.*\.nupkg/
 
   - provider: NuGet
