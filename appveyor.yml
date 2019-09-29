@@ -25,6 +25,7 @@ test_script:
 
 artifacts:
 - path: '**\*.nupkg'
+- path: '**\*.snupkg'
 
 before_deploy:
 - ps: |
@@ -80,6 +81,8 @@ for:
     api_key:
       secure: /0fA0RjUbNqcNCVM23B1QvsFpvvGJby39xb+4Huf++CvtoiAmXxLkfvH2mMbkW/D
     artifact: /.*\.nupkg/
+    publish_nuget_symbols: true
+    use_snupkg_format: true
 
 - branches:
     only:
@@ -94,6 +97,8 @@ for:
     api_key:
       secure: /0fA0RjUbNqcNCVM23B1QvsFpvvGJby39xb+4Huf++CvtoiAmXxLkfvH2mMbkW/D
     artifact: /.*\.nupkg/
+    publish_nuget_symbols: true
+    use_snupkg_format: true
 
   - provider: NuGet
     server: https://www.myget.org/F/r4mvc/api/v2/package
