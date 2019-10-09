@@ -32,7 +32,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\R4Mvc.Tools\bin\$(Configuration)\net462\*" />
+    <Content Include="..\R4Mvc.Tools\bin\$(Configuration)\net472\*" />
   </ItemGroup>
 
 </Project>

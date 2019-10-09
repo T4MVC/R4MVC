@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
 namespace R4Mvc.Tools
 {
+    [DebuggerDisplay("Controller: {Area} {Name}")]
     public class ControllerDefinition
     {
         public string Namespace { get; set; }
