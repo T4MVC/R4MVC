@@ -14,6 +14,7 @@
         public string StaticFilesPath { get; set; } = "wwwroot";
         public string[] ExcludedStaticFileExtensions { get; set; }
         public string[] ReferencedNamespaces { get; set; }
+        public string[] PragmaCodes { get; set; }
 
         // Don't include the page ViewsClass by default, and hide the option unless it's enabled
         // Not sure if we'd even need that, but leaving it in for the time being
