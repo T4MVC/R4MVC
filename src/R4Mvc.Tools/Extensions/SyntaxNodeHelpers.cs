@@ -142,6 +142,9 @@ namespace R4Mvc.Tools.Extensions
         public static MethodDeclarationSyntax WithNonActionAttribute(this MethodDeclarationSyntax node)
             => node.AddAttributeLists(AttributeList(SingletonSeparatedList(Attribute(IdentifierName("NonAction")))));
 
+        public static MethodDeclarationSyntax WithNonHandlerAttribute(this MethodDeclarationSyntax node)
+            => node.AddAttributeLists(AttributeList(SingletonSeparatedList(Attribute(IdentifierName("NonHandler")))));
+
         public static FieldDeclarationSyntax WithGeneratedAttribute(this FieldDeclarationSyntax node)
             => node.AddAttributeLists(AttributeList(SingletonSeparatedList(CreateGeneratedCodeAttribute())));
 

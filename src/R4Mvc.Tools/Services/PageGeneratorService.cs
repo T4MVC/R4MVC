@@ -290,7 +290,7 @@ namespace R4Mvc.Tools.Services
                      */
                     .WithMethod(method.Key, "IActionResult", m => m
                         .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.VirtualKeyword)
-                        .WithNonActionAttribute()
+                        .WithNonHandlerAttribute()
                         .WithGeneratedNonUserCodeAttributes()
                         .WithBody(b => b
                             .ReturnNewObject(Constants.PageActionResultClass,
@@ -347,17 +347,17 @@ namespace R4Mvc.Tools.Services
                     handlerKey = "null";
 
                 classBuilder
-                    /* [NonAction]
+                    /* [NonHandler]
                      * partial void {action}Override({ActionResultType} callInfo, [� params]);
                      */
                     .WithMethod(method.Name + overrideMethodSuffix, null, m => m
                         .WithModifiers(SyntaxKind.PartialKeyword)
-                        .WithNonActionAttribute()
+                        .WithNonHandlerAttribute()
                         .WithParameter("callInfo", callInfoType)
                         .ForEach(method.Parameters, (m2, p) => m2
                             .WithParameter(p.Name, p.Type.ToString()))
                         .WithNoBody())
-                    /* [NonAction]
+                    /* [NonHandler]
                      * public overrive {ActionResultType} {action}([� params])
                      * {
                      *  var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, HandlerNames.{Handler});
@@ -368,7 +368,7 @@ namespace R4Mvc.Tools.Services
                      */
                     .WithMethod(method.Name, method.ReturnType.ToString(), m => m
                         .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.OverrideKeyword)
-                        .WithNonActionAttribute()
+                        .WithNonHandlerAttribute()
                         .ForEach(method.Parameters, (m2, p) => m2
                             .WithParameter(p.Name, p.Type.ToString()))
                         .WithBody(b => b
