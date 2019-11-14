@@ -61,7 +61,8 @@ namespace R4Mvc.Tools.Services
             AddParameterlessMethods(genControllerClass, page.Symbol, page.IsSecure);
 
             //var actionsExpression = _settings.HelpersPrefix + "." + page.Name;
-            var handlerNames = SyntaxNodeHelpers.GetPublicNonGeneratedPageMethods(page.Symbol).Select(m => m.Name)
+            var handlerMethods = SyntaxNodeHelpers.GetPublicNonGeneratedPageMethods(page.Symbol);
+            var handlerNames = handlerMethods.Select(m => m.Name)
                 .Select(GetHandler)
                 .Where(n => !string.IsNullOrWhiteSpace(n))
                 .Distinct().ToArray();
@@ -91,7 +92,26 @@ namespace R4Mvc.Tools.Services
                     .WithModifiers(SyntaxKind.PublicKeyword)
                     .WithGeneratedNonUserCodeAttributes()
                     .ForEach(handlerNames, (c, m) => c
-                        .WithStringField(m, m, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)));
+                        .WithStringField(m, m, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)))
+                /*
+                 * [GeneratedCode]
+                 * static readonly HandlerParamsClass_OnPost s_OnPostParams = new HandlerParamsClass_OnPost();
+                 * [GeneratedCode, DebuggerNonUserCode]
+                 * public HandlerParamsClass_OnPost OnPostParams => s_OnPostParams;
+                 * [GeneratedCode, DebuggerNonUserCode]
+                 * public class HandlerParamsClass_OnPost
+                 * {
+                 *     public readonly string param1 = "param1";
+                 *     public readonly string param2 = "param2";
+                 * }
+                */
+                .ForEach(handlerMethods.Where(m => m.Parameters.Any()), (c, m) => c
+                    .WithStaticFieldBackedProperty($"{m.Name}Params", $"HandlerParamsClass_{m.Name}", SyntaxKind.PublicKeyword)
+                    .WithChildClass($"HandlerParamsClass_{m.Name}", ac => ac
+                        .WithModifiers(SyntaxKind.PublicKeyword)
+                        .WithGeneratedNonUserCodeAttributes()
+                        .ForEach(m.Parameters, (c, p) => c
+                            .WithStringField(p.Name, p.Name, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))));
 
             if (_settings.GeneratePageViewsClass)
                 WithViewsClass(genControllerClass, new[] { pageView });
