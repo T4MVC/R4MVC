@@ -35,6 +35,7 @@ namespace R4Mvc.Tools.CodeGen
                 "System.Diagnostics",
                 "System.Threading.Tasks",
                 "Microsoft.AspNetCore.Mvc",
+                "Microsoft.AspNetCore.Mvc.RazorPages",
                 "Microsoft.AspNetCore.Routing",
                 settings.R4MvcNamespace,
             };

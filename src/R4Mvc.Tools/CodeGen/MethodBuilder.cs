@@ -15,7 +15,7 @@ namespace R4Mvc.Tools.CodeGen
         private IList<ParameterSyntax> _parameters = new List<ParameterSyntax>();
         private BlockSyntax _bodyBlock;
         private ExpressionSyntax _expressionBodySyntax;
-        private bool _useGeneratedAttributes = false, _useNonActionAttribute = false, _noBody = false;
+        private bool _useGeneratedAttributes = false, _useNonActionAttribute = false, _useNonHandlerAttribute = false, _noBody = false;
 
         protected MethodBuilder() { }
         public MethodBuilder(string name, string returnType = null)
@@ -41,6 +41,12 @@ namespace R4Mvc.Tools.CodeGen
         public MethodBuilder WithNonActionAttribute()
         {
             _useNonActionAttribute = true;
+            return this;
+        }
+
+        public MethodBuilder WithNonHandlerAttribute()
+        {
+            _useNonHandlerAttribute = true;
             return this;
         }
 
@@ -92,6 +98,8 @@ namespace R4Mvc.Tools.CodeGen
                         method = method.AddParameterListParameters(_parameters.ToArray());
                     if (_useNonActionAttribute)
                         method = SyntaxNodeHelpers.WithNonActionAttribute(method);
+                    if (_useNonHandlerAttribute)
+                        method = SyntaxNodeHelpers.WithNonHandlerAttribute(method);
                     if (_useGeneratedAttributes)
                         method = method.AddAttributeLists(SyntaxNodeHelpers.GeneratedNonUserCodeAttributeList());
 

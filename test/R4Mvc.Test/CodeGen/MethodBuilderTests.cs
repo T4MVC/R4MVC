@@ -62,6 +62,16 @@ namespace R4Mvc.Test.CodeGen
             Assert.Equal("[NonAction]voidMethodName(){}", result.ToString());
         }
 
+        [Fact]
+        public void Method_NonHandler()
+        {
+            var result = new MethodBuilder("MethodName")
+                .WithNonHandlerAttribute()
+                .Build();
+
+            Assert.Equal("[NonHandler]voidMethodName(){}", result.ToString());
+        }
+
         [Theory]
         [InlineData("name", "string")]
         [InlineData("name", "string", true)]
