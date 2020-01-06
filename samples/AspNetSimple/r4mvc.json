@@ -12,6 +12,7 @@
   "ReferencedNamespaces": [
     "AspNetSimple"
   ],
+  "PragmaCodes": null,
   "FeatureFolders": {
     "Enabled": false,
     "FeaturesPath": "Features",

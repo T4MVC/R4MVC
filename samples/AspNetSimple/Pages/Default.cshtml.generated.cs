@@ -11,6 +11,7 @@ using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Routing;
 using R4Mvc;
 using AspNetSimple;
@@ -87,14 +88,14 @@ namespace AspNetSimple.Pages
         RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/Default"}};
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
-        [NonAction]
+        [NonHandler]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult OnPost()
         {
             return new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, null);
         }
 
-        [NonAction]
+        [NonHandler]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult OnPostTest()
         {
@@ -131,9 +132,9 @@ namespace AspNetSimple.Pages
         {
         }
 
-        [NonAction]
+        [NonHandler]
         partial void OnGetOverride(R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult callInfo);
-        [NonAction]
+        [NonHandler]
         public override Microsoft.AspNetCore.Mvc.IActionResult OnGet()
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, null);
@@ -141,9 +142,9 @@ namespace AspNetSimple.Pages
             return callInfo;
         }
 
-        [NonAction]
+        [NonHandler]
         partial void OnPostDeleteAsyncOverride(R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult callInfo);
-        [NonAction]
+        [NonHandler]
         public override System.Threading.Tasks.Task OnPostDeleteAsync()
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, HandlerNames.Delete);

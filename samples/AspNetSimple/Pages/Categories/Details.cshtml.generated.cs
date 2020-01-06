@@ -11,6 +11,7 @@ using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Routing;
 using R4Mvc;
 using AspNetSimple;
@@ -87,7 +88,7 @@ namespace AspNetSimple.Pages.Categories
         RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/Categories/Details"}};
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
-        [NonAction]
+        [NonHandler]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult OnGet()
         {
