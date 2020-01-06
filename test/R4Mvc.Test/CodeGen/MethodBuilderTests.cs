@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
+﻿using System;
+using Microsoft.CodeAnalysis.CSharp;
 using R4Mvc.Tools.CodeGen;
 using Xunit;
 
@@ -20,11 +21,13 @@ namespace R4Mvc.Test.CodeGen
         }
 
         [Theory]
+        [InlineData(null)]
         [InlineData(SyntaxKind.PublicKeyword)]
         [InlineData(SyntaxKind.PrivateKeyword, SyntaxKind.StaticKeyword)]
-        [InlineData()]
         public void Method_Modifiers(params SyntaxKind[] modifiers)
         {
+            if (modifiers == null)
+                modifiers = Array.Empty<SyntaxKind>();
             var result = new MethodBuilder("MethodName")
                 .WithModifiers(modifiers)
                 .Build();

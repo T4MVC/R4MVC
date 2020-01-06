@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -92,7 +92,10 @@ project-path:
                 var mvcAssembly = compilation.ReferencedAssemblyNames
                     .Where(a => a.Name == "Microsoft.AspNetCore.Mvc")
                     .FirstOrDefault();
-                Console.WriteLine($"Detected MVC version: {mvcAssembly.Version}");
+                if (mvcAssembly != null)
+                    Console.WriteLine($"Detected MVC version: {mvcAssembly.Version}");
+                else
+                    Console.WriteLine("Error? Failed to find MVC");
                 Console.WriteLine();
 
                 // Analyse the controllers in the project (updating them to be partial), as well as locate all the view files
@@ -122,7 +125,7 @@ project-path:
                     controller.AreaKey = areaMap[controller.Area];
 
                 // Analyse the razor pages in the project (updating them to be partial), as well as locate all the view files
-                var hasPagesSupport = mvcAssembly.Version >= new Version(2, 0, 0, 0);
+                var hasPagesSupport = mvcAssembly?.Version >= new Version(2, 0, 0, 0);
                 IList<PageView> pages;
                 if (hasPagesSupport)
                 {
@@ -199,7 +202,7 @@ project-path:
                 }
                 else
                 {
-                    // Use hhe default vs instance and it's MSBuild
+                    // Use the default vs instance and it's MSBuild
                     instance = MSBuildLocator.RegisterDefaults();
                 }
 
