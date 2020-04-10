@@ -85,6 +85,26 @@ public static partial class Links
     public const string UrlPath = "~";
     public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
     public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+    public static partial class Areas
+    {
+        public const string UrlPath = "~/Areas";
+        public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+        public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+        public static partial class Products
+        {
+            public const string UrlPath = "~/Areas/Products";
+            public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+            public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+            public static partial class Search
+            {
+                public const string UrlPath = "~/Areas/Products/Search";
+                public static string Url() => R4MvcHelpers.ProcessVirtualPath(UrlPath);
+                public static string Url(string fileName) => R4MvcHelpers.ProcessVirtualPath(UrlPath + "/" + fileName);
+                public static readonly string Index_js = Url("Index.js");
+            }
+        }
+    }
+
     public static partial class css
     {
         public const string UrlPath = "~/css";

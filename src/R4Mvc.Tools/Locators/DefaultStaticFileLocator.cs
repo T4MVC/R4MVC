@@ -14,7 +14,7 @@ namespace R4Mvc.Tools.Locators
             _settings = settings;
         }
 
-        public IEnumerable<StaticFile> Find(string staticPathRoot)
+        public IEnumerable<StaticFile> Find(string projectRoot, string staticPathRoot)
         {
             var files = _fileLocator.GetFiles(staticPathRoot, "*", recurse: true).AsEnumerable();
             if (_settings.ExcludedStaticFileExtensions?.Length > 0)

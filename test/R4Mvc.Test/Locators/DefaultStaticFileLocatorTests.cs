@@ -11,7 +11,7 @@ namespace R4Mvc.Test.Locators
         {
             var settings = new Settings();
             var locator = new DefaultStaticFileLocator(VirtualFileLocator.Default, settings);
-            Assert.Collection(locator.Find(@"D:\Project\wwwroot"),
+            Assert.Collection(locator.Find(@"D:\Project", @"D:\Project\wwwroot"),
                 f =>
                 {
                     Assert.Equal("core.js", f.FileName);
@@ -44,7 +44,7 @@ namespace R4Mvc.Test.Locators
         {
             var settings = new Settings { ExcludedStaticFileExtensions = new[] { ".ico", ".css" } };
             var locator = new DefaultStaticFileLocator(VirtualFileLocator.Default, settings);
-            Assert.Collection(locator.Find(@"D:\Project\wwwroot"),
+            Assert.Collection(locator.Find(@"D:\Project", @"D:\Project\wwwroot"),
                 f => Assert.Equal("lib/jslib/core.js", f.RelativePath.ToString()),
                 f => Assert.Equal("js/site.js", f.RelativePath.ToString())
             );

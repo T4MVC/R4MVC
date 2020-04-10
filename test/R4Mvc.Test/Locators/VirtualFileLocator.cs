@@ -23,6 +23,8 @@ namespace R4Mvc.Test.Locators
                 @"D:\Project\Areas\Admin\Controllers\HomeController.cs",
                 @"D:\Project\Areas\Admin\Features\Home\HomeController.cs",
                 @"D:\Project\Areas\Admin\Features\Home\Index.cshtml",
+                @"D:\Project\Areas\Admin\Features\Home\Index.js",
+                @"D:\Project\Areas\Admin\Features\Home\Index.css",
                 @"D:\Project\Areas\Admin\Views\Home\Index.cshtml",
                 @"D:\Project\Areas\Admin\Views\Shared\EditorTemplates\User.cshtml",
                 @"D:\Project\Areas\Admin\Views\Shared\_Layout.cshtml",

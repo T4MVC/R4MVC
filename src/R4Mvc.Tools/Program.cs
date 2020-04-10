@@ -164,6 +164,7 @@ namespace R4Mvc.Tools
             services.AddTransient<IViewLocator, DefaultRazorViewLocator>();
             services.AddTransient<IPageViewLocator, DefaultRazorPageViewLocator>();
             services.AddTransient<IStaticFileLocator, DefaultStaticFileLocator>();
+            services.AddTransient<IStaticFileLocator, FeatureFolderStaticFileLocator>();
             services.AddTransient<IFileLocator, PhysicalFileLocator>();
             services.AddTransient<IGeneratedFileTesterService, GeneratedFileTesterService>();
             services.AddTransient<IStaticFileGeneratorService, StaticFileGeneratorService>();
