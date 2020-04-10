@@ -14,7 +14,10 @@
   "FeatureFolders": {
     "Enabled": true,
     "FeaturesPath": "Features",
-    "StaticFileAccess": false,
+    "StaticFileAccess": true,
+    "IncludedStaticFileExtensions": [
+      ".js"
+    ],
     "FeatureOnlyAreas": [
       "Products"
     ]

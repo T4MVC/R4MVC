@@ -4,6 +4,6 @@ namespace R4Mvc.Tools.Locators
 {
     public interface IStaticFileLocator
     {
-        IEnumerable<StaticFile> Find(string staticPathRoot);
+        IEnumerable<StaticFile> Find(string projectRoot, string staticPathRoot);
     }
 }
