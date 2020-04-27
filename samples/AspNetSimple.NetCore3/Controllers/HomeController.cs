@@ -29,9 +29,15 @@ namespace AspNetSimple.NetCore3.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public virtual IActionResult Error()
+        public virtual IActionResult Error([Bind(Prefix = "errorCode")] int statusCode = 500)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var model = new ErrorViewModel()
+            {
+                StatusCode = statusCode,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+            };
+
+            return View(model);
         }
     }
 }
