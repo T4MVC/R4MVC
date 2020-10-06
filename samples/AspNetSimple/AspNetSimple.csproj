@@ -29,4 +29,8 @@
     <ProjectReference Include="..\SampleModels\SampleModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\SharedViews\**" LinkBase="Views" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
