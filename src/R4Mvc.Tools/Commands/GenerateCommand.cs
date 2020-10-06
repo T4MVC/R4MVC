@@ -84,7 +84,7 @@ project-path:
                 }
 
                 // Prep the project Compilation object, and process the Controller public methods list
-                Console.WriteLine("Compiling project using .NET Framework 4.7.2 only as a based reference ...");
+                Console.WriteLine("Compiling project using ...");
                 if (project.SupportsCompilation)
                 {
                     project.ProjectReferences.ToList().ForEach(x => project = project.RemoveProjectReference(x));
