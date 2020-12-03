@@ -1,9 +1,11 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 using R4Mvc.Tools.Extensions;
 
 namespace R4Mvc.Tools.Services
@@ -25,7 +27,9 @@ namespace R4Mvc.Tools.Services
             foreach (var tree in compiler.SyntaxTrees.Where(x => !x.FilePath.EndsWith(".generated.cs")))
             {
                 // if syntaxtree has errors, skip code generation
+#if !IGNORE_MSBUILD_DIAGNOSTICS
                 if (tree.GetDiagnostics().Any(x => x.Severity == DiagnosticSeverity.Error)) continue;
+#endif
 
                 // this first part, finds all the controller classes, modifies them and saves the changes
                 var controllerRewriter = new PageRewriter(compiler);

@@ -4,11 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.Extensions.Configuration;
+
 using Newtonsoft.Json;
+
 using R4Mvc.Tools.CodeGen;
 using R4Mvc.Tools.Commands.Core;
 using R4Mvc.Tools.Extensions;
@@ -70,6 +73,7 @@ project-path:
                 Console.WriteLine("Loading project ...");
                 var projectRoot = Path.GetDirectoryName(projectPath);
                 var project = await workspace.OpenProjectAsync(projectPath);
+#if !IGNORE_MSBUILD_DIAGNOSTICS
                 if (workspace.Diagnostics.Count > 0)
                 {
                     var foundErrors = false;
@@ -82,6 +86,7 @@ project-path:
                     if (foundErrors)
                         return;
                 }
+#endif
 
                 // Prep the project Compilation object, and process the Controller public methods list
                 Console.WriteLine("Compiling project ...");
