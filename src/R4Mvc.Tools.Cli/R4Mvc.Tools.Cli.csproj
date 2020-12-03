@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>r4mvc</AssemblyName>
     <ContentTargetFolders>tools</ContentTargetFolders>
     <PackAsTool>true</PackAsTool>
@@ -21,9 +21,9 @@
     <VersionPrefix>1.0.0</VersionPrefix>
     <AssemblyVersion Condition="$(BuildNumber) != ''">$(VersionPrefix).$(BuildNumber)</AssemblyVersion>
     <PackageReleaseNotes>
-+ First version of the dotnet cli wrapper around R4Mvc.Tools
-+ New and improved command line parser
-+ Improved VS Instance selector for better build reliability
+      + First version of the dotnet cli wrapper around R4Mvc.Tools
+      + New and improved command line parser
+      + Improved VS Instance selector for better build reliability
     </PackageReleaseNotes>
   </PropertyGroup>
 
@@ -32,7 +32,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\R4Mvc.Tools\bin\$(Configuration)\net462\*" />
+    <Content Include="..\R4Mvc.Tools\bin\$(Configuration)\net472\*" />
   </ItemGroup>
 
 </Project>

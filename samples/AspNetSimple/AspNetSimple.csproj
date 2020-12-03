@@ -5,18 +5,18 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="$(IsR4MvcBuild) == ''">
-    <TargetFrameworks>net462;netcoreapp2.2</TargetFrameworks>
+    <TargetFrameworks>net472;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(IsR4MvcBuild) != ''">
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup Condition="$(TargetFramework) == 'netcoreapp2.2'">
+  <ItemGroup Condition="$(TargetFramework) == 'net5.0'">
     <PackageReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(TargetFramework) == 'net462'">
+  <ItemGroup Condition="$(TargetFramework) == 'net472'">
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.2.0" />

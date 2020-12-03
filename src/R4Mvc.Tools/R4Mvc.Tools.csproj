@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <LangVersion>latest</LangVersion>
     <ContentTargetFolders>tools</ContentTargetFolders>
     <DevelopmentDependency>True</DevelopmentDependency>
@@ -22,9 +22,9 @@
     <VersionPrefix>1.0.0</VersionPrefix>
     <AssemblyVersion Condition="$(BuildNumber) != ''">$(VersionPrefix).$(BuildNumber)</AssemblyVersion>
     <PackageReleaseNotes>
-+ Adding the option to add extra namespaces to generated files
-! Now working with multi-targeted projects (#66)
-+ Now available as a dotnet cli tool (see R4Mvc.Tools.Cli package)
+      + Adding the option to add extra namespaces to generated files
+      ! Now working with multi-targeted projects (#66)
+      + Now available as a dotnet cli tool (see R4Mvc.Tools.Cli package)
     </PackageReleaseNotes>
   </PropertyGroup>
 
