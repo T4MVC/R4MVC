@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;netstandard2.0;net5.0;net472</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net5.0;net472</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
@@ -41,8 +41,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(DefineConstants.Contains('CORE2')) AND '$(TargetFramework)'!='net5.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DefineConstants.Contains('CORE2')) AND '$(TargetFramework)'=='net5.0'">
