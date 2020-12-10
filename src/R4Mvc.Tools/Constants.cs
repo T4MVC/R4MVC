@@ -20,6 +20,8 @@
         internal const string JsonResultClass = ProjectName + ActionResultNamespace + "JsonResult";
         internal const string ContentResultClass = ProjectName + ActionResultNamespace + "ContentResult";
         internal const string FileResultClass = ProjectName + ActionResultNamespace + "FileResult";
+        internal const string PartialViewResultClass = ProjectName + ActionResultNamespace + "PartialViewResult";
+        internal const string ViewResultClass = ProjectName + ActionResultNamespace + "ViewResult";
         internal const string RedirectResultClass = ProjectName + ActionResultNamespace + "RedirectResult";
         internal const string RedirectToActionResultClass = ProjectName + ActionResultNamespace + "RedirectToActionResult";
         internal const string RedirectToRouteResultClass = ProjectName + ActionResultNamespace + "RedirectToRouteResult";
@@ -29,6 +31,7 @@
         internal const string PageJsonResultClass = ProjectName + PageActionResultNamespace + "JsonResult";
         internal const string PageContentResultClass = ProjectName + PageActionResultNamespace + "ContentResult";
         internal const string PageFileResultClass = ProjectName + PageActionResultNamespace + "FileResult";
+        internal const string PagePartialViewResultClass = ProjectName + PageActionResultNamespace + "PartialViewResult";
         internal const string PageRedirectResultClass = ProjectName + PageActionResultNamespace + "RedirectResult";
         internal const string PageRedirectToActionResultClass = ProjectName + PageActionResultNamespace + "RedirectToActionResult";
         internal const string PageRedirectToRouteResultClass = ProjectName + PageActionResultNamespace + "RedirectToRouteResult";

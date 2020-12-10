@@ -1,13 +1,16 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 using R4Mvc.Tools.CodeGen;
 using R4Mvc.Tools.Extensions;
+
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 using static R4Mvc.Tools.Extensions.SyntaxNodeHelpers;
 
@@ -64,7 +67,7 @@ namespace R4Mvc.Tools.Services
             // build controller partial class node
             var genControllerClass = new ClassBuilder(controller.Symbol.Name)               // public partial {controllerClass}
                 .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                .WithTypeParameters(controller.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()); // optional <T1, T2, …>
+                .WithTypeParameters(controller.Symbol.TypeParameters.Select(tp => tp.Name).ToArray()); // optional <T1, T2, â€¦>
 
             // add a default constructor if there are some but none are zero length
             var gotCustomConstructors = controller.Symbol.Constructors
@@ -322,6 +325,10 @@ namespace R4Mvc.Tools.Services
                     callInfoType = Constants.RedirectToActionResultClass;
                 else if (methodReturnType.InheritsFrom<RedirectToRouteResult>())
                     callInfoType = Constants.RedirectToRouteResultClass;
+                else if (methodReturnType.InheritsFrom<PartialViewResult>())
+                    callInfoType = Constants.PartialViewResultClass;
+                else if (methodReturnType.InheritsFrom<ViewResult>())
+                    callInfoType = Constants.ViewResultClass;
                 else if (methodReturnType.InheritsFrom<IConvertToActionResult>())
                     callInfoType = Constants.ActionResultClass;
                 else if ((!isTaskResult || isGenericTaskResult) && !methodReturnType.InheritsFrom<IActionResult>())
@@ -332,7 +339,7 @@ namespace R4Mvc.Tools.Services
 
                 classBuilder
                     /* [NonAction]
-                     * partial void {action}Override({ActionResultType} callInfo, [… params]);
+                     * partial void {action}Override({ActionResultType} callInfo, [â€¦ params]);
                      */
                     .WithMethod(method.Name + overrideMethodSuffix, null, m => m
                         .WithModifiers(SyntaxKind.PartialKeyword)
@@ -342,7 +349,7 @@ namespace R4Mvc.Tools.Services
                             .WithParameter(p.Name, p.Type.ToString()))
                         .WithNoBody())
                     /* [NonAction]
-                     * public overrive {ActionResultType} {action}([… params])
+                     * public overrive {ActionResultType} {action}([â€¦ params])
                      * {
                      *  var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.{Action});
                      *  ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "paramName", paramName);
@@ -385,61 +392,61 @@ namespace R4Mvc.Tools.Services
             /* public class ViewsClass
              * {
              * [...] */
-             classBuilder.WithChildClass("ViewsClass", cb => cb
-                .WithModifiers(SyntaxKind.PublicKeyword)
-                .WithGeneratedNonUserCodeAttributes()
-                // static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-                // public _ViewNamesClass ViewNames => s_ViewNames;
-                .WithStaticFieldBackedProperty("ViewNames", ViewNamesClassName, SyntaxKind.PublicKeyword)
-                /* public class _ViewNamesClass
-                 * {
-                 *  public readonly string {view} = "{view}";
-                 * }
-                 */
-                .WithChildClass(ViewNamesClassName, vnc => vnc
-                    .WithModifiers(SyntaxKind.PublicKeyword)
-                    .ForEach(viewFiles.Where(c => c.TemplateKind == null), (vc, v) => vc
-                        .WithStringField(v.Name.SanitiseFieldName(), v.Name, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
-                .ForEach(viewFiles.Where(c => c.TemplateKind == null), (c, v) => c
-                    // public readonly string {view} = "~/Views/{controller}/{view}.cshtml";
-                    .WithStringField(v.Name.SanitiseFieldName(), v.RelativePath.ToString(), SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
-                .ForEach(viewEditorTemplates.GroupBy(v => v.TemplateKind), (c, g) => c
-                    // static readonly _DisplayTemplatesClass s_DisplayTemplates = new _DisplayTemplatesClass();
-                    // public _DisplayTemplatesClass DisplayTemplates => s_DisplayTemplates;
-                    .WithStaticFieldBackedProperty(g.Key, $"_{g.Key}Class", SyntaxKind.PublicKeyword)
-                    /* public partial _DisplayTemplatesClass
-                     * {
-                     *  public readonly string {view} = "{view}";
-                     * }
-                     */
-                    .WithChildClass($"_{g.Key}Class", tc => tc
-                        .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                        .ForEach(g, (tcc, v) => tcc
-                            .WithStringField(v.Name.SanitiseFieldName(), v.Name, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))))
-                .ForEach(subpathViews.GroupBy(v => v.TemplateKind), (c, g) => c
-                    // static readonly _{viewFolder}Class s_{viewFolder} = new _{viewFolder}Class();
-                    // public _{viewFolder}Class {viewFolder} => s_{viewFolder};
-                    .WithStaticFieldBackedProperty(g.Key, $"_{g.Key}Class", SyntaxKind.PublicKeyword)
-                    /* public class _{viewFolder}Class
-                     * {
-                     * [...] */
-                    .WithChildClass($"_{g.Key}Class", tc => tc
-                        .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
-                        // static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-                        // public _ViewNamesClass ViewNames => s_ViewNames;
-                        .WithStaticFieldBackedProperty("ViewNames", ViewNamesClassName, SyntaxKind.PublicKeyword)
-                        /* public class _ViewNamesClass
-                         * {
-                         *  public readonly string {view} = "{view}";
-                         * }
-                         */
-                        .WithChildClass(ViewNamesClassName, vnc => vnc
-                            .WithModifiers(SyntaxKind.PublicKeyword)
-                            .ForEach(g, (vc, v) => vc
-                                .WithStringField(v.Name.SanitiseFieldName(), v.Name, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
-                        .ForEach(g, (vc, v) => vc
-                            // public string {view} = "~/Views/{controller}/{viewFolder}/{view}.cshtml";
-                            .WithStringField(v.Name.SanitiseFieldName(), v.RelativePath.ToString(), SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))));
+            classBuilder.WithChildClass("ViewsClass", cb => cb
+               .WithModifiers(SyntaxKind.PublicKeyword)
+               .WithGeneratedNonUserCodeAttributes()
+               // static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+               // public _ViewNamesClass ViewNames => s_ViewNames;
+               .WithStaticFieldBackedProperty("ViewNames", ViewNamesClassName, SyntaxKind.PublicKeyword)
+               /* public class _ViewNamesClass
+                * {
+                *  public readonly string {view} = "{view}";
+                * }
+                */
+               .WithChildClass(ViewNamesClassName, vnc => vnc
+                   .WithModifiers(SyntaxKind.PublicKeyword)
+                   .ForEach(viewFiles.Where(c => c.TemplateKind == null), (vc, v) => vc
+                       .WithStringField(v.Name.SanitiseFieldName(), v.Name, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
+               .ForEach(viewFiles.Where(c => c.TemplateKind == null), (c, v) => c
+                   // public readonly string {view} = "~/Views/{controller}/{view}.cshtml";
+                   .WithStringField(v.Name.SanitiseFieldName(), v.RelativePath.ToString(), SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))
+               .ForEach(viewEditorTemplates.GroupBy(v => v.TemplateKind), (c, g) => c
+                   // static readonly _DisplayTemplatesClass s_DisplayTemplates = new _DisplayTemplatesClass();
+                   // public _DisplayTemplatesClass DisplayTemplates => s_DisplayTemplates;
+                   .WithStaticFieldBackedProperty(g.Key, $"_{g.Key}Class", SyntaxKind.PublicKeyword)
+                   /* public partial _DisplayTemplatesClass
+                    * {
+                    *  public readonly string {view} = "{view}";
+                    * }
+                    */
+                   .WithChildClass($"_{g.Key}Class", tc => tc
+                       .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                       .ForEach(g, (tcc, v) => tcc
+                           .WithStringField(v.Name.SanitiseFieldName(), v.Name, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))))
+               .ForEach(subpathViews.GroupBy(v => v.TemplateKind), (c, g) => c
+                   // static readonly _{viewFolder}Class s_{viewFolder} = new _{viewFolder}Class();
+                   // public _{viewFolder}Class {viewFolder} => s_{viewFolder};
+                   .WithStaticFieldBackedProperty(g.Key, $"_{g.Key}Class", SyntaxKind.PublicKeyword)
+                   /* public class _{viewFolder}Class
+                    * {
+                    * [...] */
+                   .WithChildClass($"_{g.Key}Class", tc => tc
+                       .WithModifiers(SyntaxKind.PublicKeyword, SyntaxKind.PartialKeyword)
+                       // static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
+                       // public _ViewNamesClass ViewNames => s_ViewNames;
+                       .WithStaticFieldBackedProperty("ViewNames", ViewNamesClassName, SyntaxKind.PublicKeyword)
+                       /* public class _ViewNamesClass
+                        * {
+                        *  public readonly string {view} = "{view}";
+                        * }
+                        */
+                       .WithChildClass(ViewNamesClassName, vnc => vnc
+                           .WithModifiers(SyntaxKind.PublicKeyword)
+                           .ForEach(g, (vc, v) => vc
+                               .WithStringField(v.Name.SanitiseFieldName(), v.Name, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))
+                       .ForEach(g, (vc, v) => vc
+                           // public string {view} = "~/Views/{controller}/{viewFolder}/{view}.cshtml";
+                           .WithStringField(v.Name.SanitiseFieldName(), v.RelativePath.ToString(), SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)))));
 
             return classBuilder
                 .WithStaticFieldBackedProperty("Views", "ViewsClass", SyntaxKind.PublicKeyword);

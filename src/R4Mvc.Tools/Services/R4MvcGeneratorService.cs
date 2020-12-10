@@ -1,11 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 using R4Mvc.Tools.CodeGen;
 using R4Mvc.Tools.Extensions;
+
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace R4Mvc.Tools.Services
@@ -119,14 +122,14 @@ namespace R4Mvc.Tools.Services
 
             // R4MVC namespace used for the areas and Dummy class
             var r4Namespace = NamespaceDeclaration(ParseName(_settings.R4MvcNamespace))
-                // add the dummy class uses in the derived controller partial class
-                /* [GeneratedCode, DebuggerNonUserCode]
-                 * public class Dummy
-                 * {
-                 *  private Dummy() {}
-                 *  public static Dummy Instance = new Dummy();
-                 * }
-                 */
+                 // add the dummy class uses in the derived controller partial class
+                 /* [GeneratedCode, DebuggerNonUserCode]
+                  * public class Dummy
+                  * {
+                  *  private Dummy() {}
+                  *  public static Dummy Instance = new Dummy();
+                  * }
+                  */
                  .AddMembers(new ClassBuilder(Constants.DummyClass)
                     .WithModifiers(SyntaxKind.PublicKeyword)
                     .WithGeneratedNonUserCodeAttributes()
@@ -183,6 +186,8 @@ namespace R4Mvc.Tools.Services
                         staticFileNode,
                         R4MvcHelpersClass(),
                         ActionResultClass(),
+                        PartialViewResultClass(),
+                        ViewResultClass(),
                         JsonResultClass(),
                         ContentResultClass(),
                         FileResultClass(),
@@ -363,6 +368,12 @@ namespace R4Mvc.Tools.Services
 
         public ClassDeclarationSyntax ActionResultClass()
             => IActionResultDerivedClass(Constants.ActionResultClass, "ActionResult");
+
+        public ClassDeclarationSyntax PartialViewResultClass()
+            => IActionResultDerivedClass(Constants.PartialViewResultClass, "PartialViewResult");
+
+        public ClassDeclarationSyntax ViewResultClass()
+           => IActionResultDerivedClass(Constants.ViewResultClass, "ViewResult");
 
         public ClassDeclarationSyntax JsonResultClass()
             => IActionResultDerivedClass(Constants.JsonResultClass, "JsonResult",

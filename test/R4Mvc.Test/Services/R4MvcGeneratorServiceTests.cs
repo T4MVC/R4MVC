@@ -1,9 +1,13 @@
 ﻿using System.Linq;
+
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 using Moq;
+
 using R4Mvc.Tools;
 using R4Mvc.Tools.Services;
+
 using Xunit;
 
 namespace R4Mvc.Test.Services
@@ -144,6 +148,22 @@ namespace R4Mvc.Test.Services
             var service = GetGeneratorService();
             var actionClass = service.ActionResultClass();
             AssertIActionResultClass(actionClass, Constants.ActionResultClass, "ActionResult");
+        }
+
+        [Fact]
+        public void PartialViewResultClass()
+        {
+            var service = GetGeneratorService();
+            var actionClass = service.PartialViewResultClass();
+            AssertIActionResultClass(actionClass, Constants.PartialViewResultClass, "PartialViewResult");
+        }
+
+        [Fact]
+        public void ViewResultClass()
+        {
+            var service = GetGeneratorService();
+            var actionClass = service.ViewResultClass();
+            AssertIActionResultClass(actionClass, Constants.ViewResultClass, "ViewResult");
         }
 
         [Fact]
