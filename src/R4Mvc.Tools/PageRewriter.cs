@@ -59,8 +59,8 @@ namespace R4Mvc.Tools
         {
             node = (MethodDeclarationSyntax)base.VisitMethodDeclaration(node);
 
-            // only public methods not marked as virtual
-            if (node.Modifiers.Any(SyntaxKind.PublicKeyword) && !node.Modifiers.Any(SyntaxKind.VirtualKeyword))
+            // only public methods not marked as virtual or override
+            if (node.Modifiers.Any(SyntaxKind.PublicKeyword) && !node.Modifiers.Any(m => m.IsKind(SyntaxKind.VirtualKeyword) || m.IsKind(SyntaxKind.OverrideKeyword)))
             {
                 var symbol = _compiler.GetSemanticModel(node.SyntaxTree).GetDeclaredSymbol(node);
                 if (PageShouldBeProcessed(symbol.ContainingType) && symbol.IsRazorPageAction() && symbol.IsNotR4MvcExcluded())
