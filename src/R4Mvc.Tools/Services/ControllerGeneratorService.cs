@@ -93,8 +93,8 @@ namespace R4Mvc.Tools.Services
             var actionsExpression = controller.AreaKey != null
                 ? _settings.HelpersPrefix + "." + controller.AreaKey + "." + controller.Name
                 : _settings.HelpersPrefix + "." + controller.Name;
-            var methods = SyntaxNodeHelpers.GetPublicNonGeneratedControllerMethods(controller.Symbol);
-            var controllerMethodNames = methods.Select(m => m.Name).Distinct().ToArray();
+            var controllerMethods = SyntaxNodeHelpers.GetPublicNonGeneratedControllerMethods(controller.Symbol).ToArray();
+            var controllerMethodNames = controllerMethods.Select(m => m.Name).Distinct().ToArray();
             genControllerClass
                 .WithExpressionProperty("Actions", controller.Symbol.Name, actionsExpression, SyntaxKind.PublicKeyword)
                 .WithStringField("Area", controller.Area, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword)
@@ -122,22 +122,22 @@ namespace R4Mvc.Tools.Services
                     .WithModifiers(SyntaxKind.PublicKeyword)
                     .WithGeneratedNonUserCodeAttributes()
                     .ForEach(controllerMethodNames, (c, m) => c
-                        .WithStringField(m, m, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)))
+                        .WithStringField(m, m, SyntaxKind.PublicKeyword, SyntaxKind.ConstKeyword)));
+
                 /* [GeneratedCode, DebuggerNonUserCode]
                  * static readonly ActionParamsClass_LogOn s_params_LogOn = new ActionParamsClass_LogOn();
-
                  * [GeneratedCode, DebuggerNonUserCode]
                  * public ActionParamsClass_LogOn LogOnParams { get { return s_params_LogOn; } }
-
                  * [GeneratedCode, DebuggerNonUserCode]
                  * public class ActionParamsClass_LogOn
                  * {
-                 *     public readonly string returnUrl = "returnUrl";
-                 *     public readonly string model = "model";
+                 *  public readonly string returnUrl = "returnUrl";
+                 *  public readonly string model = "model";
                  * }
-                */
-                .ForEach(methods.Where(m => m.Parameters.Any()), (c, m) => c
-                    .WithStaticFieldBackedProperty($"{m.Name}Params", $"ActionParamsClass_{m.Name}", SyntaxKind.PublicKeyword)
+                 */
+            if (_settings.GenerateParamsForActionMethods) genControllerClass
+                .ForEach(controllerMethods.Where(m => m.Parameters.Any()), (c, m) => c
+                    .WithStaticFieldBackedProperty(m.Name + _settings.ParamsPropertySuffix, $"ActionParamsClass_{m.Name}", SyntaxKind.PublicKeyword)
                     .WithChildClass($"ActionParamsClass_{m.Name}", ac => ac
                         .WithModifiers(SyntaxKind.PublicKeyword)
                         .WithGeneratedNonUserCodeAttributes()
