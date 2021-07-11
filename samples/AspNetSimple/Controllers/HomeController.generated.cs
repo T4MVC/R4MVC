@@ -82,6 +82,13 @@ namespace AspNetSimple.Controllers
             return RedirectToPagePermanent(taskResult.Result);
         }
 
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult Error()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Error);
+        }
+
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public HomeController Actions => MVC.Home;
         [GeneratedCode("R4Mvc", "1.0")]
@@ -173,12 +180,13 @@ namespace AspNetSimple.Controllers
         }
 
         [NonAction]
-        partial void ErrorOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
+        partial void ErrorOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, int statusCode);
         [NonAction]
-        public override Microsoft.AspNetCore.Mvc.IActionResult Error()
+        public override Microsoft.AspNetCore.Mvc.IActionResult Error(int statusCode)
         {
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Error);
-            ErrorOverride(callInfo);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "errorCode", statusCode);
+            ErrorOverride(callInfo, statusCode);
             return callInfo;
         }
     }

@@ -37,21 +37,28 @@ namespace AspNetSimple.Controllers
 
         public virtual IActionResult Parameters(int id, string name) => throw new NotImplementedException();
         public virtual IActionResult ParametersWithDefault(int id = 5, string name = "test") => throw new NotImplementedException();
+        public virtual IActionResult PrefixedParameters([Bind(Prefix = "foo")] int id, [Bind(Prefix = "far")] string name) => throw new NotImplementedException();
+        public virtual IActionResult PrefixedParametersWithDefault([Bind(Prefix = "foo")] int id = 5, [Bind(Prefix = "far")] string name = "test") => throw new NotImplementedException();
 
         public virtual Product ApiCall() => throw new NotImplementedException();
         public virtual Product ApiCallWithParams(int id) => throw new NotImplementedException();
+        public virtual Product ApiCallWithPrefixedParams(int id) => throw new NotImplementedException();
 
         public virtual Task<Product> TaskApiCall() => throw new NotImplementedException();
         public virtual Task<Product> TaskApiCallWithParams(int id) => throw new NotImplementedException();
+        public virtual Task<Product> TaskApiCallWithPrefixedParams([Bind(Prefix = "foo")] int id) => throw new NotImplementedException();
 
         public virtual ActionResult<Product> ApiCallTyped() => throw new NotImplementedException();
         public virtual ActionResult<Product> ApiCallTypedWithParams(int id) => throw new NotImplementedException();
+        public virtual ActionResult<Product> ApiCallTypedWithPrefixedParams([Bind(Prefix = "foo")] int id) => throw new NotImplementedException();
 
         public virtual Task<ActionResult<Product>> TaskApiCallTyped() => throw new NotImplementedException();
         public virtual Task<ActionResult<Product>> TaskApiCallTypedWithParams(int id) => throw new NotImplementedException();
+        public virtual Task<ActionResult<Product>> TaskApiCallTypedWithPrefixedParams([Bind(Prefix = "foo")] int id) => throw new NotImplementedException();
 
         public virtual IActionResult LocalViewModel(ErrorViewModel model) => throw new NotImplementedException();
         public virtual IActionResult ExternalViewModel(TestViewModel model) => throw new NotImplementedException();
+        public virtual IActionResult PrefixedViewModel([Bind(Prefix = "viewModel")] TestViewModel model) => throw new NotImplementedException();
 
         public override IActionResult OverrideMe() => throw new NotImplementedException();
     }

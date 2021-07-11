@@ -98,9 +98,30 @@ namespace AspNetSimple.Controllers
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult PrefixedParameters()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.PrefixedParameters);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult PrefixedParametersWithDefault()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.PrefixedParametersWithDefault);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult ApiCallWithParams()
         {
             return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallWithParams);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult ApiCallWithPrefixedParams()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallWithPrefixedParams);
         }
 
         [NonAction]
@@ -112,6 +133,13 @@ namespace AspNetSimple.Controllers
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult TaskApiCallWithPrefixedParams()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskApiCallWithPrefixedParams);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult ApiCallTypedWithParams()
         {
             return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallTypedWithParams);
@@ -119,9 +147,23 @@ namespace AspNetSimple.Controllers
 
         [NonAction]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult ApiCallTypedWithPrefixedParams()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallTypedWithPrefixedParams);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public virtual IActionResult TaskApiCallTypedWithParams()
         {
             return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskApiCallTypedWithParams);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult TaskApiCallTypedWithPrefixedParams()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskApiCallTypedWithPrefixedParams);
         }
 
         [NonAction]
@@ -136,6 +178,13 @@ namespace AspNetSimple.Controllers
         public virtual IActionResult ExternalViewModel()
         {
             return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalViewModel);
+        }
+
+        [NonAction]
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public virtual IActionResult PrefixedViewModel()
+        {
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.PrefixedViewModel);
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -171,16 +220,23 @@ namespace AspNetSimple.Controllers
             public readonly string RequiresHttps = "RequiresHttps";
             public readonly string Parameters = "Parameters";
             public readonly string ParametersWithDefault = "ParametersWithDefault";
+            public readonly string PrefixedParameters = "PrefixedParameters";
+            public readonly string PrefixedParametersWithDefault = "PrefixedParametersWithDefault";
             public readonly string ApiCall = "ApiCall";
             public readonly string ApiCallWithParams = "ApiCallWithParams";
+            public readonly string ApiCallWithPrefixedParams = "ApiCallWithPrefixedParams";
             public readonly string TaskApiCall = "TaskApiCall";
             public readonly string TaskApiCallWithParams = "TaskApiCallWithParams";
+            public readonly string TaskApiCallWithPrefixedParams = "TaskApiCallWithPrefixedParams";
             public readonly string ApiCallTyped = "ApiCallTyped";
             public readonly string ApiCallTypedWithParams = "ApiCallTypedWithParams";
+            public readonly string ApiCallTypedWithPrefixedParams = "ApiCallTypedWithPrefixedParams";
             public readonly string TaskApiCallTyped = "TaskApiCallTyped";
             public readonly string TaskApiCallTypedWithParams = "TaskApiCallTypedWithParams";
+            public readonly string TaskApiCallTypedWithPrefixedParams = "TaskApiCallTypedWithPrefixedParams";
             public readonly string LocalViewModel = "LocalViewModel";
             public readonly string ExternalViewModel = "ExternalViewModel";
+            public readonly string PrefixedViewModel = "PrefixedViewModel";
             public readonly string OverrideMe = "OverrideMe";
         }
 
@@ -205,16 +261,23 @@ namespace AspNetSimple.Controllers
             public const string RequiresHttps = "RequiresHttps";
             public const string Parameters = "Parameters";
             public const string ParametersWithDefault = "ParametersWithDefault";
+            public const string PrefixedParameters = "PrefixedParameters";
+            public const string PrefixedParametersWithDefault = "PrefixedParametersWithDefault";
             public const string ApiCall = "ApiCall";
             public const string ApiCallWithParams = "ApiCallWithParams";
+            public const string ApiCallWithPrefixedParams = "ApiCallWithPrefixedParams";
             public const string TaskApiCall = "TaskApiCall";
             public const string TaskApiCallWithParams = "TaskApiCallWithParams";
+            public const string TaskApiCallWithPrefixedParams = "TaskApiCallWithPrefixedParams";
             public const string ApiCallTyped = "ApiCallTyped";
             public const string ApiCallTypedWithParams = "ApiCallTypedWithParams";
+            public const string ApiCallTypedWithPrefixedParams = "ApiCallTypedWithPrefixedParams";
             public const string TaskApiCallTyped = "TaskApiCallTyped";
             public const string TaskApiCallTypedWithParams = "TaskApiCallTypedWithParams";
+            public const string TaskApiCallTypedWithPrefixedParams = "TaskApiCallTypedWithPrefixedParams";
             public const string LocalViewModel = "LocalViewModel";
             public const string ExternalViewModel = "ExternalViewModel";
+            public const string PrefixedViewModel = "PrefixedViewModel";
             public const string OverrideMe = "OverrideMe";
         }
 
@@ -426,6 +489,30 @@ namespace AspNetSimple.Controllers
         }
 
         [NonAction]
+        partial void PrefixedParametersOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, int id, string name);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult PrefixedParameters(int id, string name)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.PrefixedParameters);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "foo", id);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "far", name);
+            PrefixedParametersOverride(callInfo, id, name);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void PrefixedParametersWithDefaultOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, int id, string name);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult PrefixedParametersWithDefault(int id, string name)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.PrefixedParametersWithDefault);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "foo", id);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "far", name);
+            PrefixedParametersWithDefaultOverride(callInfo, id, name);
+            return callInfo;
+        }
+
+        [NonAction]
         partial void ApiCallTypedOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
         [NonAction]
         public override Microsoft.AspNetCore.Mvc.ActionResult<AspNetSimple.Models.Product> ApiCallTyped()
@@ -443,6 +530,17 @@ namespace AspNetSimple.Controllers
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallTypedWithParams);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
             ApiCallTypedWithParamsOverride(callInfo, id);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void ApiCallTypedWithPrefixedParamsOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, int id);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.ActionResult<AspNetSimple.Models.Product> ApiCallTypedWithPrefixedParams(int id)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ApiCallTypedWithPrefixedParams);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "foo", id);
+            ApiCallTypedWithPrefixedParamsOverride(callInfo, id);
             return callInfo;
         }
 
@@ -468,6 +566,17 @@ namespace AspNetSimple.Controllers
         }
 
         [NonAction]
+        partial void TaskApiCallTypedWithPrefixedParamsOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, int id);
+        [NonAction]
+        public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Mvc.ActionResult<AspNetSimple.Models.Product>> TaskApiCallTypedWithPrefixedParams(int id)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.TaskApiCallTypedWithPrefixedParams);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "foo", id);
+            TaskApiCallTypedWithPrefixedParamsOverride(callInfo, id);
+            return System.Threading.Tasks.Task.FromResult<Microsoft.AspNetCore.Mvc.ActionResult<AspNetSimple.Models.Product>>(callInfo);
+        }
+
+        [NonAction]
         partial void LocalViewModelOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, AspNetSimple.Models.ErrorViewModel model);
         [NonAction]
         public override Microsoft.AspNetCore.Mvc.IActionResult LocalViewModel(AspNetSimple.Models.ErrorViewModel model)
@@ -486,6 +595,17 @@ namespace AspNetSimple.Controllers
             var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.ExternalViewModel);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             ExternalViewModelOverride(callInfo, model);
+            return callInfo;
+        }
+
+        [NonAction]
+        partial void PrefixedViewModelOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo, SampleModels.TestViewModel model);
+        [NonAction]
+        public override Microsoft.AspNetCore.Mvc.IActionResult PrefixedViewModel(SampleModels.TestViewModel model)
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.PrefixedViewModel);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "viewModel", model);
+            PrefixedViewModelOverride(callInfo, model);
             return callInfo;
         }
 

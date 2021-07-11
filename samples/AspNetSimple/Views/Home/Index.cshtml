@@ -28,6 +28,10 @@
             <td>@Html.ActionLink("Page Categories Inner NoModel Test", MVCPages.Categories.Inner.NoModel)</td>
             <td>@Url.Action(MVCPages.Categories.Inner.NoModel)</td>
         </tr>
+        <tr>
+            <td>@Html.ActionLink("Click here to see a 418 error page", MVC.Home.Error(418))</td>
+            <td>@Url.Action(MVC.Home.Error(418))</td>
+        </tr>
     </table>
 </div>
 
