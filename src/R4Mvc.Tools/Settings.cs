@@ -15,6 +15,8 @@
         public string[] ExcludedStaticFileExtensions { get; set; }
         public string[] ReferencedNamespaces { get; set; }
         public string[] PragmaCodes { get; set; }
+        public bool GenerateParamsForActionMethods { get; set; } = true;
+        public string ParamsPropertySuffix { get; set; } = "Params";
 
         // Don't include the page ViewsClass by default, and hide the option unless it's enabled
         // Not sure if we'd even need that, but leaving it in for the time being

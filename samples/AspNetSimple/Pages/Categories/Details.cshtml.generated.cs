@@ -112,6 +112,16 @@ namespace AspNetSimple.Pages.Categories
         public class HandlerNameConstants
         {
         }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly HandlerParamsClass_OnGet s_OnGetParams = new HandlerParamsClass_OnGet();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public HandlerParamsClass_OnGet OnGetParams => s_OnGetParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class HandlerParamsClass_OnGet
+        {
+            public readonly string id = "id";
+        }
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]

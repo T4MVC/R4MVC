@@ -123,6 +123,26 @@ namespace AspNetSimple.Pages
             public const string Test = "Test";
             public const string Delete = "Delete";
         }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly HandlerParamsClass_OnPost s_OnPostParams = new HandlerParamsClass_OnPost();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public HandlerParamsClass_OnPost OnPostParams => s_OnPostParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class HandlerParamsClass_OnPost
+        {
+            public readonly string id = "id";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly HandlerParamsClass_OnPostTest s_OnPostTestParams = new HandlerParamsClass_OnPostTest();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public HandlerParamsClass_OnPostTest OnPostTestParams => s_OnPostTestParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class HandlerParamsClass_OnPostTest
+        {
+            public readonly string id = "id";
+        }
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
