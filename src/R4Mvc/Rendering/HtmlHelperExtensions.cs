@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-#if CORE2
+#if !CORE1
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 #endif
 
@@ -54,7 +54,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return htmlHelper.RouteLink(linkText, null, result, htmlAttributes, protocol, hostName, fragment);
         }
 
-#if CORE2
+#if !CORE1
         public static IHtmlContent ActionLink(this IHtmlHelper htmlHelper, string linkText, IConvertToActionResult result, object htmlAttributes = null, string protocol = null, string hostName = null, string fragment = null)
         {
             return htmlHelper.ActionLink(linkText, result.Convert(), htmlAttributes, protocol, hostName, fragment);
@@ -142,7 +142,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return htmlHelper.RouteLink(linkText, routeName, protocol ?? result.Protocol, hostName, fragment, result.RouteValueDictionary, htmlAttributes);
         }
 
-#if CORE2
+#if !CORE1
         public static IHtmlContent RouteLink(this IHtmlHelper htmlHelper, string linkText, IConvertToActionResult result, object htmlAttributes)
         {
             return htmlHelper.RouteLink(linkText, result.Convert(), htmlAttributes);
@@ -199,7 +199,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return htmlHelper.AutoNamedRouteLink(linkText, result.GetActionResult(), htmlAttributes, protocol, hostName, fragment);
         }
 
-#if CORE2
+#if !CORE1
         public static IHtmlContent AutoNamedRouteLink(this IHtmlHelper htmlHelper, string linkText, IConvertToActionResult result, object htmlAttributes = null, string protocol = null, string hostName = null, string fragment = null)
         {
             return htmlHelper.AutoNamedRouteLink(linkText, result.Convert(), htmlAttributes, protocol, hostName, fragment);
@@ -250,7 +250,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return htmlHelper.BeginRouteForm(null, result, formMethod, htmlAttributes);
         }
 
-#if CORE2
+#if !CORE1
         public static MvcForm BeginForm(this IHtmlHelper htmlHelper, IConvertToActionResult result, FormMethod formMethod, object htmlAttributes)
         {
             return BeginForm(htmlHelper, result.Convert(), formMethod, htmlAttributes);
@@ -317,7 +317,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return htmlHelper.BeginRouteForm(routeName, result.RouteValueDictionary, formMethod, null, htmlAttributes);
         }
 
-#if CORE2
+#if !CORE1
         public static MvcForm BeginRouteForm(this IHtmlHelper htmlHelper, IConvertToActionResult result)
         {
             return htmlHelper.BeginRouteForm(result.Convert());

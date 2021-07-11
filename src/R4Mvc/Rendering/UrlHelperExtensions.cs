@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-#if CORE2
+#if !CORE1
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 #endif
 
@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return urlHelper.RouteUrl(null, result, protocol, hostName, fragment);
         }
 
-#if CORE2
+#if !CORE1
         public static string Action(this IUrlHelper urlHelper, IConvertToActionResult result, string protocol = null, string hostName = null, string fragment = null)
         {
             return urlHelper.Action(result.Convert(), protocol, hostName, fragment);
@@ -57,7 +57,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return $"{request.Scheme}://{request.Host}{urlHelper.RouteUrl(result.RouteValueDictionary)}";
         }
 
-#if CORE2
+#if !CORE1
         public static string ActionAbsolute(this IUrlHelper urlHelper, IConvertToActionResult result)
         {
             return urlHelper.ActionAbsolute(result.Convert());
@@ -101,7 +101,7 @@ namespace Microsoft.AspNetCore.Mvc.Rendering
             return urlHelper.RouteUrl(routeName, result.RouteValueDictionary, protocol ?? result.Protocol, hostName, fragment);
         }
 
-#if CORE2
+#if !CORE1
         public static string RouteUrl<TAction>(this IUrlHelper urlHelper, IConvertToActionResult result)
         {
             return urlHelper.RouteUrl(null, result.Convert(), null, null);

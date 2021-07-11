@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-#if CORE2
+#if !CORE1
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 #endif
 
@@ -43,7 +43,7 @@ namespace R4Mvc.TagHelpers
             output.Attributes.RemoveAll(ActionAttribute);
             var urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
 
-#if CORE2
+#if !CORE1
             if (ObjectAction is IConvertToActionResult convertToActionResult)
                 ObjectAction = convertToActionResult.Convert();
 #endif
