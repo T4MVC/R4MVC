@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Build.Locator;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.Extensions.Configuration;
@@ -75,12 +76,21 @@ project-path:
                     var foundErrors = false;
                     foreach (var diag in workspace.Diagnostics)
                     {
-                        Console.Error.WriteLine($"  {diag.Kind}: {diag.Message}");
-                        if (diag.Kind == Microsoft.CodeAnalysis.WorkspaceDiagnosticKind.Failure)
+                        if (diag.Kind == WorkspaceDiagnosticKind.Failure)
+                        {
+                            Console.Error.WriteLine($"  {diag.Kind}: {diag.Message}");
                             foundErrors = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"  {diag.Kind}: {diag.Message}");
+                        }
                     }
                     if (foundErrors)
+                    {
+                        Console.Error.WriteLine("Found errors during project analysis. Aborting");
                         return;
+                    }
                 }
 
                 // Prep the project Compilation object, and process the Controller public methods list
