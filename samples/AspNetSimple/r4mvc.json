@@ -13,6 +13,8 @@
     "AspNetSimple"
   ],
   "PragmaCodes": null,
+  "GenerateParamsForActionMethods": true,
+  "ParamsPropertySuffix": "Params",
   "FeatureFolders": {
     "Enabled": false,
     "FeaturesPath": "Features",

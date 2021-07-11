@@ -197,6 +197,16 @@ namespace AspNetSimple.Controllers
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ActionParamsClass_ApiCallTypedWithPrefixedParams s_ApiCallTypedWithPrefixedParamsParams = new ActionParamsClass_ApiCallTypedWithPrefixedParams();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public ActionParamsClass_ApiCallTypedWithPrefixedParams ApiCallTypedWithPrefixedParamsParams => s_ApiCallTypedWithPrefixedParamsParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_ApiCallTypedWithPrefixedParams
+        {
+            public readonly string id = "foo";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ActionParamsClass_TaskApiCallTypedWithParams s_TaskApiCallTypedWithParamsParams = new ActionParamsClass_TaskApiCallTypedWithParams();
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public ActionParamsClass_TaskApiCallTypedWithParams TaskApiCallTypedWithParamsParams => s_TaskApiCallTypedWithParamsParams;
@@ -204,6 +214,16 @@ namespace AspNetSimple.Controllers
         public class ActionParamsClass_TaskApiCallTypedWithParams
         {
             public readonly string id = "id";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ActionParamsClass_TaskApiCallTypedWithPrefixedParams s_TaskApiCallTypedWithPrefixedParamsParams = new ActionParamsClass_TaskApiCallTypedWithPrefixedParams();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public ActionParamsClass_TaskApiCallTypedWithPrefixedParams TaskApiCallTypedWithPrefixedParamsParams => s_TaskApiCallTypedWithPrefixedParamsParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_TaskApiCallTypedWithPrefixedParams
+        {
+            public readonly string id = "foo";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]

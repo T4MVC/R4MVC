@@ -119,6 +119,16 @@ namespace AspNetSimple.Controllers
             public const string Error = "Error";
         }
 
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ActionParamsClass_Error s_ErrorParams = new ActionParamsClass_Error();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public ActionParamsClass_Error ErrorParams => s_ErrorParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_Error
+        {
+            public readonly string statusCode = "errorCode";
+        }
+
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ViewsClass
         {

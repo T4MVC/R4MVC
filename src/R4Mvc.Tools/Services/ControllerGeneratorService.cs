@@ -142,7 +142,7 @@ namespace R4Mvc.Tools.Services
                         .WithModifiers(SyntaxKind.PublicKeyword)
                         .WithGeneratedNonUserCodeAttributes()
                         .ForEach(m.Parameters, (c, p) => c
-                            .WithStringField(p.Name, p.Name, SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))));
+                            .WithStringField(p.Name, p.GetRouteName(), SyntaxKind.PublicKeyword, SyntaxKind.ReadOnlyKeyword))));
             WithViewsClass(genControllerClass, controller.Views);
 
             return genControllerClass.Build();

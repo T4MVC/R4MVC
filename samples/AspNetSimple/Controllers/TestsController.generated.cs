@@ -304,11 +304,43 @@ namespace AspNetSimple.Controllers
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ActionParamsClass_PrefixedParameters s_PrefixedParametersParams = new ActionParamsClass_PrefixedParameters();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public ActionParamsClass_PrefixedParameters PrefixedParametersParams => s_PrefixedParametersParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_PrefixedParameters
+        {
+            public readonly string id = "foo";
+            public readonly string name = "far";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ActionParamsClass_PrefixedParametersWithDefault s_PrefixedParametersWithDefaultParams = new ActionParamsClass_PrefixedParametersWithDefault();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public ActionParamsClass_PrefixedParametersWithDefault PrefixedParametersWithDefaultParams => s_PrefixedParametersWithDefaultParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_PrefixedParametersWithDefault
+        {
+            public readonly string id = "foo";
+            public readonly string name = "far";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ActionParamsClass_ApiCallWithParams s_ApiCallWithParamsParams = new ActionParamsClass_ApiCallWithParams();
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public ActionParamsClass_ApiCallWithParams ApiCallWithParamsParams => s_ApiCallWithParamsParams;
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public class ActionParamsClass_ApiCallWithParams
+        {
+            public readonly string id = "id";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ActionParamsClass_ApiCallWithPrefixedParams s_ApiCallWithPrefixedParamsParams = new ActionParamsClass_ApiCallWithPrefixedParams();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public ActionParamsClass_ApiCallWithPrefixedParams ApiCallWithPrefixedParamsParams => s_ApiCallWithPrefixedParamsParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_ApiCallWithPrefixedParams
         {
             public readonly string id = "id";
         }
@@ -324,6 +356,16 @@ namespace AspNetSimple.Controllers
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ActionParamsClass_TaskApiCallWithPrefixedParams s_TaskApiCallWithPrefixedParamsParams = new ActionParamsClass_TaskApiCallWithPrefixedParams();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public ActionParamsClass_TaskApiCallWithPrefixedParams TaskApiCallWithPrefixedParamsParams => s_TaskApiCallWithPrefixedParamsParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_TaskApiCallWithPrefixedParams
+        {
+            public readonly string id = "foo";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ActionParamsClass_ApiCallTypedWithParams s_ApiCallTypedWithParamsParams = new ActionParamsClass_ApiCallTypedWithParams();
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public ActionParamsClass_ApiCallTypedWithParams ApiCallTypedWithParamsParams => s_ApiCallTypedWithParamsParams;
@@ -334,6 +376,16 @@ namespace AspNetSimple.Controllers
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ActionParamsClass_ApiCallTypedWithPrefixedParams s_ApiCallTypedWithPrefixedParamsParams = new ActionParamsClass_ApiCallTypedWithPrefixedParams();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public ActionParamsClass_ApiCallTypedWithPrefixedParams ApiCallTypedWithPrefixedParamsParams => s_ApiCallTypedWithPrefixedParamsParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_ApiCallTypedWithPrefixedParams
+        {
+            public readonly string id = "foo";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
         static readonly ActionParamsClass_TaskApiCallTypedWithParams s_TaskApiCallTypedWithParamsParams = new ActionParamsClass_TaskApiCallTypedWithParams();
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
         public ActionParamsClass_TaskApiCallTypedWithParams TaskApiCallTypedWithParamsParams => s_TaskApiCallTypedWithParamsParams;
@@ -341,6 +393,16 @@ namespace AspNetSimple.Controllers
         public class ActionParamsClass_TaskApiCallTypedWithParams
         {
             public readonly string id = "id";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ActionParamsClass_TaskApiCallTypedWithPrefixedParams s_TaskApiCallTypedWithPrefixedParamsParams = new ActionParamsClass_TaskApiCallTypedWithPrefixedParams();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public ActionParamsClass_TaskApiCallTypedWithPrefixedParams TaskApiCallTypedWithPrefixedParamsParams => s_TaskApiCallTypedWithPrefixedParamsParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_TaskApiCallTypedWithPrefixedParams
+        {
+            public readonly string id = "foo";
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
@@ -361,6 +423,16 @@ namespace AspNetSimple.Controllers
         public class ActionParamsClass_ExternalViewModel
         {
             public readonly string model = "model";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly ActionParamsClass_PrefixedViewModel s_PrefixedViewModelParams = new ActionParamsClass_PrefixedViewModel();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public ActionParamsClass_PrefixedViewModel PrefixedViewModelParams => s_PrefixedViewModelParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_PrefixedViewModel
+        {
+            public readonly string model = "viewModel";
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
