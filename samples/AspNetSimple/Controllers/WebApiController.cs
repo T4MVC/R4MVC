@@ -15,8 +15,10 @@ namespace AspNetSimple.Controllers
 
         public virtual ActionResult<Product> ApiCallTyped() => throw new NotImplementedException();
         public virtual ActionResult<Product> ApiCallTypedWithParams(int id) => throw new NotImplementedException();
+        public virtual ActionResult<Product> ApiCallTypedWithPrefixedParams([Bind(Prefix = "foo")] int id) => throw new NotImplementedException();
 
         public virtual Task<ActionResult<Product>> TaskApiCallTyped() => throw new NotImplementedException();
         public virtual Task<ActionResult<Product>> TaskApiCallTypedWithParams(int id) => throw new NotImplementedException();
+        public virtual Task<ActionResult<Product>> TaskApiCallTypedWithPrefixedParams([Bind(Prefix = "foo")] int id) => throw new NotImplementedException();
     }
 }

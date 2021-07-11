@@ -186,5 +186,16 @@ namespace R4Mvc.Tools.Extensions
                 IdentifierName(entityName),
                 IdentifierName(memberName));
         }
+
+        public static string GetRouteName(this IParameterSymbol property)
+        {
+            return property.GetAttributes()
+                           .Where(attr => attr.AttributeClass.Name == nameof(BindAttribute))
+                           .SelectMany(attr => attr.NamedArguments.Where(arg => arg.Key == nameof(BindAttribute.Prefix)))
+                           .Select(arg => arg.Value.Value as string)
+                           .Where(prefix => !string.IsNullOrEmpty(prefix))
+                           .DefaultIfEmpty(property.Name)
+                           .Single();
+        }
     }
 }
