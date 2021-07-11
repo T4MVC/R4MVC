@@ -5,9 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using AspNetSimple.NetCore3.Models;
+using AspNetSimple.NetCore2.Models;
 
-namespace AspNetSimple.NetCore3.Controllers
+namespace AspNetSimple.NetCore2.Controllers
 {
     public partial class HomeController : Controller
     {

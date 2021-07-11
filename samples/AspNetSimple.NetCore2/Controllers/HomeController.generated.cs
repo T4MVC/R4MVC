@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Routing;
 using R4Mvc;
 
-namespace AspNetSimple.NetCore3.Controllers
+namespace AspNetSimple.NetCore2.Controllers
 {
     public partial class HomeController
     {
@@ -126,7 +126,7 @@ namespace AspNetSimple.NetCore3.Controllers
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public partial class R4MVC_HomeController : AspNetSimple.NetCore3.Controllers.HomeController
+    public partial class R4MVC_HomeController : AspNetSimple.NetCore2.Controllers.HomeController
     {
         public R4MVC_HomeController(): base(Dummy.Instance)
         {

@@ -329,29 +329,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult : ActionResul
         this.InitMVCT4Result(area, controller, action, protocol);
     }
 
-    public string Controller
-    {
-        get;
-        set;
-    }
+    public string Controller { get; set; }
 
-    public string Action
-    {
-        get;
-        set;
-    }
+    public string Action { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -362,29 +346,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_JsonResult : JsonResult, I
         this.InitMVCT4Result(area, controller, action, protocol);
     }
 
-    public string Controller
-    {
-        get;
-        set;
-    }
+    public string Controller { get; set; }
 
-    public string Action
-    {
-        get;
-        set;
-    }
+    public string Action { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -395,29 +363,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_ContentResult : ContentRes
         this.InitMVCT4Result(area, controller, action, protocol);
     }
 
-    public string Controller
-    {
-        get;
-        set;
-    }
+    public string Controller { get; set; }
 
-    public string Action
-    {
-        get;
-        set;
-    }
+    public string Action { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -428,29 +380,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_FileResult : FileResult, I
         this.InitMVCT4Result(area, controller, action, protocol);
     }
 
-    public string Controller
-    {
-        get;
-        set;
-    }
+    public string Controller { get; set; }
 
-    public string Action
-    {
-        get;
-        set;
-    }
+    public string Action { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -461,29 +397,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectResult : RedirectR
         this.InitMVCT4Result(area, controller, action, protocol);
     }
 
-    public string Controller
-    {
-        get;
-        set;
-    }
+    public string Controller { get; set; }
 
-    public string Action
-    {
-        get;
-        set;
-    }
+    public string Action { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -494,29 +414,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToActionResult : R
         this.InitMVCT4Result(area, controller, action, protocol);
     }
 
-    public string Controller
-    {
-        get;
-        set;
-    }
+    public string Controller { get; set; }
 
-    public string Action
-    {
-        get;
-        set;
-    }
+    public string Action { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -527,29 +431,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RedirectToRouteResult : Re
         this.InitMVCT4Result(area, controller, action, protocol);
     }
 
-    public string Controller
-    {
-        get;
-        set;
-    }
+    public string Controller { get; set; }
 
-    public string Action
-    {
-        get;
-        set;
-    }
+    public string Action { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -560,29 +448,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult : 
         this.InitMVCT4Result(pageName, pageHandler, protocol);
     }
 
-    public string PageName
-    {
-        get;
-        set;
-    }
+    public string PageName { get; set; }
 
-    public string PageHandler
-    {
-        get;
-        set;
-    }
+    public string PageHandler { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -593,29 +465,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_JsonResult : Js
         this.InitMVCT4Result(pageName, pageHandler, protocol);
     }
 
-    public string PageName
-    {
-        get;
-        set;
-    }
+    public string PageName { get; set; }
 
-    public string PageHandler
-    {
-        get;
-        set;
-    }
+    public string PageHandler { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -626,29 +482,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ContentResult :
         this.InitMVCT4Result(area, controller, action, protocol);
     }
 
-    public string Controller
-    {
-        get;
-        set;
-    }
+    public string Controller { get; set; }
 
-    public string Action
-    {
-        get;
-        set;
-    }
+    public string Action { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -659,29 +499,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_FileResult : Fi
         this.InitMVCT4Result(pageName, pageHandler, protocol);
     }
 
-    public string PageName
-    {
-        get;
-        set;
-    }
+    public string PageName { get; set; }
 
-    public string PageHandler
-    {
-        get;
-        set;
-    }
+    public string PageHandler { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -692,29 +516,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectResult 
         this.InitMVCT4Result(pageName, pageHandler, protocol);
     }
 
-    public string PageName
-    {
-        get;
-        set;
-    }
+    public string PageName { get; set; }
 
-    public string PageHandler
-    {
-        get;
-        set;
-    }
+    public string PageHandler { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -725,29 +533,13 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectToActio
         this.InitMVCT4Result(pageName, pageHandler, protocol);
     }
 
-    public string PageName
-    {
-        get;
-        set;
-    }
+    public string PageName { get; set; }
 
-    public string PageHandler
-    {
-        get;
-        set;
-    }
+    public string PageHandler { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 
 [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
@@ -758,28 +550,12 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectToRoute
         this.InitMVCT4Result(pageName, pageHandler, protocol);
     }
 
-    public string PageName
-    {
-        get;
-        set;
-    }
+    public string PageName { get; set; }
 
-    public string PageHandler
-    {
-        get;
-        set;
-    }
+    public string PageHandler { get; set; }
 
-    public string Protocol
-    {
-        get;
-        set;
-    }
+    public string Protocol { get; set; }
 
-    public RouteValueDictionary RouteValueDictionary
-    {
-        get;
-        set;
-    }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
 }
 #pragma warning restore 1591, 3008, 3009, 0108

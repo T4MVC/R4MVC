@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetSimple.Test", "test\A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleModels", "samples\SampleModels\SampleModels.csproj", "{8F6D7DDE-98A0-4808-BD91-C1CF2E0AAC69}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetSimple.NetCore3", "samples\AspNetSimple.NetCore3\AspNetSimple.NetCore3.csproj", "{4609AF1D-0942-43DA-9979-F92972A22A7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetSimple.NetCore2", "samples\AspNetSimple.NetCore2\AspNetSimple.NetCore2.csproj", "{4609AF1D-0942-43DA-9979-F92972A22A7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

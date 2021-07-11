@@ -1,6 +1,6 @@
 using System;
 
-namespace AspNetSimple.NetCore3.Models
+namespace AspNetSimple.NetCore2.Models
 {
     public class ErrorViewModel
     {
