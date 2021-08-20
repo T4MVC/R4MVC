@@ -1,6 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+
 using R4Mvc.Tools.Extensions;
+
 using Path = System.IO.Path;
 
 namespace R4Mvc.Tools.Locators
@@ -76,7 +78,7 @@ namespace R4Mvc.Tools.Locators
 
         private View GetView(string projectRoot, string filePath, string controllerName, string areaName, string templateKind = null)
         {
-            var relativePath = new Uri("~" + filePath.GetRelativePath(projectRoot).Replace("\\", "/"), UriKind.Relative);
+            var relativePath = new Uri("/" + filePath.GetRelativePath(projectRoot).Replace("\\", "/").Replace("//", "/"), UriKind.Relative);
             var templateKindSegment = templateKind != null ? templateKind + "/" : null;
             return new View(areaName, controllerName, Path.GetFileNameWithoutExtension(filePath), relativePath, templateKind);
         }
