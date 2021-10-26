@@ -12,6 +12,7 @@
         public bool SplitIntoMultipleFiles { get; set; } = true;
         public bool SplitViewOnlyPagesIntoMultipleFiles { get; set; } = true;
         public string StaticFilesPath { get; set; } = "wwwroot";
+        public bool ExcludeControllers { get; set; }
         public string[] ExcludedStaticFileExtensions { get; set; }
         public string[] ReferencedNamespaces { get; set; }
         public string[] PragmaCodes { get; set; }

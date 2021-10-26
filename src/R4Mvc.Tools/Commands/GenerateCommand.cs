@@ -109,7 +109,14 @@ project-path:
                 Console.WriteLine();
 
                 // Analyse the controllers in the project (updating them to be partial), as well as locate all the view files
-                var controllers = _controllerRewriter.RewriteControllers(compilation);
+
+                var controllers = new List<ControllerDefinition>();
+
+                if (_settings.ExcludeControllers == false)
+                {
+                    controllers.AddRange(_controllerRewriter.RewriteControllers(compilation));
+                }
+
                 var allViewFiles = _viewLocators.SelectMany(x => x.Find(projectRoot));
 
                 // Assign view files to controllers
