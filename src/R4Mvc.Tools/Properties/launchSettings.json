@@ -3,9 +3,9 @@
     "R4Mvc.Tools": {
       "commandName": "Project",
       "commandLineArgs": "generate -p \"D:\\ProjetsGit\\OOGarden-Core\\Oog.BackOffice.Core\\Oog.BackOffice.Core.csproj\"",
+      "commandLineArgs_aspNetFeatureFolders": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetFeatureFolders\\AspNetFeatureFolders.csproj\"",
       "commandLineArgs_blank": "",
-      "commandLineArgs2": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetSimple\\AspNetSimple.csproj\"",
-      "commandLineArgs_aspNetFeatureFolders": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetFeatureFolders\\AspNetFeatureFolders.csproj\""
+      "commandLineArgs2": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetSimple\\AspNetSimple.csproj\""
     }
   }
 }
