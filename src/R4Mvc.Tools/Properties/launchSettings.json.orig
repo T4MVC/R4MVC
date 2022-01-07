@@ -1,0 +1,42 @@
+{
+  "profiles": {
+<<<<<<< HEAD
+    "R4Mvc.Tools.BackOffice": {
+=======
+    "R4Mvc.Tools-DEV01 (J perciot)": {
+>>>>>>> 517d7b8fc71815dd1b7a9cd4eb9271e56b7ff06f
+      "commandName": "Project",
+      "commandLineArgs": "generate -p \"D:\\ProjetsGit\\OOGarden-Core\\Oog.BackOffice.Core\\Oog.BackOffice.Core.csproj\"",
+      "commandLineArgs_aspNetFeatureFolders": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetFeatureFolders\\AspNetFeatureFolders.csproj\"",
+      "commandLineArgs_blank": "",
+      "commandLineArgs2": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetSimple\\AspNetSimple.csproj\""
+    },
+<<<<<<< HEAD
+    "R4Mvc.Tools.FrontOffice": {
+      "commandName": "Project",
+      "commandLineArgs": "generate -p \"D:\\ProjetsGit\\OOGarden-Core\\Oog.FrontOffice.Core\\Oog.FrontOffice.Core.csproj\"",
+      "commandLineArgs_aspNetFeatureFolders": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetFeatureFolders\\AspNetFeatureFolders.csproj\"",
+      "commandLineArgs_blank": "",
+      "commandLineArgs2": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetSimple\\AspNetSimple.csproj\""
+    },
+    "R4Mvc.Tools.CustomerArea": {
+      "commandName": "Project",
+      "commandLineArgs": "generate -p \"D:\\ProjetsGit\\OOGarden-Core\\Oog.CustomerArea.Core\\Oog.CustomerArea.Core.csproj\"",
+      "commandLineArgs_aspNetFeatureFolders": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetFeatureFolders\\AspNetFeatureFolders.csproj\"",
+      "commandLineArgs_blank": "",
+      "commandLineArgs2": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetSimple\\AspNetSimple.csproj\""
+    },
+    "R4Mvc.Tools.GardenTed": {
+      "commandName": "Project",
+      "commandLineArgs": "generate -p \"D:\\ProjetsGit\\OOGarden-Core\\Oog.GardenTed.Core\\Oog.GardenTed.Core.csproj\"",
+=======
+    "R4Mvc.Tools-DEV03 (RCB)": {
+      "commandName": "Project",
+      "commandLineArgs": "generate -p \"D:\\ProjetsGit\\OOGardenNetCore\\Oog.BackOffice.Core\\Oog.BackOffice.Core.csproj\"",
+>>>>>>> 517d7b8fc71815dd1b7a9cd4eb9271e56b7ff06f
+      "commandLineArgs_aspNetFeatureFolders": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetFeatureFolders\\AspNetFeatureFolders.csproj\"",
+      "commandLineArgs_blank": "",
+      "commandLineArgs2": "generate -p \"..\\..\\..\\..\\..\\samples\\AspNetSimple\\AspNetSimple.csproj\""
+    }
+  }
+}
