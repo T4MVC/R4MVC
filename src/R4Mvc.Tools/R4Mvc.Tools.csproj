@@ -72,4 +72,6 @@
     <ProjectReference Include="..\R4Mvc\R4Mvc.csproj" PrivateAssets="All" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
 </Project>
