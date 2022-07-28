@@ -65,11 +65,22 @@ namespace R4Mvc.Tools.Locators
                 yield return GetView(projectRoot, file, controllerName, areaName);
             }
 
-            foreach (var directory in _fileLocator.GetDirectories(controllerPath))
+            foreach (var view in FindViewsRecursively(projectRoot, areaName, controllerName, controllerPath))
+                yield return view;
+
+            IEnumerable<View> FindViewsRecursively(string projectRoot, string areaName, string controllerName, string controllerPath)
             {
-                foreach (var file in _fileLocator.GetFiles(directory, "*.cshtml"))
+                foreach (var directory in _fileLocator.GetDirectories(controllerPath))
                 {
-                    yield return GetView(projectRoot, file, controllerName, areaName, Path.GetFileName(directory));
+                    foreach (var file in _fileLocator.GetFiles(directory, "*.cshtml"))
+                    {
+                        yield return GetView(projectRoot, file, controllerName, areaName, Path.GetFileName(directory));
+                    }
+
+                    foreach (var file in FindViewsRecursively(projectRoot, areaName, controllerName, directory))
+                    {
+                        yield return file;
+                    }
                 }
             }
         }
