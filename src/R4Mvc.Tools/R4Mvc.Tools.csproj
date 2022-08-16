@@ -9,7 +9,13 @@
     <IncludeBuildOutput>False</IncludeBuildOutput>
   </PropertyGroup>
 
-  <PropertyGroup>
+    <PropertyGroup>
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    </PropertyGroup>
+
+
+    <PropertyGroup>
     <PackageId>R4Mvc.Tools</PackageId>
     <Authors>Kevin Kuszyk, Scott Mackay, Artiom Chilaru</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -55,6 +61,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" PrivateAssets="All" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="5.0.0" PrivateAssets="All" />
   </ItemGroup>
 
