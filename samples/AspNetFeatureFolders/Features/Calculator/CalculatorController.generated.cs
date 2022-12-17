@@ -127,7 +127,7 @@ namespace AspNetFeatureFolders.Features.Calculator
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_CalculatorController : AspNetFeatureFolders.Features.Calculator.CalculatorController
     {
-        public R4MVC_CalculatorController(): base(Dummy.Instance)
+        public R4MVC_CalculatorController() : base(Dummy.Instance)
         {
         }
 

@@ -127,7 +127,7 @@ namespace AspNetFeatureFolders.Areas.Products.Search
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_SearchController : AspNetFeatureFolders.Areas.Products.Search.SearchController
     {
-        public R4MVC_SearchController(): base(Dummy.Instance)
+        public R4MVC_SearchController() : base(Dummy.Instance)
         {
         }
 

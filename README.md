@@ -8,7 +8,7 @@ R4MVC is a Roslyn based code generator for ASP.NET MVC Core apps that creates st
 
 It is a re-implementation of [T4MVC](https://github.com/T4MVC/T4MVC) for ASP.NET Core projects.
 
-R4MVC runs in the dotnet cli or in Visual Studio 2017, and supports ASP.NET Core MVC 1 and 2
+R4MVC runs in the dotnet cli or in Visual Studio 2022, and supports ASP.NET Core 6 and 7
 
 ## Benefits
 

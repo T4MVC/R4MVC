@@ -148,7 +148,7 @@ namespace AspNetSimple.Pages
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_DefaultModel : AspNetSimple.Pages.DefaultModel
     {
-        public R4MVC_DefaultModel(): base(Dummy.Instance)
+        public R4MVC_DefaultModel() : base(Dummy.Instance)
         {
         }
 
