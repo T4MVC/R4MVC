@@ -30,7 +30,7 @@ namespace R4Mvc.Tools.Locators
 
         private PageView GetView(string projectRoot, string pagesRoot, string filePath)
         {
-            bool isPage = false;
+            bool isRazorPage = false;
             using (var file = File.OpenRead(filePath))
             using (var reader = new StreamReader(file))
             {
@@ -44,7 +44,7 @@ namespace R4Mvc.Tools.Locators
                         break;
                     if (trimmedLine.StartsWith("@page"))
                     {
-                        isPage = true;
+                        isRazorPage = true;
                         break;
                     }
                 }
@@ -52,7 +52,7 @@ namespace R4Mvc.Tools.Locators
 
             var relativePath = filePath.GetRelativePath(projectRoot).Replace("\\", "/");
             var pagePath = filePath.GetRelativePath(pagesRoot).Replace("\\", "/").TrimEnd(".cshtml");
-            return new PageView(Path.GetFileNameWithoutExtension(filePath), filePath, relativePath, pagePath, isPage);
+            return new PageView(Path.GetFileNameWithoutExtension(filePath), filePath, relativePath, pagePath, isRazorPage);
         }
     }
 }
