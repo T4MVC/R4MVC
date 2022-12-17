@@ -10,7 +10,7 @@
         public string R4MvcNamespace { get; set; } = "R4Mvc";
         public string LinksNamespace { get; set; } = "Links";
         public bool SplitIntoMultipleFiles { get; set; } = true;
-        public bool SplitViewOnlyPagesIntoMultipleFiles { get; set; } = true;
+        public bool SplitViewOnlyPagesIntoMultipleFiles { get; set; } = false;
         public string StaticFilesPath { get; set; } = "wwwroot";
         public string[] ExcludedStaticFileExtensions { get; set; }
         public string[] ReferencedNamespaces { get; set; }

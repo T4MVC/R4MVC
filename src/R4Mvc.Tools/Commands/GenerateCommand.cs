@@ -140,9 +140,13 @@ project-path:
                 if (hasPagesSupport)
                 {
                     var definitions = _pageRewriter.RewritePages(compilation);
-                    pages = _pageViewLocators.SelectMany(x => x.Find(projectRoot)).Where(p => p.IsPage).ToList();
+                    pages = _pageViewLocators.SelectMany(x => x.Find(projectRoot)).ToList();
 
-                    foreach (var page in pages)
+                    // Some of the entries in pages can be partial views i.e. not an actual Razor Page.
+                    // They will have no associated code-behind class in the project, so filter them out when fetching definitions.
+                    var razorPages = pages.Where(p => p.IsRazorPage).ToList();
+
+                    foreach (var page in razorPages)
                     {
                         page.Definition = definitions.FirstOrDefault(d => d.GetFilePath() == (page.FilePath + ".cs"));
                     }

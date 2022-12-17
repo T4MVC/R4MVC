@@ -37,6 +37,7 @@ public static partial class MVCPages
     public static R4Mvc.NoDirectChildPagesPathClass NoDirectChildPages => s_NoDirectChildPages;
     public static readonly AspNetSimple.Pages.DefaultModel Default = new AspNetSimple.Pages.R4MVC_DefaultModel();
     public static readonly R4Mvc.NoModelModel NoModel = new R4Mvc.NoModelModel();
+    public static readonly R4Mvc.NotARazorPageModel NotARazorPage = new R4Mvc.NotARazorPageModel();
 }
 
 namespace R4Mvc
@@ -557,5 +558,58 @@ internal partial class R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_RedirectToRoute
     public string Protocol { get; set; }
 
     public RouteValueDictionary RouteValueDictionary { get; set; }
+}
+
+namespace R4Mvc
+{
+    public partial class NoDirectChildPages_AnotherEmptyLayer_NestedPages_IndexModel : IR4ActionResult
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        string IR4ActionResult.Protocol => null;
+        [GeneratedCode("R4Mvc", "1.0")]
+        RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/NoDirectChildPages/AnotherEmptyLayer/NestedPages/Index"}};
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
+    }
+
+    public partial class NoModelModel : IR4ActionResult
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        string IR4ActionResult.Protocol => null;
+        [GeneratedCode("R4Mvc", "1.0")]
+        RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/NoModel"}};
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
+    }
+
+    public partial class Categories_NoModelModel : IR4ActionResult
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        string IR4ActionResult.Protocol => null;
+        [GeneratedCode("R4Mvc", "1.0")]
+        RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/Categories/NoModel"}};
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
+    }
+
+    public partial class Categories_Inner_NoModelModel : IR4ActionResult
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        string IR4ActionResult.Protocol => null;
+        [GeneratedCode("R4Mvc", "1.0")]
+        RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/Categories/Inner/NoModel"}};
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
+    }
+
+    public partial class NotARazorPageModel : IR4ActionResult
+    {
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        string IR4ActionResult.Protocol => null;
+        [GeneratedCode("R4Mvc", "1.0")]
+        RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/NotARazorPage"}};
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
+    }
 }
 #pragma warning restore 1591, 3008, 3009, 0108
