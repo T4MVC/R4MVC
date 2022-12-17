@@ -32,26 +32,9 @@
     <DebugType>embedded</DebugType>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.6'">
-    <DefineConstants>$(DefineConstants);CORE1</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='net461'">
-    <DefineConstants>$(DefineConstants);CORE2</DefineConstants>
-  </PropertyGroup>
-
-  <ItemGroup Condition="$(DefineConstants.Contains('CORE1'))">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="1.1.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="1.1.3" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(DefineConstants.Contains('CORE2'))">
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="!$(DefineConstants.Contains('CORE1')) AND !$(DefineConstants.Contains('CORE2'))">
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='Release'">
