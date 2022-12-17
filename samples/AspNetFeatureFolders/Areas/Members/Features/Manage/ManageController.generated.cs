@@ -127,7 +127,7 @@ namespace AspNetFeatureFolders.Areas.Members.Features.Manage
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_ManageController : AspNetFeatureFolders.Areas.Members.Features.Manage.ManageController
     {
-        public R4MVC_ManageController(): base(Dummy.Instance)
+        public R4MVC_ManageController() : base(Dummy.Instance)
         {
         }
 

@@ -41,10 +41,10 @@ namespace R4Mvc.Tools.Services
                 }
 
                 // save the controller nodes from each visit to pass to the generator
-                foreach (var controllerNode in controllerRewriter.MvcPageClassNodes)
+                foreach (var pageNode in controllerRewriter.MvcPageClassNodes)
                 {
-                    var cNamespace = controllerNode.FirstAncestorOrSelf<NamespaceDeclarationSyntax>().Name.ToFullString().Trim();
-                    var cSymbol = compiler.GetSemanticModel(tree).GetDeclaredSymbol(controllerNode);
+                    var cNamespace = pageNode.GetNamespace();
+                    var cSymbol = compiler.GetSemanticModel(tree).GetDeclaredSymbol(pageNode);
                     var cFullName = cNamespace + "." + cSymbol.Name;
                     if (pages.ContainsKey(cFullName))
                     {

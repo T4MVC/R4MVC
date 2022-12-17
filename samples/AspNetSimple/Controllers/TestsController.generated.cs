@@ -454,7 +454,7 @@ namespace AspNetSimple.Controllers
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_TestsController : AspNetSimple.Controllers.TestsController
     {
-        public R4MVC_TestsController(): base(Dummy.Instance)
+        public R4MVC_TestsController() : base(Dummy.Instance)
         {
         }
 

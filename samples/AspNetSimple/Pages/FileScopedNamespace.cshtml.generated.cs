@@ -16,17 +16,17 @@ using Microsoft.AspNetCore.Routing;
 using R4Mvc;
 using AspNetSimple;
 
-namespace AspNetSimple.Areas.Members.Controllers
+namespace AspNetSimple.Pages
 {
-    public partial class ManualAreaController
+    public partial class FileScopedNamespaceModel : IR4ActionResult
     {
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public ManualAreaController()
+        public FileScopedNamespaceModel()
         {
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        protected ManualAreaController(Dummy d)
+        protected FileScopedNamespaceModel(Dummy d)
         {
         }
 
@@ -83,60 +83,93 @@ namespace AspNetSimple.Areas.Members.Controllers
         }
 
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public ManualAreaController Actions => MVC.Members.ManualArea;
+        string IR4ActionResult.Protocol => null;
         [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Area = "Members";
-        [GeneratedCode("R4Mvc", "1.0")]
-        public readonly string Name = "ManualArea";
-        [GeneratedCode("R4Mvc", "1.0")]
-        public const string NameConst = "ManualArea";
-        [GeneratedCode("R4Mvc", "1.0")]
-        static readonly ActionNamesClass s_ActionNames = new ActionNamesClass();
+        RouteValueDictionary m_RouteValueDictionary = new RouteValueDictionary{{"Page", "/FileScopedNamespace"}};
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public ActionNamesClass ActionNames => s_ActionNames;
+        RouteValueDictionary IR4ActionResult.RouteValueDictionary => m_RouteValueDictionary;
+        [NonHandler]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public class ActionNamesClass
+        public virtual IActionResult OnPost()
         {
-            public readonly string Index = "Index";
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, null);
         }
 
+        [NonHandler]
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public class ActionNameConstants
+        public virtual IActionResult OnPostTest()
         {
-            public const string Index = "Index";
-        }
-
-        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public class ViewsClass
-        {
-            static readonly _ViewNamesClass s_ViewNames = new _ViewNamesClass();
-            public _ViewNamesClass ViewNames => s_ViewNames;
-            public class _ViewNamesClass
-            {
-            }
+            return new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, HandlerNames.Test);
         }
 
         [GeneratedCode("R4Mvc", "1.0")]
-        static readonly ViewsClass s_Views = new ViewsClass();
+        public readonly string Name = "/FileScopedNamespace";
+        [GeneratedCode("R4Mvc", "1.0")]
+        public const string NameConst = "/FileScopedNamespace";
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly HandlerNamesClass s_HandlerNames = new HandlerNamesClass();
         [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-        public ViewsClass Views => s_Views;
+        public HandlerNamesClass HandlerNames => s_HandlerNames;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class HandlerNamesClass
+        {
+            public readonly string Test = "Test";
+            public readonly string Delete = "Delete";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class HandlerNameConstants
+        {
+            public const string Test = "Test";
+            public const string Delete = "Delete";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly HandlerParamsClass_OnPost s_OnPostParams = new HandlerParamsClass_OnPost();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public HandlerParamsClass_OnPost OnPostParams => s_OnPostParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class HandlerParamsClass_OnPost
+        {
+            public readonly string id = "id";
+        }
+
+        [GeneratedCode("R4Mvc", "1.0")]
+        static readonly HandlerParamsClass_OnPostTest s_OnPostTestParams = new HandlerParamsClass_OnPostTest();
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public HandlerParamsClass_OnPostTest OnPostTestParams => s_OnPostTestParams;
+        [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
+        public class HandlerParamsClass_OnPostTest
+        {
+            public readonly string id = "id";
+        }
     }
 
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
-    public partial class R4MVC_ManualAreaController : AspNetSimple.Areas.Members.Controllers.ManualAreaController
+    public partial class R4MVC_FileScopedNamespaceModel : AspNetSimple.Pages.FileScopedNamespaceModel
     {
-        public R4MVC_ManualAreaController() : base(Dummy.Instance)
+        public R4MVC_FileScopedNamespaceModel() : base(Dummy.Instance)
         {
         }
 
-        [NonAction]
-        partial void IndexOverride(R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult callInfo);
-        [NonAction]
-        public override Microsoft.AspNetCore.Mvc.IActionResult Index()
+        [NonHandler]
+        partial void OnGetOverride(R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult callInfo);
+        [NonHandler]
+        public override Microsoft.AspNetCore.Mvc.IActionResult OnGet()
         {
-            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_ActionResult(Area, Name, ActionNames.Index);
-            IndexOverride(callInfo);
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, null);
+            OnGetOverride(callInfo);
             return callInfo;
+        }
+
+        [NonHandler]
+        partial void OnPostDeleteAsyncOverride(R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult callInfo);
+        [NonHandler]
+        public override System.Threading.Tasks.Task OnPostDeleteAsync()
+        {
+            var callInfo = new R4Mvc_Microsoft_AspNetCore_Mvc_RazorPages_ActionResult(Name, HandlerNames.Delete);
+            OnPostDeleteAsyncOverride(callInfo);
+            return System.Threading.Tasks.Task.FromResult(callInfo);
         }
     }
 }

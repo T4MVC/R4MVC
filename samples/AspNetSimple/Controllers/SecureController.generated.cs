@@ -125,7 +125,7 @@ namespace AspNetSimple.Controllers
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_SecureController : AspNetSimple.Controllers.SecureController
     {
-        public R4MVC_SecureController(): base(Dummy.Instance)
+        public R4MVC_SecureController() : base(Dummy.Instance)
         {
         }
 

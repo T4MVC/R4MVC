@@ -127,7 +127,7 @@ namespace AspNetSimple.Pages.Categories
     [GeneratedCode("R4Mvc", "1.0"), DebuggerNonUserCode]
     public partial class R4MVC_DetailsModel : AspNetSimple.Pages.Categories.DetailsModel
     {
-        public R4MVC_DetailsModel(): base(Dummy.Instance)
+        public R4MVC_DetailsModel() : base(Dummy.Instance)
         {
         }
     }
